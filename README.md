@@ -1,2 +1,9 @@
 # BrainX
-BrainX 是一个智能系统，分析各种媒体格式，整合到知识库，并生成定制内容，包括机器人、洞察和媒体。它旨在为用户提供个性化和自动化的解决方案。
+
+## 文档介绍
+
+请查看项目 [Wiki](https://github.com/ArtisanCloud/BrainX/wiki)，陆续更新中...
+
+## 项目使用
+TBD...
+
