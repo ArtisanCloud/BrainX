@@ -1,0 +1,24 @@
+# https://python-poetry.org/docs/basic-usage/#installing-dependencies
+
+[tool.poetry]
+name = "brainx"
+version = "0.1.0"
+description = ""
+authors = ["Matrix-X <matrix-x@artisan-cloud.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.110.0"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+gunicorn = "^21.2.0"
+psycopg2 = "^2.9.9"
+sqlalchemy = "^2.0.28"
+alembic = "^1.13.1"
+databases = {extras = ["postgresql"], version = "^0.9.0"}
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
