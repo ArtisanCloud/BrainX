@@ -16,21 +16,18 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Main Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+目录参考结构: https://nextjs.org/learn/dashboard-app/getting-started
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+834 / 5,000
+翻译结果
+翻译结果
+* /app：包含应用程序的所有路由、组件和逻辑，这是您主要工作的地方。
+* /app/utils：包含应用程序中使用的函数，例如可重用的实用函数和数据获取函数。
+* /app/styles：包含应用程序的所有通用样式。
+* /app/components：包含应用程序的所有 UI 组件，例如卡片、表格和表单。 为了节省时间，我们为您预先设计了这些组件的样式。
+* /public：包含应用程序的所有静态资源，例如图像。
+* /scripts：包含一个播种脚本，您将在后面的章节中使用它来填充数据库。
+* 配置文件：您还会注意到应用程序根目录下的配置文件，例如 next.config.js。 大多数这些文件是在您使用 create-next-app 启动新项目时创建和预配置的。 在本课程中您不需要修改它们。

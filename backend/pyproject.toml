@@ -17,6 +17,8 @@ sqlalchemy = "^2.0.28"
 alembic = "^1.13.1"
 databases = {extras = ["postgresql"], version = "^0.9.0"}
 python-dotenv = "^1.0.1"
+asyncio = "^3.4.3"
+greenlet = "^3.0.3"
 
 
 [build-system]

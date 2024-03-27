@@ -1,5 +1,6 @@
 .idea/
 .env
+logs
 
 alembic.ini
 
