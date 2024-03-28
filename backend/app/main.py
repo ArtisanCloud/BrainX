@@ -14,7 +14,7 @@ from alembic import script
 from alembic.runtime import migration
 from sqlalchemy.engine import create_engine, Engine
 
-from app.api.api import api_router
+from app.controller.api import api_router
 from app.db.wait_for_db import check_database_connection
 from app.core.config import settings, AppEnvironment
 
@@ -22,7 +22,7 @@ from contextlib import asynccontextmanager
 
 import sentry_sdk
 
-# from app.chat.pg_vector import get_vector_store_singleton, CustomPGVectorStore
+# from app.qa.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 
 
 # 获取当前日志记录器
