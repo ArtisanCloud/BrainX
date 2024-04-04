@@ -14,7 +14,7 @@ from alembic import script
 from alembic.runtime import migration
 from sqlalchemy.engine import create_engine, Engine
 
-from app.controller.api import api_router
+from app.api.api import api_router
 from app.db.wait_for_db import check_database_connection
 from app.core.config import settings, AppEnvironment
 

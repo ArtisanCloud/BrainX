@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import NavLinks from '@/app/dashboard/nav-link';
-import ArtisanCloudLogo from '@/app/components/artisancloud-logo';
+import ArtisanCloudLogo from '@/app/ui/artisancloud-logo';
 import { PowerIcon } from '@heroicons/react/24/outline';
 
 export default function SideNav() {

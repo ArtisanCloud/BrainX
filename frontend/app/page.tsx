@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import ArtisanCloudLogo from "@/app/components/artisancloud-logo";
+import ArtisanCloudLogo from "@/app/ui/artisancloud-logo";
+
+import variables from '@/app/styles/variables.module.scss'
 
 
 export default function Home() {

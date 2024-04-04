@@ -5,7 +5,7 @@ import {
 	InboxIcon,
 } from '@heroicons/react/24/outline';
 import { noto_serif } from '@/app/styles/fonts';
-import { fetchCardData } from '@/app/utils/data';
+import { fetchCardData } from '@/app/lib/data';
 
 const iconMap = {
 	collected: BanknotesIcon,

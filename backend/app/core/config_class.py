@@ -77,7 +77,7 @@ class Settings(PreviewPrefixedSettings):
     """
 
     PROJECT_NAME: str = "brain_x"
-    API_PREFIX: str = "/controller"
+    API_PREFIX: str = "/api"
     DATABASE_URL: str
     LOG_LEVEL: str = "DEBUG"
     IS_PULL_REQUEST: bool = False
