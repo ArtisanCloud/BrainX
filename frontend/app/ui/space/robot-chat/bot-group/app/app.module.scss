@@ -1,0 +1,98 @@
+
+.container {
+  --primary-color: #293036;
+  --hover-color: #f0f0f0;
+  --selected-color: #c7d1d9;
+
+  --title-color: #21292d;
+  --description-color: #bfc4ce;
+
+  --title-color-selected: #1c1b1b;
+  --description-color-selected: #ffffff;
+  --button-color-selected: #abb9b9;
+
+  --title-color-hovered: #21292d;
+  --description-color-hovered: #bfc4ce;
+  --button-color-hovered: #e2eaea;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px;
+  font-size: 12px;
+  border-radius: 5px;
+  //border: #ff006a 1px solid;
+
+  transition: background-color 0.3s; /* 添加过渡效果 */
+
+
+
+  &:hover {
+    background-color: var(--hover-color); /* 鼠标移动到 container 上时的背景色 */
+    .content{
+      .title {
+        color: var(--title-color-hovered);
+      }
+      .description {
+        color: var(--description-color-hovered);
+      }
+    }
+    .action {
+      .button {
+        color: var(--button-color-hovered);
+        background-color: var(--hover-color);
+        border: 1px solid var(--button-color-hovered); /* 鼠标移动到 container 上时，显示 .button 的边框 */
+      }
+    }
+  }
+
+  .avatar {
+    .avatarImage{
+      width: 42px;
+    }
+  }
+
+  .content {
+    margin-left: -20px;
+    .title {
+      font-size: 12px;
+      color: var(--title-color);
+    }
+    .description{
+      font-size: 8px;
+      color: var(--description-color);
+    }
+  }
+
+  .action {
+    .button {
+      color: var(--hover-color);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+}
+
+
+.selected {
+  background-color: var(--selected-color);
+  color: var(--hover-color); /* 修改文字颜色 */
+  .content {
+    .title {
+      color: var(--title-color-selected);
+    }
+    .description {
+      color: var(--description-color-selected);
+    }
+  }
+  .action {
+    .button {
+      color: var(--button-color-selected);
+      background-color: var(--hover-color);
+      //border: 1px solid var(--selected-color); /* 鼠标移动到 container 上时，显示 .button 的边框 */
+    }
+  }
+}

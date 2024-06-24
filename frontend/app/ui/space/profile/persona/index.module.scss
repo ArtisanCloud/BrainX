@@ -1,0 +1,11 @@
+.container{
+  .content{
+    max-height: 200px;
+    overflow-y: auto !important; /* 当内容超出容器高度时显示垂直滚动条 */
+    -ms-overflow-style: none; /* 隐藏 IE 浏览器的滚动条 */
+    scrollbar-width: none; /* 隐藏 Firefox 浏览器的滚动条 */
+
+    color: var(--text);
+    font-size: 10px;
+  }
+}

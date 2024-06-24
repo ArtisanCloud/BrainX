@@ -1,0 +1,69 @@
+.container {
+  flex: 1;
+  background-color: var(--chat-bg);
+  border-bottom: 1px solid #eee;
+  padding: 5px;
+  //border: 1px solid #962525;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .info {
+    display: flex;
+    flex-direction: row;
+    //border: #ff006a 1px solid;
+    margin-left: 20px;
+
+    .avatar {
+      .avatarImage {
+        width: 38px;
+      }
+    }
+
+    .content {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+
+      .titleBox {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 6px;
+        .title {
+          //margin-left: 10px;
+          font-size: 14px;
+          color: var(--text);
+          font-weight: bold;
+        }
+        .selectLLM{
+          margin-left: 20px;
+          width: 180px;
+          height: 20px;
+          background-color: var(--bgText);
+          border-radius: 5px;
+        }
+      }
+
+      .description {
+        font-size: 10px;
+        color: var(--textSoft);
+      }
+    }
+  }
+
+  .action {
+    margin-right: 4px;
+
+    .showSetting {
+      margin-right: 10px;
+      border: none;
+    }
+
+    .openSetting {
+      margin-right: 10px;
+      border: none;
+    }
+  }
+}

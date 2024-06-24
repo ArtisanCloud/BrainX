@@ -1,0 +1,67 @@
+.container {
+
+  --input: 140px;
+
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  .queryImage {
+    flex: 1;
+    //border: #ff006a 1px solid;
+    .imageDragger {
+      height: 200px;
+    }
+    .hide{
+      display: none;
+    }
+
+    .preview {
+      width: 100%;
+      height: 480px;
+      text-align: center;
+      padding: 20px;
+      .clearButton{
+        margin-top: 10px;
+      }
+    }
+    .hide{
+      display: none;
+    }
+
+  }
+
+  .vSeparate {
+    border-left: var(--textSoft) 1px dashed;
+    min-height: 768px;
+  }
+
+  .question {
+    flex: 1;
+    padding: 20px;
+    //border: #ff006a 1px solid;
+    .questionTitle {
+      margin-bottom: 20px;
+    }
+
+    .questionInput {
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 100%;
+      height: var(--input);
+      /* 输入框样式 */
+    }
+    .button{
+      margin-top: 20px;
+      text-align: right;
+    }
+    .separate{
+      font-size: 12px;
+    }
+    .result{
+
+    }
+
+  }
+}

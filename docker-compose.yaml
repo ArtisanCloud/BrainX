@@ -1,0 +1,53 @@
+# version: '3'
+
+services:
+  backend:
+    image: ${DOCKER_IMAGE_BACKEND_NAME}:${DOCKER_IMAGE_VERSION}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+        POETRY_VERSION: ${POETRY_VERSION}
+        HOST_PROXY: ${HOST_PROXY}
+    container_name: brainx-backend
+    ports:
+      - "${BACKEND_PORT}:8000"  # 假设 FastAPI 服务运行在 8000 端口
+    # env_file:
+    #   - ./.env
+    networks:
+      - brainx-network
+      
+  frontend:
+    image: ${DOCKER_IMAGE_FRONTEND_NAME}:${DOCKER_IMAGE_VERSION}
+    build:
+        context: ./frontend
+        dockerfile: Dockerfile
+    container_name: brainx-frontend
+    ports:
+      - "${FRONTEND_PORT}:3000"  # 假设 Next.js 服务运行在 3000 端口
+    # env_file:
+    #   - ./.env
+    networks:
+      - brainx-network
+
+  gateway:
+    image: ${DOCKER_IMAGE_GATEWAY_NAME}:${DOCKER_IMAGE_VERSION}
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    volumes:
+      - ./docker-data/logs/nginx/server:/var/log/nginx/server
+      - ./docker-data/ogs/nginx/dashboard:/var/log/nginx/dashboard
+      - ./nginx/services:/etc/nginx/sites-enabled/
+    ports:
+      - '${GATEWAY_PORT}:8080'
+    # env_file:
+    #   - ./.env
+    # command: ['sh', '/etc/nginx/convert-nginx.sh']
+
+networks:
+  brainx-network:
+    driver: bridge
+
+name: brainx

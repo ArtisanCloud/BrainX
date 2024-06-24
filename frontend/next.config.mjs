@@ -7,6 +7,25 @@ const nextConfig = {
 	sassOptions: {
 		includePaths: [path.join(__dirname, 'styles')],
 	},
+	// ssr: false,
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'http',
+				hostname: '**',
+				port: '9001',
+				pathname: '**',
+			},
+			{
+				protocol: 'https',
+				hostname: '**',
+				port: '9001',
+				pathname: '**',
+			},
+		],
+	},
+	// Develop mode only
+	// reactStrictMode: false,
 };
 
 export default nextConfig;

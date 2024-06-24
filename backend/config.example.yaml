@@ -1,0 +1,94 @@
+server:
+  version: "0.0.1"
+  project_name: "brainx"
+  host: "0.0.0.0"
+  port: 8000
+  max_bytes: 10485760
+  cors_origins:
+    - "*"
+  worker_count: 5
+  environment: "local"
+  server_render: False
+
+api:
+  api_prefix: "/api"
+  openapi_prefix: "/openapi"
+  request_timeout: 60
+
+database:
+  url: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
+  table_name_vector_store: "embeddings"
+
+cache:
+  redis:
+    url: redis://mypassword@localhost:6379/0
+
+models:
+  qa_embedding_model_name: "shibing624/text2vec-base-chinese"
+  visual_search_model_name: "clip-ViT-L-14"
+  visual_query_model_name: "dandelin/vilt-b32-finetuned-vqa"
+
+log:
+  path: logs
+  split:
+    - error
+  level: info
+  keep_days: 30
+  console: true
+  stat: false
+
+openai:
+  llm_name: "gpt-3.5-turbo"
+  api_base: "https://api.openai.com/v1/"
+  api_key: "YOUR_API_KEY"
+  request_timeout: 30
+
+baidu_qianfan:
+  api_key: "YOUR_API_KEY"
+  secret_key: "YOUR_SECRET_KEY"
+  request_timeout: 30
+
+kimi:
+  llm_name: "moonshot-v1-8k"
+  api_key: "YOUR_API_KEY"
+  api_base: "https://api.moonshot.cn/v1"
+  request_timeout: 30
+
+ollama:
+  url: "http://localhost:11434"
+
+polygon:
+  api_key: "YOUR_API_KEY"
+
+sentry:
+  dsn: "YOUR_DSN"
+  environment: "local"
+  release: "1.0"
+
+storage:
+  driver: "minio"
+  local_storage:
+    storage_path: "./storage"
+  minio:
+    endpoint: "https://minio.example.com"
+    access_key: "YOUR_ACCESS_KEY"
+    secret_key: "YOUR_SECRET_KEY"
+    use_ssl: True
+    region: 'AsiaShanghai'
+  aliyun:
+    endpoint: "oss-cn-beijing.aliyuncs.com"
+    access_key: "YOUR_ACCESS_KEY"
+    secret_key: "YOUR_SECRET_KEY"
+    bucket_name: "BUCKET_NAME"
+  azure:
+    account_name: 'ACCOUNT_NAME'
+    account_key: 'ACCOUNT_KEY'
+    container_name: 'CONTAINER_NAME'
+    bucket_name: 'BUCKET_NAME'
+  google:
+    bucket_name: 'BUCKET_NAME'
+  s3:
+    endpoint: 'ENDPOINT'
+    access_key: 'ACCESS_KEY'
+    secret_key: 'SECRET_KEY'
+    bucket_name: 'BUCKET_NAME'

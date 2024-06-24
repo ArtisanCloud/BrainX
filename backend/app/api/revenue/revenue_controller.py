@@ -1,20 +1,30 @@
+import asyncio
+
 from fastapi import Depends, APIRouter, HTTPException, Query
 from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
 import logging
+
+from starlette.requests import Request
+
+from app.api.context_manager import build_request_context
 from app.models.revenue import Revenue
 
 from uuid import UUID
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
-@router.get("/")
-async def get_revenues() -> List[Revenue]:
-    """
-    Get all documents or documents by their ids
-    """
+@router.get("/", response_model=None)
+async def get_revenues(
+        # request: Request,
+        _=Depends(build_request_context)
+) -> List[Revenue]:
+
+    # db = get_db_session()
+    # print(db)
+    # print(request)
+    # await asyncio.sleep(5)
+
     revenues = [
         Revenue(month='Jan', revenue=2000),
         Revenue(month='Feb', revenue=1800),

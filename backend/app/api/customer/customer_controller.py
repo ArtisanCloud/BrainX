@@ -1,19 +1,17 @@
-from fastapi import Depends, APIRouter, HTTPException, Query
-from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter
 import logging
-from app.models.customer import Customer
+from app.models.originaztion.user import User
 
-from uuid import UUID
+from app.schemas.customer import ResponseUserList
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
 @router.get("/")
-async def get_customers() -> List[Customer]:
+async def api_get_customers() -> ResponseUserList:
     """
     Get all documents or documents by their ids
     """
-    customers = [Customer(Id="1", Name="Item 1"), Customer(Id="2", Name="Item 2")]
+    customers = [User(id="1", name="Item 1"), User(id="2", name="Item 2")]
+
     return customers

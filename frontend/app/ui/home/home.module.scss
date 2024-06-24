@@ -1,0 +1,106 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    display: flex;
+    height: 100px; /* adjusted */
+    padding: 12px; /* adjusted */
+    flex-direction: row;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, #495de3 0%, #F7F7F7 100%);
+    background-size: 100% 200px; /* adjusted */
+    background-position: 0% 100%;
+    transition: background-position 0.5s ease-in-out;
+
+    .headerLeft {
+
+    }
+
+    .headerCenter {
+
+    }
+
+    .headerRight {
+
+    }
+
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* adjusted */
+    background: linear-gradient(to  top, #d3cfcf, #F7F7F7);
+
+    .containerSlogan {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      padding: 32px; /* adjusted */
+      gap: 48px; /* adjusted */
+      border-radius: 0.5rem;
+      background-color: #F7F7F7;
+
+      .mark {
+        margin-top: 48px; /* adjusted */
+        height: 0;
+        width: 0;
+        border-bottom: 20px solid black;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+      }
+
+      .slogan {
+        font-size: 1.25rem; /* adjusted */
+        color: #333333;
+      }
+
+    }
+
+
+    .containerLogo {
+      flex: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 40px; /* adjusted */
+      padding: 4px; /* adjusted */
+
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2),
+      0 0 30px rgba(0, 0, 0, 0.4); /* added multiple shadows */
+
+      background: linear-gradient(to bottom, #ff69b4, #33cc33); /* random gradient 1 */
+    }
+
+    .containerLogo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .body {
+      flex-direction: row;
+    }
+    .containerSlogan {
+      width: 2/5;
+
+      .slogan {
+        font-size: 2.5rem; /* adjusted */
+        line-height: 1.2;
+      }
+    }
+    .containerLogo {
+      width: 3/5;
+      padding: 8px 8px 8px; /* adjusted */
+
+    }
+  }
+  .footer{
+    height: 80px;
+  }
+}

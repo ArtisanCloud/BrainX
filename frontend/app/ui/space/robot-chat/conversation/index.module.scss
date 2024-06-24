@@ -1,0 +1,38 @@
+.container{
+
+  //border: #ff006a solid 1px;
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* add this */
+    //padding-left: 8px;
+
+    .item {
+      //border: #ff006a solid 1px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 6px;
+      font-size: 12px;
+      height: 30px;
+      text-align: center;
+      border-radius: 4px;
+      //border-bottom: #e4e7ee 1px solid;
+      width: 88%;
+
+      .name{
+
+      }
+      .date{
+        font-size: 8px;
+        color: var(--textSoft);
+      }
+
+      &:hover {
+        background-color: #f0f0f0; /* add this */
+      }
+    }
+
+  }
+}

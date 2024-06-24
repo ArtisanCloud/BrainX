@@ -1,0 +1,80 @@
+import asyncio
+import http
+from typing import Iterator
+
+from fastapi import Request, APIRouter
+from fastapi.responses import StreamingResponse
+
+from app.core.brain.index import LLMModel
+from app.schemas.robto_chat.chat import RequestChat
+from app.service.robot_chat.chat import chat
+
+router = APIRouter()
+
+
+async def event_generator(request: Request, llm: str, stream_response: Iterator):
+    for token in stream_response:
+        # print("llm:", llm, "token:", token)
+        if await request.is_disconnected():
+            break
+
+        if token:
+            content = ''
+            if llm == LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
+                # print("token content:", repr(token.content), end='\n')
+                if isinstance(token.content, str):
+                    # print("turbo", repr(token.content), end='\n')
+                    content = token.content
+
+            elif llm == LLMModel.KIMI_MOONSHOT_V1_8K.value:
+                if isinstance(token.content, str):
+                    content = token.content
+
+            elif llm in [
+                LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value,
+                LLMModel.BAIDU_ERNIE_3_D_5_8K.value,
+                LLMModel.BAIDU_ERNIE_4_D_0_8K.value,
+                LLMModel.BAIDU_ERNIE_Speed_128K.value,
+                LLMModel.BAIDU_ERNIE_Lite_8K.value
+            ]:
+                if isinstance(token.content, str):
+                    # 替换回车为转义的 `\n`
+                    # print(repr(token.content))
+                    content = token.content.replace("\r\n", "\\n").replace("\n", "\\n")
+
+            else:
+                # print("token content:", repr(token), end='\n')
+                if token != "":
+                    content = token
+
+            # print("content end:", content, end='\n\n')
+            # if content:
+            yield f"data: {content}\n\n"
+            await asyncio.sleep(0.1)  # 延迟一点时间
+
+
+@router.post("/chat")
+async def api_chat(
+        request: Request,
+        data: RequestChat,
+) -> StreamingResponse:
+    try:
+        question = data.messages[0].content
+
+        stream_response, exception = chat(question, data.llm, "app")
+        if exception:
+            raise exception
+
+        return StreamingResponse(
+            event_generator(request, data.llm, stream_response),
+            media_type="text/event-stream",
+            headers={"Content-Type": "text/event-stream"},
+        )
+
+    except Exception as e:
+        # logger.error(f"Failed to robot_chat: {e}")
+        return StreamingResponse(
+            [f"data: ERROR: {e}\n\n"],
+            media_type="text/event-stream",
+            status_code=http.HTTPStatus.BAD_REQUEST,
+        )

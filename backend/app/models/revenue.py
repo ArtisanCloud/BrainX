@@ -1,6 +1,9 @@
 from enum import Enum
-from .base import Base
-from typing import List, Optional, Dict, Union, Any
+from sqlalchemy import Column, String, Integer
+from sqlalchemy.orm import mapped_column
+
+from app.models.base import BaseModel, table_name_revenue
+from typing import Dict, Union, Any
 
 
 class RevenueMetadataKeysEnum(str, Enum):
@@ -13,6 +16,21 @@ class RevenueMetadataKeysEnum(str, Enum):
 
 DocumentMetadataMap = Dict[Union[RevenueMetadataKeysEnum, str], Any]
 
-class Revenue(Base):
-    month: str
-    revenue: int
+
+
+class Revenue(BaseModel):
+
+    __tablename__ = table_name_revenue
+
+    month = mapped_column(String(255), nullable=True)
+    revenue = mapped_column(Integer, nullable=True)
+    # month: str
+    # revenue: int
+
+    def __init__(self, month: str, revenue: int):
+        super().__init__()
+        self.month = month
+        self.revenue = revenue
+
+
+

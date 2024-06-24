@@ -1,0 +1,20 @@
+.container{
+  font-family: 'Noto Serif'; /* assuming noto_serif.className applies this font */
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+  color: white;
+
+  .logo{
+    //box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  }
+  .brand{
+    font-size: 38px;
+    color: #007bff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  }
+
+}

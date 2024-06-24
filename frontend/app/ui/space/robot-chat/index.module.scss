@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .content {
+    margin-top: calc(var(--navbar-height) + 6px);
+    --chat-bg: #F7F7F7;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    //min-height: var(--container-min-height);
+    height: 100%;
+    //border: #9cf04e 1px solid;
+
+    .main {
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      //border: 1px solid #962525;
+
+      .chatBody {
+        flex: 16;
+        display: flex;
+        flex-direction: row;
+        //height: 100%;
+        //border: 1px solid red;
+
+      }
+
+    }
+  }
+}

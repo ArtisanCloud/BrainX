@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import {sql} from '@vercel/postgres';
 import {
 	CustomerField,
 	CustomersTableType,
@@ -8,58 +8,64 @@ import {
 	User,
 	Revenue,
 } from './definitions';
-import { formatCurrency } from './utils';
-import { unstable_noStore as noStore } from 'next/cache';
+import {formatCurrency} from './utils';
+import {unstable_noStore as noStore} from 'next/cache';
+import {backendClient} from "@/app/api/backend";
 
 export async function fetchRevenue() {
 	// Add noStore() here to prevent the response from being cached.
 	// This is equivalent to in fetch(..., {cache: 'no-store'}).
 	noStore();
 	try {
-		const res = await fetch(`http://127.0.0.1:8000/api/revenue/`, { cache: 'no-store' })
+		const endpoint = `/api/revenue`;
+		console.log(endpoint)
+		const res = await backendClient.backend_get(endpoint,{cache: 'no-store'});
+		console.log(res)
 		const data = res.json()
-		// console.log(data)
 		return data;
 	} catch (error) {
-		console.error('Database Error:', error);
-		throw new Error('Failed to fetch revenue data.');
+		console.error('Fetch Revenue Error:', error);
+		// throw new Error('Failed to fetch revenue data.');
 	}
 }
 
 export async function fetchLatestInvoices() {
 	noStore();
 	try {
-		const res = await fetch(`http://127.0.0.1:8000/api/invoice/`, { cache: 'no-store' })
+		const endpoint = `/api/invoice`;
+		const res = await backendClient.backend_get(endpoint,{cache: 'no-store'});
 		const latestInvoices = res.json()
 		// console.log(latestInvoices)
 		return latestInvoices;
 	} catch (error) {
-		console.error('Database Error:', error);
-		throw new Error('Failed to fetch the latest invoices.');
+		console.error('Fetch invoices Error:', error);
+		// throw new Error('Failed to fetch the latest invoices.');
 	}
 }
 
 export async function fetchCardData() {
-	noStore();
-	try {
-		const numberOfInvoices = 10;
-		const numberOfCustomers =20;
-		const totalPaidInvoices = 12;
-		const totalPendingInvoices =14;
-
-		return {
-			numberOfCustomers,
-			numberOfInvoices,
-			totalPaidInvoices,
-			totalPendingInvoices,
-		};
-	} catch (error) {
-		console.error('Database Error:', error);
-		throw new Error('Failed to fetch card data.');
-	}
+	return [{
+		id: 1,
+		title: "Total Users",
+		number: 10.928,
+		change: 12,
+	},
+		{
+			id: 2,
+			title: "Stock",
+			number: 8.236,
+			change: -2,
+		},
+		{
+			id: 3,
+			title: "Revenue",
+			number: 6.642,
+			change: 18,
+		}]
 }
 
 const ITEMS_PER_PAGE = 6;
+
 export async function fetchFilteredInvoices(
 	query: string,
 	currentPage: number,
@@ -78,7 +84,7 @@ export async function fetchFilteredInvoices(
         customers.email,
         customers.image_url
       FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      JOIN customers ON invoices.user_id = customers.id
       WHERE
         customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`} OR
@@ -101,7 +107,7 @@ export async function fetchInvoicesPages(query: string) {
 	try {
 		const count = await sql`SELECT COUNT(*)
     FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
+    JOIN customers ON invoices.user_id = customers.id
     WHERE
       customers.name ILIKE ${`%${query}%`} OR
       customers.email ILIKE ${`%${query}%`} OR
@@ -124,7 +130,7 @@ export async function fetchInvoiceById(id: string) {
 		const data = await sql<InvoiceForm>`
       SELECT
         invoices.id,
-        invoices.customer_id,
+        invoices.user_id,
         invoices.amount,
         invoices.status
       FROM invoices
@@ -175,7 +181,7 @@ export async function fetchFilteredCustomers(query: string) {
 		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
 		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
 		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
+		LEFT JOIN invoices ON customers.id = invoices.user_id
 		WHERE
 		  customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`}

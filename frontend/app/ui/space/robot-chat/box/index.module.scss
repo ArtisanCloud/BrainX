@@ -1,0 +1,178 @@
+.container {
+  --message-container-height: 100%; /* 设置容器的固定高度 */
+  //border: #e17474 1px solid;
+  flex: 3;
+
+  background-color: var(--chat-bg);
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  //height: 768px;
+
+
+  .messageContainer {
+    //border: #4f65d2 1px solid;
+
+    --margin-gap: 18px;
+    --avatar-width: 42px;
+    --avatar-height: 42px;
+    --message-padding: 12px;
+    --message-font-size: 12px;
+    --message-border-radius: 6px;
+    --message-min-width: 20px;
+    --message-max-width: 480px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 将消息容器中的内容右对齐 */
+    padding: 10px;
+    margin-top: 20px;
+
+    flex: 1;
+    //height: var(--message-container-height); /* 设置容器的高度 */
+    //height: calc(100% - var(--input-container-height)); /* 动态计算高度 */
+    overflow-y: auto !important; /* 当内容超出容器高度时显示垂直滚动条 */
+    -ms-overflow-style: none; /* 隐藏 IE 浏览器的滚动条 */
+    scrollbar-width: none; /* 隐藏 Firefox 浏览器的滚动条 */
+
+    /* 隐藏滚动条 */
+    //&::-webkit-scrollbar {
+    //  display: none;
+    //}
+
+    .userMessageCell {
+      display: flex;
+      flex-direction: row-reverse; /* 反转用户消息单元的方向，使其右对齐 */
+      align-self: flex-end; /* 单独将用户消息单元右对齐 */
+      padding: 10px;
+      margin-bottom: 20px;
+      //border: 1px solid red;
+      width: 100%;
+
+      .userAvatar {
+        width: var(--avatar-width);
+        height: var(--avatar-height);
+        //border: #b7902b 1px solid;
+      }
+
+      .message {
+        background-color: #d2ecb2;
+        margin-right: var(--margin-gap);
+        font-size: var(--message-font-size);
+        padding: var(--message-padding);
+        border-radius: var(--message-border-radius);
+        //border: #63de3a 1px solid;
+        min-width: var(--message-min-width); /* Set a fixed width */
+        //max-width: var(--message-max-width); /* Set a fixed width */
+        word-wrap: break-word; /* Allow content to wrap automatically */
+        overflow-wrap: break-word; /* For older browsers */
+        line-height: 2.0;
+      }
+    }
+
+    .aiMessageCell {
+      display: flex;
+      flex-direction: row; /* AI消息单元保持默认方向，即左对齐 */
+      align-self: flex-start; /* 单独将AI消息单元左对齐 */
+      margin-bottom: 20px;
+      width: 100%;
+      //border: 1px solid blue;
+
+      .aiAvatar {
+        width: var(--avatar-width);
+        height: var(--avatar-height);
+        //border: #b7902b 1px solid;
+      }
+
+      .message {
+        background-color: #daedf5;
+        margin-left: var(--margin-gap);
+        margin-right: var(--margin-gap);
+        font-size: var(--message-font-size);
+        padding: var(--message-padding);
+        border-radius: var(--message-border-radius);
+        //border: #63de3a 1px solid;
+        min-width: var(--message-min-width); /* Set a fixed width */
+        //max-width: var(--message-max-width); /* Set a fixed width */
+        word-wrap: break-word; /* Allow content to wrap automatically */
+        overflow-wrap: break-word; /* For older browsers */
+        line-height: 2.0;
+      }
+    }
+  }
+
+  .inputContainer {
+    --input-container-height: 260px; /* 设置 inputContainer 的高度 */
+    --input: 140px;
+
+    //border: #5d57c9 1px solid;
+    position: relative;
+    margin-top: auto; /* 将输入容器移动到容器的底部 */
+    width: 100%; /* 将宽度设置为100% */
+    align-self: flex-end; /* 将输入容器底部对齐 */
+    height: var(--input-container-height); /* 设置 inputContainer 的高度 */
+    //flex:1;
+
+    border-top: var(--bgSoft) 1px solid;
+
+    .inputTool {
+      border: #eee 1px solid;
+      border-radius: 6px;
+      margin:0 4px;
+      height: 40px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .left{
+
+      }
+      .buttonTool {
+        margin:6px;
+      }
+    }
+    .right{
+
+    }
+
+    .inputMessage {
+      //border: #9d336c 1px solid;
+      padding: 10px;
+
+      .input {
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 100%;
+        height: var(--input);
+        /* 输入框样式 */
+      }
+
+      .error {
+        border: #ff006a 1px solid; // 错误时的边框颜色
+      }
+
+    }
+
+    .inputCommand {
+      display: flex;
+      flex-direction: row;
+      padding: 4px;
+      justify-content: flex-end;
+      align-items: center; /* 垂直居中 */
+      //border: #63de3a 1px solid;
+
+      .shortCut {
+        margin-right: 12px;
+        font-size: 12px;
+        padding: 4px;
+        //border: #5d57c9 1px solid;
+      }
+
+      .sendButton {
+        font-size: 12px;
+      }
+    }
+  }
+}

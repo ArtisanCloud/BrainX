@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  height:50px;
+  padding: 20px;
+  border-radius: 5px;
+  //color: var(--textSoft);
+  color: var(--textSoft);
+  background-color: white;
+  .logo {
+    font-weight: bold;
+  }
+
+  .text {
+    font-size: 12px;
+  }
+}
+
+

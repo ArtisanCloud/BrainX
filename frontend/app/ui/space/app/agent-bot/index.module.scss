@@ -1,0 +1,114 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px 16px 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 6px 8px 0 rgba(28, 31, 35, .06);
+  cursor: pointer;
+  //height: 180px;
+
+  .main {
+    display: flex;
+    flex-direction: row;
+
+    .avatar{
+      //background-color: #2e2e3814;
+      border-radius: 8px;
+      flex-shrink: 0;
+      height: 68px;
+      width: 68px;
+      margin-left: 4px;
+      margin-top: 12px;
+
+      .avatarImage{
+        display: block;
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+      }
+    }
+    .content{
+      display: flex;
+      flex: 1 1;
+      flex-flow: column nowrap;
+      margin-left: 16px;
+      overflow: hidden;
+
+      .appInfo{
+        display: flex;
+        flex: 1 1;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        .title{
+          color: #1c1d23;
+          font-size: 18px;
+          font-weight: 600;
+          line-height: 24px;
+          margin-top: 12px;
+        }
+        .action{
+          display: flex;
+          //align-items: center;
+          flex-shrink: 0;
+          //border: #ff006a 1px solid;
+          .favourite{
+            height: 24px;
+            width: 24px;
+            //border: 1px solid red;
+          }
+          .button{
+            margin-left: 12px;
+            line-height: 1;
+            .buttonTool{
+              border: none;
+            }
+          }
+        }
+      }
+      .sema{
+        word-wrap: break-word;
+        color: rgba(28, 29, 35, .8);
+        font-size: 14px;
+        height: 40px;
+        line-height: 20px;
+        margin-bottom: 8px;
+      }
+      .llm{
+        align-items: center;
+        display: flex;
+        .span{
+          color: rgba(28, 29, 35, .35);
+          font-size: 12px;
+          letter-spacing: .12px;
+          line-height: 16px;
+        }
+      }
+    }
+  }
+
+  .separate {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #999;
+
+    .userInfo {
+
+    }
+
+    .date {
+
+    }
+  }
+}

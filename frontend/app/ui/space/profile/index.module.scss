@@ -1,0 +1,44 @@
+.container {
+  width: 230px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--chat-bg);
+  border-left: #eee solid 1px;
+  padding: 10px;
+  //border: #5d57c9 1px solid;
+
+  .list {
+    height: 740px;
+    flex: 1;
+    overflow-y: auto !important; /* 当内容超出容器高度时显示垂直滚动条 */
+    -ms-overflow-style: none; /* 隐藏 IE 浏览器的滚动条 */
+    scrollbar-width: none; /* 隐藏 Firefox 浏览器的滚动条 */
+
+    .profileItem {
+      .divider {
+        font-size: 12px;
+        color: var(--textSoft);
+      }
+    }
+  }
+}
+
+.show {
+  display: block;
+  /* 这里可以定义动画的结束状态 */
+  /* 例如，可以添加淡入效果 */
+  animation: fadeIn 1s ease-in-out;
+}
+
+.hide {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

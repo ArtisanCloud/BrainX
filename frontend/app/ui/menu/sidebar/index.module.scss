@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: var(--menu-width);
+  position: sticky;
+  padding: 12px;
+  //border: 1px solid red;
+  height: 100%;
+  background-color: var(--bgSideBar);
+
+  .menu{
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      position: relative;
+
+      .userImage {
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .username {
+        font-weight: 500;
+      }
+
+      .userDetail {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .userTitle {
+        font-size: 20px;
+        color: white;
+      }
+    }
+    .user::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 80%; /* 控制底部边框的长度为宽度的一半 */
+      border-bottom: #e4e7ec 1px solid;
+      transform: translateX(-50%);
+    }
+    .list {
+      margin-top: 40px;
+      list-style: none;
+      //border: #2e374a 1px solid;
+      position: relative;
+    }
+    .list::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 80%; /* 控制底部边框的长度为宽度的一半 */
+      border-bottom: #e4e7ec 1px solid;
+      transform: translateX(-50%);
+    }
+
+
+    .cat {
+      color: var(--textSoft);
+      font-weight: bold;
+      font-size: 13px;
+      margin: 12px 8px;
+    }
+
+    .logout {
+      padding: 20px;
+      margin: 5px 0px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border-radius: 10px;
+      background: none;
+      border: none;
+      color: #ce3f3f;
+      width: 100%;
+    }
+    .logout:hover {
+      background-color: #dde2ea;
+    }
+  }
+
+  .drawerHandler {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10px;
+    color: white;
+    padding:8px;
+    //border: 1px solid red;
+  }
+}
+
+
+
+
+

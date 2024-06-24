@@ -7,10 +7,9 @@ from app.models.invoice import Invoice
 from uuid import UUID
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
-@router.get("/")
+@router.get("/", response_model=None)
 async def get_invoices() -> List[Invoice]:
     """
     获取所有发票
@@ -30,7 +29,7 @@ async def get_invoices() -> List[Invoice]:
     # 生成发票列表
     invoices = [
         Invoice(
-            customer_id=customers[0]["id"],
+            user_id=customers[0]["id"],
             amount=15795,
             status='pending',
             date='2022-12-06',
@@ -39,7 +38,7 @@ async def get_invoices() -> List[Invoice]:
             image_url='/customers/delba-de-oliveira.png',
         ),
         Invoice(
-            customer_id=customers[1]["id"],
+            user_id=customers[1]["id"],
             amount=20348,
             status='pending',
             date='2022-11-14',
@@ -48,7 +47,7 @@ async def get_invoices() -> List[Invoice]:
             image_url='/customers/delba-de-oliveira.png',
         ),
         Invoice(
-            customer_id=customers[4]["id"],
+            user_id=customers[4]["id"],
             amount=3040,
             status='paid',
             date='2022-10-29',

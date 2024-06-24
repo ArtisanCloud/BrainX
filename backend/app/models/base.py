@@ -1,18 +1,87 @@
-from pydantic import BaseModel, Field, validator
-from typing import List, Optional, Dict, Union, Any
-from uuid import UUID
+from sqlalchemy import Column, TIMESTAMP, BigInteger, select
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from enum import IntEnum
+
+from pytz import timezone
 from datetime import datetime
+import uuid as uuid
 
-class Base(BaseModel):
-    id: Optional[UUID] = Field(None, description="Unique identifier")
-    created_at: Optional[datetime] = Field(None, description="Creation datetime")
-    updated_at: Optional[datetime] = Field(None, description="Update datetime")
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import mapped_column
 
-    class Config:
-        from_attributes = True
+from app.database.deps import get_db_session
+
+UTC = timezone('UTC')
 
 
-class BaseMetadataObject(BaseModel):
-    class Config:
-        from_attributes = True
+def time_now():
+    return datetime.now(UTC)
+
+
+class BaseStatus(IntEnum):
+    ACTIVE = 1
+    INACTIVE = 2
+    PENDING = 3
+
+
+Base = declarative_base()
+
+class BaseModel(Base):
+    __abstract__ = True
+
+    """Base class for all db orm models"""
+    id = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
+    created_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, nullable=False)
+    updated_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, onupdate=time_now, nullable=False)
+    deleted_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
+
+    def __repr__(self):
+        return f"id: {self.id}, uuid:{self.uuid}, created_at: {self.created_at}, updated_at:{self.updated_at}, deleted_at:{self.deleted_at}"
+
+    @classmethod
+    def get_by_uuid(cls, uuid):
+        stmt = select(cls).filter(cls.uuid == uuid, cls.deleted_at.is_(None)).first()
+        db: AsyncSession = get_db_session()
+        return db.execute(stmt)
+
+    @classmethod
+    def get_by_id(cls, id):
+        stmt = select(cls).filter(cls.id == id, cls.deleted_at.is_(None)).first()
+        db: AsyncSession = get_db_session()
+        return db.execute(stmt)
+
+
+class BasePivotModel(Base):
+    __abstract__ = True
+
+    """Base class for all db orm models"""
+    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
+
+    created_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, nullable=False)
+    # updated_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, onupdate=time_now, nullable=False)
+    # deleted_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
+
+    def __repr__(self):
+        return (f"created_at: {self.created_at}, "
+                # f"updated_at:{self.updated_at}, "
+                # f"deleted_at:{self.deleted_at}"
+                )
+
+
+table_name_tenant = "tenants"
+table_name_user = "users"
+table_name_media_resource = 'media_resources'
+table_name_pivot_tenant_to_user = "pivot_tenant_to_user"
+table_name_revenue = 'revenue'
+table_name_invoice = 'invoice'
+table_name_app = "apps"
+table_name_workflow = "workflows"
+table_name_customer = "customer"
+table_name_app_model_config = 'app_model_configs'
+table_name_model_provider = "model_providers"
+table_name_image_embedding = 'data_image_embedding'
+table_name_tenant_default_model = "tenant_default_models"
 

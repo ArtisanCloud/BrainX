@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  width: 100%;
+
+  .main {
+    margin-top: calc(var(--navbar-height) + 6px);
+    background-color: white;
+    gap: 20px;
+    min-height: 76vh;
+    width: 100%;
+    //border: #1f1fd2 solid 1px;
+  }
+}

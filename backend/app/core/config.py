@@ -1,73 +1,190 @@
 import os
 from enum import Enum
-from typing import List, Optional
-from pydantic import AnyHttpUrl, EmailStr
+from typing import List
 
-from dotenv import load_dotenv
-# 加载环境变量
-load_dotenv()
+import yaml
 
-class Settings():
-    # LLM API
-    OPENAI_API_BASE: str = ""
-    OPENAI_API_KEY: str = ""
+from pydantic import BaseModel
 
-    # OSS Storage
-    OSS_ENDPOINT: str = ""
-    OSS_DRIVER: str = ""
-    # aws
-    AWS_KEY: str = ""
-    AWS_SECRET: str = ""
-    # minio
-    MINIO_ACCESS_KEY: str
-    MINIO_SECRET_KEY: str
-
-    # Libs source
-    POLYGON_API_KEY: str = ""
-    PROJECT_NAME: str = "brain_x"
-    API_PREFIX: str = "/api"
-    DATABASE_URL: str
-    LOG_LEVEL: str = "DEBUG"
-    IS_PULL_REQUEST: bool = False
-    RENDER: bool = False
-    CODE_SPACES: bool = False
-    CODE_SPACE_NAME: Optional[str]
-    S3_BUCKET_NAME: str
-    S3_ASSET_BUCKET_NAME: str
-    CDN_BASE_URL: str
-    VECTOR_STORE_TABLE_NAME: str = "pg_vector_store"
-    SENTRY_DSN: Optional[str]
-    RENDER_GIT_COMMIT: Optional[str]
-    LOADER_IO_VERIFICATION_STR: str = "loaderio-e51043c635e0f4656473d3570ae5d9ec"
-    SEC_EDGAR_COMPANY_NAME: str = "{ArtisanCloud}"
-    SEC_EDGAR_EMAIL: EmailStr = "{dev@artisan-cloud.com}"
-
-    # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
-    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
-    # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
-
-    def __init__(self):
-        # Initialize other attributes here if needed
-
-        self.OPENAI_API_BASE = os.getenv("OPENAI_API_BASE")
-        self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        self.DATABASE_URL = os.getenv("DATABASE_URL")
-        self.POLYGON_IO_API_KEY = os.getenv("POLYGON_IO_API_KEY")
-
-        pass
 
 class AppEnvironment(str, Enum):
-    """
-    Enum for app environments.
-    """
-
     LOCAL = "local"
     PREVIEW = "preview"
     PRODUCTION = "production"
 
-settings = Settings()
-# print(settings.DATABASE_URL)
-os.environ["OPENAI_API_BASE"] = settings.OPENAI_API_BASE
-os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
-os.environ["POLYGON_API_KEY"] = settings.POLYGON_API_KEY
+
+class Server(BaseModel):
+    version: str
+    project_name: str
+    host: str
+    port: int
+    max_bytes: int
+    cors_origins: List[str]
+    worker_count: int
+    environment: str
+    server_render: bool
+
+
+class Api(BaseModel):
+    api_prefix: str
+    openapi_prefix: str
+    request_timeout: int
+
+
+class Database(BaseModel):
+    url: str
+    table_name_vector_store: str
+
+
+class Redis(BaseModel):
+    url: str
+
+
+class Cache(BaseModel):
+    redis: Redis
+
+
+class Models(BaseModel):
+    qa_embedding_model_name: str
+    visual_search_model_name: str
+    visual_query_model_name: str
+
+
+class Log(BaseModel):
+    path: str
+    split: List[str]
+    level: str
+    keep_days: int
+    console: bool
+    stat: bool
+
+
+class OpenAI(BaseModel):
+    llm_name: str
+    api_base: str
+    api_key: str
+    request_timeout: int
+
+
+class BaiduQianfan(BaseModel):
+    api_key: str
+    secret_key: str
+    request_timeout: int
+
+
+class Kimi(BaseModel):
+    llm_name: str
+    api_base: str
+    api_key: str
+    request_timeout: int
+
+
+class OLLAMA(BaseModel):
+    url: str
+
+
+class Polygon(BaseModel):
+    api_key: str
+
+
+class Sentry(BaseModel):
+    dsn: str
+    environment: str
+    release: str
+    sample_rate: float
+
+
+class MinIO(BaseModel):
+    endpoint: str
+    access_key: str
+    secret_key: str
+    use_ssl: bool
+    region: str
+
+
+
+class LocalStorage(BaseModel):
+    storage_path: str
+
+
+class AliyunOSS(BaseModel):
+    endpoint: str
+    access_key: str
+    secret_key: str
+    bucket_name: str
+
+
+class AzureOSS(BaseModel):
+    account_name: str
+    account_key: str
+    container_name: str
+    bucket_name: str
+
+
+class GoogleOSS(BaseModel):
+    bucket_name: str
+
+
+class S3OSS(BaseModel):
+    endpoint: str
+    access_key: str
+    secret_key: str
+    bucket_name: str
+
+
+class Storage(BaseModel):
+    driver: str
+    local_storage: LocalStorage
+    minio: MinIO
+    aliyun: AliyunOSS
+    azure: AzureOSS
+    google: GoogleOSS
+    s3: S3OSS
+
+
+class Settings(BaseModel):
+    server: Server
+    api: Api
+    database: Database
+    cache: Cache
+    models: Models
+    openai: OpenAI
+    baidu_qianfan: BaiduQianfan
+    kimi: Kimi
+    ollama: OLLAMA
+    polygon: Polygon
+    sentry: Sentry
+    storage: Storage
+
+
+# Load the YAML file into a Python object
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+# Create a Settings object from the YAML data
+settings = Settings(
+    server=Server(**config['server']),
+    api=Api(**config['api']),
+    database=Database(**config['database']),
+    cache=Cache(**config['cache']),
+    models=Models(**config['models']),
+    log=Log(**config['log']),
+    openai=OpenAI(**config['openai']),
+    baidu_qianfan=BaiduQianfan(**config['baidu_qianfan']),
+    kimi=Kimi(**config['kimi']),
+    ollama=OLLAMA(**config['ollama']),
+    polygon=Polygon(**config['polygon']),
+    sentry=Sentry(**config['sentry']),
+    storage=Storage(**config['storage'])
+)
+
+# Access the settings
+print(settings.server.version)
+os.environ["OPENAI_API_BASE"] = settings.openai.api_base
+os.environ["OPENAI_API_KEY"] = settings.openai.api_key
+os.environ["QIANFAN_AK"] = settings.baidu_qianfan.api_key
+os.environ["QIANFAN_SK"] = settings.baidu_qianfan.secret_key
+# print(os.environ)
+os.environ["POLYGON_API_KEY"] = settings.polygon.api_key
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+# ...

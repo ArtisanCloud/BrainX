@@ -1,0 +1,60 @@
+.container {
+  --navbar-height: 80px;
+  --navbar-width: 100%;
+  --menu-width: 200px;
+  --compact-menu-width: 50px;
+
+  display: flex;
+
+  .menu {
+    width: var(--menu-width);
+    background-color: var(--bgSoft);
+    /* 在屏幕宽度小于1024像素时的样式 */
+    //@media (max-width: 1024px) {
+    //  --menu-width: var(--compact-menu-width);
+    //  //display: none;
+    //}
+  }
+
+  .content {
+    position: relative;
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    //padding: var(--layoutPadding);
+    background-color: #f8f5f5;
+    width: 100%;
+    //border: 1px solid red;
+
+    .wrapper {
+      display: flex;
+      gap: 20px;
+      margin-top: 80px;
+    }
+
+    .main {
+      //margin-top: calc(var(--navbar-height) + 6px);
+      background-color: white;
+      gap: 20px;
+      //min-height: 76vh;
+      height: 100%;
+      //border: #1f1fd2 solid 1px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+    }
+
+    .side {
+      flex: 1;
+    }
+  }
+
+
+}
+
+
+

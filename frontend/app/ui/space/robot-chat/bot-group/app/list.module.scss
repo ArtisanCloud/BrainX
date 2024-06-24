@@ -1,0 +1,13 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  /* Add a max height to trigger the scrollbar */
+  max-height: 300px; /* Adjust this value to your needs */
+  /* Optional: Add some padding and border */
+  padding: 4px;
+  //border: 1px solid #5d57c9;
+
+}
