@@ -1,14 +1,12 @@
 from fastapi import APIRouter
 
-from app.api.chat_bot import chat_controller
+from app.api.system import status_controller, test_controller
 from app.api.customer import customer_controller
 from app.api.media_resource import media_resource_controller
-from app.api.open_doc import open_doc_controller
-from app.api.question_answer import query_controller, visual_search_controller, visual_query_controller
+
 from app.api.app import app_controller
-from app.api.revenue import revenue_controller
-from app.api.revenue import invoice_controller
-from app.api.system import status_controller, test_controller
+from app.api.chat_bot import chat_controller
+from app.api.question_answer import query_controller, visual_search_controller, visual_query_controller
 
 err_code_400 = 400
 
@@ -34,11 +32,6 @@ api_router.include_router(query_controller.router, prefix="/question_answer", ta
 api_router.include_router(visual_query_controller.router, prefix="/question_answer", tags=["visual_query"])
 api_router.include_router(visual_search_controller.router, prefix="/question_answer", tags=["visual_search"])
 
-# open doc
-api_router.include_router(open_doc_controller.router, prefix="/open_doc", tags=["open_doc"])
-
-api_router.include_router(revenue_controller.router, prefix="/revenue", tags=["revenue"])
-api_router.include_router(invoice_controller.router, prefix="/invoice", tags=["invoice"])
 
 import os
 from fastapi import APIRouter

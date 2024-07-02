@@ -54,7 +54,7 @@ async def query_by_text(
         if exception:
             raise exception
 
-        print(response,docs)
+        # print(response,docs)
         # for ollama response
         if isinstance(response, str):
             return transform_documents_to_reply(response, docs[0])
@@ -62,7 +62,7 @@ async def query_by_text(
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
-    logger.info(repr(response))
+    # logger.info(repr(response))
     # logger.info(response.source_nodes[0].score)
     # print(docs)
 

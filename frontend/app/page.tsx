@@ -1,23 +1,13 @@
 import Link from 'next/link';
 import {ArrowRightIcon} from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import ArtisanCloudLogo from "@/app/ui/home/logo";
 import styles from '@/app/ui/home/home.module.scss';
+import HomeNavbar from "@/app/ui/home/navbar";
 
 export default function Home() {
 	return (
 		<main className={styles.container}>
-			<div className={styles.header}>
-				<div className={styles.headerLeft}>
-					<ArtisanCloudLogo/>
-				</div>
-				<div className={styles.headerCenter}>
-					<div>search</div>
-				</div>
-				<div className={styles.headerRight}>
-					<div>user</div>
-				</div>
-			</div>
+			<HomeNavbar/>
 			<div className={styles.body}>
 				<div className={styles.containerSlogan}>
 					<div
@@ -44,7 +34,9 @@ export default function Home() {
 					/>
 				</div>
 			</div>
-			<div className={styles.footer}>footer</div>
+			<div className={styles.footer}>
+				<span>Powered By ArtisanCloud</span>
+			</div>
 		</main>
 	);
 }

@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  height: 100px; /* adjusted */
+  padding: 12px; /* adjusted */
+  flex-direction: row;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, #495de3 0%, #F7F7F7 100%);
+  background-size: 100% 200px; /* adjusted */
+  background-position: 0% 100%;
+  transition: background-position 0.5s ease-in-out;
+
+  .headerLeft {
+
+  }
+
+  .headerCenter {
+    .menu {
+      display: inline-block;
+      padding: 10px 20px; // 设置上下左右间隔
+      font-size: 16px; // 设置字体大小
+      font-family: 'Roboto', sans-serif; // 使用现代感的字体
+      color: #333; // 设置字体颜色
+      //background-color: #f8f9fa; // 设置背景颜色，柔和的灰色
+      border-radius: 8px; // 设置圆角
+      margin: 5px; // 设置菜单项之间的间隔
+      transition: background-color 0.3s, color 0.3s; // 添加过渡效果
+
+      // 悬停效果
+      &:hover {
+        //background-color: #e9ecef; // 鼠标悬停时背景颜色稍微变深
+        color: #007bff; // 鼠标悬停时字体颜色变为蓝色
+      }
+
+      // 活跃状态效果
+      &:active {
+        //background-color: #ced4da; // 点击时背景颜色更深一些
+        color: #0056b3; // 点击时字体颜色变为深蓝色
+      }
+
+    }
+  }
+
+  .headerRight {
+
+  }
+
+}

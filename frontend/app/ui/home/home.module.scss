@@ -1,32 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-
-  .header {
-    display: flex;
-    height: 100px; /* adjusted */
-    padding: 12px; /* adjusted */
-    flex-direction: row;
-    justify-content: space-between;
-    background: linear-gradient(to bottom, #495de3 0%, #F7F7F7 100%);
-    background-size: 100% 200px; /* adjusted */
-    background-position: 0% 100%;
-    transition: background-position 0.5s ease-in-out;
-
-    .headerLeft {
-
-    }
-
-    .headerCenter {
-
-    }
-
-    .headerRight {
-
-    }
-
-  }
-
+  
   .body {
     display: flex;
     flex-direction: column;
@@ -102,5 +77,9 @@
   }
   .footer{
     height: 80px;
+    //border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
