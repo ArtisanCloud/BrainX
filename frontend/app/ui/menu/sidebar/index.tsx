@@ -10,6 +10,7 @@ import {Form} from "antd"
 import {handleSignOut, menuItems} from "@/app/ui/menu";
 import React, {useContext} from "react";
 import {HideSidebarContext, SidebarContextType} from "@/app/ui/menu/provider/sidebar-provider";
+import Link from "next/link";
 
 
 const Sidebar = () => {
@@ -22,20 +23,24 @@ const Sidebar = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.menu}>
-				<div className={styles.user}>
-					<Image
-						className={styles.userImage}
-						// src={user.img || "/noavatar.png"}
-						src={"/logo-s.png"}
-						alt=""
-						width="50"
-						height="50"
-					/>
-					<div className={styles.userDetail}>
-						{/*<span className={styles.username}>{user.username}</span>*/}
-						<span className={styles.userTitle}>BrainX</span>
+				<Link
+					href="/"
+				>
+					<div className={styles.user}>
+						<Image
+							className={styles.userImage}
+							// src={user.img || "/noavatar.png"}
+							src={"/logo-s.png"}
+							alt=""
+							width="50"
+							height="50"
+						/>
+						<div className={styles.userDetail}>
+							{/*<span className={styles.username}>{user.username}</span>*/}
+							<span className={styles.userTitle}>BrainX</span>
+						</div>
 					</div>
-				</div>
+				</Link>
 				<ul className={styles.list}>
 					{menuItems.map((cat) => (
 						<li key={cat.title}>

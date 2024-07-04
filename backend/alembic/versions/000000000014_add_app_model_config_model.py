@@ -28,10 +28,8 @@ def upgrade() -> None:
         sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('uuid', UUID(as_uuid=True),  index=True, unique=True),
 
-        sa.Column('app_uuid', sa.String(), nullable=False, index=True),
-        sa.Column('model_provider_uuid', sa.String(), nullable=False, index=True),
-        sa.Column('name', sa.String(), nullable=False),
-        sa.Column('type', sa.String(), nullable=False),
+        sa.Column('app_uuid', sa.UUID(), nullable=False, index=True),
+        sa.Column('model_provider_uuid', sa.UUID(), nullable=True, index=True),
         sa.Column('configs', sa.Text(), nullable=True),
         sa.Column('persona_prompt', sa.Text(), nullable=True),
 

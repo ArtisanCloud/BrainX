@@ -3,6 +3,8 @@ from sqlalchemy import select, func
 from app.database.seed.tenant import init_tenant_uuid
 from app.models.model_provider import ModelProvider
 
+init_model_provider_uuid = "3c189a18-ef3f-41fd-0002-1607772020bd"
+
 
 # 添加代理人数据
 async def seed_model_providers(db) -> Exception | None:
@@ -27,6 +29,7 @@ async def seed_model_providers(db) -> Exception | None:
                     encrypted_config='{"api_key": "your_api_key", "api_security": "your_api_security"}',
                 ),
             ]
+            model_providers[0].uuid = init_model_provider_uuid
             db.add_all(model_providers)
             await db.commit()  # 添加 await 关键字
 

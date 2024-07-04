@@ -1,11 +1,11 @@
+from typing import List
+
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, func, ForeignKey, SmallInteger, UUID
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.models.base import BaseModel, table_name_workflow
 from app.models.originaztion.user import table_name_user
 from app.models.tenant import table_name_tenant
-
-
 
 
 class Workflow(BaseModel):
@@ -21,9 +21,7 @@ class Workflow(BaseModel):
     graph = mapped_column('graph', Text)  # Using Text for JSON data
     meta = mapped_column('meta', Text)  # Using Text for JSON data
 
-    created_by = mapped_column('created_by', UUID, nullable=True, index=True)
-    updated_by = mapped_column('updated_by', UUID, nullable=True, index=True)
-    deleted_by = mapped_column('deleted_by', UUID, nullable=True, index=True)
+    app: Mapped[List["App"]] = relationship(back_populates="workflow", foreign_keys="[App.workflow_uuid]")
 
     def __repr__(self):
         return f"<Workflow(id={self.id}, name={self.name})>"

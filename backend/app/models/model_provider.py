@@ -20,5 +20,6 @@ class ModelProvider(BaseModel):
     quota_limit = mapped_column('quota_limit', BigInteger, nullable=True)
     quota_used = mapped_column('quota_used', BigInteger, default=0)
 
-    # tenant = relationship("Tenant", backref="model_providers")
-    app_model_configs:Mapped["AppModelConfig"] = relationship( backref="model_provider")
+    tenant: Mapped["Tenant"] = relationship(back_populates="model_providers")
+    app_model_config: Mapped["AppModelConfig"] = relationship(back_populates="model_provider",
+                                                              foreign_keys="[AppModelConfig.model_provider_uuid]")

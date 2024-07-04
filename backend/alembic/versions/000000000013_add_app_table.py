@@ -33,6 +33,7 @@ def upgrade() -> None:
         sa.Column('uuid', UUID(as_uuid=True),  index=True, unique=True),
 
         sa.Column('tenant_uuid', sa.UUID(), nullable=True),
+        sa.Column('app_model_config_uuid', sa.UUID(), nullable=True),
         sa.Column('workflow_uuid', sa.UUID(), nullable=True),
         sa.Column('name', sa.String(), nullable=True),
         sa.Column('status', sa.SmallInteger(), nullable=True),

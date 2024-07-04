@@ -5,7 +5,8 @@ import Rightbar from "@/app/ui/dashboard/rightbar/rightbar";
 import Transactions from "@/app/ui/dashboard/transactions/transactions";
 
 import {
-	fetchRevenue, fetchLatestInvoices,fetchCardData} from '@/app/lib/data';
+	fetchCardData
+} from '@/app/lib/data';
 
 export default async function DashboardPage() {
 	const cards = await fetchCardData();

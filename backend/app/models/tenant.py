@@ -1,8 +1,7 @@
-import hashlib
-import uuid
+from typing import List
 
-from sqlalchemy import Column, String, Text, SmallInteger, UUID, ForeignKey
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy import  String, Text, SmallInteger, UUID, ForeignKey
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.base import BaseModel, table_name_tenant, table_name_tenant_default_model
 
@@ -18,7 +17,8 @@ class Tenant(BaseModel):
     config = mapped_column('config', Text)
 
     # users = relationship("User", secondary="pivot_tenant_to_user")
-    apps = relationship("App")
+    apps: Mapped[List["App"]] = relationship(back_populates="tenant")
+    model_providers: Mapped[List["ModelProvider"]] = relationship(back_populates="tenant")
 
     def __repr__(self):
         return (
@@ -31,23 +31,6 @@ class Tenant(BaseModel):
         )
 
 
-def generate_uuid(self):
-    str_merged_uuid = self.user_uuid + self.tenant_uuid
-
-    # 使用 SHA-256 哈希函数计算合并后的字符串的摘要
-    hash_object = hashlib.sha256()
-    hash_object.update(str_merged_uuid.encode())
-    hash_digest = hash_object.digest()
-
-    # 取摘要的前16字节作为UUID的字节序列
-    uuid_bytes = hash_digest[:16]
-
-    # 将哈希摘要转换为 UUID
-    generated_uuid = uuid.UUID(bytes=uuid_bytes)
-
-    return generated_uuid
-
-
 class TenantDefaultModel(BaseModel):
     __tablename__ = table_name_tenant_default_model
 
@@ -55,3 +38,4 @@ class TenantDefaultModel(BaseModel):
     provider_name = mapped_column('provider_name', String(40), nullable=False)
     name = mapped_column('name', String(255), nullable=False)
     type = mapped_column('type', String(40), nullable=False)
+

@@ -1,10 +1,10 @@
+import uuid
+
 from sqlalchemy import Column, UUID, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column
 
 from app.models.base import BasePivotModel, table_name_user, table_name_pivot_tenant_to_user
 from app.models.tenant import table_name_tenant
-
-
 
 
 class PivotTenantToUser(BasePivotModel):
@@ -22,3 +22,4 @@ class PivotTenantToUser(BasePivotModel):
             f"tenant_uuid='{self.tenant_uuid}', "
             f"user_uuid='{self.user_uuid}')>"
         )
+

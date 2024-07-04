@@ -28,6 +28,7 @@ class BaseStatus(IntEnum):
 
 Base = declarative_base()
 
+
 class BaseModel(Base):
     __abstract__ = True
 
@@ -61,6 +62,7 @@ class BasePivotModel(Base):
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
 
     created_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, nullable=False)
+
     # updated_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, onupdate=time_now, nullable=False)
     # deleted_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
 
@@ -69,6 +71,9 @@ class BasePivotModel(Base):
                 # f"updated_at:{self.updated_at}, "
                 # f"deleted_at:{self.deleted_at}"
                 )
+
+    def generate_uuid(self):
+        self.uuid = uuid.uuid4()
 
 
 table_name_tenant = "tenants"
@@ -84,4 +89,3 @@ table_name_app_model_config = 'app_model_configs'
 table_name_model_provider = "model_providers"
 table_name_image_embedding = 'data_image_embedding'
 table_name_tenant_default_model = "tenant_default_models"
-

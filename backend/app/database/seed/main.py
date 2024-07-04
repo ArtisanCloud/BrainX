@@ -29,20 +29,20 @@ async def start_seed() -> Exception | None:
         if e:
             return e
 
-        # #  执行添加root用户种子
-        # e = await seed_users(db)
-        # if e:
-        #     return e
-        #
-        # # 执行添加种子数据的函数
-        # e = await seed_model_providers(db)
-        # if e:
-        #     return e
-        #
-        # # 执行添加种子数据的函数
-        # e = await seed_apps(db)
-        # if e:
-        #     return e
+        #  执行添加root用户种子
+        e = await seed_users(db)
+        if e:
+            return e
+
+        # 执行添加种子数据的函数
+        e = await seed_model_providers(db)
+        if e:
+            return e
+
+        # 执行添加种子数据的函数
+        e = await seed_apps(db)
+        if e:
+            return e
 
 
         # await seed_conversations()
