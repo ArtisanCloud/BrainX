@@ -27,7 +27,7 @@ async def seed_apps(db) -> Exception | None:
                     "description": "代理机器人1号",
                     "status": AppStatus.ACTIVE,
                     "type": AppType.AGENT,
-                    "avatar_url": "app-product.png"
+                    "avatar_url": "images/app-product.png"
                 },
                 {
                     "uuid": "af932bfd-ff82-47e3-86bd-a31de67f8701",
@@ -37,7 +37,7 @@ async def seed_apps(db) -> Exception | None:
                     "description": "代理机器人1号",
                     "status": AppStatus.ACTIVE,
                     "type": AppType.AGENT,
-                    "avatar_url": "app-tech.png"
+                    "avatar_url": "images/app-tech.png"
                 },
                 {
                     "uuid": "a3f1dae1-5ce6-4b2d-b4be-0004914b819e",
@@ -47,7 +47,7 @@ async def seed_apps(db) -> Exception | None:
                     "description": "代理机器人1号",
                     "status": AppStatus.ACTIVE,
                     "type": AppType.AGENT,
-                    "avatar_url": "app-market.png"
+                    "avatar_url": "images/app-market.png"
                 }
             ]
 
@@ -89,6 +89,7 @@ async def get_apps_from_data(db, data: list[dict]) -> list[App]:
             type=item["type"],
             avatar_url=item["avatar_url"]
         )
+        # print(app)
         # 创建 AppModelConfig 对象并设置其属性
         app_model_config = AppModelConfig(
             app_uuid=app.uuid,

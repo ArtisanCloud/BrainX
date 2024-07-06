@@ -16,7 +16,7 @@ export const defaultApp: App = {
 	user_id: 1,
 	name: '纯聊天',
 	description: '您可以先体验一下，尝试与机器人对话，随后可以创建自己的代理机器人',
-	avatar_url: 'agent.png',
+	avatar_url: 'images/app.png',
 }
 
 const Index = () => {

@@ -25,7 +25,7 @@ def upgrade() -> None:
     op.create_table(
         table_name_model_provider,  # 使用表名
         sa.Column('id', sa.BigInteger(), nullable=False),
-        sa.Column('uuid', UUID(as_uuid=True),  index=True, unique=True),
+        sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
         sa.Column('name', sa.String, nullable=False),

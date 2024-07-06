@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
@@ -13,15 +15,29 @@ class BaseDAO(Generic[ModelType]):
         self.db = db
         self.model = model
 
-    async def create(self, obj_data: Dict[str, Any]) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def create(self, obj: ModelType) -> Tuple[Optional[ModelType], Optional[Exception]]:
+        """
+        创建新的模型对象
+        """
+        # print(obj)
+        try:
+            self.db.add(obj)
+            await self.db.commit()
+
+            await self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
+            return obj, None
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            return None, e
+
+    async def create_many(self, objs: List[ModelType]) -> Tuple[Optional[List[ModelType]], Optional[Exception]]:
         """
         创建新的模型对象
         """
         try:
-            obj = self.model(**obj_data)
-            self.db.add(obj)
+            self.db.add_all(objs)
             await self.db.commit()
-            return obj, None
+            return objs, None
         except SQLAlchemyError as e:
             await self.db.rollback()
             return None, e
@@ -136,6 +152,29 @@ class BaseDAO(Generic[ModelType]):
         except SQLAlchemyError as e:
             await self.db.rollback()
             return None, e
+
+    async def soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[bool, Optional[Exception]]:
+        """
+        通用的软删除方法，适用于任意模型对象
+        """
+        try:
+            async with self.db as session:  # 假设 self.db 返回 AsyncSession 实例
+                # 构建查询条件
+                query = select(model_cls).where(and_(*[getattr(model_cls, key) == value for key, value in conditions.items()]))
+                result = await session.execute(query)
+                exist_obj = result.scalars().first()
+
+                if exist_obj is None:
+                    raise Exception(f"{model_cls.__name__} not found")
+
+                # 执行软删除操作，这里假设模型类有 deleted_at 字段
+                exist_obj.deleted_at = datetime.now()
+                await session.commit()
+                return True, None
+
+        except SQLAlchemyError as e:
+            await session.rollback()
+            return False, e
 
     async def delete(self, obj_id: Any) -> Tuple[bool, Optional[Exception]]:
         """

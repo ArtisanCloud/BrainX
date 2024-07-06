@@ -12,7 +12,7 @@ export default function Index() {
 			{/*<BeakerIcon className="h-12 w-12" />*/}
 			<Image
 				className={styles.logo}
-				src="/logo-s.png"
+				src="/images/logo-s.png"
 				width={48} height={48}
 				priority={true}
 				alt="artisan cloud present logo"

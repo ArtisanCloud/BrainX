@@ -17,7 +17,7 @@ from app.models.base import BaseModel
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000020'
-down_revision: Union[str, None] = '000000000014'
+down_revision: Union[str, None] = '000000000016'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -26,7 +26,7 @@ def upgrade() -> None:
     op.create_table(
         table_name_media_resource,
         sa.Column('id', sa.BigInteger(), nullable=False),
-        sa.Column('uuid', UUID(as_uuid=True),  index=True, unique=True),
+        sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('user_id', sa.Integer(), comment='用户Id'),
         sa.Column('filename', sa.String(), comment='名称'),

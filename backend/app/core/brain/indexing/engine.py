@@ -91,7 +91,7 @@ async def generate_query_engine(llm):
     # configure response synthesizer
     response_synthesizer = get_response_synthesizer()
 
-    # assemble query robto_chat
+    # assemble query robot_chat
     query_engine = RetrieverQueryEngine(
         retriever=retriever,
         response_synthesizer=response_synthesizer,

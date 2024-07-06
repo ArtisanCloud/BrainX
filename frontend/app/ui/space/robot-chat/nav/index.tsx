@@ -65,7 +65,8 @@ const ChatNav = () => {
 								className={styles.selectLLM}
 								labelInValue
 								style={{border: "none"}}
-								defaultValue={{value: openai_gpt_3_d_5_turbo, label: label_openai_gpt_3_d_5_turbo}}
+								// defaultValue={{value: openai_gpt_3_d_5_turbo, label: label_openai_gpt_3_d_5_turbo}}
+								defaultValue={{value: baidu_ernie_lite_8k, label: label_baidu_ernie_lite_8k}}
 								onChange={handleChangeLLM}
 								options={[
 									{

@@ -1,11 +1,12 @@
-from app.schemas.robto_chat.conversation import Message
+from app.schemas.robot_chat.conversation import MessageSchema
 from app.schemas.base import BaseSchema
 
 
 class RequestChat(BaseSchema):
     llm: str | None
     conversationUUID: str | None
-    messages: list[Message]
+    appUUID: str | None
+    messages: list[MessageSchema]
 
 
 class ResponseChatStream:

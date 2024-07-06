@@ -1,6 +1,8 @@
-from typing import Tuple, Iterator, Any, List
+from typing import Tuple, Iterator, Any, List, Type
+import uuid
+import time
 
-from langchain_community.chat_message_histories import RedisChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
@@ -22,11 +24,16 @@ class BrainXService:
     def __init__(self,
                  llm: str,
                  temperature: float = 0.5,
-                 streaming: bool = False
+                 streaming: bool = False,
+                 chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory,  # ChatMessageHistory 动态驱动
+                 chat_history_kwargs: dict = {},  # 传递给 ChatMessageHistory 的其他参数
                  ):
         self.llm = llm
         self.temperature = temperature
         self.streaming = streaming
+
+        self.chat_history_cls = chat_history_cls
+        self.chat_history_kwargs = chat_history_kwargs
 
         query_embedding_table = settings.database.table_name_vector_store
         self.vector_store, e = get_vector_store_singleton(query_embedding_table)
@@ -155,6 +162,13 @@ class BrainXService:
         except Exception as e:
             return None, e
 
+    def generate_session_id(self) -> str:
+        """生成会话ID"""
+        return str(uuid.uuid4())
+
+    def get_chat_history(self, session_id: str) -> ChatMessageHistory:
+        return self.chat_history_cls(session_id=session_id, **self.chat_history_kwargs)
+
     def chat_completion(self,
                         question: str,
                         app: App = None,
@@ -167,7 +181,8 @@ class BrainXService:
 
             prompt = get_chat_prompt_template(app)
 
-            chat_history = RedisChatMessageHistory(session_id=session_id)
+            # chat_history = RedisChatMessageHistory(session_id=session_id)
+            chat_history = self.get_chat_history(session_id)
 
             chain = prompt | chat_llm
 
@@ -221,7 +236,7 @@ class BrainXService:
 
             prompt = get_chat_prompt_template(app)
 
-            chat_history = RedisChatMessageHistory(url=settings.cache.redis.url, session_id=session_id)
+            chat_history = self.get_chat_history(session_id)
 
             chain = prompt | chat_llm
 

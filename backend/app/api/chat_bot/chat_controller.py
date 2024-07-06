@@ -6,7 +6,7 @@ from fastapi import Request, APIRouter
 from fastapi.responses import StreamingResponse
 
 from app.core.brain.index import LLMModel
-from app.schemas.robto_chat.chat import RequestChat
+from app.schemas.robot_chat.chat import RequestChat
 from app.service.robot_chat.chat import chat
 
 router = APIRouter()
@@ -60,15 +60,20 @@ async def api_chat(
 ) -> StreamingResponse:
     try:
         question = data.messages[0].content
+        conversation_uuid = data.conversationUUID
 
-        stream_response, exception = chat(question, data.llm, "app")
+        stream_response, conversation_uuid, exception = chat(question, data.llm, "app", conversation_uuid)
         if exception:
             raise exception
 
+        # print("conversationUUID:", conversation_uuid)
         return StreamingResponse(
             event_generator(request, data.llm, stream_response),
             media_type="text/event-stream",
-            headers={"Content-Type": "text/event-stream"},
+            headers={
+                "Content-Type": "text/event-stream",
+                "Conversation-Uuid": conversation_uuid
+            },
         )
 
     except Exception as e:

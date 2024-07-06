@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import List
 
-from sqlalchemy import String, SmallInteger, BigInteger, Text, ForeignKey, Boolean, UUID
+from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.app_model_config import table_name_app_model_config
@@ -29,9 +29,9 @@ class AppMode(IntEnum):
 class App(BaseModel):
     __tablename__ = table_name_app
 
-    tenant_uuid = mapped_column(UUID, ForeignKey(table_name_tenant + '.uuid'))
-    app_model_config_uuid = mapped_column(UUID, ForeignKey(table_name_app_model_config + '.uuid'))
-    workflow_uuid = mapped_column(UUID, ForeignKey(table_name_workflow + '.uuid'))
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
+    app_model_config_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app_model_config + '.uuid'))
+    workflow_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_workflow + '.uuid'))
 
     name = mapped_column(String)
     status = mapped_column(SmallInteger)

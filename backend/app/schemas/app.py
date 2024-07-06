@@ -7,8 +7,8 @@ from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObj
 
 
 class AppSchema(BaseObjectSchema):
-    user_id: Optional[int] = None
-    parent_id: Optional[int] = None
+    user_uuid: Optional[str] = None
+    parent_uuid: Optional[str] = None
     app_model_config_uuid: Optional[str] = None
     name: Optional[str] = None
     status: Optional[int] = None
@@ -23,16 +23,17 @@ class AppSchema(BaseObjectSchema):
         # print(base)
         return cls(
             **base,
-            user_id=obj.user_id,
-            parent_id=obj.parent_id,
-            model_uuid=obj.app_model_config_uuid,
+            tenant_uuid=obj.tenant_uuid,
+            app_model_config_uuid=str(obj.app_model_config_uuid),
+            workflow_uuid=obj.workflow_uuid,
             name=obj.name,
             status=obj.status,
             type=obj.type,
+            mode=obj.mode,
             description=obj.description,
-            persona_prompt=obj.persona_prompt,
             avatar_url=obj.avatar_url
         )
+
 
 class RequestGetAppList:
     pagination: Optional[Pagination] = None
@@ -65,19 +66,21 @@ class RequestPatchApp(AppSchema):
 class ResponsePatchApp(BaseSchema):
     app: AppSchema
 
+
 class ResponseDeleteApp(BaseSchema):
     result: bool
 
 
 def make_app(app: AppSchema) -> App:
     return App(
-        user_id=app.user_id,
-        parent_id=app.parent_id,
-        model_config_uuid=app.app_model_config_uuid,
+        tenant_uuid=app.tenant_uuid,
+        app_model_config_uuid=app.app_model_config_uuid,
+        workflow_uuid=app.workflow_uuid,
         name=app.name,
         status=app.status,
         type=app.type,
+        mode=app.mode,
         description=app.description,
-        persona_prompt=app.persona_prompt,
         avatar_url=app.avatar_url,
+        is_public=app.is_public,
     )

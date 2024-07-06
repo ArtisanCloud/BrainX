@@ -25,7 +25,7 @@ def upgrade() -> None:
     op.create_table(
         table_name_tenant,
         sa.Column('id', sa.BigInteger(), nullable=False),
-        sa.Column('uuid', UUID(as_uuid=True), index=True, unique=True),
+        sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('name', sa.String(), nullable=False, unique=True),
         sa.Column('plan', sa.SmallInteger()),

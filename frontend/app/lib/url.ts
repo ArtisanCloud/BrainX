@@ -2,7 +2,7 @@ import {ossUrl, staticsUrl} from "@/app/config/config";
 import {App} from "@/app/api/robot-chat/app";
 import {routeRobotChat} from "@/app/config/constant/index";
 
-const notFoundImage = '/avatar-not-found.png'
+const notFoundImage = '/images/avatar-not-found.png'
 
 export const GetPublicUrl = (resource: string | undefined) => {
 	// console.log(resource)

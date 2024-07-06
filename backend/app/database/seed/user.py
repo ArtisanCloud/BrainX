@@ -4,10 +4,11 @@ from app.database.seed.tenant import init_tenant_uuid
 from app.models.originaztion.user import User
 from app.models.pivot_tenant_to_user import PivotTenantToUser
 
+init_user_uuid = "00000000-0000-0000-0001-1607772020bd"
 
 # 添加代理人数据
 async def seed_users(db) -> Exception | None:
-    init_user_uuid = "00000000-0000-0000-0001-1607772020bd"
+
     print("start seed users")
     try:
         # Check if the table is empty

@@ -26,7 +26,7 @@ export default function Home() {
 				<div className={styles.containerLogo}>
 					{/* Add Hero Images Here */}
 					<Image
-						src="/brainx.jpeg"
+						src="/images/brainx.jpeg"
 						width={1000}
 						height={760}
 						priority={true}

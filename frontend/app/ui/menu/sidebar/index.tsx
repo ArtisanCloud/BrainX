@@ -30,7 +30,7 @@ const Sidebar = () => {
 						<Image
 							className={styles.userImage}
 							// src={user.img || "/noavatar.png"}
-							src={"/logo-s.png"}
+							src={"/images/logo-s.png"}
 							alt=""
 							width="50"
 							height="50"

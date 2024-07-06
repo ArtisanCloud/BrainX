@@ -64,7 +64,7 @@ async def lifespan(app: FastAPI):
     )
     cfg.set_main_option("sqlalchemy.url", db_url)
     engine = create_engine(db_url, echo=True)
-    # print("robto_chat:", robto_chat)
+    # print("robot_chat:", robot_chat)
     if not check_current_head(cfg, engine):
         raise Exception(
             "Database is not up to date. Please run `poetry run alembic upgrade head`"
