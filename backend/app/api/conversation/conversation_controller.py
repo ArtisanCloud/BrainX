@@ -7,13 +7,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.api.context_manager import build_request_context
+from app.core.libs.uuid import safe_str_to_uuid
 from app.database.deps import get_db_session
 from app.database.seed.user import init_user_uuid
 from app.models.robot_chat.conversation import Conversation
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.robot_chat.conversation import RequestCreateConversation, make_conversation, \
     ResponseCreateConversation, RequestPatchConversation, ResponsePatchConversation, ResponseDeleteConversation, \
-    ResponseGetConversationList
+    ResponseGetConversationList, RequestGetConversationList
 from app.service.conversation.delete import soft_delete_conversation
 from app.service.conversation.list import get_conversation_list
 from app.service.conversation.create import create_conversation
@@ -31,11 +32,12 @@ async def api_get_conversation_list(
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", 1))
     page_size = int(request.query_params.get("page_size", 10))
-
+    app_uuid = request.query_params.get("app_uuid", None)
     p = Pagination(page=page, page_size=page_size)
+    # print("app_uuid:", app_uuid)
 
     try:
-        conversations, pagination, exception = await get_conversation_list(db, p)
+        conversations, pagination, exception = await get_conversation_list(db, p, app_uuid)
         if exception is not None:
             raise exception
 

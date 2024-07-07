@@ -35,12 +35,14 @@ class ConversationSchema(BaseObjectSchema):
 
 
 class RequestGetConversationList:
+    app_uuid: str
     pagination: Optional[Pagination] = None
 
 
 class ResponseGetConversationList(BaseSchema):
     data: list[ConversationSchema]
     pagination: ResponsePagination
+
 
 class RequestCreateConversation(ConversationSchema):
     name: constr(min_length=0, max_length=255)  # 允许为空
@@ -68,7 +70,8 @@ def make_conversation(conversation: ConversationSchema) -> Conversation:
         uuid=uuid.uuid4(),  # 生成一个新的 UUID
         user_uuid=uuid.UUID(conversation.user_uuid) if conversation.user_uuid else None,
         app_uuid=uuid.UUID(conversation.app_uuid) if conversation.app_uuid else None,
-        app_model_config_uuid=uuid.UUID(conversation.app_model_config_uuid) if conversation.app_model_config_uuid else None,
+        app_model_config_uuid=uuid.UUID(
+            conversation.app_model_config_uuid) if conversation.app_model_config_uuid else None,
         name=conversation.name,
         status=conversation.status,
         context=conversation.context,

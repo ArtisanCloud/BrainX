@@ -10,8 +10,12 @@ import {
 	AppstoreOutlined
 } from '@ant-design/icons';
 import useSSE from "@/app/lib/sse/EventSourceHelper";
-import {Conversation, ConversationItem} from "@/app/api/robot-chat/conversation";
-import {AppContextType, SelectedAppContext} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
+import {ConversationItem} from "@/app/api/robot-chat/conversation";
+import {
+	AppContextType,
+	SelectedAppContext,
+	welcomeConversation
+} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 import {GetPublicUrl} from "@/app/lib/url";
 import {GetChatBotSSEActionUrl, RequestSendChat} from "@/app/api/robot-chat";
 import Image from "next/image";
@@ -20,24 +24,18 @@ import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import {FormatSSEMessageReply} from "@/app/lib/sse/format";
+import {v4 as uuidv4} from 'uuid';
 
 
 const ChatBox = () => {
-	const {selectedApp} = useContext(SelectedAppContext) as AppContextType;
+	const {selectedApp, currentConversation, setCurrentConversation} = useContext(SelectedAppContext) as AppContextType;
 	const {selectedLlm} = useContext(SelectLLMContext) as SelectLLMContextType;
 
 	const refInput = useRef<HTMLTextAreaElement>(null);
 	const refMessageContainer = useRef<HTMLDivElement>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [showHint, setShowHint] = useState<boolean>(false);
-	const [conversation, setConversation] = useState<Conversation>({
-		currentPrompt: '',
-		items: [
-			{question: '', answer: '您好，请问有什么可以帮助到您？'},
-			// { question: '有啥可以分享的？', answer: '没啥弄\n没啥弄\n没啥弄\n' },
-			// { question: '吃了没？', answer: '我不饿' },
-		],
-	});
+	// const [conversation, setConversation] = useState<Conversation>(welcomeConversation);
 
 	const streamUrl = GetChatBotSSEActionUrl('chat');
 	const sse = useSSE();
@@ -50,8 +48,12 @@ const ChatBox = () => {
 	}
 
 	useEffect(() => {
+		setCurrentConversation(welcomeConversation);
+	}, [selectedApp]);
+
+	useEffect(() => {
 		scrollToBottom();
-	}, [conversation]);
+	}, [currentConversation]);
 
 	const handleSelectModel = () => {
 		console.log('select model');
@@ -98,16 +100,25 @@ const ChatBox = () => {
 			setLoading(false);
 			return;
 		} else {
-			conversation.currentPrompt = message
+			currentConversation.currentPrompt = message
 		}
 		// console.log('Send button clicked:', message);
 		const newItem = {
-			question: conversation.currentPrompt,
+			question: currentConversation.currentPrompt,
 			answer: '',
 		} as ConversationItem;
 
-		setConversation((prevConversation) => ({
+		// 初始化一个uuid，给conversation
+		let sessionID = ""
+		if (!currentConversation.uuid || currentConversation.uuid == "") {
+			sessionID = uuidv4();
+		} else {
+			sessionID = currentConversation.uuid!
+		}
+		// 小心，别冲突了
+		setCurrentConversation((prevConversation) => ({
 			...prevConversation,
+			uuid: sessionID,
 			items: [...prevConversation.items, newItem],
 		}));
 
@@ -115,13 +126,13 @@ const ChatBox = () => {
 		refInput.current!.value = '';
 
 		const requestBody: RequestSendChat = {
-			conversationUUID: "",
+			conversationUUID: sessionID,
 			appUUID: selectedApp?.uuid ?? "",
 			llm: selectedLlm ?? "",
 			messages: [
 				{
 					role: 'user',
-					content: conversation.currentPrompt,
+					content: currentConversation.currentPrompt,
 				},
 			],
 		}
@@ -148,7 +159,7 @@ const ChatBox = () => {
 					// const objMsg = JSON.parse(msg.data);
 
 					// <--- Add this check
-					setConversation((prevConversation) => {
+					setCurrentConversation((prevConversation) => {
 						const lastItem = prevConversation.items[prevConversation.items.length - 1];
 						return {
 							...prevConversation,
@@ -185,7 +196,7 @@ const ChatBox = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.messageContainer} ref={refMessageContainer}>
-				{conversation.items.map((item: ConversationItem, index) => (
+				{currentConversation.items.map((item: ConversationItem, index) => (
 					<React.Fragment key={index}>
 						{/* 用户消息单元 */}
 						{item.question && (

@@ -29,14 +29,16 @@ class AppService:
 
     async def patch_app(self, app_uuid: str, update_data: Dict[str, Any]) -> Tuple[App | None, Exception | None]:
         try:
-            updated_app = await self.app_dao.patch_app(app_uuid, update_data)
-            return updated_app, None
+            updated_app, exception = await self.app_dao.patch(app_uuid, update_data)
+            return updated_app, exception
         except SQLAlchemyError as e:
             return None, e
 
     async def get_app_by_uuid(self, app_uuid: str) -> Tuple[App | None, Exception | None]:
         try:
-            app = await self.app_dao.get_app_by_uuid(app_uuid)
+            app, exception = await self.app_dao.get_by_uuid(app_uuid)
+            if exception:
+                return None, exception
             return app, None
         except SQLAlchemyError as e:
             return None, e

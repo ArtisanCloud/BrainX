@@ -2,7 +2,11 @@ import React, {useContext} from 'react';
 import {App} from "@/app/api/robot-chat/app";
 import styles from "./app.module.scss"
 import {GetPublicUrl} from "@/app/lib/url";
-import {AppContextType, SelectedAppContext} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
+import {
+	AppContextType,
+	SelectedAppContext,
+	welcomeConversation
+} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 import Image from "next/image";
 
 export interface AppItemProps {
@@ -10,13 +14,14 @@ export interface AppItemProps {
 }
 
 const AppBot: React.FC<AppItemProps> = ({app}) => {
-	const {selectedApp, setSelectedApp} = useContext(SelectedAppContext) as AppContextType;
+	const {selectedApp, setSelectedApp,setCurrentConversation} = useContext(SelectedAppContext) as AppContextType;
 
 	const containerClassName = `${styles.container} ${selectedApp === app ? styles.selected : ''}`;
 
 	const clickApp = () => {
 		// console.log("clickApp", app)
 		setSelectedApp(app)
+		setCurrentConversation(welcomeConversation)
 	};
 
 	return (

@@ -63,7 +63,8 @@ def get_chat_prompt_template(app: App) -> ChatPromptTemplate:
         [
             (
                 "system",
-                app.persona_prompt,
+                # app.persona_prompt,
+                "You are a helpful assistant. Answer all questions to the best of your ability."
             ),
             MessagesPlaceholder(variable_name="history"),
             ("human", "{question}"),

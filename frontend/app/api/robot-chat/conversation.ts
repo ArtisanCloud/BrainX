@@ -2,6 +2,7 @@ import {backendClient} from "@/app/api/backend";
 import {PowerModel, RequestPagination, Response, ResponsePagination} from "@/app/api";
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 import {App} from "@/app/api/robot-chat/app";
+import exp from "constants";
 
 export interface Message extends PowerModel{
 	role: string
@@ -9,6 +10,12 @@ export interface Message extends PowerModel{
 }
 
 export interface Conversation extends PowerModel{
+	user_uuid?: string;
+	app_uuid?: string;
+	app_model_config_uuid?: string;
+	name?: string;
+	status?: string;
+	context?: string;
 	currentPrompt: string;
 	messages?: Message[];
 	items: ConversationItem[];
@@ -20,6 +27,10 @@ export interface ConversationItem {
 	answer: string;
 }
 
+export interface RequestFetchConversationList extends RequestPagination{
+	app_uuid: string;
+}
+
 export interface ResponseFetchConversationList {
 	data: Conversation[];
 	pagination: ResponsePagination;
@@ -27,7 +38,7 @@ export interface ResponseFetchConversationList {
 
 
 
-export async function ActionFetchConversationList(pg: RequestPagination): Promise<ResponseFetchConversationList> {
+export async function ActionFetchConversationList(pg: RequestFetchConversationList): Promise<ResponseFetchConversationList> {
 	noStore();
 	try {
 		const endpoint = `/api/chat_bot/conversation/list`;
