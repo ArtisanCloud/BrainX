@@ -12,7 +12,7 @@ import {defaultPage, routeRobotChat} from "@/app/config/constant/index";
 import {FetchAppListContext} from "@/app/ui/space/app/provider/fetch-app-list-provider";
 import {appPageSize} from "@/app/ui/space/app/list";
 import {ActionDeleteApp} from "@/app/api/robot-chat/app";
-import {sleep} from "@/app/lib/utils";
+import {sleep} from "@/app/lib/base";
 
 
 const AppBot: React.FC<AppItemProps> = ({app}) => {

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.conversation import conversation_controller
+from app.api.conversation import conversation_controller, message_controller
 from app.api.system import status_controller, test_controller
 from app.api.customer import customer_controller
 from app.api.media_resource import media_resource_controller
@@ -31,6 +31,7 @@ api_router.include_router(chat_controller.router, prefix="/chat_bot", tags=["cha
 api_router.include_router(app_controller.router, prefix="/chat_bot/app", tags=["chatbot"])
 # conversation
 api_router.include_router(conversation_controller.router, prefix="/chat_bot/conversation", tags=["chatbot"])
+api_router.include_router(message_controller.router, prefix="/chat_bot/conversation/message", tags=["chatbot"])
 
 # question answer
 api_router.include_router(query_controller.router, prefix="/question_answer", tags=["query"])

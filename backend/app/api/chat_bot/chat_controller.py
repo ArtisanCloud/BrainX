@@ -64,7 +64,7 @@ async def api_chat(
 ) -> StreamingResponse:
     try:
         question = data.messages[0].content
-        user_uuid = data.appUUID
+        # user_uuid = data.appUUID
         app_uuid = data.appUUID
         conversation_uuid = data.conversationUUID
 

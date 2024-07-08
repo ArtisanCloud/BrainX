@@ -1,6 +1,5 @@
 from typing import Tuple, Iterator, Any, List, Type
 import uuid
-import time
 
 from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
 from langchain_core.documents import Document
@@ -197,7 +196,7 @@ class BrainXService:
             # Define a function to trim messages
             def trim_messages(chain_input):
                 stored_messages = chat_history.messages
-                if len(stored_messages) <= 2:
+                if len(stored_messages) <= 6:
                     return False
 
                 chat_history.clear()
@@ -249,17 +248,19 @@ class BrainXService:
             )
 
             # Define a function to trim messages
+            num_to_keep = 6
             def trim_messages(chain_input):
                 stored_messages = chat_history.messages
-                if len(stored_messages) <= 2:
+                if len(stored_messages) <= num_to_keep:
                     return False
 
-                chat_history.clear()
-
-                for message in stored_messages[-2:]:
-                    chat_history.add_message(message)
-
-                return True
+                # chat_history.clear()
+                # for message in stored_messages[-2:]:
+                #     chat_history.add_message(message)
+                # return True
+                # 这是裁剪给context的数据，暂时历史数据都会保存下来，后续可以调整。
+                trimmed_messages = stored_messages[-num_to_keep:]
+                return trimmed_messages
 
             # Add message trimming to the chain
             chain_with_trimming = (

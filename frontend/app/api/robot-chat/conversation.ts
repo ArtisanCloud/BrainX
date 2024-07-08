@@ -1,15 +1,14 @@
 import {backendClient} from "@/app/api/backend";
 import {PowerModel, RequestPagination, Response, ResponsePagination} from "@/app/api";
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
-import {App} from "@/app/api/robot-chat/app";
-import exp from "constants";
 
-export interface Message extends PowerModel{
-	role: string
+export interface Message extends PowerModel {
+	role?: string
 	content: string
+	type: string
 }
 
-export interface Conversation extends PowerModel{
+export interface Conversation extends PowerModel {
 	user_uuid?: string;
 	app_uuid?: string;
 	app_model_config_uuid?: string;
@@ -27,7 +26,7 @@ export interface ConversationItem {
 	answer: string;
 }
 
-export interface RequestFetchConversationList extends RequestPagination{
+export interface RequestFetchConversationList extends RequestPagination {
 	app_uuid: string;
 }
 
@@ -37,12 +36,11 @@ export interface ResponseFetchConversationList {
 }
 
 
-
-export async function ActionFetchConversationList(pg: RequestFetchConversationList): Promise<ResponseFetchConversationList> {
+export async function ActionFetchConversationList(data: RequestFetchConversationList): Promise<ResponseFetchConversationList> {
 	noStore();
 	try {
 		const endpoint = `/api/chat_bot/conversation/list`;
-		const queryString = Object.entries(pg).map(([key, value]) => `${key}=${value}`).join('&');
+		const queryString = Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&');
 		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
 
 		return res as ResponseFetchConversationList;
@@ -70,4 +68,30 @@ export async function ActionCreateConversation(option: RequestCreateConversation
 
 	return res as ResponseCreateConversation;
 
+}
+
+
+export interface RequestFetchCachedMessageList extends RequestPagination {
+	conversation_uuid: string;
+
+}
+
+export interface ResponseFetchCachedMessageList {
+	data: Message[];
+	pagination: ResponsePagination;
+}
+
+export async function ActionFetchCachedMessageList(data: RequestFetchCachedMessageList): Promise<ResponseFetchCachedMessageList> {
+	noStore();
+	try {
+		const endpoint = `/api/chat_bot/conversation/message/list/cached`;
+		const queryString = Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&');
+		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
+
+		return res as ResponseFetchCachedMessageList;
+
+	} catch (error) {
+		console.error('Fetch cached messages Error:', error);
+		throw new Error('Failed to fetch the cached messages.');
+	}
 }

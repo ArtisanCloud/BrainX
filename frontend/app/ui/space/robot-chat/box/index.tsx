@@ -131,7 +131,8 @@ const ChatBox = () => {
 			llm: selectedLlm ?? "",
 			messages: [
 				{
-					role: 'user',
+					type: 'user',
+					// role: 'user',
 					content: currentConversation.currentPrompt,
 				},
 			],

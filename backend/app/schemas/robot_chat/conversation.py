@@ -2,14 +2,28 @@ import uuid
 from typing import Optional
 from pydantic import constr
 
-from app.models.robot_chat.conversation import Conversation
+from app.models.robot_chat.conversation import Conversation, Message
 from app.schemas.base import BaseSchema, Pagination, ResponsePagination, BaseObjectSchema
 
 
-class MessageSchema(BaseSchema):
+class MessageSchema(BaseObjectSchema):
+    reply_to_message_uuid: Optional[str] = None
     content: str | None
-    role: str | None
+    role: Optional[str] = None
+    type: Optional[str] = None
 
+    @classmethod
+    def from_orm(cls, obj: Message):
+        # print(obj)
+        base = super().from_orm(obj)
+        return cls(
+            **base,
+            conversation_uuid=str(obj.conversation_uuid) if obj.conversation_uuid else None,  # 将 UUID 对象转换为字符串
+            reply_to_message_uuid=str(obj.reply_to_message_uuid) if obj.reply_to_message_uuid else None,  # 处理 app_uuid 可能为 None 的情况
+            content=obj.content,
+            role=obj.role if obj.role else None ,
+            type=obj.type,
+        )
 
 class ConversationSchema(BaseObjectSchema):
     user_uuid: Optional[str] = None
@@ -18,6 +32,7 @@ class ConversationSchema(BaseObjectSchema):
     name: Optional[str] = None
     status: Optional[int] = None
     context: Optional[int] = None
+    messages: Optional[list[MessageSchema]] = None
 
     @classmethod
     def from_orm(cls, obj: Conversation):
@@ -76,3 +91,13 @@ def make_conversation(conversation: ConversationSchema) -> Conversation:
         status=conversation.status,
         context=conversation.context,
     )
+
+
+class RequestGetMessageList:
+    conversation_uuid: str
+    pagination: Optional[Pagination] = None
+
+
+class ResponseGetMessageList(BaseSchema):
+    data: list[MessageSchema]
+    pagination: ResponsePagination

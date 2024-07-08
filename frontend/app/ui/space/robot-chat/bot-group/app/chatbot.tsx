@@ -13,7 +13,7 @@ export interface AppItemProps {
 	app: App;
 }
 
-const AppBot: React.FC<AppItemProps> = ({app}) => {
+const ChatBot: React.FC<AppItemProps> = ({app}) => {
 	const {selectedApp, setSelectedApp,setCurrentConversation} = useContext(SelectedAppContext) as AppContextType;
 
 	const containerClassName = `${styles.container} ${selectedApp === app ? styles.selected : ''}`;
@@ -38,4 +38,4 @@ const AppBot: React.FC<AppItemProps> = ({app}) => {
 	);
 };
 
-export default AppBot;
+export default ChatBot;

@@ -28,6 +28,12 @@ async def chat(db: AsyncSession,
             "url": settings.cache.redis.url,
         })
 
+    # print(
+    #     "question:", question, "llm:", llm,
+    #     "user_uuid:", user_uuid,
+    #     "app_uuid:",   app_uuid, "conversation_uuid:", conversation_uuid
+    #       )
+
     # 如果不是app的对话，则生成临时的新会话ID
     if app_uuid == '' and conversation_uuid == '':
         conversation_uuid = service_brain_x.generate_session_id()
@@ -52,7 +58,12 @@ async def chat(db: AsyncSession,
                 return None, None, exception
         # 如果存在对话历史记录，则直接使用该对话历史记录
         else:
-            if conversation.user_uuid != user_uuid or conversation.app_uuid != app_uuid:
+            # print(conversation)
+            # print(conversation.user_uuid, user_uuid, conversation.app_uuid, app_uuid)
+            # print(type(conversation.user_uuid), type(user_uuid))
+            # print(type(conversation.app_uuid), type(app_uuid))
+
+            if str(conversation.user_uuid) != user_uuid or str(conversation.app_uuid) != app_uuid:
                 return None, None, Exception("Conversation " + conversation_uuid + " not belong to this app or user")
 
     stream_response, exception = service_brain_x.chat_stream(question, app, conversation_uuid)

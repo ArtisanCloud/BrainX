@@ -4,7 +4,11 @@ import styles from "./app.module.scss"
 import {Button} from 'antd';
 import {MoreOutlined} from '@ant-design/icons';
 import {GetPublicUrl} from "@/app/lib/url";
-import {AppContextType, SelectedAppContext} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
+import {
+	AppContextType,
+	SelectedAppContext,
+	welcomeConversation
+} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 import {AppItemProps} from "@/app/ui/space/robot-chat/bot-group/app/chatbot";
 import {ActionFetchConversationList, RequestFetchConversationList} from "@/app/api/robot-chat/conversation";
 
@@ -12,7 +16,7 @@ import {ActionFetchConversationList, RequestFetchConversationList} from "@/app/a
 const AppBot: React.FC<AppItemProps> = ({app}) => {
 	const {
 		selectedApp, setSelectedApp,
-		setCurrentAppConversations,
+		setCurrentAppConversations,setCurrentConversation,
 	} = useContext(SelectedAppContext) as AppContextType;
 
 	const containerClassName = `${styles.container} ${selectedApp === app ? styles.selected : ''}`;
@@ -20,6 +24,7 @@ const AppBot: React.FC<AppItemProps> = ({app}) => {
 	const clickApp = async () => {
 		// console.log("clickApp", app.uuid)
 		setSelectedApp(app)
+		setCurrentConversation(welcomeConversation)
 
 		// 如果app_uuid 不为空，则请求获取对话列表
 		if (app.uuid != "") {

@@ -7,8 +7,9 @@
 
   display: flex;
   flex-direction: column;
-  height: 100%;
-  //height: 768px;
+  //height: 100%;
+  min-width: 480px;
+  height: 768px;
 
 
   .messageContainer {
@@ -21,20 +22,21 @@
     --message-font-size: 12px;
     --message-border-radius: 6px;
     --message-min-width: 20px;
-    --message-max-width: 480px;
+    --message-max-width: 80%;
 
     display: flex;
     flex-direction: column;
     align-items: flex-end; /* 将消息容器中的内容右对齐 */
     padding: 10px;
     margin-top: 20px;
+    //border: 1px solid #e17474;
 
     flex: 1;
     //height: var(--message-container-height); /* 设置容器的高度 */
     //height: calc(100% - var(--input-container-height)); /* 动态计算高度 */
     overflow-y: auto !important; /* 当内容超出容器高度时显示垂直滚动条 */
     -ms-overflow-style: none; /* 隐藏 IE 浏览器的滚动条 */
-    scrollbar-width: none; /* 隐藏 Firefox 浏览器的滚动条 */
+    //scrollbar-width: none; /* 隐藏 Firefox 浏览器的滚动条 */
 
     /* 隐藏滚动条 */
     //&::-webkit-scrollbar {
@@ -64,7 +66,7 @@
         border-radius: var(--message-border-radius);
         //border: #63de3a 1px solid;
         min-width: var(--message-min-width); /* Set a fixed width */
-        //max-width: var(--message-max-width); /* Set a fixed width */
+        max-width: var(--message-max-width); /* Set a fixed width */
         word-wrap: break-word; /* Allow content to wrap automatically */
         overflow-wrap: break-word; /* For older browsers */
         line-height: 2.0;
@@ -94,7 +96,7 @@
         border-radius: var(--message-border-radius);
         //border: #63de3a 1px solid;
         min-width: var(--message-min-width); /* Set a fixed width */
-        //max-width: var(--message-max-width); /* Set a fixed width */
+        max-width: var(--message-max-width); /* Set a fixed width */
         word-wrap: break-word; /* Allow content to wrap automatically */
         overflow-wrap: break-word; /* For older browsers */
         line-height: 2.0;
