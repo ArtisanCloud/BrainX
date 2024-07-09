@@ -25,6 +25,11 @@ class Server(BaseModel):
     server_render: bool
 
 
+class JWT(BaseModel):
+    jwt_secret: str
+    expire_in: int
+
+
 class Api(BaseModel):
     api_prefix: str
     openapi_prefix: str
@@ -102,7 +107,6 @@ class MinIO(BaseModel):
     region: str
 
 
-
 class LocalStorage(BaseModel):
     storage_path: str
 
@@ -145,6 +149,7 @@ class Storage(BaseModel):
 class Settings(BaseModel):
     server: Server
     api: Api
+    jwt: JWT
     database: Database
     cache: Cache
     models: Models
@@ -164,6 +169,7 @@ with open('config.yaml', 'r') as f:
 # Create a Settings object from the YAML data
 settings = Settings(
     server=Server(**config['server']),
+    jwt=JWT(**config['jwt']),
     api=Api(**config['api']),
     database=Database(**config['database']),
     cache=Cache(**config['cache']),

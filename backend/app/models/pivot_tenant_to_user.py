@@ -14,7 +14,7 @@ class PivotTenantToUser(BasePivotModel):
     user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + ".uuid"), nullable=False)
 
     # tenant = relationship("Tenant", back_populates="users")
-    # user = relationship("User", back_populates="tenants")
+    # tenant = relationship("User", back_populates="tenants")
 
     def __repr__(self):
         return (

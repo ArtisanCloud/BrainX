@@ -35,7 +35,7 @@ class AppSchema(BaseObjectSchema):
         )
 
 
-class RequestGetAppList:
+class RequestGetAppList(BaseSchema):
     pagination: Optional[Pagination] = None
 
 

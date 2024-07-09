@@ -25,6 +25,7 @@ class BaseDAO(Generic[ModelType]):
             await self.db.commit()
 
             await self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
+
             return obj, None
         except SQLAlchemyError as e:
             await self.db.rollback()
@@ -75,9 +76,9 @@ class BaseDAO(Generic[ModelType]):
                 query = query.filter(and_(*filters))
 
             # 打印生成的 SQL 查询语句
-            query_str = str(query)
-            print(conditions)
-            print(f"Generated SQL query: {query_str}")
+            # query_str = str(query)
+            # print(conditions)
+            # print(f"Generated SQL query: {query_str}")
 
             result = await self.db.execute(query)
             objects = result.scalars().all()

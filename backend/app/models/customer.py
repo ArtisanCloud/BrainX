@@ -36,7 +36,7 @@ class Customer(BaseModel):
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True)
     password = mapped_column(String)
     email = mapped_column(String)
-    # inviter_id = mapped_column(BigInteger, ForeignKey('customer.id'))
+    # inviter_id = mapped_column(BigInteger, ForeignKey('tenant.id'))
     mgm_id = mapped_column(Integer)
     invite_code = mapped_column(String)
     source = mapped_column(Integer)

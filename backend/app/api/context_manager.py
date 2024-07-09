@@ -18,9 +18,9 @@ context_db_session: ContextVar[Session | None] = ContextVar('db_session', defaul
 context_api_id: ContextVar[str | None] = ContextVar('api_id', default=None)
 # context_log_meta stores log meta data for every request
 context_log_meta: ContextVar[dict] = ContextVar('log_meta', default={})
-# context_user_id stores user id coming from client for every request
+# context_user_id stores tenant id coming from client for every request
 context_user_id: ContextVar[str | None] = ContextVar('user_id', default=None)
-# context_actor_user_data stores user data coming from token for every request
+# context_actor_user_data stores tenant data coming from token for every request
 context_actor_user_data: ContextVar[UserTokenData | None] = ContextVar('actor_user_data', default=None)
 # context_set_db_session_rollback stores flag to rollback db session or not
 context_set_db_session_rollback: ContextVar[bool] = ContextVar('set_db_session_rollback', default=False)
@@ -32,17 +32,17 @@ async def build_request_context(request: Request):
 
     context_api_id.set(str(uuid.uuid4()))
     context_user_id.set(request.headers.get('X-User-ID'))
-    # fetch the token from context and check if the user is active or not
+    # fetch the token from context and check if the tenant is active or not
     user_data_from_context: UserTokenData = context_actor_user_data.get()
     if user_data_from_context:
         user: UserSchema = User.get_by_uuid(user_data_from_context.uuid)
         error_message = None
         if not user:
-            error_message = "Invalid authentication credentials, user not found"
+            error_message = "Invalid authentication credentials, tenant not found"
         elif user.role != user_data_from_context.role:
-            error_message = "Invalid authentication credentials, user role mismatch"
+            error_message = "Invalid authentication credentials, tenant role mismatch"
         elif user.status != UserStatus.ACTIVE.value:
-            error_message = "Invalid authentication credentials, user is not active"
+            error_message = "Invalid authentication credentials, tenant is not active"
         if error_message:
             raise AuthException(status_code=401, message=error_message)
     context_log_meta.set({'api_id': context_api_id.get(), 'request_id': request.headers.get('X-Request-ID'),

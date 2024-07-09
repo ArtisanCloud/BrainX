@@ -49,7 +49,7 @@ class ConversationSchema(BaseObjectSchema):
         )
 
 
-class RequestGetConversationList:
+class RequestGetConversationList(BaseSchema):
     app_uuid: str
     pagination: Optional[Pagination] = None
 
@@ -93,7 +93,7 @@ def make_conversation(conversation: ConversationSchema) -> Conversation:
     )
 
 
-class RequestGetMessageList:
+class RequestGetMessageList(BaseSchema):
     conversation_uuid: str
     pagination: Optional[Pagination] = None
 

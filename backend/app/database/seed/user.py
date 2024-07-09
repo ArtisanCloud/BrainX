@@ -17,7 +17,7 @@ async def seed_users(db) -> Exception | None:
         if users_count == 0:
             user = User(
                 uuid=init_user_uuid,
-                name="初始用户", nick_name="default user",
+                name="初始用户", nick_name="default tenant",
                 status="active",
             )
             db.add(user)

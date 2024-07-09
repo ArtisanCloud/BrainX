@@ -10,13 +10,17 @@ server:
   environment: "local"
   server_render: False
 
+jwt:
+  jwt_secret: "dev"
+  expire_in: 2592000 # 3600*24*30
+
 api:
   api_prefix: "/api"
   openapi_prefix: "/openapi"
   request_timeout: 60
 
 database:
-  url: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
+  url: "postgresql+asyncpg://tenant:pass@127.0.0.1:54321/brain_x"
   table_name_vector_store: "embeddings"
 
 cache:

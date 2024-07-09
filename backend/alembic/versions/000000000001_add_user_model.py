@@ -1,4 +1,4 @@
-"""add user model
+"""add tenant model
 
 Revision ID: 000000000001
 Revises: 38460b361a35

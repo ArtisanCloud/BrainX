@@ -15,7 +15,6 @@ async def seed_tenants(db) -> Exception | None:
         # print(tenants_count)
         if tenants_count == 0:
             tenant = Tenant(
-                id=1,
                 uuid=init_tenant_uuid,
                 name="初始用户租户",
                 status=BaseStatus.ACTIVE,

@@ -64,7 +64,7 @@ async def chat(db: AsyncSession,
             # print(type(conversation.app_uuid), type(app_uuid))
 
             if str(conversation.user_uuid) != user_uuid or str(conversation.app_uuid) != app_uuid:
-                return None, None, Exception("Conversation " + conversation_uuid + " not belong to this app or user")
+                return None, None, Exception("Conversation " + conversation_uuid + " not belong to this app or tenant")
 
     stream_response, exception = service_brain_x.chat_stream(question, app, conversation_uuid)
     if exception:

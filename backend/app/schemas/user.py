@@ -1,19 +1,21 @@
 from enum import Enum
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
 
-from app.schemas.base import BaseSchema
+from app.models.originaztion.user import User
+from app.schemas.base import BaseObjectSchema
 
 
 class UserRole(str, Enum):
-    """Enum for user roles"""
+    """Enum for tenant roles"""
     ADMIN = "admin"
-    CUSTOMER = "customer"
+    CUSTOMER = "tenant"
 
 
 class UserStatus(str, Enum):
-    """Enum for user system"""
+    """Enum for tenant system"""
     ACTIVE = "active"
     SUSPENDED = "suspended"
 
@@ -25,72 +27,53 @@ class UserTokenData(BaseModel):
     email: EmailStr
 
 
-class ResponseUserSchema(BaseModel):
+class UserSchema(BaseObjectSchema):
+    account: Optional[str]
+    name: Optional[str]
+    nick_name: Optional[str]
+    desc: Optional[str]
+    position_id: Optional[str]
+    job_title: Optional[str]
+    department_id: Optional[int]
+    mobile_phone: Optional[str]
+    gender: Optional[str]
+    email: Optional[str]
+    external_email: Optional[str]
+    avatar: Optional[str]
+    password: Optional[str]
+    status: Optional[str]
+    is_reserved: Optional[bool]
+    is_activated: Optional[bool]
+    we_work_user_id: Optional[str]
+
+    @classmethod
+    def from_orm(cls, obj: User):
+        base = super().from_orm(obj)
+        # print(base)
+        return cls(
+            **base,
+            account=obj.account,
+            name=obj.name,
+            nick_name=obj.nick_name,
+            desc=obj.desc,
+            position_id=obj.position_id,
+            job_title=obj.job_title,
+            department_id=obj.department_id,
+            mobile_phone=obj.mobile_phone,
+            gender=obj.gender,
+            email=obj.email,
+            external_email=obj.external_email,
+            avatar=obj.avatar,
+            password=obj.password,
+            status=obj.status,
+            is_reserved=obj.is_reserved,
+            is_activated=obj.is_activated,
+            we_work_user_id=obj.we_work_user_id,
+        )
+
+
+class ResponseGetUser(UserSchema):
     """User model for response"""
-    first_name: str
-    last_name: str
-    email: EmailStr
-    role: UserRole = UserRole.CUSTOMER
-
-
-class UserBaseSchema(ResponseUserSchema):
-    """User model for insert"""
-    status: UserStatus = UserStatus.ACTIVE
-
-
-class UserInsertModel(UserBaseSchema):
-    """User model for insert"""
-    password: str
-
-    # @validator('password')
-    def password_validator(cls, password):
-        """
-        Validates that the password is at least 8 characters long,
-        contains at least one uppercase letter, one lowercase letter,
-        one number, and one special character.
-        """
-        special_chars = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '='}
-        if len(password) < 8:
-            raise ValueError('password must be at least 8 characters long')
-        if not any(char.isupper() for char in password):
-            raise ValueError('password must contain at least one uppercase letter')
-        if not any(char.islower() for char in password):
-            raise ValueError('password must contain at least one lowercase letter')
-        if not any(char.isdigit() for char in password):
-            raise ValueError('password must contain at least one number')
-        if not any(char in special_chars for char in password):
-            raise ValueError('password must contain at least one special character')
-        return password
-
-    def create_db_entity(self, password_hash: str):
-        """
-        Creates a db entity from the insert model
-        """
-        from app.models.originaztion.user import User
-        dict_to_build_db_entity = self.dict()
-        dict_to_build_db_entity['password_hash'] = password_hash
-        dict_to_build_db_entity.pop('password')
-        return User(**dict_to_build_db_entity)
-
-
-class UserSchema(UserBaseSchema, BaseSchema):
-    """User model"""
-    password_hash: str
-
-    class Config:
-        from_attributes = True
-
-    def build_user_token_data(self) -> dict:
-        """
-        Builds the user token data
-        :return: dict
-        """
-        res_dict = self.dict()
-        res_dict['uuid'] = str(self.uuid)
-        return UserTokenData.parse_obj(res_dict).dict()
-
-    def build_response_model(self) -> ResponseUserSchema:
-        return ResponseUserSchema.parse_obj(self.dict())
 
 
 class UserLoginModel(BaseModel):

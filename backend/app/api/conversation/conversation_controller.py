@@ -7,14 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.api.context_manager import build_request_context
-from app.core.libs.uuid import safe_str_to_uuid
 from app.database.deps import get_db_session
 from app.database.seed.user import init_user_uuid
 from app.models.robot_chat.conversation import Conversation
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.robot_chat.conversation import RequestCreateConversation, make_conversation, \
     ResponseCreateConversation, RequestPatchConversation, ResponsePatchConversation, ResponseDeleteConversation, \
-    ResponseGetConversationList, RequestGetConversationList
+    ResponseGetConversationList
 from app.service.conversation.delete import soft_delete_conversation
 from app.service.conversation.list import get_conversation_list
 from app.service.conversation.create import create_conversation

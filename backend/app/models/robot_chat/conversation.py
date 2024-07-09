@@ -19,7 +19,7 @@ class Conversation(BaseModel):
 
     # app: Mapped["App"] = relationship(backref="conversation")
 
-    # user: Mapped["User"] = relationship(backref="conversation")
+    # tenant: Mapped["User"] = relationship(backref="conversation")
     messages: Mapped[List["Message"]] = relationship(back_populates="conversation",
                                                      foreign_keys="[Message.conversation_uuid]")
 

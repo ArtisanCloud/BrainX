@@ -1,12 +1,12 @@
 .container{
   font-family: 'Noto Serif'; /* assuming noto_serif.className applies this font */
-  border: none;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   line-height: 1;
   color: white;
+  //border: 1px solid red;
 
   .logo{
     //box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);

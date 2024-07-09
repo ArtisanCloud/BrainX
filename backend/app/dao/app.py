@@ -11,17 +11,17 @@ from app.models.app import App
 class AppDAO(BaseDAO[App]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, App)
-    #
-    # async def create_app(self, app: App) -> App:
-    #     try:
-    #         self.db.add(app)
-    #         await self.db.commit()
-    #         await self.db.refresh(app)
-    #         return app
-    #     except SQLAlchemyError as e:
-    #         await self.db.rollback()
-    #         raise e
-    #
+
+    async def create_app(self, app: App) -> App:
+        try:
+            self.db.add(app)
+            await self.db.commit()
+            await self.db.refresh(app)
+            return app
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            raise e
+
     # async def create_apps(self, apps: List[App]) -> List[App]:
     #     try:
     #         self.db.add_all(apps)

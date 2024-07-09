@@ -3,15 +3,26 @@
 import styles from "@/app/ui/home/navbar/index.module.scss";
 import ArtisanCloudLogo from "@/app/ui/home/logo/index"
 import React from "react";
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu} from "@nextui-org/react";
+import {
+	Navbar,
+	NavbarBrand,
+	NavbarContent,
+	NavbarItem,
+	Link,
+	Button,
+	DropdownItem,
+	DropdownTrigger,
+	Dropdown,
+	DropdownMenu
+} from "@nextui-org/react";
 
 
 export default function HomeNavbar() {
 	return (
-		<div className={styles.container}>
-			<Navbar>
-				<NavbarBrand>
-					<ArtisanCloudLogo />
+		< >
+			<Navbar className={styles.container}>
+				<NavbarBrand className={styles.headerLeft}>
+					<ArtisanCloudLogo/>
 				</NavbarBrand>
 				<NavbarContent className="hidden sm:flex gap-4" justify="center">
 					{/*<Dropdown>*/}
@@ -72,18 +83,18 @@ export default function HomeNavbar() {
 					{/*		</DropdownItem>*/}
 					{/*	</DropdownMenu>*/}
 					{/*</Dropdown>*/}
-					<NavbarItem isActive>
-						<Link href="#" aria-current="page">
-							产品
-						</Link>
-					</NavbarItem>
-					<NavbarItem>
-						<Link color="foreground" href="#">
-							文档
-						</Link>
-					</NavbarItem>
+					{/*<NavbarItem isActive>*/}
+					{/*	<Link href="#" aria-current="page">*/}
+					{/*		产品*/}
+					{/*	</Link>*/}
+					{/*</NavbarItem>*/}
+					{/*<NavbarItem>*/}
+					{/*	<Link color="foreground" href="#">*/}
+					{/*		文档*/}
+					{/*	</Link>*/}
+					{/*</NavbarItem>*/}
 				</NavbarContent>
-				<NavbarContent justify="end">
+				<NavbarContent justify="end" className={styles.headerRight}>
 					<NavbarItem className="hidden lg:flex">
 						<Link href="#">登陆</Link>
 					</NavbarItem>
@@ -94,7 +105,7 @@ export default function HomeNavbar() {
 					</NavbarItem>
 				</NavbarContent>
 			</Navbar>
-		</div>
+		</>
 	);
 
 
