@@ -5,8 +5,7 @@
   .body {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* adjusted */
-    background: linear-gradient(to  top, #d3cfcf, #F7F7F7);
+    //background: linear-gradient(to  top, #d3cfcf, #F7F7F7);
 
     .containerSlogan {
       flex: 2;
@@ -14,7 +13,6 @@
       flex-direction: column;
       padding: 32px; /* adjusted */
       gap: 48px; /* adjusted */
-      border-radius: 0.5rem;
       background-color: #F7F7F7;
 
       .mark {
