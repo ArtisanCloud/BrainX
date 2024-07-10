@@ -6,19 +6,23 @@ import styles from './index.module.scss';
 import {router} from "next/client";
 import HomeNavbar from "@/app/ui/home/navbar";
 import React from "react";
+import {ActionLogin} from "@/app/api/auth";
+import {setToken} from "@/app/lib/auth";
 
 export default function LoginPage() {
 	async function handleSubmit(values: { account: string; password: string }) {
-		const response = await fetch('/api/auth/login', {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify(values),
+		const response = await ActionLogin({
+			account: values.account,
+			password: values.password,
 		});
 
-		if (response.ok) {
+		if (response.token) {
+			setToken(response.token.access_token);
+
 			router.push('/space');
+
 		} else {
-			// Handle errors
+
 		}
 	}
 
