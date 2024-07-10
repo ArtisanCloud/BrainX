@@ -38,4 +38,3 @@ next-env.d.ts
 .idea
 .DS_Store
 .env
-docker-data/postgres
