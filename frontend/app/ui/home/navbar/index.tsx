@@ -1,112 +1,22 @@
 "use client";
-
-import styles from "@/app/ui/home/navbar/index.module.scss";
 import ArtisanCloudLogo from "@/app/ui/home/logo/index"
 import React from "react";
 import {
-	Navbar,
-	NavbarBrand,
-	NavbarContent,
-	NavbarItem,
 	Link,
-	Button,
-	DropdownItem,
-	DropdownTrigger,
-	Dropdown,
-	DropdownMenu
 } from "@nextui-org/react";
 
 
 export default function HomeNavbar() {
 	return (
-		< >
-			<Navbar className={styles.container}>
-				<NavbarBrand className={styles.headerLeft}>
-					<ArtisanCloudLogo/>
-				</NavbarBrand>
-				<NavbarContent className="hidden sm:flex gap-4" justify="center">
-					{/*<Dropdown>*/}
-					{/*	<NavbarItem>*/}
-					{/*		<DropdownTrigger>*/}
-					{/*			<Button*/}
-					{/*				disableRipple*/}
-					{/*				className="p-0 bg-transparent data-[hover=true]:bg-transparent"*/}
-					{/*				// endContent={icons.chevron}*/}
-					{/*				radius="sm"*/}
-					{/*				variant="light"*/}
-					{/*			>*/}
-					{/*				Features*/}
-					{/*			</Button>*/}
-					{/*		</DropdownTrigger>*/}
-					{/*	</NavbarItem>*/}
-					{/*	<DropdownMenu*/}
-					{/*		aria-label="ACME features"*/}
-					{/*		className="w-[340px]"*/}
-					{/*		itemClasses={{*/}
-					{/*			base: "gap-4",*/}
-					{/*		}}*/}
-					{/*	>*/}
-					{/*		<DropdownItem*/}
-					{/*			key="autoscaling"*/}
-					{/*			description="ACME scales apps to meet user demand, automagically, based on load."*/}
-					{/*			// startContent={icons.scale}*/}
-					{/*		>*/}
-					{/*			Autoscaling*/}
-					{/*		</DropdownItem>*/}
-					{/*		<DropdownItem*/}
-					{/*			key="usage_metrics"*/}
-					{/*			description="Real-time metrics to debug issues. Slow query added? We’ll show you exactly where."*/}
-					{/*			// startContent={icons.activity}*/}
-					{/*		>*/}
-					{/*			Usage Metrics*/}
-					{/*		</DropdownItem>*/}
-					{/*		<DropdownItem*/}
-					{/*			key="production_ready"*/}
-					{/*			description="ACME runs on ACME, join us and others serving requests at web scale."*/}
-					{/*			// startContent={icons.flash}*/}
-					{/*		>*/}
-					{/*			Production Ready*/}
-					{/*		</DropdownItem>*/}
-					{/*		<DropdownItem*/}
-					{/*			key="99_uptime"*/}
-					{/*			description="Applications stay on the grid with high availability and high uptime guarantees."*/}
-					{/*			// startContent={icons.server}*/}
-					{/*		>*/}
-					{/*			+99% Uptime*/}
-					{/*		</DropdownItem>*/}
-					{/*		<DropdownItem*/}
-					{/*			key="supreme_support"*/}
-					{/*			description="Overcome any challenge with a supporting team ready to respond."*/}
-					{/*			// startContent={icons.user}*/}
-					{/*		>*/}
-					{/*			+Supreme Support*/}
-					{/*		</DropdownItem>*/}
-					{/*	</DropdownMenu>*/}
-					{/*</Dropdown>*/}
-					{/*<NavbarItem isActive>*/}
-					{/*	<Link href="#" aria-current="page">*/}
-					{/*		产品*/}
-					{/*	</Link>*/}
-					{/*</NavbarItem>*/}
-					{/*<NavbarItem>*/}
-					{/*	<Link color="foreground" href="#">*/}
-					{/*		文档*/}
-					{/*	</Link>*/}
-					{/*</NavbarItem>*/}
-				</NavbarContent>
-				<NavbarContent justify="end" className={styles.headerRight}>
-					<NavbarItem className="hidden lg:flex">
-						<Link href="/auth/login">登陆</Link>
-					</NavbarItem>
-					<NavbarItem>
-						<Button as={Link} color="primary" href="/user/register" variant="flat">
-							注册
-						</Button>
-					</NavbarItem>
-				</NavbarContent>
-			</Navbar>
-		</>
+		<div className={'h-24  bg-gradient-to-b-header  bg-bottom-100 bg-100x200 transition-all duration-500 w-full flex items-center px-7'}>
+			<div className={'opacity-80'}>
+				<ArtisanCloudLogo/>
+			</div>
+			<div className={'h-full flex gap-3 ml-auto mr-5'}>
+				<Link href={'/'} className={'text-primary text-md font-bold opacity-65'}>首页</Link>
+				<Link href={'/user/register'} className={'text-primary text-md font-bold opacity-65'}>注册</Link>
+				<Link href={'/auth/login'} className={'text-primary text-md font-bold opacity-65 hover:text-foreground'}>登陆</Link>
+			</div>
+		</div>
 	);
-
-
 }
