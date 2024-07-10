@@ -1,6 +1,6 @@
 import http
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.deps import get_db_session
@@ -31,8 +31,10 @@ async def api_register(
 
     return res
 
+
 @router.post("/login")
 async def api_login(
+        response: Response,
         data: RequestLoginUser,
         db: AsyncSession = Depends(get_db_session),
 

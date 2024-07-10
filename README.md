@@ -7,3 +7,8 @@
 ## 项目使用
 TBD...
 
+
+<image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/home.png">
+
+<image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/chat.png">
+

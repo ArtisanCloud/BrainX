@@ -7,10 +7,13 @@ import {MdOutlineArrowBack} from "react-icons/md";
 import {LogoutOutlined} from '@ant-design/icons'
 
 import {Form} from "antd"
-import {handleSignOut, menuItems} from "@/app/ui/menu";
+import { menuItems} from "@/app/ui/menu";
 import React, {useContext} from "react";
 import {HideSidebarContext, SidebarContextType} from "@/app/ui/menu/provider/sidebar-provider";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import Cookies from "js-cookie";
+import {token_key} from "@/app/lib/auth";
 
 
 const Sidebar = () => {
@@ -18,6 +21,15 @@ const Sidebar = () => {
 	const {hideSidebar, setHideSidebar} = useContext(HideSidebarContext) as SidebarContextType;
 	const handleClickDrawerHandle = () => {
 		setHideSidebar(!hideSidebar)
+	}
+
+	const router = useRouter();
+
+	const handleSignOut = (event: any) => {
+		event.preventDefault();
+		// Your form submission logic here
+		Cookies.set(token_key, '', {expires: -1});
+		router.push('/')
 	}
 
 	return (

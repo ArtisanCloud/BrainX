@@ -8,7 +8,7 @@ import {
 	User,
 	Revenue,
 } from './definitions';
-import {formatCurrency} from './utils';
+import {formatCurrency} from './base';
 import {unstable_noStore as noStore} from 'next/cache';
 import {backendClient} from "@/app/api/backend";
 

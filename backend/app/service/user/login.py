@@ -32,7 +32,7 @@ def sign_token(user: User, secret_key, expires_in) -> AccessTokenSchema:
 async def login_by_account(
         db: AsyncSession,
         account: str, password: str
-):
+) -> tuple[AccessTokenSchema, Exception]:
     service_user = UserService(db)
 
     # check user exist or not

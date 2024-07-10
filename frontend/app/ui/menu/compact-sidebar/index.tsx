@@ -9,27 +9,41 @@ import {LogoutOutlined} from '@ant-design/icons'
 import {MdOutlineArrowForward} from "react-icons/md";
 import React, {useContext} from "react";
 import {HideSidebarContext, SidebarContextType} from "@/app/ui/menu/provider/sidebar-provider";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
+import Cookies from "js-cookie";
+import {token_key} from "@/app/lib/auth";
 
 const CompactSidebar = () => {
 	// const { user } = await auth();
+	const router = useRouter();
 	const {hideSidebar, setHideSidebar} = useContext(HideSidebarContext) as SidebarContextType;
 	const handleClickDrawerHandle = () => {
 		setHideSidebar(!hideSidebar)
 		// console.log(hideSidebar)
 	}
 
+
+	const handleSignOut = (event: any) => {
+		event.preventDefault();
+		// Your form submission logic here
+		Cookies.set(token_key, '', {expires: -1});
+		router.push('/')
+	}
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.menu}>
 				<div className={styles.user}>
-					<Image
-						className={styles.userImage}
-						// src={user.img || "/noavatar.png"}
-						src={"/images/logo-s.png"}
-						alt=""
-						width="50"
-						height="50"
-					/>
+					<Link href={"/"}>
+						<Image
+							className={styles.userImage}
+							src={"/images/logo-s.png"}
+							alt=""
+							width="50"
+							height="50"
+						/>
+					</Link>
 				</div>
 				<ul className={styles.list}>
 					{menuItems.map((cat) => (

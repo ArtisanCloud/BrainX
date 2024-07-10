@@ -1,6 +1,6 @@
 import {backendClient} from "@/app/api/backend";
-import {RequestCreateMediaResource, ResponseCreateMediaResource} from "@/app/api/media-resource";
 import {User} from "@/app/api/tenant/user";
+import {Response} from "@/app/api";
 
 export interface Token {
 	token_type: string
@@ -14,7 +14,7 @@ export interface RequestLogin {
 	password: string
 }
 
-export interface ResponseLogin {
+export interface ResponseLogin extends Response {
 	account: string
 	token: Token
 }
@@ -28,19 +28,17 @@ export async function ActionLogin(option: RequestLogin) {
 	return res as ResponseLogin;
 }
 
-
-
 export interface RequestRegister {
 	account: string
 	password: string
 }
 
-export interface ResponseRegister {
+export interface ResponseRegister extends Response {
 	user: User
 }
 export async function ActionRegister(option: RequestRegister) {
 	// 处理上传事件的逻辑
-	const endpoint = `/api/media/resource/create/base64`;
+	const endpoint = `/api/auth/register`;
 
 	const res = await backendClient.backend_post(endpoint, option);
 

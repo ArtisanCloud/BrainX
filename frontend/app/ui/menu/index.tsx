@@ -8,7 +8,8 @@ import {HiOutlineAcademicCap} from "react-icons/hi";
 import {RiRobot2Line} from "react-icons/ri";
 import {GrAppsRounded, GrBusinessService} from "react-icons/gr";
 import React, {useContext, useEffect} from "react";
-import SidebarProvider, {HideSidebarContext, SidebarContextType} from "@/app/ui/menu/provider/sidebar-provider";
+import {HideSidebarContext, SidebarContextType} from "@/app/ui/menu/provider/sidebar-provider";
+
 
 export const menuItems = [
 
@@ -87,11 +88,6 @@ export const menuItems = [
 	},
 ];
 
-export const handleSignOut = (event: any) => {
-	event.preventDefault();
-	// Your form submission logic here
-	// await signOut();
-}
 
 const Menu = () => {
 	const {width} = useWindowSize();
