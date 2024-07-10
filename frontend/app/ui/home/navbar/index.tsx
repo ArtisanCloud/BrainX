@@ -96,10 +96,10 @@ export default function HomeNavbar() {
 				</NavbarContent>
 				<NavbarContent justify="end" className={styles.headerRight}>
 					<NavbarItem className="hidden lg:flex">
-						<Link href="#">登陆</Link>
+						<Link href="/auth/login">登陆</Link>
 					</NavbarItem>
 					<NavbarItem>
-						<Button as={Link} color="primary" href="#" variant="flat">
+						<Button as={Link} color="primary" href="/user/register" variant="flat">
 							注册
 						</Button>
 					</NavbarItem>
