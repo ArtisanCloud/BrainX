@@ -54,7 +54,9 @@ export default function HomeNavbar() {
 								<DropdownItem key="profile" className="h-14 gap-2" textValue="account">
 									<p className="font-semibold">{account}</p>
 								</DropdownItem>
-								<DropdownItem key="space" textValue="工作台">工作台</DropdownItem>
+								<DropdownItem key="space" textValue="工作台">
+									<Link href={'space'}>工作台</Link>
+								</DropdownItem>
 								<DropdownItem key="logout" onClick={handleLogout} color="danger" textValue="退出">
 									退出
 								</DropdownItem>

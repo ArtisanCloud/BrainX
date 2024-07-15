@@ -33,27 +33,28 @@ class AppDAO(BaseDAO[App]):
     #         await self.db.rollback()
     #         raise e
     #
-    # async def patch_app(self, app_uuid: str, update_data: Dict[str, Any]) -> App | None:
-    #     try:
-    #         result = await self.db.execute(select(App).filter_by(uuid=app_uuid))
-    #         exist_app = result.scalars().first()
-    #
-    #         if exist_app is None:
-    #             raise Exception("App not found")
-    #
-    #         for field, value in update_data.items():
-    #             setattr(exist_app, field, value)
-    #         # 更新 `updated_at` 字段
-    #         setattr(exist_app, "updated_at", datetime.now())
-    #
-    #         await self.db.commit()
-    #         await self.db.refresh(exist_app)
-    #
-    #         return exist_app
-    #
-    #     except SQLAlchemyError as e:
-    #         await self.db.rollback()  # 确保在发生异常时回滚事务
-    #         raise SQLAlchemyError(f"patch app failed: {str(e)}")
+    async def patch_app(self, app_uuid: str, update_data: Dict[str, Any]) -> Tuple[App | None, SQLAlchemyError | None]:
+        try:
+            result = await self.db.execute(select(App).filter_by(uuid=app_uuid))
+            exist_app = result.scalars().first()
+
+            if exist_app is None:
+                raise Exception("App not found")
+
+            for field, value in update_data.items():
+                setattr(exist_app, field, value)
+            # 更新 `updated_at` 字段
+            setattr(exist_app, "updated_at", datetime.now())
+
+
+            await self.db.commit()
+            await self.db.refresh(exist_app)
+
+            return exist_app, None
+
+        except SQLAlchemyError as e:
+            await self.db.rollback()  # 确保在发生异常时回滚事务
+            return None, SQLAlchemyError(f"patch app failed: {str(e)}")
     #
     # async def update_app(self, app: App) -> App:
     #     try:

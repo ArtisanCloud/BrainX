@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import List
 
-from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID
+from sqlalchemy import Text, String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.app_model_config import table_name_app_model_config
@@ -38,6 +38,7 @@ class App(BaseModel):
     type = mapped_column(SmallInteger)
     mode = mapped_column(SmallInteger)
     description = mapped_column(String)
+    persona = mapped_column(Text)
     avatar_url = mapped_column(String)
     is_public = mapped_column(Boolean)
 
@@ -68,6 +69,7 @@ class App(BaseModel):
             f"type={self.type}, "
             f"mode={self.mode}, "
             f"description='{description}', "
+            f"persona='{self.persona}', "
             f"avatar_url='{self.avatar_url}', "
             f"is_public={self.is_public})>"
         )

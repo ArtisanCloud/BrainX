@@ -40,6 +40,7 @@ def upgrade() -> None:
         sa.Column('type', sa.SmallInteger(), nullable=True),
         sa.Column('mode', sa.SmallInteger(), nullable=True),
         sa.Column('description', sa.String(), nullable=True),
+        sa.Column('persona', sa.Text(), nullable=True),
         sa.Column('avatar_url', sa.String(), nullable=True),
         sa.Column('is_public', sa.Boolean(), nullable=True),
 

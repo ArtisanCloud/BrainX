@@ -114,16 +114,17 @@ class BaseDAO(Generic[ModelType]):
 
         return filters
 
-    async def update(self, obj_id: Any, update_data: Dict[str, Any]) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
+        Optional[ModelType], Optional[Exception]]:
         """
         更新模型对象
         """
         try:
-            obj, error = await self.get_by_id(obj_id)
+            obj, error = await self.get_by_uuid(obj_uuid)
             if error:
                 return None, error
             if not obj:
-                return None, Exception(f"Object with id {obj_id} not found")
+                return None, Exception(f"Object with uuid {obj_uuid} not found")
 
             for field, value in update_data.items():
                 setattr(obj, field, value)
@@ -134,22 +135,26 @@ class BaseDAO(Generic[ModelType]):
             await self.db.rollback()
             return None, e
 
-    async def patch(self, obj_id: Any, patch_data: Dict[str, Any]) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象
         """
         try:
-            obj, error = await self.get_by_id(obj_id)
+            obj, error = await self.get_by_uuid(obj_uuid)
+
             if error:
                 return None, error
             if not obj:
-                return None, Exception(f"Object with id {obj_id} not found")
+                return None, Exception(f"Object with uuid {obj_uuid} not found")
 
             for field, value in patch_data.items():
                 setattr(obj, field, value)
+            setattr(obj, "updated_at", datetime.now())
 
             await self.db.commit()
+            await self.db.refresh(obj)
             return obj, None
+
         except SQLAlchemyError as e:
             await self.db.rollback()
             return None, e
@@ -161,7 +166,8 @@ class BaseDAO(Generic[ModelType]):
         try:
             async with self.db as session:  # 假设 self.db 返回 AsyncSession 实例
                 # 构建查询条件
-                query = select(model_cls).where(and_(*[getattr(model_cls, key) == value for key, value in conditions.items()]))
+                query = select(model_cls).where(
+                    and_(*[getattr(model_cls, key) == value for key, value in conditions.items()]))
                 result = await session.execute(query)
                 exist_obj = result.scalars().first()
 
@@ -177,16 +183,16 @@ class BaseDAO(Generic[ModelType]):
             await session.rollback()
             return False, e
 
-    async def delete(self, obj_id: Any) -> Tuple[bool, Optional[Exception]]:
+    async def delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
         """
         删除模型对象
         """
         try:
-            obj, error = await self.get_by_id(obj_id)
+            obj, error = await self.get_by_uuid(obj_uuid)
             if error:
                 return False, error
             if not obj:
-                return False, Exception(f"Object with id {obj_id} not found")
+                return False, Exception(f"Object with uuid {obj_uuid} not found")
 
             await self.db.delete(obj)
             await self.db.commit()

@@ -14,7 +14,7 @@ class AppSchema(BaseObjectSchema):
     status: Optional[int] = None
     type: Optional[int] = None
     description: Optional[str] = None
-    persona_prompt: Optional[str] = None
+    persona: Optional[str] = None
     avatar_url: Optional[str] = None
 
     @classmethod

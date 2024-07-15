@@ -24,7 +24,9 @@ const AppBot: React.FC<AppItemProps> = ({app}) => {
 	const clickApp = async () => {
 		// console.log("clickApp", app.uuid)
 		setSelectedApp(app)
+		// 重新设置当前选中APP的相关信息
 		setCurrentConversation(welcomeConversation)
+		setCurrentAppConversations([])
 
 		// 如果app_uuid 不为空，则请求获取对话列表
 		if (app.uuid != "") {
