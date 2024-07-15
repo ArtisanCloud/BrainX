@@ -11,7 +11,7 @@ export interface App extends PowerModel {
 	llm_uuid?: string;
 	name?: string;
 	description?: string;
-	persona_prompt?: string;
+	persona?: string;
 	status?: number;
 	avatar_url?: string;
 }

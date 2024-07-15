@@ -19,6 +19,7 @@ class Tenant(BaseModel):
     # users = relationship("User", secondary="pivot_tenant_to_user")
     apps: Mapped[List["App"]] = relationship(back_populates="tenant")
     model_providers: Mapped[List["ModelProvider"]] = relationship(back_populates="tenant")
+    datasets: Mapped[List["Dataset"]] = relationship(back_populates="app")
 
     def __repr__(self):
         return (

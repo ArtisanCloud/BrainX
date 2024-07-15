@@ -28,14 +28,14 @@ const SetPersona = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
 
 	const handleChangePersona = (e: any) => {
 		// 先要本地的值能够能改动
-		props.app.persona_prompt = e.target.value
+		props.app.persona = e.target.value
 		// 然后在context里保存修改的值
 		setPersona(e.target.value)
 	}
 
 	return (
 		<div ref={ref} className={styles.container}>
-			<TextArea onChange={handleChangePersona} value={props.app?.persona_prompt}
+			<TextArea onChange={handleChangePersona} value={props.app?.persona}
 								placeholder={hintAppPersona}
 								rows={28}/>
 		</div>

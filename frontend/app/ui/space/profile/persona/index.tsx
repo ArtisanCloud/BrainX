@@ -46,7 +46,7 @@ const Persona = forwardRef<RefPersona, Props & { ref?: Ref<RefPersona> }>((props
 		// console.log(persona)
 		const res: ResponseCreateApp = await ActionPatchApp({
 			uuid: props.app.uuid,
-			persona_prompt: persona!,
+			persona: persona!,
 		})
 
 		setLoading(false);
@@ -64,7 +64,7 @@ const Persona = forwardRef<RefPersona, Props & { ref?: Ref<RefPersona> }>((props
 	return (
 		<div className={styles.container}>
 			<div className={styles.content} onClick={handleEdit}>
-				{props.app.persona_prompt ? props.app.persona_prompt : hintAppPersona}
+				{props.app.persona ? props.app.persona : hintAppPersona}
 			</div>
 			{contextHolder}
 			<Modal

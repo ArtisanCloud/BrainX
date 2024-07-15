@@ -13,7 +13,7 @@ async def patch_app(
         update_data: Dict[str, Any]
 ) -> Tuple[AppSchema | None, Exception | None]:
     service_app = AppService(db)
-    app, exception = await service_app.patch_app(app_uuid, update_data)
+    app, exception = await service_app.app_dao.patch(app_uuid, update_data)
 
     if exception:
         return None, exception
