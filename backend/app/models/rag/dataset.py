@@ -1,7 +1,7 @@
-from sqlalchemy import Column, String, SmallInteger, ForeignKey, Boolean, UUID
+from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from app.models.base import BaseModel, table_name_dataset, table_name_tenant, table_name_user
-from app.models.app import table_name_app
+from app.models.app.app import table_name_app
 from enum import IntEnum
 
 __tablename__ = table_name_app

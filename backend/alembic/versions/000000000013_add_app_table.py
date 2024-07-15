@@ -12,12 +12,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from alembic import op
 import sqlalchemy as sa
 
-from app.models.app import table_name_app
-from app.models.base import BaseModel, table_name_app_model_config
-from app.models.model_provider import table_name_model_provider
+from app.models.app.app import table_name_app
 from app.models.originaztion.user import table_name_user
-from app.models.tenant import table_name_tenant
-from app.models.workflow import table_name_workflow
+from app.models.tenant.tenant import table_name_tenant
+from app.models.workflow.workflow import table_name_workflow
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000013'

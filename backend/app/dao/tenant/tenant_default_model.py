@@ -1,7 +1,7 @@
 from sqlalchemy import select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.tenant import TenantDefaultModel
+from app.models.tenant.tenant import TenantDefaultModel
 from typing import List, Tuple
 from app.schemas.tenant import TenantDefaultModelSchema
 

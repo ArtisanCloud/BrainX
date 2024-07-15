@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
 from app.models.base import BaseStatus
 from app.models.originaztion.user import User
-from app.models.pivot_tenant_to_user import PivotTenantToUser
-from app.models.tenant import Tenant
+from app.models.tenant.pivot_tenant_to_user import PivotTenantToUser
+from app.models.tenant.tenant import Tenant
 
 
 class UserDAO(BaseDAO[User]):

@@ -1,12 +1,12 @@
 import hashlib
 import uuid
-from typing import List, Tuple
+from typing import Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
 
-from app.models.pivot_tenant_to_user import PivotTenantToUser
+from app.models.tenant.pivot_tenant_to_user import PivotTenantToUser
 
 
 class PivotTenantToUserDAO:

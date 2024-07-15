@@ -2,7 +2,7 @@ from app.dao.base import BaseDAO
 from sqlalchemy import select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from app.models.tenant import Tenant
+from app.models.tenant.tenant import Tenant
 from typing import List, Tuple
 from app.schemas.tenant import TenantSchema
 

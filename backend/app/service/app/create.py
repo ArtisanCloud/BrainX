@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.app import AppSchema
 from app.service.app.service import AppService
 
-from app.models.app import App
+from app.models.app.app import App
 
 
 def transform_app_to_reply(app: App) -> [AppSchema | None]:

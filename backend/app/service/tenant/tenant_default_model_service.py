@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from app.models.tenant import TenantDefaultModel
-from app.dao.tenant_default_model import TenantDefaultModelDAO
+from app.models.tenant.tenant import TenantDefaultModel
+from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
 from app.schemas.tenant import TenantDefaultModelSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError

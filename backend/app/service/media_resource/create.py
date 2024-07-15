@@ -3,7 +3,7 @@ from typing import Tuple
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dao.media_resource import bucket_media_resource_product
+from app.dao.media_resource.media_resource import bucket_media_resource_product
 from app.models.media_resource.model import MediaResource
 from app.schemas.media_resource.schema import MediaResourceSchema
 from app.service.media_resource.service import MediaResourceService

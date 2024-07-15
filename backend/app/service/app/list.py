@@ -10,7 +10,7 @@ from app.schemas.app import AppSchema
 from app.service.base import paginate_query
 from app.service.app.create import transform_app_to_reply
 
-from app.models.app import App
+from app.models.app.app import App
 
 def transform_apps_to_reply(apps: [App]) -> List[AppSchema]:
     data = [transform_app_to_reply(resource) for resource in apps]

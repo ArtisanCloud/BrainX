@@ -1,9 +1,5 @@
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
-from app.models.model_provider import ModelProvider
-from typing import Tuple
-from app.schemas.model_provider import ModelProviderSchema
+from app.models.model_provider.model_provider import ModelProvider
 from app.dao.base import BaseDAO
 
 

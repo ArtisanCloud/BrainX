@@ -4,7 +4,7 @@ from sqlalchemy import Column, UUID, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column
 
 from app.models.base import BasePivotModel, table_name_user, table_name_pivot_tenant_to_user
-from app.models.tenant import table_name_tenant
+from app.models.tenant.tenant import table_name_tenant
 
 
 class PivotTenantToUser(BasePivotModel):

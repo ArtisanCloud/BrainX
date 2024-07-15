@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from alembic import op
 import sqlalchemy as sa
 
-from app.models.tenant import table_name_tenant
+from app.models.tenant.tenant import table_name_tenant
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000002'

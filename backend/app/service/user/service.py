@@ -3,7 +3,7 @@ from typing import Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dao.user import UserDAO
+from app.dao.tenant.user import UserDAO
 from app.models.originaztion.user import User
 
 

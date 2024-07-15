@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import List, Tuple, Dict, Any
+from typing import Tuple, Dict, Any
 
-from sqlalchemy import select, delete, and_
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from app.dao.base import BaseDAO
-from app.models.app import App
+from app.models.app.app import App
 
 
 class AppDAO(BaseDAO[App]):

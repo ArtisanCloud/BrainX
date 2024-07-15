@@ -7,7 +7,7 @@ from starlette.requests import Request
 
 from app.api.context_manager import build_request_context
 from app.database.deps import get_db_session
-from app.models.app import App
+from app.models.app.app import App
 
 from app.schemas.app import ResponseGetAppList, RequestCreateApp, make_app, ResponseCreateApp, \
     RequestPatchApp, ResponsePatchApp, ResponseDeleteApp

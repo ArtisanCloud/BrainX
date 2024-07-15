@@ -1,10 +1,10 @@
-from typing import List, Tuple
+from typing import Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.model_provider import ModelProvider
+from app.models.model_provider.model_provider import ModelProvider
 from app.schemas.model_provider import ModelProviderSchema
-from app.dao.model_provider import ModelProviderDAO
+from app.dao.model_provider.model_provider import ModelProviderDAO
 
 
 class ModelProviderService:

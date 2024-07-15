@@ -1,13 +1,11 @@
 from sqlalchemy import select, func
 
-from app.dao.app import AppDAO
-from app.dao.model_provider import ModelProviderDAO
+from app.dao.model_provider.model_provider import ModelProviderDAO
 from app.database.seed.model_provider import init_model_provider_uuid
 from app.database.seed.tenant import init_tenant_uuid
-from app.models.app import App
-from app.models.app import AppStatus, AppType
-from app.models.app_model_config import AppModelConfig
-from app.service.model_provider.service import ModelProviderService
+from app.models.app.app import App
+from app.models.app.app import AppStatus, AppType
+from app.models.app.app_model_config import AppModelConfig
 
 
 # 添加代理人数据

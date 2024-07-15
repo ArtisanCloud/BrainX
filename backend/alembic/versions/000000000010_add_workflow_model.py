@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy import UUID
 
 from app.models.originaztion.user import table_name_user
-from app.models.workflow import table_name_workflow
+from app.models.workflow.workflow import table_name_workflow
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000010'

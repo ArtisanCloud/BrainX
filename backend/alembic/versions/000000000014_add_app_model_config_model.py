@@ -12,8 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
-from app.models.app_model_config import table_name_app_model_config
-from app.models.base import BaseModel
+from app.models.app.app_model_config import table_name_app_model_config
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000014'

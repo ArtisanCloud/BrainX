@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.app import App
+from app.models.app.app import App
 
 
 async def get_app_by_id(

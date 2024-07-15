@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.models.media_resource.model import MediaResource
-from app.dao.media_resource import MediaResourceDAO, FindManyMediaResourcesOption, get_media_type
+from app.dao.media_resource.media_resource import MediaResourceDAO, FindManyMediaResourcesOption, get_media_type
 from app.schemas.base import ResponsePagination
 
 

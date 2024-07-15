@@ -5,7 +5,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.models.base import BaseModel, table_name_workflow
 from app.models.originaztion.user import table_name_user
-from app.models.tenant import table_name_tenant
+from app.models.tenant.tenant import table_name_tenant
 
 
 class Workflow(BaseModel):

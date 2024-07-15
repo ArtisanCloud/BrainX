@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
-from app.models.app import App
+from app.models.app.app import App
 from app.models.robot_chat.conversation import Conversation
 from app.service.app.service import AppService
 from app.service.brainx import BrainXService

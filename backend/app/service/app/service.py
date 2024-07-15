@@ -1,10 +1,6 @@
-from typing import Tuple, Dict, Any, List
-
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dao.app import AppDAO
-from app.models.app import App
+from app.dao.app.app import AppDAO
 
 
 class AppService:

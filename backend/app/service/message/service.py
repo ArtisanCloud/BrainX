@@ -1,11 +1,10 @@
 from langchain_core.messages import BaseMessage
 
-from app.dao.message import MessageDAO
+from app.dao.robot_chat.message import MessageDAO
 
 from typing import Optional, Tuple, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.robot_chat.conversation import Message
 from app.schemas.base import Pagination, ResponsePagination
 
 

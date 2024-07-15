@@ -1,7 +1,7 @@
 from sqlalchemy import select, func
 
 from app.models.base import BaseStatus
-from app.models.tenant import Tenant
+from app.models.tenant.tenant import Tenant
 
 init_tenant_uuid = "00000000-0000-0000-0001-1607772020bd"
 

@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import constr
 
-from app.models.app import App
+from app.models.app.app import App
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
 
 

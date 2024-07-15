@@ -1,7 +1,7 @@
 from sqlalchemy import select, func
 
 from app.database.seed.tenant import init_tenant_uuid
-from app.models.model_provider import ModelProvider
+from app.models.model_provider.model_provider import ModelProvider
 
 init_model_provider_uuid = "3c189a18-ef3f-41fd-0002-1607772020bd"
 

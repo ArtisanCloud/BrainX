@@ -4,10 +4,10 @@ from typing import List
 from sqlalchemy import Text, String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app.models.app_model_config import table_name_app_model_config
+from app.models.app.app_model_config import table_name_app_model_config
 from app.models.base import BaseModel, table_name_app
-from app.models.tenant import table_name_tenant
-from app.models.workflow import table_name_workflow
+from app.models.tenant.tenant import table_name_tenant
+from app.models.workflow.workflow import table_name_workflow
 
 
 class AppStatus(IntEnum):

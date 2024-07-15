@@ -1,10 +1,6 @@
-from fastapi import Depends, APIRouter, HTTPException, Query
-from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.logger import logger
-from app.models.customer import User
-
-from uuid import UUID
+from fastapi import APIRouter
+from typing import List
+from app.models.tenant.customer import User
 
 router = APIRouter()
 
