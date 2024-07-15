@@ -1,7 +1,7 @@
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from app.models.base import BaseModel, table_name_dataset, table_name_tenant, table_name_user
-from app.models.app.app import table_name_app
+from app.models.base import table_name_app
 from enum import IntEnum
 
 __tablename__ = table_name_app
@@ -23,7 +23,7 @@ class Dataset(BaseModel):
     description = mapped_column(String)
     is_published = mapped_column(Boolean)
 
-    driver_type = mapped_column(SmallInteger, nullable=False, enum=IndexingDriverType)  # 使用枚举类型定义
+    driver_type = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
 
     embedding_model = mapped_column(String(255))
     embedding_model_provider = mapped_column(String(255))

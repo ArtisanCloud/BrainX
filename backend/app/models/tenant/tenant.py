@@ -1,10 +1,9 @@
 from typing import List
 
-from sqlalchemy import  String, Text, SmallInteger, UUID, ForeignKey
+from sqlalchemy import String, Text, SmallInteger, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.base import BaseModel, table_name_tenant, table_name_tenant_default_model
-
 
 # class Tenant(BaseModel):
 class Tenant(BaseModel):
@@ -19,7 +18,8 @@ class Tenant(BaseModel):
     # users = relationship("User", secondary="pivot_tenant_to_user")
     apps: Mapped[List["App"]] = relationship(back_populates="tenant")
     model_providers: Mapped[List["ModelProvider"]] = relationship(back_populates="tenant")
-    datasets: Mapped[List["Dataset"]] = relationship(back_populates="app")
+    datasets: Mapped[List["Dataset"]] = relationship(back_populates="tenant",
+                                                     foreign_keys="Dataset.tenant_uuid")
 
     def __repr__(self):
         return (
@@ -39,4 +39,3 @@ class TenantDefaultModel(BaseModel):
     provider_name = mapped_column('provider_name', String(40), nullable=False)
     name = mapped_column('name', String(255), nullable=False)
     type = mapped_column('type', String(40), nullable=False)
-

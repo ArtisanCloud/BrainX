@@ -15,7 +15,7 @@ async def chat(db: AsyncSession,
     if app_uuid != '':
         # 获取app
         service_app = AppService(db)
-        app, exception = await service_app.get_app_by_uuid(app_uuid)
+        app, exception = await service_app.app_dao.get_by_uuid(app_uuid)
         if exception:
             return None, None, exception
     else:

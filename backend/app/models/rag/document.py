@@ -43,7 +43,7 @@ class Document(BaseModel):
     split_end_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
 
     dataset: Mapped["Dataset"] = relationship(back_populates="documents", foreign_keys=[dataset_uuid])
-    document_segments: Mapped["DocumentSegment"] = relationship(back_populates="document", foreign_keys="[DocumentSegment.dataset_uuid]")
+    document_segments: Mapped["DocumentSegment"] = relationship(back_populates="document", foreign_keys="[DocumentSegment.document_uuid]")
 
     # tenant: Mapped["Tenat"] = relationship(back_populates="datasets", foreign_keys=[tenant_uuid])
     # created_user_by: Mapped["User"] = relationship(back_populates="created_documents", foreign_keys=[created_user_by])
