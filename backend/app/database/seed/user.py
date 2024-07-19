@@ -1,14 +1,13 @@
 from sqlalchemy import select, func
 
-from app.database.seed.tenant import init_tenant_uuid
+from app.core.libs.security import hash_plain_password
+from app.database.seed import init_user_uuid, init_tenant_uuid
 from app.models.originaztion.user import User
-from app.models.tenant.pivot_tenant_to_user import PivotTenantToUser
 
-init_user_uuid = "00000000-0000-0000-0001-1607772020bd"
+
 
 # 添加代理人数据
 async def seed_users(db) -> Exception | None:
-
     print("start seed users")
     try:
         # Check if the table is empty
@@ -17,20 +16,22 @@ async def seed_users(db) -> Exception | None:
         if users_count == 0:
             user = User(
                 uuid=init_user_uuid,
+                tenant_owner_uuid=init_tenant_uuid,
                 account='root',
+                password=hash_plain_password("root"),
                 name="初始用户", nick_name="default tenant",
                 status="active",
             )
             db.add(user)
 
-            pivot = PivotTenantToUser(
-                tenant_uuid=init_tenant_uuid,
-                user_uuid=user.uuid
-            )
-            pivot.generate_uuid()
+            # pivot = PivotTenantToUser(
+            #     tenant_uuid=init_tenant_uuid,
+            #     user_uuid=user.uuid,
+            # )
+            # pivot.generate_uuid()
 
             # print(pivot)
-            db.add(pivot)
+            # db.add(pivot)
 
             await db.commit()  # 添加 await 关键字
 

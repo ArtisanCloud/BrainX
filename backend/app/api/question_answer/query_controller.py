@@ -3,7 +3,7 @@ import http
 from fastapi import Depends, APIRouter
 
 
-from app.api.context_manager import build_request_context
+
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.query import RequestQuery, ResponseQuery
 
@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post("/query")
 async def api_query(
         query: RequestQuery,
-        _=Depends(build_request_context)
+        
 ) -> ResponseQuery | ResponseSchema:
     """
     query question_answer by text

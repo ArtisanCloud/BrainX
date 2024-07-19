@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from app.models import Document
 
 
 class Dataset:

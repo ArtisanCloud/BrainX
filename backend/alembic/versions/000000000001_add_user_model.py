@@ -28,6 +28,7 @@ def upgrade() -> None:
         sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
+        sa.Column('tenant_owner_uuid', sa.UUID(), nullable=True, unique=True),
         sa.Column('account', sa.String(), nullable=True),
         sa.Column('name', sa.String(), nullable=True),
         sa.Column('nick_name', sa.String(), nullable=True),

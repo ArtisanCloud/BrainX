@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import settings
 from app.core.libs.security import check_password
 from app.models.originaztion.user import User
-from app.schemas.auth import ResponseLoginUser, AccessTokenSchema, ALGORITHM, auth_user_uuid_key
+from app.schemas.auth import ResponseLoginUser, AccessTokenSchema, ALGORITHM, auth_user_uuid_key, auth_tenant_uuid_key
 from app.service.user.service import UserService
 from jose import JWTError, jwt
 
@@ -13,6 +13,7 @@ from jose import JWTError, jwt
 def sign_token(user: User, secret_key, expires_in) -> AccessTokenSchema:
     now = datetime.now(timezone.utc)
     access_token_payload = {
+        auth_tenant_uuid_key: str(user.tenant_owner_uuid),
         auth_user_uuid_key: str(user.uuid),
         'name': user.name,
         'exp': now + timedelta(seconds=expires_in)
@@ -32,7 +33,7 @@ def sign_token(user: User, secret_key, expires_in) -> AccessTokenSchema:
 async def login_by_account(
         db: AsyncSession,
         account: str, password: str
-) -> tuple[AccessTokenSchema, Exception]:
+) -> tuple[AccessTokenSchema | None, Exception | None]:
     service_user = UserService(db)
 
     # check user exist or not
@@ -51,6 +52,13 @@ async def login_by_account(
     # print(f"passed:{passed}")
     if not passed:
         return None, Exception("password error")
+
+    # load user owned tenant
+    # user, exception = service_user.user_dao.load_owner_tenant(user)
+    # if exception is not None:
+    #     return None, exception
+    if user.tenant_owner_uuid == "":
+        return None, Exception("user has not bind owned tenant")
 
     # create token
     access_token = sign_token(user, settings.jwt.jwt_secret, settings.jwt.expire_in)

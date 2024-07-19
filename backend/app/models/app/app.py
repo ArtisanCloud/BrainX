@@ -5,7 +5,7 @@ from sqlalchemy import Text, String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.app.app_model_config import table_name_app_model_config
-from app.models.base import BaseModel, table_name_app
+from app.models.base import BaseModel, table_name_app, table_name_user
 from app.models.tenant.tenant import table_name_tenant
 from app.models.workflow.workflow import table_name_workflow
 
@@ -30,6 +30,8 @@ class App(BaseModel):
     __tablename__ = table_name_app
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
+    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
     app_model_config_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app_model_config + '.uuid'))
     workflow_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_workflow + '.uuid'))
 
@@ -65,6 +67,8 @@ class App(BaseModel):
             f"name='{self.name}', "
             f"workflow_uuid='{self.workflow_uuid}', "
             f"tenant_uuid='{self.tenant_uuid}', "
+            f"created_user_by='{self.created_user_by}', "
+            f"updated_user_by='{self.updated_user_by}', "
             f"status={self.status}, "
             f"type={self.type}, "
             f"mode={self.mode}, "

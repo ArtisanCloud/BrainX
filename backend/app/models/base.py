@@ -87,6 +87,7 @@ table_name_conversation = 'conversations'
 table_name_message = 'messages'
 table_name_workflow = "workflows"
 table_name_dataset = "datasets"
+table_name_dataset_segment_rule = "dataset_segment_rules"
 table_name_document = "documents"
 table_name_document_segment = "document_segments"
 table_name_embedding = "embeddings"

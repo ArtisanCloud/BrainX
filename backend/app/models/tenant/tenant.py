@@ -1,9 +1,11 @@
 from typing import List
 
-from sqlalchemy import String, Text, SmallInteger, ForeignKey
+from sqlalchemy import String, Text, SmallInteger, ForeignKey, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app.models.base import BaseModel, table_name_tenant, table_name_tenant_default_model
+from app.models.base import BaseModel, table_name_tenant, table_name_tenant_default_model, \
+    table_name_pivot_tenant_to_user, table_name_user
+
 
 # class Tenant(BaseModel):
 class Tenant(BaseModel):
@@ -15,11 +17,15 @@ class Tenant(BaseModel):
     encrypted_public_key = mapped_column('encrypted_public_key', Text)
     config = mapped_column('config', Text)
 
-    # users = relationship("User", secondary="pivot_tenant_to_user")
+    users: Mapped[List["User"]] = relationship(secondary=table_name_pivot_tenant_to_user,
+                                               back_populates="tenants",
+                                               overlaps="user, tenant"
+                                               )
+    owned_user: Mapped["User"] = relationship(back_populates="owned_tenant", foreign_keys='[User.tenant_owner_uuid]')
     apps: Mapped[List["App"]] = relationship(back_populates="tenant")
     model_providers: Mapped[List["ModelProvider"]] = relationship(back_populates="tenant")
     datasets: Mapped[List["Dataset"]] = relationship(back_populates="tenant",
-                                                     foreign_keys="Dataset.tenant_uuid")
+                                                     foreign_keys="[Dataset.tenant_uuid]")
 
     def __repr__(self):
         return (

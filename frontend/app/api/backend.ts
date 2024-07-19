@@ -1,6 +1,9 @@
 import {backendUrl, frontendUrl} from "@/app/config/config";
 import {notification} from 'antd';
 import {Response as APIResponse} from "@/app/api";
+import Cookies from "js-cookie";
+import {token_key} from "@/app/lib/auth";
+import {sleep} from "@/app/lib/base";
 
 interface validateError {
 	type: string
@@ -16,6 +19,21 @@ interface validateError {
 
 
 class BackendClient {
+
+	private get_header() {
+		const token = Cookies.get(token_key)
+
+		const headers = {
+			"Content-Type": "application/json",
+		}
+		if (token) {
+			headers['Authorization'] = `Bearer ${token}`
+		}
+		// console.log(token, headers)
+
+
+		return headers
+	}
 
 	public async backend_get(endpoint: string, init?: any) {
 		return this.get(backendUrl, endpoint, init)
@@ -44,7 +62,9 @@ class BackendClient {
 
 	public async get(host: string, endpoint: string, init?: any): Promise<any> {
 		const url = host + endpoint;
-		const res = await fetch(url, init);
+		const headers = init?.headers ? {...this.get_header(), ...init.headers} : this.get_header();
+		const newInit = {...init, headers};
+		const res = await fetch(url, newInit);
 
 		return this.processResponse(res)
 	}
@@ -53,27 +73,29 @@ class BackendClient {
 		const url = host + endpoint;
 		const res = await fetch(url, {
 			method: "POST",
-			headers: {"Content-Type": "application/json"},
+			headers: this.get_header(),
 			body: JSON.stringify(body),
 		});
 
 		return this.processResponse(res)
 	}
+
 	public async patch(host: string, endpoint: string, body?: any): Promise<any> {
 		const url = host + endpoint;
 		const res = await fetch(url, {
 			method: "PATCH",
-			headers: {"Content-Type": "application/json"},
+			headers: this.get_header(),
 			body: JSON.stringify(body),
 		});
 
 		return this.processResponse(res)
 	}
+
 	public async delete(host: string, endpoint: string, body?: any): Promise<any> {
 		const url = host + endpoint;
 		const res = await fetch(url, {
 			method: "DELETE",
-			headers: {"Content-Type": "application/json"},
+			headers: this.get_header(),
 			body: JSON.stringify(body),
 		});
 
@@ -90,6 +112,17 @@ class BackendClient {
 					description: `${error.loc.join(": ")} ${JSON.stringify(error.input)}`,
 				});
 			});
+		} else if (res.status == 401) {
+
+			notification.error({
+				message: "当前未登录状态",
+				description: "需要重新登录",
+				duration: 3,
+			});
+			// sleep(2000).then(() => {
+			// 	window.location.href = '/user/login'; // 替换为你的登录页面路径
+			// })
+			return;
 		}
 
 	}
@@ -101,7 +134,7 @@ class BackendClient {
 		});
 	}
 
-	private async processResponse(res: Response){
+	private async processResponse(res: Response) {
 
 		if (!res.ok) {
 			this.processHttpErrorResponse(res).then(() => {

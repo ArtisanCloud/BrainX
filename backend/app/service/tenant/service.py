@@ -1,7 +1,7 @@
 from typing import Tuple
 from app.models.tenant.tenant import Tenant
 from app.dao.tenant.tenant import TenantDAO
-from app.schemas.tenant import TenantSchema
+from app.schemas.tenant.tenant import TenantSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 

@@ -12,7 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
-from app.models.base import table_name_document_segment, table_name_tenant, table_name_document, table_name_user
+from app.models.base import table_name_document_segment, table_name_tenant, table_name_document, table_name_user, \
+    table_name_dataset
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000032'
@@ -28,6 +29,7 @@ def upgrade() -> None:
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False),
+        sa.Column('dataset_uuid', UUID(as_uuid=True), nullable=False),
         sa.Column('document_uuid', UUID(as_uuid=True), nullable=False),
         sa.Column('created_user_by', UUID(as_uuid=True), nullable=False),
         sa.Column('updated_user_by', UUID(as_uuid=True), nullable=True),
@@ -43,6 +45,7 @@ def upgrade() -> None:
         sa.Column('deleted_at', sa.Boolean(), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
+        sa.ForeignKeyConstraint(['dataset_uuid'], [table_name_dataset + '.uuid'], ),
         sa.ForeignKeyConstraint(['document_uuid'], [table_name_document + '.uuid'], ),
         sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
         sa.ForeignKeyConstraint(['updated_user_by'], [table_name_user + '.uuid'], ),

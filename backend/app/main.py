@@ -1,5 +1,4 @@
 from typing import cast
-
 from app.logger import logger
 
 from fastapi import FastAPI
@@ -108,6 +107,8 @@ if settings.server.cors_origins:
 
 # print("cors with domain", origins)
 
+from starlette.middleware.sessions import SessionMiddleware
+app.add_middleware(SessionMiddleware, secret_key="session_key")
 # 允许所有方法和请求头
 app.add_middleware(
     CORSMiddleware,

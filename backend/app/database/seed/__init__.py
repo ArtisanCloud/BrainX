@@ -1,0 +1,3 @@
+init_tenant_uuid = "00000000-0000-0000-0001-1607772020bd"
+init_user_uuid = "00000000-0000-0000-0001-1607772020bd"
+init_model_provider_uuid = "3c189a18-ef3f-41fd-0002-1607772020bd"

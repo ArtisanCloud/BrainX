@@ -3,7 +3,7 @@ from typing import Tuple
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.model_provider.model_provider import ModelProvider
-from app.schemas.model_provider import ModelProviderSchema
+from app.schemas.model_provider.model_provider import ModelProviderSchema
 from app.dao.model_provider.model_provider import ModelProviderDAO
 
 

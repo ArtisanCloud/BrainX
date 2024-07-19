@@ -34,7 +34,6 @@ async def api_register(
 
 @router.post("/login")
 async def api_login(
-        response: Response,
         data: RequestLoginUser,
         db: AsyncSession = Depends(get_db_session),
 

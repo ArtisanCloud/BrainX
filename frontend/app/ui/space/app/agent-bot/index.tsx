@@ -1,7 +1,7 @@
 "use client";
 
 import styles from './index.module.scss'
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import {GetPublicUrl} from "@/app/lib/url";
 import {Button, Dropdown, MenuProps, Popconfirm, PopconfirmProps, message} from 'antd';
 import {EllipsisOutlined} from '@ant-design/icons';

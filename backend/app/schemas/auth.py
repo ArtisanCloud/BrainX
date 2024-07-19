@@ -1,11 +1,10 @@
-from typing import Optional
-
 from app import settings
-from app.schemas.base import BaseSchema, Pagination
-from app.schemas.user import UserSchema
+from app.schemas.base import BaseSchema
+from app.schemas.tenant.user import UserSchema
 
 token_expired_duration = 60 * 60 * 24 * 3
 access_token_type = "Bearer"
+auth_tenant_uuid_key = "tenant_uuid"
 auth_user_uuid_key = "user_uuid"
 
 SECRET_KEY = settings.jwt.jwt_secret

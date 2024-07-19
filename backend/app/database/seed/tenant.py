@@ -1,9 +1,9 @@
 from sqlalchemy import select, func
 
+from app.database.seed import init_user_uuid, init_tenant_uuid
 from app.models.base import BaseStatus
 from app.models.tenant.tenant import Tenant
 
-init_tenant_uuid = "00000000-0000-0000-0001-1607772020bd"
 
 
 # 添加代理人数据

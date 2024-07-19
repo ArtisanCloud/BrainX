@@ -9,6 +9,7 @@ import {ActionLogin} from "@/app/api/auth";
 import Cookies from 'js-cookie';
 import {useRouter} from "next/navigation";
 import {account_key, token_key} from "@/app/lib/auth";
+import {hashPassword} from "@/app/lib/security";
 
 export default function LoginPage() {
 
@@ -19,7 +20,7 @@ export default function LoginPage() {
 
 		const response = await ActionLogin({
 			account: values.account,
-			password: values.password,
+			password: hashPassword(values.password),
 		});
 
 

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
 
-from app.api.context_manager import build_request_context
+
 from app.database.deps import get_db_session
 from app.database.seed.user import init_user_uuid
 from app.models.robot_chat.conversation import Conversation
@@ -25,7 +25,6 @@ router = APIRouter()
 @router.get("/list")
 async def api_get_conversation_list(
         request: Request,
-        _=Depends(build_request_context),
         db: AsyncSession = Depends(get_db_session),
 ) -> ResponseGetConversationList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10

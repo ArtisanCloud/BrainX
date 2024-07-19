@@ -39,8 +39,6 @@ def upgrade() -> None:
         sa.Column('batch_index', sa.Integer(), nullable=True),
         sa.Column('word_count', sa.Integer(), nullable=True),
         sa.Column('token_count', sa.Integer(), nullable=True),
-        sa.Column('chunk_size', sa.Integer(), nullable=True),
-        sa.Column('overlap_size', sa.Integer(), nullable=True),
 
         sa.Column('process_start_at', sa.TIMESTAMP(timezone=True), nullable=True),
         sa.Column('process_end_at', sa.TIMESTAMP(timezone=True), nullable=True),

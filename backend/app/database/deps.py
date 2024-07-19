@@ -21,6 +21,8 @@ async def get_db_session() -> AsyncSession:
             #  rollback the db session if any exception occurs
             logger.error(e)
             await db.rollback()
+            raise e
+
         finally:
             #  close the db session
             await db.close()

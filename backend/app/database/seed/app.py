@@ -1,8 +1,8 @@
 from sqlalchemy import select, func
 
 from app.dao.model_provider.model_provider import ModelProviderDAO
-from app.database.seed.model_provider import init_model_provider_uuid
-from app.database.seed.tenant import init_tenant_uuid
+from app.database.seed import init_model_provider_uuid, init_user_uuid
+from app.database.seed import init_tenant_uuid
 from app.models.app.app import App
 from app.models.app.app import AppStatus, AppType
 from app.models.app.app_model_config import AppModelConfig
@@ -20,6 +20,7 @@ async def seed_apps(db) -> Exception | None:
                 {
                     "uuid": "7c189a18-ef3f-41fd-bda1-1607772020bd",
                     "tenant_uuid": init_tenant_uuid,
+                    "created_user_by": init_user_uuid,
                     "app_model_config_uuid": init_model_provider_uuid,
                     "name": "PowerWechat",
                     "description": "代理机器人1号",
@@ -30,6 +31,7 @@ async def seed_apps(db) -> Exception | None:
                 {
                     "uuid": "af932bfd-ff82-47e3-86bd-a31de67f8701",
                     "tenant_uuid": init_tenant_uuid,
+                    "created_user_by": init_user_uuid,
                     "app_model_config_uuid": init_model_provider_uuid,
                     "name": "PowerX",
                     "description": "代理机器人1号",
@@ -40,6 +42,7 @@ async def seed_apps(db) -> Exception | None:
                 {
                     "uuid": "a3f1dae1-5ce6-4b2d-b4be-0004914b819e",
                     "tenant_uuid": init_tenant_uuid,
+                    "created_user_by": init_user_uuid,
                     "app_model_config_uuid": init_model_provider_uuid,
                     "name": "BrainX",
                     "description": "代理机器人1号",
@@ -85,7 +88,8 @@ async def get_apps_from_data(db, data: list[dict]) -> list[App]:
             description=item["description"],
             status=item["status"],
             type=item["type"],
-            avatar_url=item["avatar_url"]
+            avatar_url=item["avatar_url"],
+            created_user_by=init_user_uuid,
         )
         # print(app)
         # 创建 AppModelConfig 对象并设置其属性

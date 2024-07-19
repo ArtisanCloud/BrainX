@@ -4,8 +4,7 @@ from typing import List, Optional, Dict, Union, Any
 from sqlalchemy import Column, String, UUID, BigInteger, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from app.models.base import BaseModel, table_name_user
-
+from app.models.base import BaseModel, table_name_user, table_name_pivot_tenant_to_user, table_name_tenant
 
 
 class UserMetadataKeysEnum(str, Enum):
@@ -21,6 +20,7 @@ DocumentMetadataMap = Dict[Union[UserMetadataKeysEnum, str], Any]
 class User(BaseModel):
     __tablename__ = table_name_user
 
+    tenant_owner_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     account = mapped_column(String, unique=True, nullable=False)
     name = mapped_column(String)
     nick_name = mapped_column(String)
@@ -39,15 +39,21 @@ class User(BaseModel):
     is_activated = mapped_column(Boolean, default=False)
     we_work_user_id = mapped_column(String)
 
-    # tenants: Mapped[List[Tenant]] = relationship(secondary="pivot_tenant_to_user")
+    tenants: Mapped[List["Tenant"]] = relationship(secondary=table_name_pivot_tenant_to_user,
+                                                   back_populates="users",
+                                                   overlaps="user, tenant",
+                                                   )
+    owned_tenant: Mapped["Tenant"] = relationship(back_populates="owned_user", foreign_keys=[tenant_owner_uuid])
 
     def __repr__(self):
+        description = self.desc[:10] + '...' if self.desc is not None else 'No description'
         return (
             f"<User(id={self.id}, "
+            f"tenant_owner_uuid='{self.tenant_owner_uuid}', "
             f"account='{self.account}', "
             f"name='{self.name}', "
             f"nick_name='{self.nick_name}', "
-            f"desc='{self.desc[:10]}...', "
+            f"desc='{description}...', "
             f"position_id={self.position_id}, "
             f"job_title='{self.job_title}', "
             f"department_id={self.department_id}, "

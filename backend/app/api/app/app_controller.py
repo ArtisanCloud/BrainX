@@ -5,11 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
 
-from app.api.context_manager import build_request_context
+from app.api.middleware.auth import get_session_user
 from app.database.deps import get_db_session
+from app.models import User
 from app.models.app.app import App
 
-from app.schemas.app import ResponseGetAppList, RequestCreateApp, make_app, ResponseCreateApp, \
+from app.schemas.app.app import ResponseGetAppList, RequestCreateApp, make_app, ResponseCreateApp, \
     RequestPatchApp, ResponsePatchApp, ResponseDeleteApp
 from app.schemas.base import Pagination, ResponseSchema
 from app.service.app.create import create_app
@@ -23,7 +24,7 @@ router = APIRouter()
 @router.get("/list")
 async def api_get_app_list(
         request: Request,
-        _=Depends(build_request_context),
+        session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_db_session),
 ) -> ResponseGetAppList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
@@ -33,7 +34,7 @@ async def api_get_app_list(
     p = Pagination(page=page, page_size=page_size)
 
     try:
-        apps, pagination, exception = await get_app_list(db, p)
+        apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
             raise exception
 

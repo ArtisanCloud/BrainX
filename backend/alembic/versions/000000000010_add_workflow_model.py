@@ -29,6 +29,8 @@ def upgrade() -> None:
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('tenant_uuid', sa.UUID(), nullable=True),
+        sa.Column('created_user_by', UUID(as_uuid=True), nullable=False),
+        sa.Column('updated_user_by', UUID(as_uuid=True), nullable=True),
         sa.Column('parent_uuid', sa.UUID(), nullable=True),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('tag', sa.String(), nullable=False),

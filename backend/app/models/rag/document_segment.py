@@ -3,7 +3,7 @@ from enum import IntEnum
 from sqlalchemy import SmallInteger, ForeignKey, Boolean, UUID, Text, Integer, TIMESTAMP
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from app.models.base import BaseModel, table_name_document_segment, table_name_document, table_name_user, \
-    table_name_tenant
+    table_name_tenant, table_name_dataset
 
 
 class DocumentSegmentStatus(IntEnum):
@@ -21,6 +21,7 @@ class DocumentSegment(BaseModel):
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     document_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_document + '.uuid'))
+    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))
     created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
     updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
 

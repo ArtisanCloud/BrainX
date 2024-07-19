@@ -15,6 +15,17 @@ class UserDAO(BaseDAO[User]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, User)
 
+    async def load_owner_tenant(self, user: User) -> Tuple[User | None, Exception | None]:
+        try:
+            stmt = select(Tenant).filter_by(uuid=user.tenant_owner_uuid)
+            result = await self.db.execute(stmt)
+            user.owned_tenant = result.scalar_one_or_none()
+
+        except SQLAlchemyError as e:
+            return None, e
+
+        return user, None
+
     async def get_by_account(self, account: str) -> Tuple[Optional[User], Optional[Exception]]:
         """
         根据 Account 获取模型对象

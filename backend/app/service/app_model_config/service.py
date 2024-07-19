@@ -1,7 +1,7 @@
 from typing import Tuple
 from app.models.app.app_model_config import AppModelConfig
 from app.dao.app.app_model_config import AppModelConfigDAO
-from app.schemas.app_model_config import AppModelConfigSchema
+from app.schemas.app.app_model_config import AppModelConfigSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 

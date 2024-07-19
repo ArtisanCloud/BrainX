@@ -32,8 +32,6 @@ class Document(BaseModel):
     batch_index = mapped_column(Integer)
     word_count = mapped_column(Integer)
     token_count = mapped_column(Integer)
-    chunk_size = mapped_column(Integer)
-    overlap_size = mapped_column(Integer)
 
     process_start_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
     process_end_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)

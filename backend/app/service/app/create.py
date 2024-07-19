@@ -2,7 +2,7 @@ from typing import Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.app import AppSchema
+from app.schemas.app.app import AppSchema
 from app.service.app.service import AppService
 
 from app.models.app.app import App

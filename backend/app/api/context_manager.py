@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models.originaztion.user import User
 from app.logger import logger
-from app.schemas.user import UserTokenData, UserSchema, UserStatus
+from app.schemas.tenant.user import UserTokenData, UserSchema, UserStatus
 from app.utils.exceptions import AuthException
 
 # we are using context variables to store request level context , as FASTAPI

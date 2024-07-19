@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.app import AppSchema
+from app.schemas.app.app import AppSchema
 from app.service.app.create import transform_app_to_reply
 from app.service.app.service import AppService
 

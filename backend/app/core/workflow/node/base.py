@@ -15,7 +15,7 @@ class NodeType(EnumWithValueOf):
     CONDITION = "condition"
     DATABASE = "database"
     END = "end"
-    KNOWLEDGE = "knowledge"
+    KNOWLEDGE = "rag"
     LLM = "llm"
     MESSAGE = "message"
     START = "start"

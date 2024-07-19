@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from app.api.context_manager import build_request_context
+
 from app.database.deps import get_db_session
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.media_resource.schema import ResponseGetMediaResourceList, ResponseCreateMediaResource, \
@@ -19,7 +19,6 @@ router = APIRouter()
 @router.get("/list")
 async def api_get_media_resource_list(
         request: Request,
-        _=Depends(build_request_context),
         db: AsyncSession = Depends(get_db_session),
 ) -> ResponseGetMediaResourceList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
