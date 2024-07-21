@@ -43,7 +43,8 @@ class Dataset(BaseModel):
     dataset_format = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
     import_type = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
     driver_type = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
-
+    word_count = mapped_column(Integer)
+    token_count = mapped_column(Integer)
     embedding_model = mapped_column(String(255))
     embedding_model_provider = mapped_column(String(255))
 
@@ -64,10 +65,11 @@ class Dataset(BaseModel):
             f"description='{description}', "
             f"avatar_url='{self.avatar_url}', "
             f"is_published='{self.is_published}', "
-            f"indexing_driver_type='{self.indexing_driver_type}', "
+            f"driver_type='{self.driver_type}', "
+            f"word_count='{self.word_count}', "
+            f"token_count='{self.token_count}', "
             f"embedding_model='{self.embedding_model}', "
-            f"embedding_model_provider='{self.embedding_model_provider}', "
-            f"is_public={self.is_public})>"
+            f"embedding_model_provider='{self.embedding_model_provider})>"
         )
 
 

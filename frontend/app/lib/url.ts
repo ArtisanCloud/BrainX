@@ -19,6 +19,11 @@ export const GetPublicUrl = (resource: string | undefined) => {
 export const GetOssUrl = (uri: string | undefined): string => {
 	// console.log(uri)
 	if (!uri) return notFoundImage;
+
+	if (uri.startsWith('http://') || uri.startsWith('https://')) {
+		return uri;
+	}
+
 	const normalizedUri = uri.startsWith('/') ? uri.slice(1) : uri;
 	// console.log(ossUrl,normalizedUri)
 

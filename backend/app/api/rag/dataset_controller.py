@@ -8,7 +8,6 @@ from starlette.requests import Request
 from app.api.middleware.auth import get_session_user
 from app.database.deps import get_db_session
 from app.models import Dataset, User
-from app.schemas.auth import auth_user_uuid_key
 
 from app.schemas.base import Pagination, ResponseSchema
 from app.schemas.rag.dataset import ResponseGetDatasetList, RequestCreateDataset, make_dataset, RequestPatchDataset, \
@@ -65,7 +64,7 @@ async def api_create_dataset(
         dataset = make_dataset(data)
         dataset.tenant_uuid = str(session_user.tenant_owner_uuid)
         dataset.created_user_by = str(session_user.uuid)
-        # print(dataset)
+        print(dataset)
         dataset, exception = await create_dataset(db, dataset)
         if exception is not None:
             raise exception

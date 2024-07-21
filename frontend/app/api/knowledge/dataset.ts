@@ -22,6 +22,8 @@ export interface Dataset extends PowerModel {
 	is_published?: boolean;
 	import_type?: string;
 	driver_type?: string;
+	word_count?: number;
+	token_count?: number;
 	embedding_model?: string;
 	embedding_model_provider?: string;
 

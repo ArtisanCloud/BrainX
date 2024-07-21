@@ -2,13 +2,13 @@
 
 import styles from './index.module.scss'
 import React, {useContext} from "react";
-import {GetPublicUrl} from "@/app/lib/url";
+import {GetOssUrl} from "@/app/lib/url";
 import {Button, Dropdown, MenuProps, Popconfirm, PopconfirmProps, message} from 'antd';
 import {EllipsisOutlined} from '@ant-design/icons';
 import {AppItemProps} from "@/app/ui/space/robot-chat/bot-group/app/chatbot";
 import Image from "next/image";
 import Link from "next/link";
-import {defaultPage, routeRobotChat} from "@/app/config/constant/index";
+import {defaultPage, routeRobotChat} from "@/app/config/constant";
 import {FetchAppListContext} from "@/app/ui/space/app/provider/fetch-app-list-provider";
 import {appPageSize} from "@/app/ui/space/app/list";
 import {ActionDeleteApp} from "@/app/api/app";
@@ -104,7 +104,7 @@ const AppBot: React.FC<AppItemProps> = ({app}) => {
 							height={68}
 							alt={'app avatar'}
 							className={styles.avatarImage}
-							src={GetPublicUrl(app.avatar_url!)}/>
+							src={GetOssUrl(app.avatar_url!)}/>
 					</div>
 					<div className={styles.content}>
 						<div className={styles.appInfo}>

@@ -2,8 +2,8 @@
 
 import styles from './index.module.scss';
 import React, {useContext, useEffect} from "react";
-import {Table, Space, Button, TableProps, Switch} from "antd";
-import {DeleteOutlined} from "@ant-design/icons";
+import {Table, Space, Button, TableProps, Switch, Dropdown, MenuProps} from "antd";
+import {MoreOutlined, BlockOutlined, DeleteOutlined} from "@ant-design/icons";
 import {
 	FetchDatasetListContext,
 	FetchDatasetListContextType
@@ -11,7 +11,54 @@ import {
 import {defaultPage, pageSize} from "@/app/config/constant";
 import {Dataset, ResponseFetchDatasetList} from "@/app/api/knowledge/dataset";
 import Image from "next/image";
-import {GetPublicUrl} from "@/app/lib/url";
+import {GetOssUrl} from "@/app/lib/url";
+import {getDatasetImportTypeTranslation} from "@/app/utils/dataset"
+import {EditIcon} from "@nextui-org/shared-icons";
+
+
+const handleEdit = (record: Dataset) => {
+	console.log(record)
+}
+
+const handleDelete = (record: Dataset) => {
+	console.log(record)
+}
+
+
+const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+	console.info('Click on left button.');
+	console.log('click left button', e);
+};
+
+const handleMenuClick: MenuProps['onClick'] = (e) => {
+
+	if (e.key=='edit'){
+		handleEdit()
+	}
+
+};
+
+
+
+
+const items: MenuProps['items'] = [
+	{
+		label: '编辑',
+		key: 'edit',
+		icon: <EditIcon/>,
+	},
+	{
+		label: '删除',
+		key: 'delete',
+		icon: <DeleteOutlined/>,
+		danger: true,
+	},
+]
+
+const menuProps = {
+	items,
+	onClick: handleMenuClick,
+};
 
 const columns: TableProps<Dataset>['columns'] = [
 	{
@@ -20,13 +67,21 @@ const columns: TableProps<Dataset>['columns'] = [
 		key: 'name',
 		render: (_, dataset: Dataset) =>
 			<div className={'flex flex-row'}>
-				<Image
-					priority
-					width={68}
-					height={68}
-					alt={'app avatar'}
-					className={'rounded-lg border-1'}
-					src={GetPublicUrl(dataset.avatar_url!)}/>
+				{dataset.avatar_url ? (<Image
+						priority
+						width={68}
+						height={68}
+						alt={'app avatar'}
+						className={'rounded-lg border-1'}
+						src={GetOssUrl(dataset.avatar_url)}/>
+				) : (
+					<div className={'w-16 h-16 flex'}>
+						<BlockOutlined
+							style={{fontSize: '32px', color: 'white', backgroundColor: '#5295e5'}}
+							className="place-content-center rounded-lg border-1 w-full h-full"
+						/>
+					</div>
+				)}
 				<div className={'flex flex-col justify-center ml-3 border-0'}>
 					<span className={'border-0'} style={{fontWeight: 'bold'}}>{dataset.name}</span>
 					<span style={{fontSize: '12px', color: 'gray'}}>{dataset.description}</span>
@@ -38,14 +93,25 @@ const columns: TableProps<Dataset>['columns'] = [
 		key: 'type',
 		render: (_, record) => (
 			<Space size="middle">
-
+				{getDatasetImportTypeTranslation(record.import_type)}
 			</Space>
 		),
 	},
 	{
 		title: '尺寸',
-		dataIndex: 'size',
-		key: 'size',
+		dataIndex: 'word_count',
+		key: 'word_count',
+		render: (text, record) => (
+			record.word_count !== null ? record.word_count : 0
+		),
+	},
+	{
+		title: '结束时间',
+		dataIndex: 'updatedAt',
+		key: 'updatedAt',
+		render: (_, record) => (
+			record.updatedAt ? moment(record.updatedAt).format('YYYY-MM-DD HH:mm:ss') : ''
+		),
 	},
 	{
 		title: '启动',
@@ -55,8 +121,8 @@ const columns: TableProps<Dataset>['columns'] = [
 				<Switch
 					checkedChildren="开启"
 					unCheckedChildren="关闭"
-					defaultChecked/>
-
+					checked={record.is_published}
+				/>
 			</Space>
 		),
 	},
@@ -65,10 +131,17 @@ const columns: TableProps<Dataset>['columns'] = [
 		key: 'action',
 		render: (_, record) => (
 			<Space size="middle">
-				<Button
-					size={"small"}
-					style={{border: 'none'}}
-					icon={<DeleteOutlined/>}/>
+				<Dropdown
+					menu={menuProps}
+					placement="bottom"
+					arrow={{pointAtCenter: true}}
+					// onClick={handleButtonClick}
+				>
+					<Button
+						size="small"
+						icon={<MoreOutlined/>}/>
+				</Dropdown>
+
 			</Space>
 		),
 	},
@@ -106,6 +179,7 @@ const DatasetList = () => {
 		})
 
 	}
+
 
 	return (
 		<div className={styles.container}>

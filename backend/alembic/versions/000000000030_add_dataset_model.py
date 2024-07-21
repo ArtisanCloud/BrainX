@@ -38,6 +38,8 @@ def create_dataset_table() -> None:
         sa.Column('dataset_format', sa.SmallInteger(), nullable=True),
         sa.Column('import_type', sa.SmallInteger(), nullable=True),
         sa.Column('driver_type', sa.SmallInteger(), nullable=True),
+        sa.Column('word_count', sa.Integer(), nullable=True),
+        sa.Column('token_count', sa.Integer(), nullable=True),
         sa.Column('embedding_model', sa.String(255), nullable=True),
         sa.Column('embedding_model_provider', sa.String(255), nullable=True),
 

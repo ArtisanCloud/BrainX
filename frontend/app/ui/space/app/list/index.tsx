@@ -6,7 +6,7 @@ import AppBot from "@/app/ui/space/app/agent-bot";
 import {App, ResponseFetchAppList} from "@/app/api/app";
 import {Pagination} from 'antd';
 import {FetchAppListContext, FetchAppListContextType} from "@/app/ui/space/app/provider/fetch-app-list-provider";
-import {defaultPage, pageSize} from "@/app/config/constant/index";
+import {defaultPage, pageSize} from "@/app/config/constant";
 
 
 export const appPageSize = 9

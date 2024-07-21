@@ -16,6 +16,8 @@ class DatasetSchema(BaseObjectSchema):
     is_published: Optional[bool] = None
     import_type: Optional[int] = None
     driver_type: Optional[int] = None
+    word_count: Optional[int] = None
+    token_count: Optional[int] = None
     embedding_model: Optional[str] = None
     embedding_model_provider: Optional[str] = None
 
@@ -30,12 +32,14 @@ class DatasetSchema(BaseObjectSchema):
             updated_user_by=str(obj.updated_user_by),
             name=obj.name,
             description=obj.description,
+            avatar_url=obj.avatar_url,
             is_published=obj.is_published,
             import_type=obj.import_type,
             driver_type=obj.driver_type,
             embedding_model=obj.embedding_model,
             embedding_model_provider=obj.embedding_model_provider
         )
+
 
 class RequestGetDatasetList(BaseSchema):
     pagination: Optional[Pagination] = None
@@ -49,6 +53,7 @@ class ResponseGetDatasetList(BaseSchema):
 class RequestCreateDataset(DatasetSchema):
     name: constr(min_length=1)
     # description: constr(min_length=1)
+
 
 class ResponseCreateDataset(BaseSchema):
     dataset: DatasetSchema

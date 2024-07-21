@@ -1,6 +1,7 @@
 import {DatasetImportType} from "@/app/api/knowledge/dataset";
 
-function getDatasetImportTypeTranslation(type: DatasetImportType): string {
+export const getDatasetImportTypeTranslation = (type: DatasetImportType): string => {
+	console.log(type)
 	switch (type) {
 		case DatasetImportType.LOCAL_DOCUMENT:
 			return '本地文档';

@@ -3,6 +3,7 @@ from typing import cast
 
 from starlette.staticfiles import StaticFiles
 
+from app import default_local_storage_path
 from app.logger import logger
 
 from fastapi import FastAPI
@@ -100,7 +101,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.mount("/static", StaticFiles(directory=os.path.abspath("./storage/public/static/")), name="statics")
+app.mount("/static", StaticFiles(directory=os.path.abspath(default_local_storage_path)), name="statics")
 
 
 origins = [

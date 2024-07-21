@@ -41,7 +41,8 @@ const AppBot: React.FC<AppItemProps> = ({app}) => {
 		}
 	};
 
-	const handleEdit = () => {
+	const handleEdit = (e:any) => {
+		e.stopPropagation()
 		console.log("handleEdit", app)
 	};
 
