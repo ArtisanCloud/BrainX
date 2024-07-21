@@ -35,6 +35,7 @@ def create_dataset_table() -> None:
         sa.Column('description', sa.String(), nullable=True),
         sa.Column('avatar_url', sa.String(), nullable=True),
         sa.Column('is_published', sa.Boolean(), nullable=True),
+        sa.Column('dataset_format', sa.SmallInteger(), nullable=True),
         sa.Column('import_type', sa.SmallInteger(), nullable=True),
         sa.Column('driver_type', sa.SmallInteger(), nullable=True),
         sa.Column('embedding_model', sa.String(255), nullable=True),
@@ -42,7 +43,7 @@ def create_dataset_table() -> None:
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('deleted_at', sa.Boolean(), default=None, nullable=True),
+        sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
         sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),

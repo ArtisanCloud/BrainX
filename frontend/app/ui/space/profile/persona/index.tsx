@@ -1,7 +1,7 @@
 import React, {forwardRef, Ref, useContext, useImperativeHandle} from 'react';
 import styles from './index.module.scss';
 import {useState} from "react";
-import {ActionPatchApp, App, ResponseCreateApp} from "@/app/api/robot-chat/app";
+import {ActionPatchApp, App, ResponseCreateApp} from "@/app/api/app";
 import {Modal, message} from "antd"
 import SetPersona from "@/app/ui/space/profile/persona/set-persona/index";
 import {CreateAppContext, CreateAppContextType} from "@/app/ui/space/app/provider/create-app-provider";

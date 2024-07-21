@@ -19,6 +19,10 @@ api:
   openapi_prefix: "/openapi"
   request_timeout: 60
 
+openapi:
+  access_key: "YOUR_ACCESS_KEY"
+  secret_key: "YOUR_SECRET_KEY"
+
 database:
   url: "postgresql+asyncpg://tenant:pass@127.0.0.1:54321/brain_x"
   table_name_vector_store: "embeddings"

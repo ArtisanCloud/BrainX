@@ -5,7 +5,7 @@ import {Input} from 'antd';
 import {forwardRef, Ref, useContext, useEffect} from "react";
 import {CreateAppContext, CreateAppContextType} from "@/app/ui/space/app/provider/create-app-provider";
 import {hintAppPersona} from "@/app/config/constant/placeholder";
-import {App} from "@/app/api/robot-chat/app";
+import {App} from "@/app/api/app";
 import {RefPersona} from "@/app/ui/space/profile/persona";
 
 

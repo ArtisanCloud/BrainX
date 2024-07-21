@@ -3,17 +3,18 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Collapse, CollapseProps} from 'antd';
 import styles from './index.module.scss'
-import {ActionFetchAppList, App, maxPageSize, pageSize, ResponseFetchAppList} from "@/app/api/robot-chat/app";
+import {ActionFetchAppList, App, ResponseFetchAppList} from "@/app/api/app";
 import {
 	AppContextType,
 	SelectedAppContext
 } from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 import AppList from "@/app/ui/space/robot-chat/bot-group/app/list";
-import {GetAppFromUUID} from "@/app/lib/app";
+import {GetAppFromUUID} from "@/app/utils/app";
+import {maxPageSize} from "@/app/api";
 
 
 export const defaultApp: App = {
-	user_id: 1,
+	tenant_uuid: "chat",
 	name: '纯聊天',
 	description: '您可以先体验一下，尝试与机器人对话，随后可以创建自己的代理机器人',
 	avatar_url: 'images/app.png',

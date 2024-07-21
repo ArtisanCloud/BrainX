@@ -1,32 +1,64 @@
 "use client";
 
 import styles from './index.module.scss';
-import {Knowledge} from "@/app/api/knowledge";
-import {useState} from "react";
-import {Table, Space, Button, TableProps} from "antd";
+import React, {useContext, useEffect} from "react";
+import {Table, Space, Button, TableProps, Switch} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
+import {
+	FetchDatasetListContext,
+	FetchDatasetListContextType
+} from "@/app/ui/space/knowledge/provider/fetch-dataset-list-provider";
+import {defaultPage, pageSize} from "@/app/config/constant";
+import {Dataset, ResponseFetchDatasetList} from "@/app/api/knowledge/dataset";
+import Image from "next/image";
+import {GetPublicUrl} from "@/app/lib/url";
 
-const columns: TableProps<Knowledge>['columns'] = [
+const columns: TableProps<Dataset>['columns'] = [
 	{
-		title: 'Name',
+		title: '名称',
 		dataIndex: 'name',
 		key: 'name',
-		render: (_, knowledge: Knowledge) =>
-			<div>
-				<span style={{fontWeight: 'bold'}}>{knowledge.name}</span>
-				<br/>
-				<span style={{fontSize: '12px', color: 'gray'}}>{knowledge.description}</span>
+		render: (_, dataset: Dataset) =>
+			<div className={'flex flex-row'}>
+				<Image
+					priority
+					width={68}
+					height={68}
+					alt={'app avatar'}
+					className={'rounded-lg border-1'}
+					src={GetPublicUrl(dataset.avatar_url!)}/>
+				<div className={'flex flex-col justify-center ml-3 border-0'}>
+					<span className={'border-0'} style={{fontWeight: 'bold'}}>{dataset.name}</span>
+					<span style={{fontSize: '12px', color: 'gray'}}>{dataset.description}</span>
+				</div>
 			</div>
 	},
 	{
-		title: '单元',
-		dataIndex: 'units',
-		key: 'units',
+		title: '类型',
+		key: 'type',
+		render: (_, record) => (
+			<Space size="middle">
+
+			</Space>
+		),
 	},
 	{
 		title: '尺寸',
 		dataIndex: 'size',
 		key: 'size',
+	},
+	{
+		title: '启动',
+		key: 'is_published',
+		render: (_, record) => (
+			<Space size="middle">
+				<Switch
+					checkedChildren="开启"
+					unCheckedChildren="关闭"
+					defaultChecked/>
+
+			</Space>
+		),
 	},
 	{
 		title: '操作',
@@ -42,40 +74,44 @@ const columns: TableProps<Knowledge>['columns'] = [
 	},
 ];
 
-const KnowledgeList = () => {
+const DatasetList = () => {
+	const {
+		datasetList, setDatasetList,
+		fetchDatasetList,
+		pagination, setPagination
+	} = useContext(FetchDatasetListContext) as FetchDatasetListContextType;
 
-	const [list, setList] = useState<Knowledge[]>([
-		{
-			id: 1,
-			name: "PowerWechat",
-			description: "赞助我们#、返佣商品#、评论数据管理#、自动回复#、数据统计与分析#、客服消息#",
-			units: 82,
-			size: "192.21 kB",
-			updatedAt: "2021-09-01 12:00:00",
-		},
-		{
-			id: 2,
-			name: "营销知识",
-			description: "关于营销方面的知识库",
-			units: 0,
-			size: " kB",
-			updatedAt: "2021-09-01 12:00:00",
-		},
-		{
-			id: 3,
-			name: "PowerX",
-			description: "私域相关的知识",
-			units: 1,
-			size: "473 kB",
-			updatedAt: "2021-09-01 12:00:00",
-		}
-	]);
+
+	useEffect(() => {
+		// console.log(pagination)
+		let _page = pagination?.page ?? defaultPage
+		let _pageSize = pagination?.per_page ?? pageSize
+
+		fetchDatasetList({
+			page: _page,
+			page_size: _pageSize,
+		}).then((res: ResponseFetchDatasetList) => {
+			// console.log(res)
+			setDatasetList(res.data)
+			setPagination(res.pagination)
+		})
+
+	}, [pagination?.page, pagination?.per_page]);
+
+	const onChange = (page: number, pageSize: number) => {
+		// console.log("onChange", page, pageSize)
+		setPagination({
+			...pagination,
+			page: page,
+		})
+
+	}
 
 	return (
 		<div className={styles.container}>
-			<Table columns={columns} dataSource={list} rowKey="id"/>
+			<Table columns={columns} dataSource={datasetList} rowKey="id"/>
 		</div>
 	);
 }
 
-export default KnowledgeList;
+export default DatasetList;

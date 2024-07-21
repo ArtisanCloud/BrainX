@@ -42,7 +42,7 @@ api_router.include_router(chat_controller.router, prefix="/chat_bot",
                           tags=["chatbot"])
 
 # app
-api_router.include_router(app_controller.router, prefix="/chat_bot/app",
+api_router.include_router(app_controller.router, prefix="/app",
                           dependencies=[Depends(auth_user_token)],
                           tags=["chatbot"])
 # conversation

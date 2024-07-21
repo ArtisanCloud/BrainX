@@ -48,9 +48,9 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
-        sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_user + '.uuid'], ),
-        sa.ForeignKeyConstraint(['workflow_uuid'], [table_name_workflow + '.uuid'], ),
         sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
+        sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
+        sa.ForeignKeyConstraint(['workflow_uuid'], [table_name_workflow + '.uuid'], ),
         sa.PrimaryKeyConstraint('id')
     )
 

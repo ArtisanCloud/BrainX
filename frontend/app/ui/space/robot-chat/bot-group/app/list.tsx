@@ -1,6 +1,6 @@
 import AppBot from "@/app/ui/space/robot-chat/bot-group/app/index";
 import React from "react";
-import {App} from "@/app/api/robot-chat/app";
+import {App} from "@/app/api/app";
 import styles from './list.module.scss';
 
 interface AppListProps {

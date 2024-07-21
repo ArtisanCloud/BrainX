@@ -1,5 +1,5 @@
 import type {NextRequest} from 'next/server'
-import {token_key} from "@/app/lib/auth";
+import {token_key} from "@/app/utils/auth";
 
 export function middleware(request: NextRequest) {
 	const isAuthPath = request.nextUrl.pathname.startsWith('/user');

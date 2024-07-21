@@ -6,7 +6,7 @@ import {
 	Link,
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
-import {account_key, token_key} from "@/app/lib/auth";
+import {account_key, token_key} from "@/app/utils/auth";
 import { Avatar } from 'antd';
 
 

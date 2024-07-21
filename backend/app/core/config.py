@@ -36,6 +36,11 @@ class Api(BaseModel):
     request_timeout: int
 
 
+class OpenAPI(BaseModel):
+    access_key: str
+    secret_key: str
+
+
 class Database(BaseModel):
     url: str
     table_name_vector_store: str
@@ -149,6 +154,7 @@ class Storage(BaseModel):
 class Settings(BaseModel):
     server: Server
     api: Api
+    openapi: OpenAPI
     jwt: JWT
     database: Database
     cache: Cache
@@ -171,6 +177,7 @@ settings = Settings(
     server=Server(**config['server']),
     jwt=JWT(**config['jwt']),
     api=Api(**config['api']),
+    openapi=OpenAPI(**config['openapi']),
     database=Database(**config['database']),
     cache=Cache(**config['cache']),
     models=Models(**config['models']),

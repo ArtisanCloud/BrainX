@@ -1,3 +1,5 @@
+
+
 export interface PowerModel {
 	id?: number;
 	uuid?: string;

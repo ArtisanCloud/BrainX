@@ -3,7 +3,7 @@
 // AppContext.tsx
 import React, {createContext, useState} from 'react';
 import {RequestPagination, ResponsePagination} from "@/app/api";
-import {ActionFetchAppList, App, ResponseFetchAppList} from "@/app/api/robot-chat/app";
+import {ActionFetchAppList, App, ResponseFetchAppList} from "@/app/api/app";
 import {defaultPage} from "@/app/config/constant/index";
 import {appPageSize} from "@/app/ui/space/app/list";
 

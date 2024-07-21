@@ -3,10 +3,10 @@
 import styles from './index.module.scss';
 import React, {useContext, useEffect} from "react";
 import AppBot from "@/app/ui/space/app/agent-bot";
-import {App, ResponseFetchAppList} from "@/app/api/robot-chat/app";
+import {App, ResponseFetchAppList} from "@/app/api/app";
 import {Pagination} from 'antd';
 import {FetchAppListContext, FetchAppListContextType} from "@/app/ui/space/app/provider/fetch-app-list-provider";
-import {defaultPage} from "@/app/config/constant/index";
+import {defaultPage, pageSize} from "@/app/config/constant/index";
 
 
 export const appPageSize = 9
@@ -22,14 +22,8 @@ const AppList = () => {
 
 	useEffect(() => {
 
-		let _page = pagination.page
-		let _pageSize = pagination.per_page
-		if (pagination.page == undefined) {
-			_page = defaultPage
-		}
-		if (pagination.per_page == undefined) {
-			_pageSize = appPageSize
-		}
+		let _page = pagination?.page ?? defaultPage
+		let _pageSize = pagination?.per_page ?? pageSize
 		fetchAppList({
 			page: _page,
 			page_size: _pageSize,
@@ -39,7 +33,7 @@ const AppList = () => {
 			setPagination(res.pagination)
 		})
 
-	}, [pagination.page, pagination.per_page]);
+	}, [pagination?.page, pagination?.per_page]);
 
 	const onChange = (page: number, pageSize: number) => {
 		// console.log("onChange", page, pageSize)

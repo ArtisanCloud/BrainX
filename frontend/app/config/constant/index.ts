@@ -7,5 +7,7 @@ export const SENTRY_DSN: string | undefined = undefined;
 
 
 export const defaultPage = 1
+export const pageSize = 10
+export const maxPageSize = 999
 
 export const routeRobotChat = '/space/workspace/robot-chat'

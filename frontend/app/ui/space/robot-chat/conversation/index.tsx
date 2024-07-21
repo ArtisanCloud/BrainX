@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 import React, {useContext} from "react";
 import {AppContextType, SelectedAppContext} from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 import {ActionFetchCachedMessageList, RequestFetchCachedMessageList} from "@/app/api/robot-chat/conversation";
-import {convertDataToConversationItems} from "@/app/lib/conversation";
+import {convertDataToConversationItems} from "@/app/utils/conversation";
 
 const Conversation = () => {
 

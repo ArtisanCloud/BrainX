@@ -5,7 +5,7 @@ import {Button, Select, Input, Modal, message} from "antd"
 import {useContext, useState} from "react";
 import CreateApp from "../create-app";
 import {CreateAppContext, CreateAppContextType} from "@/app/ui/space/app/provider/create-app-provider";
-import {ActionCreateApp, ResponseCreateApp} from "@/app/api/robot-chat/app";
+import {ActionCreateApp, ResponseCreateApp} from "@/app/api/app";
 import {GetOssUrl} from "@/app/lib/url";
 import {FetchAppListContext} from "@/app/ui/space/app/provider/fetch-app-list-provider";
 import {appPageSize} from "@/app/ui/space/app/list";
@@ -15,7 +15,7 @@ const {Search} = Input;
 
 const ToolBar = () => {
 
-	const {appList, setAppList, fetchAppList} = useContext(FetchAppListContext);
+	const {setAppList, fetchAppList} = useContext(FetchAppListContext);
 
 	const {
 		name, description, avatarUrl,
@@ -29,7 +29,6 @@ const ToolBar = () => {
 
 	const handleChangeType = (value: string) => {
 		console.log(value);
-
 	}
 	const handleOnSearch = (value: string) => {
 		console.log(value);

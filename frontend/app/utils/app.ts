@@ -1,4 +1,4 @@
-import {App} from "@/app/api/robot-chat/app";
+import {App} from "@/app/api/app";
 
 export const GetAppFromUUID = (uuid: string, apps: App[]): App | null => {
 	// 遍历 apps 数组

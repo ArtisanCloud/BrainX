@@ -2,18 +2,21 @@ import {unstable_noStore as noStore} from 'next/cache';
 import {backendClient} from "@/app/api/backend";
 import {PowerModel, RequestPagination, Response, ResponsePagination} from "@/app/api";
 
-export const pageSize = 10
-export const maxPageSize = 999
 
 export interface App extends PowerModel {
-	user_id?: number;
-	parent_id?: number;
-	llm_uuid?: string;
+	tenant_uuid?: string;
+	created_user_by?: string;
+	updated_user_by?: string;
+	app_model_config_uuid?: string;
+	workflow_uuid?: string;
 	name?: string;
+	status?: string;
+	type?: string;
+	mode?: string;
 	description?: string;
 	persona?: string;
-	status?: number;
 	avatar_url?: string;
+	is_public?: boolean;
 }
 
 export interface ResponseFetchAppList {
@@ -25,7 +28,7 @@ export interface ResponseFetchAppList {
 export async function ActionFetchAppList(pg: RequestPagination): Promise<ResponseFetchAppList> {
 	noStore();
 	try {
-		const endpoint = `/api/chat_bot/app/list`;
+		const endpoint = `/api/app/list`;
 		const queryString = Object.entries(pg).map(([key, value]) => `${key}=${value}`).join('&');
 		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
 
@@ -50,7 +53,7 @@ export interface ResponseCreateApp extends Response {
 
 export async function ActionCreateApp(option: RequestCreateApp): Promise<ResponseCreateApp> {
 
-	const endpoint = `/api/chat_bot/app/create`;
+	const endpoint = `/api/app/create`;
 
 	const res = await backendClient.backend_post(endpoint, option);
 
@@ -67,7 +70,7 @@ export interface ResponsePatchApp extends Response {
 
 export async function ActionPatchApp(option: RequestPatchApp): Promise<ResponsePatchApp> {
 
-	const endpoint = `/api/chat_bot/app/patch/${option.uuid}`;
+	const endpoint = `/api/app/patch/${option.uuid}`;
 
 	const res = await backendClient.backend_patch(endpoint, option);
 
@@ -81,7 +84,7 @@ export interface ResponseDeleteApp {
 
 export async function ActionDeleteApp(appUuid: string): Promise<ResponseDeleteApp> {
 
-	const endpoint = `/api/chat_bot/app/delete/${appUuid}`
+	const endpoint = `/api/app/delete/${appUuid}`
 
 	const res = await backendClient.backend_delete(endpoint);
 

@@ -30,7 +30,7 @@ const links = [
 	}
 ]
 
-const Index = () => {
+const Navbar = () => {
 	const pathname = usePathname();
 
 	const {hideSidebar} = useContext(HideSidebarContext) as SidebarContextType;
@@ -69,4 +69,4 @@ const Index = () => {
 	);
 };
 
-export default Index;
+export default Navbar;

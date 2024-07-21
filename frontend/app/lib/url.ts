@@ -1,5 +1,5 @@
 import {ossUrl, staticsUrl} from "@/app/config/config";
-import {App} from "@/app/api/robot-chat/app";
+import {App} from "@/app/api/app";
 import {routeRobotChat} from "@/app/config/constant/index";
 
 const notFoundImage = '/images/avatar-not-found.png'

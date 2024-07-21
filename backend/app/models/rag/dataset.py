@@ -13,6 +13,12 @@ class IndexingDriverType(IntEnum):
     LLAMA_INDEX = 2
 
 
+class DatasetFormat(IntEnum):
+    TEXT = 1
+    TABLE = 2
+    IMAGE = 3
+
+
 class ImportType(IntEnum):
     LOCAL_DOCUMENT = 1
     ONLINE_DATA = 2
@@ -34,12 +40,12 @@ class Dataset(BaseModel):
     avatar_url = mapped_column(String)
     is_published = mapped_column(Boolean)
 
+    dataset_format = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
     import_type = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
     driver_type = mapped_column(SmallInteger, nullable=False)  # 使用枚举类型定义
 
     embedding_model = mapped_column(String(255))
     embedding_model_provider = mapped_column(String(255))
-
 
     tenant: Mapped["Tenant"] = relationship(back_populates="datasets", foreign_keys=[tenant_uuid])
     documents: Mapped["Document"] = relationship(back_populates="dataset", foreign_keys="[Document.dataset_uuid]")
@@ -56,6 +62,7 @@ class Dataset(BaseModel):
             f"created_user_by='{self.created_user_by}', "
             f"updated_user_by='{self.updated_user_by}', "
             f"description='{description}', "
+            f"avatar_url='{self.avatar_url}', "
             f"is_published='{self.is_published}', "
             f"indexing_driver_type='{self.indexing_driver_type}', "
             f"embedding_model='{self.embedding_model}', "

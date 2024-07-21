@@ -57,10 +57,13 @@ async def api_get_app_by_id(app_id: int, db: AsyncSession = Depends(get_db_sessi
 @router.post("/create")
 async def api_create_app(
         data: RequestCreateApp,
+        session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_db_session)):
     try:
 
         app = make_app(data)
+        app.tenant_uuid = str(session_user.tenant_owner_uuid)
+        app.created_user_by = str(session_user.uuid)
         # print(app)
         app, exception = await create_app(db, app)
         if exception is not None:

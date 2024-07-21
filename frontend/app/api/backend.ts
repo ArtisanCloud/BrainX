@@ -2,7 +2,7 @@ import {backendUrl, frontendUrl} from "@/app/config/config";
 import {notification} from 'antd';
 import {Response as APIResponse} from "@/app/api";
 import Cookies from "js-cookie";
-import {token_key} from "@/app/lib/auth";
+import {token_key} from "@/app/utils/auth";
 import {sleep} from "@/app/lib/base";
 
 interface validateError {

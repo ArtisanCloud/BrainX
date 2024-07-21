@@ -1,10 +1,10 @@
 import styles from './index.module.scss';
 
-const Knowledge = () => {
+const Dataset = () => {
 	return (
 		<div className={styles.container}>
 			Knowledge
 		</div>
 	);
 }
-export default Knowledge;
+export default Dataset;

@@ -53,6 +53,7 @@ class UserDAO(BaseDAO[User]):
             # create user
             user = User(
                 uuid=uuid4(),
+                tenant_owner_uuid=tenant.uuid,
                 account=user.account,
                 name=user.account,
                 password=user.password,
@@ -61,14 +62,14 @@ class UserDAO(BaseDAO[User]):
             self.db.add(user)
 
             # connect user and tenant
-            pivot = PivotTenantToUser(
-                tenant_uuid=tenant.uuid,
-                user_uuid=user.uuid
-            )
-            pivot.generate_uuid()
+            # pivot = PivotTenantToUser(
+            #     tenant_uuid=tenant.uuid,
+            #     user_uuid=user.uuid
+            # )
+            # pivot.generate_uuid()
 
             # print(pivot)
-            self.db.add(pivot)
+            # self.db.add(pivot)
 
             await self.db.commit()
             await self.db.refresh(user)

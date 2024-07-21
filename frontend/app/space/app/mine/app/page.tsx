@@ -3,7 +3,6 @@ import Toolbar from "@/app/ui/space/app/toolbar";
 import AppList from "@/app/ui/space/app/list";
 import {FetchAppListProvider} from "@/app/ui/space/app/provider/fetch-app-list-provider";
 import CreateAppProvider from "@/app/ui/space/app/provider/create-app-provider";
-import RobotChatProvider from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 
 const AppPage = () => {
 	return (

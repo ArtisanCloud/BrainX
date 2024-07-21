@@ -58,10 +58,13 @@ async def api_get_dataset_by_uuid(dataset_uuid: str, db: AsyncSession = Depends(
 @router.post("/create")
 async def api_create_dataset(
         data: RequestCreateDataset,
+        session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_db_session)):
     try:
 
         dataset = make_dataset(data)
+        dataset.tenant_uuid = str(session_user.tenant_owner_uuid)
+        dataset.created_user_by = str(session_user.uuid)
         # print(dataset)
         dataset, exception = await create_dataset(db, dataset)
         if exception is not None:

@@ -2,7 +2,7 @@
 
 
 import React, {createContext, useState} from 'react';
-import {App} from "@/app/api/robot-chat/app";
+import {App} from "@/app/api/app";
 
 export interface QuestionAnswerContextType {
 	selectedQAMode: number | null | undefined;

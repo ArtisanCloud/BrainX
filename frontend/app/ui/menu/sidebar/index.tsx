@@ -13,7 +13,7 @@ import {HideSidebarContext, SidebarContextType} from "@/app/ui/menu/provider/sid
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import Cookies from "js-cookie";
-import {token_key} from "@/app/lib/auth";
+import {token_key} from "@/app/utils/auth";
 
 
 const Sidebar = () => {

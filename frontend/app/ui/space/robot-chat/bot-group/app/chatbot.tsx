@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {App} from "@/app/api/robot-chat/app";
+import {App} from "@/app/api/app";
 import styles from "./app.module.scss"
 import {GetPublicUrl} from "@/app/lib/url";
 import {

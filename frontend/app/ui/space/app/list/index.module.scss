@@ -10,8 +10,10 @@
     padding: 0 24px 13px;
   }
   .pagination{
-    padding-right: 160px;
-    text-align: right;
-    //border: 1px solid #ECECEC;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    //padding-right: 160px;
+    //border: 1px solid #cc2e2e;
   }
 }
