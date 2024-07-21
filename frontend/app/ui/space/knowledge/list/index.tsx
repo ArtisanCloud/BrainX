@@ -96,12 +96,7 @@ const DatasetList = () => {
 			setPagination(res.pagination)
 		})
 
-	}, [
-		pagination?.page, pagination?.per_page,
-		fetchDatasetList,
-		setDatasetList,
-		setPagination,
-	]);
+	}, [pagination?.page, pagination?.per_page]);
 
 	const onChange = (page: number, pageSize: number) => {
 		// console.log("onChange", page, pageSize)

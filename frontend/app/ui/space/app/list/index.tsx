@@ -33,12 +33,7 @@ const AppList = () => {
 			setPagination(res.pagination)
 		})
 
-	}, [
-		pagination?.page, pagination?.per_page,
-		fetchAppList,
-		setAppList,
-		setPagination
-	]);
+	}, [pagination?.page, pagination?.per_page	]);
 
 	const onChange = (page: number, pageSize: number) => {
 		// console.log("onChange", page, pageSize)

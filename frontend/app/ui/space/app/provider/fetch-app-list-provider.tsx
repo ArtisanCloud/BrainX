@@ -39,8 +39,8 @@ export const FetchAppListProvider: React.FC<{ children: React.ReactNode }> = ({c
 			value={{
 				appList, setAppList,
 				fetchAppList,
-				pagination,setPagination
-		}}
+				pagination, setPagination
+			}}
 		>
 			{children}
 		</FetchAppListContext.Provider>

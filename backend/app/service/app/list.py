@@ -30,7 +30,7 @@ async def get_app_list(
         where(App.deleted_at.is_(None)).
         order_by(App.created_at)
     )
-    print(stmt)
+    # print(stmt)
     res, pg, exception = await paginate_query(db, stmt, App, pagination, True)
     if exception:
         return None, None, exception

@@ -109,7 +109,7 @@ const CreateApp = () => {
 				<div className={styles.avatar}>
 					<Upload
 						name="avatar"
-						listType="picture-circle"
+						listType="picture-card"
 						className="avatar-uploader"
 						showUploadList={false}
 						beforeUpload={beforeUpload}
@@ -117,11 +117,12 @@ const CreateApp = () => {
 					>
 						{avatarUrl ? <Image
 							src={GetOssUrl(avatarUrl)}
+							className={'rounded-lg'}
 							alt="avatar"
 							priority
 							width={80}
 							height={80}
-							style={{width: '100%'}}/> : uploadButton}
+							style={{width: '100%', height: '100%',}}/> : uploadButton}
 					</Upload>
 				</div>
 			</div>
