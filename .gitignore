@@ -1,12 +1,27 @@
 .idea/
 .DS_Store
 
+__pycache__/
+
+.env
+*/.env
+*/.env.production.*
+
+*/dist
+*/.next
+
+*/logs
+
+*/alembic.ini
+
+docker-data
+
 !backend/storage/
 backend/storage/public/static/*
 
 frontend/.env.*
 !frontend/.env.example
 
+gateway/nginx/ssl/
 gateway/nginx/ssl/*
 
-docker-data/postgres
