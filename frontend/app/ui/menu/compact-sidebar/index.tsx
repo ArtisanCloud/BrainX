@@ -4,7 +4,7 @@ import Image from "next/image";
 import MenuLink from "@/app/ui/menu/menu-link";
 import styles from "./index.module.scss";
 import {Button} from "antd"
-import {handleSignOut, menuItems} from "@/app/ui/menu";
+import {menuItems} from "@/app/ui/menu";
 import {LogoutOutlined} from '@ant-design/icons'
 import {MdOutlineArrowForward} from "react-icons/md";
 import React, {useContext} from "react";

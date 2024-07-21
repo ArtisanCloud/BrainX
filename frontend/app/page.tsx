@@ -24,7 +24,9 @@ export default function Home() {
 				</div>
 				<div className={'w-1/3 flex justify-center flex-col'}>
 					<div className={'relative h-800 w-800 scale-50 -ml-52'}>
-						<Image src={brainxImage.src} width={800} height={800}
+						<Image
+							alt={'BrainX'}
+							src={brainxImage.src} width={800} height={800}
 									 className={'absolute left-0 top-0 z-10 rounded-full'}/>
 						<div id={'card-item-bg'} style={{
 							'--image': `url(${brainxImage.src})`,

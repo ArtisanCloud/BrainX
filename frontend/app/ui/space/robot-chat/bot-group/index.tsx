@@ -10,7 +10,7 @@ import {
 } from "@/app/ui/space/robot-chat/provider/robot-chat-provider";
 import AppList from "@/app/ui/space/robot-chat/bot-group/app/list";
 import {GetAppFromUUID} from "@/app/utils/app";
-import {maxPageSize} from "@/app/api";
+import {maxPageSize} from "@/app/config/constant";
 
 
 export const defaultApp: App = {

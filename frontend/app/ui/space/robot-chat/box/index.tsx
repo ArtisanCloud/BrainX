@@ -49,7 +49,7 @@ const ChatBox = () => {
 
 	useEffect(() => {
 		setCurrentConversation(welcomeConversation);
-	}, [selectedApp]);
+	}, [selectedApp,setCurrentConversation]);
 
 	useEffect(() => {
 		scrollToBottom();

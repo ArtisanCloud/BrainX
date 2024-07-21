@@ -23,7 +23,7 @@ class BackendClient {
 	private get_header() {
 		const token = Cookies.get(token_key)
 
-		const headers = {
+		const headers: any = {
 			"Content-Type": "application/json",
 		}
 		if (token) {
