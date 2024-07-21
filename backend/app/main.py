@@ -1,4 +1,8 @@
+import os
 from typing import cast
+
+from starlette.staticfiles import StaticFiles
+
 from app.logger import logger
 
 from fastapi import FastAPI
@@ -95,6 +99,9 @@ app = FastAPI(
     # This means that this code will be executed once, before the application starts receiving requests.
     lifespan=lifespan,
 )
+
+app.mount("/static", StaticFiles(directory=os.path.abspath("./storage/public/static/")), name="statics")
+
 
 origins = [
     "http://localhost",

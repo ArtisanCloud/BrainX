@@ -8,7 +8,7 @@ from app import settings
 def auth_openapi_access_key(access_key: str = Query(...)):
     credentials_exception = HTTPException(
         status_code=401,
-        detail="Invalid credentials",
+        detail="Invalid key access credentials",
     )
 
     if access_key != settings.openapi.access_key:

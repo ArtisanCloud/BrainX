@@ -110,6 +110,7 @@ class MinIO(BaseModel):
     secret_key: str
     use_ssl: bool
     region: str
+    bucket_name: str
 
 
 class LocalStorage(BaseModel):

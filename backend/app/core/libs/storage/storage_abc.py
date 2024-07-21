@@ -1,5 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Generator, Union
+from datetime import datetime
+from typing import Generator, Union, Any, Optional
+from io import BytesIO
+
+from pydantic import BaseModel
+
+
+class ObjectResult(BaseModel):
+    bucket_name: Optional[str] = None
+    object_name: Optional[str] = None
+    version_id: Optional[str] = None
+    etag: Optional[dict] = None
+    http_headers: Optional[str] = None
+    last_modified: Optional[datetime] = None,
+    location: Optional[str] = None,
 
 
 class StorageABC(ABC):
@@ -14,12 +28,36 @@ class StorageABC(ABC):
         self.config = config
 
     @abstractmethod
-    def save(self, filename: str, data: bytes) -> None:
+    def save(self,
+             bucket_name: str,
+             object_name: str,
+             data: bytes,
+             length: int,
+             content_type: str = "application/octet-stream",
+             metadata: dict | None = None,
+             # sse: Sse | None = None,
+             # progress: ProgressType | None = None,
+             part_size: int = 0,
+             num_parallel_uploads: int = 3,
+             # tags: Tags | None = None,
+             # retention: Retention | None = None,
+             legal_hold: bool = False
+             ) -> ObjectResult:
         """Save data to a file in the storage system.
 
         Args:
-            filename (str): The name of the file.
-            data (bytes): The data to save.
+            bucket_name (str): The name of the bucket where the object will be stored.
+            object_name (str): The name of the object to be stored.
+            data (BytesIO): The data to save as a BytesIO stream.
+            length (int): The length of the data in bytes.
+            content_type (str, optional): The MIME type of the object. Defaults to "application/octet-stream".
+            metadata (dict | None, optional): Additional metadata for the object. Defaults to None.
+            part_size (int, optional): The size of each part for multipart uploads, in bytes. Defaults to 0.
+            num_parallel_uploads (int, optional): The number of parallel uploads for multipart uploads. Defaults to 3.
+            legal_hold (bool, optional): Whether to place a legal hold on the object. Defaults to False.
+
+        Returns:
+            Any
         """
         pass
 
@@ -66,6 +104,18 @@ class StorageABC(ABC):
 
         Returns:
             bool: True if the file exists, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    async def check_bucket_exists(self, bucket: str) -> Exception | None:
+        """Check if a bucket exists in the storage system.If not , create the bucket as the bucket name
+
+        Args:
+            bucket (str): The name of the bucket.
+
+        Returns:
+            Exception: Not None if the bucket check has exception, None otherwise.
         """
         pass
 

@@ -1,6 +1,8 @@
 .idea/
 .DS_Store
 
+!backend/storage/
+backend/storage/public/static/*
 
 gateway/nginx/ssl/*
 

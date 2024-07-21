@@ -39,7 +39,7 @@ async def create_media_resource_by_file(
     if exception:
         return None, exception
 
-    media_resource, exception = service_media_resource.create_media_resource(media_resource)
+    media_resource, exception = await service_media_resource.create_media_resource(media_resource)
     if exception:
         return None, Exception(f"Database error: {exception}")
 

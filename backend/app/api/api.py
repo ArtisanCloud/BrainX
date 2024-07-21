@@ -1,4 +1,7 @@
+import os
+
 from fastapi import APIRouter, Depends
+from starlette.staticfiles import StaticFiles
 
 from app.api.auth import auth_controller
 from app.api.conversation import conversation_controller, message_controller
