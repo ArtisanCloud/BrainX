@@ -13,7 +13,7 @@ class ObjectResult(BaseModel):
     etag: Optional[dict] = None
     http_headers: Optional[str] = None
     last_modified: Optional[datetime] = None,
-    location: Optional[str] = None,
+    location: str = '',
 
 
 class StorageABC(ABC):

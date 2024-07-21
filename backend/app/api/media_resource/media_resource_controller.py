@@ -76,7 +76,6 @@ async def create_media_resource(
         #
 
         data.base64Data = remove_base64_prefix(data.base64Data)
-
         media_resource, exception = await create_media_resource_by_base64_string(db, data.bucketName, data.base64Data)
         if exception is not None:
             raise exception

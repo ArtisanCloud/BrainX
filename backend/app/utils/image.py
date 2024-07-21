@@ -30,9 +30,11 @@ def image_base64_to_embed(image_string, clip_model):
 
 
 def remove_base64_prefix(base64_data: str) -> str:
-    if base64_data.startswith('data:image/'):
-        return base64_data[22:]
-    elif base64_data.startswith('data:application/'):
-        return base64_data[25:]
+    # Split the string by the comma separator
+    parts = base64_data.split(',', 1)
+    if len(parts) > 1:
+        # Return the part after the comma
+        return parts[1]
     else:
+        # If there's no comma, return the original string
         return base64_data

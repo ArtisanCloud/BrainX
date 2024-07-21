@@ -54,8 +54,8 @@ class MinioStorage(StorageABC):
         # print(info)
         return ObjectResult(
             bucket_name=info.bucket_name,
-            object_name=info.location,
-            location=info.location,
+            object_name=info.object_name,
+            location=""
         )
 
     def load_once(self, filename: str) -> bytes:

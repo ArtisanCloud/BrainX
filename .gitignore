@@ -4,6 +4,9 @@
 !backend/storage/
 backend/storage/public/static/*
 
+frontend/.env.*
+!frontend/.env.example
+
 gateway/nginx/ssl/*
 
 docker-data/postgres

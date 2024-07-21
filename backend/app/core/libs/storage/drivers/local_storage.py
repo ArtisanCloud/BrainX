@@ -14,12 +14,8 @@ class LocalStorage:
         if not os.path.exists(base_path):
             os.makedirs(base_path)
 
-        server_host = settings.server.host
-        server_port = settings.server.port
-        base_url = f"{server_host}:{server_port}"
-
         self.local_storage_path = os.path.join(base_path, "public", "static")
-        self.local_storage_url = urljoin(f"http://{base_url}/", "static")
+
         # print(self.local_storage_path, self.local_storage_url)
 
     def save(self,
@@ -49,6 +45,7 @@ class LocalStorage:
         info = ObjectResult(
             bucket_name=bucket_name,
             object_name=object_name,
+            location=self._get_local_url(bucket_name + '/' + object_name),
         )
 
         return info
@@ -96,3 +93,11 @@ class LocalStorage:
             os.remove(file_path)
         else:
             raise FileNotFoundError(f"File {filename} not found in local storage")
+
+    def _get_local_url(self, resource: str):
+        server_host = settings.server.host
+        server_port = settings.server.port
+        base_url = f"{server_host}:{server_port}"
+        local_storage_url = urljoin(f"http://{base_url}/", "static" + "/" + resource)
+
+        return local_storage_url

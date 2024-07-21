@@ -1,4 +1,3 @@
-import os
 from base64 import b64decode
 from datetime import datetime
 from urllib.parse import urljoin
@@ -81,6 +80,9 @@ class MediaResourceService:
             )
 
             url = self.get_oss_resource_uri(bucket, info.object_name)
+            if info.location != '':
+                url = info.location
+            # print(info, url)
 
             return MediaResource(
                 bucket_name=bucket,
@@ -118,6 +120,8 @@ class MediaResourceService:
                 content_type=content_type)
 
             url = f"{bucket}/{object_name}"
+            if info.location != '':
+                url = info.location
 
             return MediaResource(
                 bucket_name=bucket,

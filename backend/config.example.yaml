@@ -74,11 +74,11 @@ sentry:
   release: "1.0"
 
 storage:
-  driver: "minio"
+  driver: "local"
   local_storage:
     storage_path: "./storage"
   minio:
-    endpoint: "https://minio.example.com"
+    endpoint: "127.0.0.1:9001"
     access_key: "YOUR_ACCESS_KEY"
     secret_key: "YOUR_SECRET_KEY"
     use_ssl: True
