@@ -135,7 +135,7 @@ const columns: TableProps<Dataset>['columns'] = [
 					menu={menuProps}
 					placement="bottom"
 					arrow={{pointAtCenter: true}}
-					// onClick={handleButtonClick}
+					onClick={handleButtonClick}
 				>
 					<Button
 						size="small"
