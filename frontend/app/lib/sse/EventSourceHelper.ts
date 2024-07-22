@@ -5,6 +5,8 @@ import {
 } from '@microsoft/fetch-event-source';
 import FatalError from './FatalError';
 import RetriableError from './RetriableError';
+import Cookies from "js-cookie";
+import {token_key} from "@/app/utils/auth";
 
 type OnOpenCallback = (response: Response) => void;
 type OnMessageCallback = (msg: any) => void;
@@ -30,10 +32,14 @@ const useSSE = () => {
 
   function connectEventSource(options: EventSourceOptions) {
     const { method, url, body } = options;
-
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
+    const token = Cookies.get(token_key)
+    // console.log("connect:",token)
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
 
     const requestOptions: FetchEventSourceInit = {
       method: 'GET',
@@ -85,9 +91,6 @@ const useSSE = () => {
 
     if (method === 'POST') {
       requestOptions.method = method;
-      requestOptions.headers = {
-        'Content-Type': 'application/json',
-      };
       requestOptions.body = JSON.stringify(body);
     }
     // console.log(requestOptions);
