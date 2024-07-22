@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import HomeNavbar from '@/app/ui/home/navbar';
 import React from "react";
 import {ActionRegister} from "@/app/api/auth";
+import {encodePassword} from "@/app/lib/security";
 
 export default function RegisterPage() {
 
@@ -16,7 +17,7 @@ export default function RegisterPage() {
 	async function handleSubmit(values: { account: string; password: string }) {
 		const response = await ActionRegister({
 			account: values.account,
-			password: values.password,
+			password: encodePassword(values.password),
 		});
 
 		if (response.user) {

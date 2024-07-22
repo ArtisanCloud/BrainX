@@ -1,6 +1,7 @@
 "use client";
 
 import styles from './index.module.scss';
+import uiStyles from '@/app/styles/component.module.scss';
 import React, {useContext, useEffect} from "react";
 import {Table, Space, Button, TableProps, Switch, Dropdown, MenuProps} from "antd";
 import {MoreOutlined, BlockOutlined, DeleteOutlined} from "@ant-design/icons";
@@ -25,20 +26,19 @@ const handleDelete = (record: Dataset) => {
 }
 
 
-const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-	console.info('Click on left button.');
-	console.log('click left button', e);
+const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>, record: Dataset) => {
+	// console.info('Click on action button.', record);
+
+
 };
 
 const handleMenuClick: MenuProps['onClick'] = (e) => {
 
-	if (e.key=='edit'){
-		handleEdit()
+	if (e.key == 'edit') {
+		// handleEdit()
 	}
 
 };
-
-
 
 
 const items: MenuProps['items'] = [
@@ -135,11 +135,12 @@ const columns: TableProps<Dataset>['columns'] = [
 					menu={menuProps}
 					placement="bottom"
 					arrow={{pointAtCenter: true}}
-					onClick={handleButtonClick}
+					trigger={['click']}
+					onClick={(e) => handleButtonClick(e, record)}  // 包装事件处理函数
 				>
-					<Button
-						size="small"
-						icon={<MoreOutlined/>}/>
+					<MoreOutlined
+						className={uiStyles.btnAction}
+					/>
 				</Dropdown>
 
 			</Space>
