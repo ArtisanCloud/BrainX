@@ -20,8 +20,8 @@ export interface Dataset extends PowerModel {
 	description?: string;
 	avatar_url?: string;
 	is_published?: boolean;
-	import_type?: string;
-	driver_type?: string;
+	import_type?: number;
+	driver_type?: number;
 	word_count?: number;
 	token_count?: number;
 	embedding_model?: string;

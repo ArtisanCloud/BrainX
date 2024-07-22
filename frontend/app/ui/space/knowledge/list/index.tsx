@@ -3,7 +3,7 @@
 import styles from './index.module.scss';
 import uiStyles from '@/app/styles/component.module.scss';
 import React, {useContext, useEffect} from "react";
-import {Table, Space, Button, TableProps, Switch, Dropdown, MenuProps} from "antd";
+import {Table, Space, TableProps, Switch, Dropdown, MenuProps} from "antd";
 import {MoreOutlined, BlockOutlined, DeleteOutlined} from "@ant-design/icons";
 import {
 	FetchDatasetListContext,
@@ -15,6 +15,7 @@ import Image from "next/image";
 import {GetOssUrl} from "@/app/lib/url";
 import {getDatasetImportTypeTranslation} from "@/app/utils/dataset"
 import {EditIcon} from "@nextui-org/shared-icons";
+import moment from "moment";
 
 
 const handleEdit = (record: Dataset) => {
@@ -26,8 +27,8 @@ const handleDelete = (record: Dataset) => {
 }
 
 
-const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>, record: Dataset) => {
-	// console.info('Click on action button.', record);
+const handleButtonClick = (e: any, record: Dataset) => {
+	console.info('Click on action button.', record);
 
 
 };
@@ -93,7 +94,7 @@ const columns: TableProps<Dataset>['columns'] = [
 		key: 'type',
 		render: (_, record) => (
 			<Space size="middle">
-				{getDatasetImportTypeTranslation(record.import_type)}
+				{getDatasetImportTypeTranslation(record?.import_type!)}
 			</Space>
 		),
 	},
@@ -136,9 +137,9 @@ const columns: TableProps<Dataset>['columns'] = [
 					placement="bottom"
 					arrow={{pointAtCenter: true}}
 					trigger={['click']}
-					onClick={(e) => handleButtonClick(e, record)}  // 包装事件处理函数
 				>
 					<MoreOutlined
+						onClick={(e) => handleButtonClick(e, record)}  // 包装事件处理函数
 						className={uiStyles.btnAction}
 					/>
 				</Dropdown>

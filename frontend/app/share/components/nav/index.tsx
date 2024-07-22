@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 import React from "react";
 import {Select} from 'antd';
 import {
-	baidu_ernie_lite_8k, baidu_qianfan_ernie_3_d_5_8k, label_baidu_qianfan_ernie_3_d_5_8k,
+	baidu_ernie_lite_8k, baidu_qianfan_ernie_3_d_5_8k,
 	label_openai_gpt_3_d_5_turbo,
 } from "@/app/config/llm";
 
