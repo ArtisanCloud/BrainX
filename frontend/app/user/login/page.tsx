@@ -3,7 +3,7 @@
 
 import {Form, Input, Button, message} from 'antd';
 import styles from './index.module.scss';
-import HomeNavbar from "@/app/ui/home/navbar";
+import HomeNavbar from "@/app/components/home/navbar";
 import React from "react";
 import {ActionLogin} from "@/app/api/auth";
 import Cookies from 'js-cookie';

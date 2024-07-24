@@ -28,7 +28,8 @@ async def api_visual_query(
         res, exception = await visual_query(base64Image, query.question)
         # print(res, exception)
         if exception:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
         return res
 
     except Exception as e:

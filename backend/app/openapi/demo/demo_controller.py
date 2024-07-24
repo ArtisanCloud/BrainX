@@ -41,7 +41,8 @@ async def api_chat(
             init_user_uuid, app_uuid, conversation_uuid
         )
         if exception:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
         return StreamingResponse(
             event_generator(request, data.llm, stream_response),

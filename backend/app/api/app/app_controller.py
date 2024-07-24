@@ -36,7 +36,8 @@ async def api_get_app_list(
     try:
         apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -67,7 +68,8 @@ async def api_create_app(
         # print(app)
         app, exception = await create_app(db, app)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -89,7 +91,8 @@ async def api_patch_app(
 
         app, exception = await patch_app(db, app_uuid, update_data)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -107,7 +110,8 @@ async def api_delete_app(
         user_id = 1
         result, exception = await soft_delete_app(db, user_id, app_uuid)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

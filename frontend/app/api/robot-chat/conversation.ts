@@ -46,7 +46,7 @@ export async function ActionFetchConversationList(data: RequestFetchConversation
 		return res as ResponseFetchConversationList;
 
 	} catch (error) {
-		console.error('Fetch conversations Error:', error);
+		// console.error('Fetch conversations Error:', error);
 		throw new Error('Failed to fetch the latest conversations.');
 	}
 }
@@ -91,7 +91,7 @@ export async function ActionFetchCachedMessageList(data: RequestFetchCachedMessa
 		return res as ResponseFetchCachedMessageList;
 
 	} catch (error) {
-		console.error('Fetch cached messages Error:', error);
+		// console.error('Fetch cached messages Error:', error);
 		throw new Error('Failed to fetch the cached messages.');
 	}
 }

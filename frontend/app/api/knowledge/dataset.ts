@@ -50,11 +50,32 @@ export async function ActionFetchDatasetList(pg: RequestPagination): Promise<Res
 	}
 }
 
+export type RequestGetDataset = Dataset
+
+export interface ResponseGetDataset extends Response {
+	dataset: Dataset
+}
+
+export async function ActionGetDataset(option: RequestGetDataset): Promise<ResponseGetDataset> {
+	noStore();
+	try {
+		const endpoint = `/api/rag/dataset/${option.uuid}`;
+		const res = await backendClient.backend_get(`${endpoint}`, {cache: 'no-store'});
+
+		return res as ResponseGetDataset;
+
+	} catch (error) {
+		// console.error('Fetch dataset Error:', error);
+		throw new Error('Failed to fetch the latest dataset.');
+	}
+}
+
 
 export interface RequestCreateDataset {
 	name: string
 	description: string
 	avatar_url: string
+	import_type: number
 }
 
 export interface ResponseCreateDataset extends Response {

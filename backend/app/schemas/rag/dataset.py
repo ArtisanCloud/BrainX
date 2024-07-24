@@ -50,6 +50,9 @@ class ResponseGetDatasetList(BaseSchema):
     pagination: ResponsePagination
 
 
+class ResponseGetDataset(BaseSchema):
+    data: DatasetSchema
+
 class RequestCreateDataset(DatasetSchema):
     name: constr(min_length=1)
     # description: constr(min_length=1)

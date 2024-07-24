@@ -3,6 +3,7 @@ from sqlalchemy import select, func
 from app.dao.model_provider.model_provider import ModelProviderDAO
 from app.database.seed import init_model_provider_uuid, init_user_uuid
 from app.database.seed import init_tenant_uuid
+from app.logger import logger
 from app.models.app.app import App
 from app.models.app.app import AppStatus, AppType
 from app.models.app.app_model_config import AppModelConfig
@@ -76,6 +77,7 @@ async def get_apps_from_data(db, data: list[dict]) -> list[App]:
     model_provider, exception = await dao.get_by_uuid(init_model_provider_uuid)
     if exception:
         raise exception
+
     # print(model_provider)
 
     apps = []

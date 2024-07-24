@@ -24,8 +24,8 @@ export async function fetchRevenue() {
 		const data = res.json()
 		return data;
 	} catch (error) {
-		console.error('Fetch Revenue Error:', error);
-		// throw new Error('Failed to fetch revenue data.');
+		// console.error('Fetch Revenue Error:', error);
+		throw new Error('Failed to fetch revenue data.');
 	}
 }
 
@@ -38,8 +38,8 @@ export async function fetchLatestInvoices() {
 		// console.log(latestInvoices)
 		return latestInvoices;
 	} catch (error) {
-		console.error('Fetch invoices Error:', error);
-		// throw new Error('Failed to fetch the latest invoices.');
+		// console.error('Fetch invoices Error:', error);
+		throw new Error('Failed to fetch the latest invoices.');
 	}
 }
 

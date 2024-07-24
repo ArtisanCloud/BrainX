@@ -1,9 +1,11 @@
-from typing import Optional
+from typing import Optional, List
 
-from pydantic import constr
+from pydantic import constr, Field
 
-from app.models.rag.document import Document, ImportType
+from app.models.rag.document import Document
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
+from app.schemas.rag.document_segment import DocumentSegmentSchema
+from app.service.rag.document_segment.list import transform_document_segments_to_reply
 
 
 class DocumentSchema(BaseObjectSchema):
@@ -17,6 +19,7 @@ class DocumentSchema(BaseObjectSchema):
     driver_type: Optional[int] = None
     embedding_model: Optional[str] = None
     embedding_model_provider: Optional[str] = None
+    document_segments: List[DocumentSegmentSchema] = Field(default_factory=list)
 
     @classmethod
     def from_orm(cls, obj: Document):
@@ -32,8 +35,10 @@ class DocumentSchema(BaseObjectSchema):
             is_published=obj.is_published,
             import_type=obj.import_type,
             driver_type=obj.driver_type,
-            embedding_model=obj.embedding_model
+            embedding_model=obj.embedding_model,
+            document_segments=transform_document_segments_to_reply(obj.document_segments)
         )
+
 
 class RequestGetDocumentList(BaseSchema):
     pagination: Optional[Pagination] = None
@@ -42,6 +47,10 @@ class RequestGetDocumentList(BaseSchema):
 class ResponseGetDocumentList(BaseSchema):
     data: list[DocumentSchema]
     pagination: ResponsePagination
+
+
+class ResponseGetDocument(BaseSchema):
+    data: DocumentSchema
 
 
 class RequestCreateDocument(DocumentSchema):

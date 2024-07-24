@@ -37,7 +37,8 @@ async def api_get_conversation_list(
     try:
         conversations, pagination, exception = await get_conversation_list(db, p, app_uuid)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -66,7 +67,8 @@ async def api_create_conversation(
 
         conversation, exception = await create_conversation(db, conversation)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -88,7 +90,8 @@ async def api_patch_conversation(
 
         conversation, exception = await patch_conversation(db, conversation_uuid, update_data)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -106,7 +109,8 @@ async def api_delete_conversation(
         user_id = 1
         result, exception = await soft_delete_conversation(db, user_id, conversation_uuid)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

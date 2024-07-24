@@ -1,4 +1,4 @@
-import "./ui/globals.scss";
+import "@/app/components/globals.scss";
 import type {Metadata} from "next";
 import {inter} from '@/app/styles/fonts';
 import {AntdRegistry} from '@ant-design/nextjs-registry';

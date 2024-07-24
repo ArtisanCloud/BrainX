@@ -1,6 +1,6 @@
 import {ArrowRightIcon} from '@heroicons/react/24/outline';
-import styles from '@/app/ui/home/home.module.scss';
-import HomeNavbar from "@/app/ui/home/navbar";
+import styles from '@/app/components/home/home.module.scss';
+import HomeNavbar from "@/app/components/home/navbar";
 import brainxImage from '/public/images/brainx.jpeg';
 import {Button, Image, Link} from "@nextui-org/react"
 

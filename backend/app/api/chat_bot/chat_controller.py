@@ -10,6 +10,7 @@ from app.api.middleware.auth import get_session_user
 from app.core.brain.index import LLMModel
 from app.database.deps import get_db_session
 from app.database.seed.user import init_user_uuid
+from app.logger import logger
 from app.models import User
 from app.schemas.robot_chat.chat import RequestChat
 from app.service.robot_chat.chat import chat
@@ -77,7 +78,8 @@ async def api_chat(
             session_user.uuid, app_uuid, conversation_uuid
         )
         if exception:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
         # print("conversationUUID:", conversation_uuid)
         return StreamingResponse(

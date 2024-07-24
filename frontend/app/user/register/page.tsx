@@ -4,7 +4,7 @@
 import {Form, Input, Button, message} from 'antd';
 import styles from './index.module.scss';
 import {useRouter} from "next/navigation";
-import HomeNavbar from '@/app/ui/home/navbar';
+import HomeNavbar from '@/app/components/home/navbar';
 import React from "react";
 import {ActionRegister} from "@/app/api/auth";
 import {encodePassword} from "@/app/lib/security";

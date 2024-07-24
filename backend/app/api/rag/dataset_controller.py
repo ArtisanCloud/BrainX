@@ -1,4 +1,5 @@
 import http
+from app.logger import logger
 
 from fastapi import Depends, APIRouter, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,11 +8,11 @@ from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
 from app.database.deps import get_db_session
-from app.models import Dataset, User
+from app.models import User
 
 from app.schemas.base import Pagination, ResponseSchema
 from app.schemas.rag.dataset import ResponseGetDatasetList, RequestCreateDataset, make_dataset, RequestPatchDataset, \
-    ResponseCreateDataset, ResponsePatchDataset, ResponseDeleteDataset
+    ResponseCreateDataset, ResponsePatchDataset, ResponseDeleteDataset, ResponseGetDataset
 from app.service.rag.dataset.create import create_dataset
 from app.service.rag.dataset.list import get_dataset_list
 from app.service.rag.dataset.get import get_dataset_by_uuid
@@ -35,7 +36,8 @@ async def api_get_dataset_list(
     try:
         datasets, pagination, exception = await get_dataset_list(db, session_user.uuid, p)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -46,12 +48,23 @@ async def api_get_dataset_list(
 
 
 @router.get("/{dataset_uuid}")
-async def api_get_dataset_by_uuid(dataset_uuid: str, db: AsyncSession = Depends(get_db_session)):
-    get_dataset_by_uuid(db, dataset_uuid)
-    dataset = await db.get(Dataset, dataset_uuid)
-    if dataset is None:
-        raise HTTPException(status_code=404, detail="Dataset not found")
-    return dataset
+async def api_get_dataset_by_uuid(
+        dataset_uuid: str,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_db_session)
+):
+    try:
+        dataset, exception = await get_dataset_by_uuid(db, session_user, dataset_uuid)
+        if exception is not None:
+            logger.error(exception)
+            raise Exception("database query: pls check log")
+
+    except Exception as e:
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseGetDataset(data=dataset)
+
+    return res
 
 
 @router.post("/create")
@@ -64,10 +77,11 @@ async def api_create_dataset(
         dataset = make_dataset(data)
         dataset.tenant_uuid = str(session_user.tenant_owner_uuid)
         dataset.created_user_by = str(session_user.uuid)
-        print(dataset)
+        # print(dataset)
         dataset, exception = await create_dataset(db, dataset)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -89,7 +103,8 @@ async def api_patch_dataset(
 
         dataset, exception = await patch_dataset(db, dataset_uuid, update_data)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -107,7 +122,8 @@ async def api_delete_dataset(
         user_id = 1
         result, exception = await soft_delete_dataset(db, user_id, dataset_uuid)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

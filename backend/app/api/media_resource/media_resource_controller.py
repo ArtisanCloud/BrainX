@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-
+from app.logger import logger
 from app.database.deps import get_db_session
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.media_resource.schema import ResponseGetMediaResourceList, ResponseCreateMediaResource, \
@@ -30,7 +30,8 @@ async def api_get_media_resource_list(
     try:
         media_resources, pagination, exception = await get_media_resource_list(db, p)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -53,7 +54,8 @@ async def create_media_resource(request: Request,
 
         media_resource, exception = await create_media_resource_by_file(db, resource)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -78,7 +80,8 @@ async def create_media_resource(
         data.base64Data = remove_base64_prefix(data.base64Data)
         media_resource, exception = await create_media_resource_by_base64_string(db, data.bucketName, data.base64Data)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

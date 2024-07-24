@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.deps import get_db_session
+from app.logger import logger
 from app.schemas.auth import RequestRegisterUser, ResponseRegisterUser, RequestLoginUser, ResponseLoginUser
 from app.schemas.base import ResponseSchema
 from app.service.user.create_user import create_user_by_account
@@ -22,7 +23,8 @@ async def api_register(
 
         user, exception = await create_user_by_account(db, data.account, data.password)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -42,7 +44,8 @@ async def api_login(
 
         token, exception = await login_by_account(db, data.account, data.password)
         if exception is not None:
-            raise exception
+            logger.error(exception)
+            raise Exception("database query: pls check log")
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

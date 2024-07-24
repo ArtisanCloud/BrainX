@@ -35,7 +35,7 @@ export async function ActionFetchAppList(pg: RequestPagination): Promise<Respons
 		return res as ResponseFetchAppList;
 
 	} catch (error) {
-		console.error('Fetch apps Error:', error);
+		// console.error('Fetch apps Error:', error);
 		throw new Error('Failed to fetch the latest apps.');
 	}
 }
