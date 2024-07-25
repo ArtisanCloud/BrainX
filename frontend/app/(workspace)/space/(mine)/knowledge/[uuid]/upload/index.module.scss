@@ -1,0 +1,93 @@
+.container {
+  background-color: #f7f7fa;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .path {
+    align-items: center;
+    display: flex;
+    box-shadow: 0 2px 2px 0 rgba(29, 28, 35, .04);
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding: 16px 24px;
+
+    .pathLink {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      box-sizing: border-box;
+      align-items: center;
+      display: flex;
+      color: #000;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 24px;
+      //margin-left: 12px;
+      .back {
+        cursor: pointer;
+        padding: 4.5px 12px;
+        font-size: 16px;
+        fill: currentColor;
+        display: inline-block;
+        font-style: normal;
+        line-height: 0;
+        text-align: center;
+        text-rendering: optimizeLegibility;
+        text-transform: none;
+
+      }
+
+      .label {
+        display: block;
+        unicode-bidi: isolate;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        box-sizing: border-box;
+
+      }
+    }
+  }
+
+  .main {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 24px;
+
+    .stepContainer {
+      height: 100%;
+      margin: 0 auto;
+      min-width: 1008px;
+      width: calc(100% - 200px);
+      .stepView{
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        box-sizing: border-box;
+
+      }
+
+      .stepOneContent {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex-wrap: wrap;
+        .uploadedTableContainer{
+          margin-top: 25px !important;
+          flex: 1 1;
+          border: 1px solid rgba(29, 28, 35, .12);
+          border-radius: 10px;
+          position: relative;
+        }
+        .navContainer{
+          display: flex;
+          float: right;
+          justify-content: flex-end;
+          line-height: 32px;
+          margin-bottom: 40px;
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+}

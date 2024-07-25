@@ -32,6 +32,7 @@ class Document(BaseModel):
     batch_index = mapped_column(Integer)
     word_count = mapped_column(Integer)
     token_count = mapped_column(Integer)
+    resource_url = mapped_column(String)
 
     process_start_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
     process_end_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
@@ -63,6 +64,7 @@ class Document(BaseModel):
             f"word_count='{self.word_count}', "
             f"token_count='{self.token_count}', "
             f"chunk_size='{self.chunk_size}', "
+            f"resource_url='{self.resource_url}', "
             f"overlap_size='{self.overlap_size}', "
             f"process_start_at='{self.process_start_at}', "
             f"process_end_at='{self.process_end_at}', "

@@ -9,16 +9,28 @@ from app.service.rag.document_segment.list import transform_document_segments_to
 
 
 class DocumentSchema(BaseObjectSchema):
+    uuid: Optional[str] = None
+    title: Optional[str] = None
+    dataset_uuid: Optional[str] = None
     tenant_uuid: Optional[str] = None
     created_user_by: Optional[str] = None
     updated_user_by: Optional[str] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    is_published: Optional[bool] = None
-    import_type: Optional[int] = None
-    driver_type: Optional[int] = None
-    embedding_model: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
+    status: Optional[int] = None
+    type: Optional[int] = None
+    document_index: Optional[int] = None
+    batch_index: Optional[int] = None
+    word_count: Optional[int] = None
+    token_count: Optional[int] = None
+    chunk_size: Optional[str] = None
+    resource_url: Optional[str] = None
+    overlap_size: Optional[int] = None
+    process_start_at: Optional[str] = None
+    process_end_at: Optional[str] = None
+    parse_start_at: Optional[str] = None
+    parse_end_at: Optional[str] = None
+    split_start_at: Optional[bool] = None
+    split_end_at: Optional[int] = None
+
     document_segments: List[DocumentSegmentSchema] = Field(default_factory=list)
 
     @classmethod
@@ -27,15 +39,27 @@ class DocumentSchema(BaseObjectSchema):
         # print(base)
         return cls(
             **base,
-            tenant_uuid=obj.tenant_uuid,
+            title=obj.title,
+            dataset_uuid=str(obj.dataset_uuid),
+            tenant_uuid=str(obj.tenant_uuid),
             created_user_by=str(obj.created_user_by),
             updated_user_by=str(obj.updated_user_by),
-            name=obj.name,
-            description=obj.description,
-            is_published=obj.is_published,
-            import_type=obj.import_type,
-            driver_type=obj.driver_type,
-            embedding_model=obj.embedding_model,
+            status=obj.status,
+            type=obj.type,
+            document_index=obj.document_index,
+            batch_index=obj.batch_index,
+            word_count=obj.word_count,
+            token_count=obj.token_count,
+            chunk_size=obj.chunk_size,
+            resource_url=obj.resource_url,
+            overlap_size=obj.overlap_size,
+            process_start_at=obj.process_start_at,
+            process_end_at=obj.process_end_at,
+            parse_start_at=obj.parse_start_at,
+            parse_end_at=obj.parse_end_at,
+            split_start_at=obj.split_start_at,
+            split_end_at=obj.split_end_at,
+
             document_segments=transform_document_segments_to_reply(obj.document_segments)
         )
 

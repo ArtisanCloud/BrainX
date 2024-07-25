@@ -1,9 +1,10 @@
 "use client";
 
+import Link from 'next/link'
 import {useParams} from 'next/navigation';
 import React, {useEffect, useState} from 'react';
 import styles from "./index.module.scss";
-import {Breadcrumb, Input, Button, Tag, Select, Empty, Space,Dropdown, MenuProps,SelectProps} from "antd";
+import {Breadcrumb, Input, Button, Tag, Select, Empty, Space, Dropdown, MenuProps, SelectProps} from "antd";
 import {ActionGetDataset, Dataset, DatasetImportType} from "@/app/api/knowledge/dataset";
 import Image from "next/image";
 import {GetOssUrl} from "@/app/lib/url";
@@ -14,13 +15,14 @@ import {
 	FileAddOutlined,
 	ReloadOutlined,
 	LinkOutlined,
-	DeleteOutlined
+	DeleteOutlined,
+	FileTextOutlined,
+	UploadOutlined,
+	GlobalOutlined
 } from "@ant-design/icons";
 import {ActionFetchDocumentList, RequestFetchDocumentList} from "@/app/api/knowledge/document";
 
 import {Document} from "@/app/api/knowledge/document";
-import uiStyles from "@/app/styles/component.module.scss";
-import {EditIcon} from "@nextui-org/shared-icons";
 
 type LabelRender = SelectProps['labelRender'];
 
@@ -98,9 +100,6 @@ const DatasetDetailPage = () => {
 	};
 
 
-
-
-
 	const handleClickAction: MenuProps['onClick'] = (e) => {
 		console.log(e)
 		// if (e.key == 'edit') {
@@ -112,34 +111,36 @@ const DatasetDetailPage = () => {
 
 	const items: MenuProps['items'] = [
 		{
-			label: '本地文档',
-			key:DatasetImportType.LOCAL_DOCUMENT,
-			// icon: <EditIcon/>,
+			label: <>
+				<Link href={currentDataset?.uuid + "/upload"}>本地文档</Link>
+			</>,
+			key: DatasetImportType.LOCAL_DOCUMENT,
+			icon: <UploadOutlined/>,
 		},
 		{
 			label: '在线数据',
-			key:DatasetImportType.ONLINE_DATA,
-			// icon: <EditIcon/>,
+			key: DatasetImportType.ONLINE_DATA,
+			icon: <GlobalOutlined/>,
 		},
 		{
 			label: 'Notion',
-			key:DatasetImportType.NOTION,
+			key: DatasetImportType.NOTION,
 			// icon: <EditIcon/>,
 		},
 		{
 			label: 'Google文档',
-			key:DatasetImportType.GOOGLE_DOC,
+			key: DatasetImportType.GOOGLE_DOC,
 			// icon: <EditIcon/>,
 		},
 		{
 			label: '飞书',
-			key:DatasetImportType.LARK,
+			key: DatasetImportType.LARK,
 			// icon: <EditIcon/>,
 		},
 		{
 			label: '自定义',
-			key:DatasetImportType.CUSTOM,
-			// icon: <EditIcon/>,
+			key: DatasetImportType.CUSTOM,
+			icon: <FileTextOutlined/>,
 		}
 
 	]
