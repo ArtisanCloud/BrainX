@@ -3,13 +3,23 @@
 import {useParams} from "next/navigation";
 import React, {useState} from "react";
 import {Dataset} from "@/app/api/knowledge/dataset";
-import {Document} from "@/app/api/knowledge/document";
 import Link from 'next/link'
 import styles from "@/app/(workspace)/space/(mine)/knowledge/[uuid]/upload/index.module.scss";
-import {Table, Space, Button, Steps, Upload, UploadProps, message, TableProps} from "antd";
-import {InboxOutlined, DeleteOutlined} from "@ant-design/icons";
+import {Table, Button, Steps, Upload, UploadProps, message, TableProps} from "antd";
+import {
+	InboxOutlined,
+	DeleteOutlined,
+	FilePdfOutlined,
+	FileWordOutlined,
+	FileTextOutlined,
+	FileImageOutlined,
+	FileUnknownOutlined
+} from '@ant-design/icons';
+import {AllowedFileTypes} from "@/app/utils/dataset";
+
 import uiStyles from "@/app/styles/component.module.scss";
-import {ActionCreateMediaResource, bucket_name} from "@/app/api/media-resource";
+import {ActionCreateMediaResource, bucket_name, MediaResource} from "@/app/api/media-resource";
+import {ContentType} from "@/app/utils/media";
 
 const {Dragger} = Upload;
 
@@ -17,7 +27,7 @@ const {Dragger} = Upload;
 const UploadLocalDocumentPage = () => {
 	const params = useParams<{ uuid: string }>();
 	const [currentDataset, setCurrentDataset] = useState<Dataset>();
-	const [documents, setDocuments] = useState<Document[]>([]);
+	const [documents, setDocuments] = useState<MediaResource[]>([]);
 
 	const [current, setCurrent] = useState(0);
 
@@ -43,24 +53,41 @@ const UploadLocalDocumentPage = () => {
 
 	const mapStepItems = stepItems.map((item) => ({key: item.title, title: item.title}));
 
-	const uploadDocument = (fileName: string, base64: string, index: number) => {
-		console.log(fileName,index)
-		// const res = ActionCreateMediaResource({
-		// 	mediaName: base64,
-		// 	bucketName: bucket_name,
-		// 	base64Data: base64,
-		// }, index)
+	const uploadDocument = async (fileName: string, base64: string, index: number) => {
+		// console.log(fileName, index)
+		const res = await ActionCreateMediaResource({
+			mediaName: fileName,
+			bucketName: bucket_name,
+			base64Data: base64,
+			sortIndex: index,
+		})
+		if (res.media_resource.url) {
+			setDocuments((prevDocuments) => [
+				...prevDocuments,
+				res.media_resource
+			]);
+		}
+
 	}
 
 	const uploadProps: UploadProps = {
 		name: 'files',
 		multiple: true,
 		beforeUpload(file: any, fileList: any[]) {
-			console.log(file, fileList)
+			// console.log(file, fileList)
+
 			// 检查文件大小是否小于20MB
 			const isLt20M = file.size / 1024 / 1024 < 20;
 			if (!isLt20M) {
 				message.error('files must be smaller than 20MB!');
+				return false;
+			}
+
+
+			// 修正条件判断，检查文件类型是否在允许的范围内
+			if (!AllowedFileTypes.includes(file.type)) {
+
+				message.error(`${file.name} is not a PDF, TXT, DOC, DOCX, or MD file`);
 				return false;
 			}
 
@@ -70,53 +97,93 @@ const UploadLocalDocumentPage = () => {
 				return false;
 			}
 
+			// console.log(file.uid);
+			// 使用 split 将字符串分割成数组
+			const parts = file.uid.split('-');
+			// 获取最后一个部分
+			const lastPart = parts[parts.length - 1];
+			// console.log(lastPart);
+			// 将最后一个部分转换为整数
+			let sortIndex = parseInt(lastPart, 10);
+			// console.log(sortIndex);
+
 			const _ = new Promise((resolve) => {
 				const reader = new FileReader();
 				reader.readAsDataURL(file);
 				reader.onload = () => {
 					// console.log(reader.result);
-					uploadDocument(file.name,reader.result as string, file.index);
+					const _ = uploadDocument(file.name, reader.result as string, sortIndex);
 				};
 			});
 		},
 	};
 
-	const handleClickDelete = (e:any, document:any) => {
-		console.log(e, document)
+	const handleClickDelete = (e: any, document: any) => {
+		// console.log(e, document)
+		e.stopPropagation(); // 阻止事件冒泡，如果需要的话
+
+		setDocuments((prevDocuments) =>
+			prevDocuments.filter((doc) => doc.id !== document.id)
+		);
 	}
 
-	interface UploadedDataType {
-		key: string;
-		documentName: string;
-		status: number;
-		fileSize: string;
-	}
+	// interface UploadedDataType{
+	// 	key: string;
+	// 	documentName: string;
+	// 	status: number;
+	// 	fileSize: string;
+	// }
 
-	const uploadedDocumentsTableColumns: TableProps<UploadedDataType>['columns'] = [
+	const getFileIcon = (contentType: string) => {
+		// console.log(contentType)
+		switch (contentType) {
+			case ContentType.PDF:
+				return <FilePdfOutlined/>;
+			case ContentType.DOC:
+			case ContentType.DOCX:
+				return <FileWordOutlined/>;
+			case ContentType.TXT:
+				return <FileTextOutlined/>;
+			case ContentType.PNG:
+			case ContentType.JPEG:
+			case ContentType.GIF:
+				return <FileImageOutlined/>;
+			default:
+				return <FileUnknownOutlined/>;
+		}
+	};
+
+	const uploadedDocumentsTableColumns: TableProps<MediaResource>['columns'] = [
 		{
 			title: '文档名称',
-			dataIndex: 'documentName',
-			key: 'documentName',
-			render: (text) => <a>{text}</a>,
+			dataIndex: 'filename',
+			key: 'filename',
+			render: (filename: string, record: any) => (
+				<>
+					{getFileIcon(record.content_type)}
+					<span style={{marginLeft: "20px"}}>{filename}</span>
+				</>
+			),
 		},
 		{
 			title: '状态',
-			dataIndex: 'status',
 			key: 'status',
+			render: (_, record: any) => record.deletedAt == null ? '正常' : '异常',  // 根据实际需要调整状态的显示方式
 		},
 		{
 			title: '文件尺寸',
-			dataIndex: 'fileSize',
+			dataIndex: 'size',
 			key: 'fileSize',
+			render: (size: number) => `${(size / 1024).toFixed(2)} KB`,  // 转换为 KB 并保留两位小数
 		},
 		{
 			title: '操作',
 			key: 'action',
 			dataIndex: 'tags',
-			render: (_, document) => (
+			render: (_, record) => (
 				<>
 					<DeleteOutlined
-						onClick={(e) => handleClickDelete(e, document)}  // 包装事件处理函数
+						onClick={(e) => handleClickDelete(e, record)}  // 包装事件处理函数
 						className={uiStyles.btnAction}
 					/>
 				</>
@@ -124,14 +191,6 @@ const UploadLocalDocumentPage = () => {
 		}
 	];
 
-	const uploadedDocumentsData: UploadedDataType[] = [
-		{
-			key: '1',
-			documentName: 'John Brown',
-			status: 1,
-			fileSize: '12.23',
-		},
-	];
 
 	return (
 
@@ -170,7 +229,7 @@ const UploadLocalDocumentPage = () => {
 										<div className={styles.uploadedTableContainer}>
 											<Table
 												columns={uploadedDocumentsTableColumns}
-												dataSource={uploadedDocumentsData}
+												dataSource={documents.map((doc) => ({...doc, key: doc.id}))} // 添加唯一的 key
 												pagination={{hideOnSinglePage: true}}
 											/>
 										</div>

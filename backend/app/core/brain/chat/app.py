@@ -37,10 +37,10 @@ class InMemoryHistory(BaseChatMessageHistory, BaseModel):
 store = {}
 
 
-def get_session_history(user_id: str, conversation_id: str) -> BaseChatMessageHistory:
-    if (user_id, conversation_id) not in store:
-        store[(user_id, conversation_id)] = InMemoryHistory()
-    return store[(user_id, conversation_id)]
+def get_session_history(user_uuid: str, conversation_id: str) -> BaseChatMessageHistory:
+    if (user_uuid, conversation_id) not in store:
+        store[(user_uuid, conversation_id)] = InMemoryHistory()
+    return store[(user_uuid, conversation_id)]
 
 
 def fake_retriever(query):

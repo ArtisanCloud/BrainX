@@ -28,7 +28,9 @@ def upgrade() -> None:
         sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
-        sa.Column('user_id', sa.Integer(), comment='用户Id'),
+        sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
+        sa.Column('created_user_by', UUID(as_uuid=True), nullable=False, index=True),
+
         sa.Column('filename', sa.String(), comment='名称'),
         sa.Column('size', sa.Integer(), comment='尺寸'),
         sa.Column('width', sa.Integer(), comment='宽度'),

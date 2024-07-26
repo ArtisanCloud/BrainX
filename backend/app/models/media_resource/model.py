@@ -1,16 +1,15 @@
 # Define the MediaResource model
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseModel, table_name_media_resource
-from sqlalchemy import Column, Integer, String, Boolean
-
-
+from app.models.base import BaseModel, table_name_media_resource, table_name_tenant, table_name_user
+from sqlalchemy import Column, Integer, String, Boolean, UUID, ForeignKey
 
 
 class MediaResource(BaseModel):
     __tablename__ = table_name_media_resource
 
-    user_id = mapped_column(Integer, comment='客户Id')
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
     filename = mapped_column(String, comment='名称')
     size = mapped_column(Integer, comment='尺寸')
     width = mapped_column(Integer, comment='宽度')

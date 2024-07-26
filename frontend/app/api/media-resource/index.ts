@@ -4,20 +4,21 @@ import {backendClient} from "@/app/api/backend";
 export const bucket_name = 'bucket.brainx'
 
 export interface MediaResource extends PowerModel {
+	bucket_name: string;
 	filename: string;
 	size: number;
+	is_local_stored: boolean;
 	url: string;
-	bucketName: string;
-	isLocalStored: boolean;
-	contentType: string;
-	resourceType: string;
-	sortIndex: number;
+	content_type: string;
+	resource_type: string;
+	sort_index: number;
 }
 
 export interface RequestCreateMediaResource {
 	mediaName: string
 	bucketName: string
 	base64Data: string
+	sortIndex: number
 }
 
 export interface ResponseCreateMediaResource {
@@ -26,7 +27,7 @@ export interface ResponseCreateMediaResource {
 }
 
 
-export async function ActionCreateMediaResource(option: RequestCreateMediaResource, sortIndex: number) {
+export async function ActionCreateMediaResource(option: RequestCreateMediaResource) {
 	// 处理上传事件的逻辑
 	const endpoint = `/api/media/resource/create/base64`;
 

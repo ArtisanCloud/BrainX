@@ -1,7 +1,8 @@
 from enum import IntEnum
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Text, Integer, TIMESTAMP
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from app.models.base import BaseModel, table_name_document, table_name_dataset, table_name_user, table_name_tenant
+from app.models.base import BaseModel, table_name_document, table_name_dataset, table_name_user, table_name_tenant, \
+    table_name_media_resource
 
 
 class DocumentType(IntEnum):
@@ -24,6 +25,7 @@ class Document(BaseModel):
     dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))
     created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
     updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
+    resource_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_media_resource + '.uuid'), nullable=True)
 
     title = mapped_column(String)
     status = mapped_column(SmallInteger)
@@ -57,6 +59,7 @@ class Document(BaseModel):
             f"tenant_uuid='{self.tenant_uuid}', "
             f"created_user_by='{self.created_user_by}', "
             f"updated_user_by='{self.updated_user_by}', "
+            f"resource_uuid='{self.resource_uuid}', "
             f"status='{self.status}', "
             f"type='{self.type}', "
             f"document_index='{self.document_index}', "

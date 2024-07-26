@@ -1,4 +1,13 @@
 import {DatasetImportType} from "@/app/api/knowledge/dataset";
+import {ContentType} from "@/app/utils/media";
+
+export const AllowedFileTypes = [
+	ContentType.PDF,
+	ContentType.DOC,
+	ContentType.DOCX,
+	ContentType.TXT,
+	ContentType.MD
+];
 
 export const getDatasetImportTypeTranslation = (type: DatasetImportType): string => {
 	// console.log(type)

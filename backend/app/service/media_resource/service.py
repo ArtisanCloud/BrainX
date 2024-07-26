@@ -9,9 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import client_storage
 from app.core.config import settings
 from app.core.libs.storage.storage import Storage
+from app.models import User
 from app.models.media_resource.model import MediaResource
 from app.dao.media_resource.media_resource import MediaResourceDAO, FindManyMediaResourcesOption, get_media_type
 from app.schemas.base import ResponsePagination
+from app.utils.media import remove_base64_prefix, get_content_type_from_base64, get_file_type_from_magic_numbers
 
 
 class MediaResourceService:
@@ -96,24 +98,43 @@ class MediaResourceService:
             return None, e
 
     async def make_oss_resource_by_base64_string(
-            self, bucket: str, base64_data: str
+            self, user: User,
+            bucket: str, base64_data: str,
+            media_name: str = None, sort_index: int = None,
     ) -> Tuple[MediaResource | None, Exception | None]:
+
+        content_type = self.determine_content_type(base64_data)
+        if content_type is None:
+            return None, Exception(f"Invalid base64 data content type")
+
+        base64_data = remove_base64_prefix(base64_data)
+
         try:
             data = b64decode(base64_data, validate=True)
-            return await self.make_oss_resource_by_base64_data(bucket, data)
+            return await self.make_oss_resource_by_base64_data(
+                user, bucket,
+                data, content_type,
+                media_name, sort_index
+            )
         except Exception as e:
             return None, e
 
     async def make_oss_resource_by_base64_data(
-            self, bucket: str, data: bytes
+            self,
+            user: User, bucket: str,
+            data: bytes, content_type: str,
+            media_name: str = None,
+            sort_index: int = None,
     ) -> Tuple[MediaResource | None, Exception | None]:
         try:
             res = await self.oss_client.check_bucket_exists(bucket)
             if res is not None:
                 return None, Exception(f"Bucket '{bucket}' does not exist")
 
-            object_name = f"object_{datetime.now().timestamp()}"
-            content_type = "image/png"
+            if media_name is None or media_name == '':
+                object_name = f"object_{datetime.now().timestamp()}"
+            else:
+                object_name = media_name
 
             info = self.oss_client.save(
                 bucket, object_name, data, len(data),
@@ -124,15 +145,27 @@ class MediaResourceService:
                 url = info.location
 
             return MediaResource(
+                tenant_uuid=user.tenant_owner_uuid,
+                created_user_by=user.uuid,
                 bucket_name=bucket,
                 filename=info.object_name,
                 size=len(data),
                 url=url,
                 content_type=content_type,
                 resource_type=get_media_type(content_type),
+                sort_index=sort_index,
             ), None
         except Exception as e:
             return None, e
 
     async def check_bucket_exists(self, bucket: str) -> Exception | None:
         return await self.oss_client.check_bucket_exists(bucket)
+
+    @classmethod
+    def determine_content_type(cls, base64_data: str) -> str:
+        # 通过前缀判断内容类型
+        content_type = get_content_type_from_base64(base64_data)
+        if content_type:
+            return content_type
+        # 如果没有前缀，使用魔术字节判断内容类型
+        return get_file_type_from_magic_numbers(base64_data)

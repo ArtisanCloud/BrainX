@@ -63,9 +63,10 @@ const CreateDataset = () => {
 				const requestData = {
 					mediaName: info.file.name,
 					bucketName: bucket_name,
-					base64Data: base64
+					base64Data: base64,
+					sortIndex:0
 				} as RequestCreateMediaResource
-				const res: ResponseCreateMediaResource = await ActionCreateMediaResource(requestData, 0);
+				const res: ResponseCreateMediaResource = await ActionCreateMediaResource(requestData);
 				// console.log(res)
 				if (res) {
 					setLoading(false);

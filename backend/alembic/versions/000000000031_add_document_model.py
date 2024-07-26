@@ -27,10 +27,11 @@ def upgrade() -> None:
         sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
-        sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False),
-        sa.Column('dataset_uuid', UUID(as_uuid=True), nullable=False),
-        sa.Column('created_user_by', UUID(as_uuid=True), nullable=False),
-        sa.Column('updated_user_by', UUID(as_uuid=True), nullable=True),
+        sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
+        sa.Column('dataset_uuid', UUID(as_uuid=True), nullable=False, index=True),
+        sa.Column('created_user_by', UUID(as_uuid=True), nullable=False, index=True),
+        sa.Column('updated_user_by', UUID(as_uuid=True), nullable=True, index=True),
+        sa.Column('resource_uuid', UUID(as_uuid=True), nullable=True, index=True),
 
         sa.Column('title', sa.String(), nullable=True),
         sa.Column('status', sa.SmallInteger(), nullable=True),

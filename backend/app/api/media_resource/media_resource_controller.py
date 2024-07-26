@@ -4,14 +4,15 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
+from app.api.middleware.auth import get_session_user
 from app.logger import logger
 from app.database.deps import get_db_session
+from app.models import User
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.media_resource.schema import ResponseGetMediaResourceList, ResponseCreateMediaResource, \
     RequestCreateMediaResourceByBase64
 from app.service.media_resource.create import create_media_resource_by_file, create_media_resource_by_base64_string
 from app.service.media_resource.list import get_media_resource_list
-from app.utils.image import remove_base64_prefix
 
 router = APIRouter()
 
@@ -68,17 +69,20 @@ async def create_media_resource(request: Request,
 
 @router.post("/create/base64")
 async def create_media_resource(
-        # sort_index: int,
         data: RequestCreateMediaResourceByBase64,
+        session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_db_session),
 ) -> ResponseCreateMediaResource | ResponseSchema:
     try:
         # Parse multipart form
         # print(resource)
         #
-
-        data.base64Data = remove_base64_prefix(data.base64Data)
-        media_resource, exception = await create_media_resource_by_base64_string(db, data.bucketName, data.base64Data)
+        # print(session_user)
+        media_resource, exception = await create_media_resource_by_base64_string(
+            db, session_user,
+            data.bucketName, data.base64Data,
+            data.mediaName, data.sortIndex,
+        )
         if exception is not None:
             logger.error(exception)
             raise Exception("database query: pls check log")

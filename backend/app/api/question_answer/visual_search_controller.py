@@ -10,7 +10,7 @@ from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.visual_search import RequestVisualSearch, \
     ResponseVisualSearch
 from app.service.question_answer.visual_search import visual_search
-from app.utils.image import image_base64_to_embed
+from app.utils.media import image_base64_to_embed
 from app.core.brain.index import get_visual_search_embedding_model
 
 router = APIRouter()

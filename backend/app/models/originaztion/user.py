@@ -49,6 +49,7 @@ class User(BaseModel):
         description = self.desc[:10] + '...' if self.desc is not None else 'No description'
         return (
             f"<User(id={self.id}, "
+            f"uuid='{self.uuid}', "
             f"tenant_owner_uuid='{self.tenant_owner_uuid}', "
             f"account='{self.account}', "
             f"name='{self.name}', "
