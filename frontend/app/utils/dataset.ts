@@ -6,8 +6,43 @@ export const AllowedFileTypes = [
 	ContentType.DOC,
 	ContentType.DOCX,
 	ContentType.TXT,
-	ContentType.MD
+	ContentType.MD,
+	'.pdf',
+	'.doc',
+	'.docx',
+	'.txt',
+	'.md'
 ];
+
+export const segmentationOptions = [
+	{ value: '\n', label: '换行' },
+	{ value: '\n\n', label: '两个换行' },
+	{ value: '。', label: '中文句号' },
+	{ value: '！', label: '中文感叹号' },
+	{ value: '.', label: '英文句号' },
+	{ value: '!', label: '英文感叹号' },
+	{ value: '？', label: '中文问号' },
+	{ value: '?', label: '英文问号' },
+	// { value: '\n', label: 'Line break' },
+	// { value: '\n\n', label: '2 line breaks' },
+	// { value: '。', label: 'Chinese period' },
+	// { value: '！', label: 'Chinese exclamation mark' },
+	// { value: '.', label: 'English period' },
+	// { value: '!', label: 'English exclamation mark' },
+	// { value: '？', label: 'Chinese question mark' },
+	// { value: '?', label: 'English question mark' },
+
+
+
+
+
+
+
+
+
+
+];
+
 
 export const getDatasetImportTypeTranslation = (type: DatasetImportType): string => {
 	// console.log(type)

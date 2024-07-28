@@ -1,11 +1,24 @@
 "use client";
 
 import {useParams} from "next/navigation";
-import React, {useState} from "react";
-import {Dataset} from "@/app/api/knowledge/dataset";
+import React, {useEffect, useState} from "react";
+import {Dataset, SegmentationMode} from "@/app/api/knowledge/dataset";
 import Link from 'next/link'
 import styles from "@/app/(workspace)/space/(mine)/knowledge/[uuid]/upload/index.module.scss";
-import {Table, Button, Steps, Upload, UploadProps, message, TableProps} from "antd";
+import {
+	Table,
+	Button,
+	Steps,
+	Upload,
+	UploadProps,
+	message,
+	TableProps,
+	Space,
+	Radio,
+	Select,
+	Input,
+	Checkbox
+} from "antd";
 import {
 	InboxOutlined,
 	DeleteOutlined,
@@ -13,9 +26,11 @@ import {
 	FileWordOutlined,
 	FileTextOutlined,
 	FileImageOutlined,
-	FileUnknownOutlined
+	FileUnknownOutlined,
+	CheckCircleOutlined,
+	CloseCircleOutlined
 } from '@ant-design/icons';
-import {AllowedFileTypes} from "@/app/utils/dataset";
+import {AllowedFileTypes, segmentationOptions} from "@/app/utils/dataset";
 
 import uiStyles from "@/app/styles/component.module.scss";
 import {ActionCreateMediaResource, bucket_name, MediaResource} from "@/app/api/media-resource";
@@ -30,6 +45,12 @@ const UploadLocalDocumentPage = () => {
 	const [documents, setDocuments] = useState<MediaResource[]>([]);
 
 	const [current, setCurrent] = useState(0);
+	const [segmentMode, setSegmentMode] = useState<SegmentationMode>(SegmentationMode.AUTOMATIC);
+	const [selectedSegmentID, setSelectedSegmentID] = useState('\n');
+	const [segmentMaxLength, setSegmentMaxLength] = useState(800);
+	const [replaceConsecutiveSpaces, setReplaceConsecutiveSpaces] = useState(false);
+	const [deleteAllUrls, setDeleteAllUrls] = useState(false);
+
 
 	const next = () => {
 		setCurrent(current + 1);
@@ -91,9 +112,9 @@ const UploadLocalDocumentPage = () => {
 				return false;
 			}
 
-			// 检查总文件数量是否超过3个
-			if (fileList.length > 3) {
-				message.error('You can only upload up to 3 files!');
+			// 检查总文件数量是否超过最大数
+			if (fileList.length > 300) {
+				message.error('You can only upload up to 300 files!');
 				return false;
 			}
 
@@ -107,18 +128,22 @@ const UploadLocalDocumentPage = () => {
 			let sortIndex = parseInt(lastPart, 10);
 			// console.log(sortIndex);
 
-			const _ = new Promise((resolve) => {
-				const reader = new FileReader();
-				reader.readAsDataURL(file);
-				reader.onload = () => {
-					// console.log(reader.result);
-					const _ = uploadDocument(file.name, reader.result as string, sortIndex);
-				};
-			});
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				// console.log(reader.result);
+				const _ = uploadDocument(file.name, reader.result as string, sortIndex);
+			};
+
+			return false;
 		},
 	};
 
-	const handleClickDelete = (e: any, document: any) => {
+	// useEffect(() => {
+	// 	console.log(current, stepItems.length)
+	// }, [current])
+
+	const handleDeleteDocument = (e: any, document: any) => {
 		// console.log(e, document)
 		e.stopPropagation(); // 阻止事件冒泡，如果需要的话
 
@@ -127,12 +152,14 @@ const UploadLocalDocumentPage = () => {
 		);
 	}
 
-	// interface UploadedDataType{
-	// 	key: string;
-	// 	documentName: string;
-	// 	status: number;
-	// 	fileSize: string;
-	// }
+	const handleChangeSelectedSegmentID = (value) => {
+		setSelectedSegmentID(value);
+	};
+
+	const handleChangeSegmentMaxLength = (value) => {
+		setSegmentMaxLength(value);
+	};
+
 
 	const getFileIcon = (contentType: string) => {
 		// console.log(contentType)
@@ -168,7 +195,19 @@ const UploadLocalDocumentPage = () => {
 		{
 			title: '状态',
 			key: 'status',
-			render: (_, record: any) => record.deletedAt == null ? '正常' : '异常',  // 根据实际需要调整状态的显示方式
+			render: (_, record: any) => (
+				<>
+					{record.deletedAt == null ? (
+						<>
+							<CheckCircleOutlined style={{color: 'green'}}/><span className={'ml-2'}>已上传</span>
+						</>
+					) : (
+						<>
+							<CloseCircleOutlined style={{color: 'red'}}/><span className={'ml-2'}>失败</span>
+						</>
+					)}
+				</>
+			)
 		},
 		{
 			title: '文件尺寸',
@@ -183,14 +222,13 @@ const UploadLocalDocumentPage = () => {
 			render: (_, record) => (
 				<>
 					<DeleteOutlined
-						onClick={(e) => handleClickDelete(e, record)}  // 包装事件处理函数
+						onClick={(e) => handleDeleteDocument(e, record)}  // 包装事件处理函数
 						className={uiStyles.btnAction}
 					/>
 				</>
 			),
 		}
 	];
-
 
 	return (
 
@@ -209,13 +247,13 @@ const UploadLocalDocumentPage = () => {
 						<Steps current={current} items={mapStepItems}/>
 
 						<div style={{marginTop: 24}}>
-							{current < mapStepItems.length - 1 && (
+							{current <= mapStepItems.length - 3 && (
 								<div className={styles.stepOneContent}>
 									<Dragger
 										showUploadList={false}
 										maxCount={300}
+										accept={AllowedFileTypes}
 										{...uploadProps}
-
 									>
 										<p className="ant-upload-drag-icon">
 											<InboxOutlined/>
@@ -236,7 +274,7 @@ const UploadLocalDocumentPage = () => {
 									) : null}
 									<div className={styles.navContainer}>
 										<Button
-											disabled={documents.length === 0}
+											// disabled={documents.length === 0}
 											type="primary"
 											onClick={() => next()}
 										>
@@ -246,15 +284,86 @@ const UploadLocalDocumentPage = () => {
 								</div>
 							)}
 
-							{current === stepItems.length - 1 && (
-								<Button type="primary" onClick={() => {
-								}}>
-									Done
-								</Button>
+							{current === stepItems.length - 2 && (
+								<div className={styles.stepTwoContent}>
+									<div className={styles.selectSegmentModeContainer}>
+										<Radio.Group value={segmentMode}>
+											<Space className={styles.radioGroup} direction="vertical">
+												<div
+													className={`${styles.automatic} ${segmentMode === SegmentationMode.AUTOMATIC ? styles['automatic-mode'] : styles['other-mode']}`}
+													onClick={() => setSegmentMode(SegmentationMode.AUTOMATIC)}
+												>
+													<div className={styles.radio}>
+														<Radio value={SegmentationMode.AUTOMATIC}></Radio>
+													</div>
+													<div className={styles.automaticDescription}>
+														<span className={styles.title}>自动分片 & 清洗</span>
+														<div className={styles.description}>自动分片 & 预处理规则</div>
+													</div>
+												</div>
+												<div
+													className={`${styles.custom} ${segmentMode === SegmentationMode.CUSTOM ? styles['custom-mode'] : styles['other-mode']}`}
+													onClick={() => setSegmentMode(SegmentationMode.CUSTOM)}
+												>
+													<div className={styles.radio}>
+														<Radio value={SegmentationMode.CUSTOM}></Radio>
+													</div>
+													<div className={styles.customDescription}>
+														<span className={styles.title}>自定义</span>
+														<div className={styles.description}>自定义分片规则 & 分片长度 & 处理规则</div>
+														{segmentMode === SegmentationMode.CUSTOM && (
+															<div className={styles.customConfig}>
+																<div className={styles.separate}></div>
+																<div className={styles.segmentField}>
+																	<span className={styles.title}>分段识别符号</span>
+																	<Select
+																		className={styles.select}
+																		options={segmentationOptions}
+																		value={selectedSegmentID}
+																		onChange={handleChangeSelectedSegmentID}
+																		placeholder="请选择一个识别符号"
+																		style={{width: '100%'}}
+																	/>
+																</div>
+																<div className={styles.segmentField}>
+																	<span className={styles.title}>最大切分长度</span>
+																	<Input onChange={handleChangeSegmentMaxLength}
+																				 className={styles.input}
+																				 value={800}
+																	/>
+																</div>
+																<div className={styles.segmentField}>
+																	<span className={styles.title}>文本预处理规则</span>
+																	<Checkbox className={styles.checkbox}
+																						onChange={(e)=>setDeleteAllUrls(e.target.value)}
+																	>将连续的空格、换行符和制表符替换掉
+																	</Checkbox>
+																	<Checkbox className={styles.checkbox}
+																						onChange={(e)=>setDeleteAllUrls(e.target.value)}
+																	>删除所有的URL和电子邮件地址
+																	</Checkbox>
+																</div>
+															</div>
+														)}
+													</div>
+												</div>
+											</Space>
+										</Radio.Group>
+									</div>
+									<div className={styles.navContainer}>
+										<Button style={{margin: '0 8px'}} onClick={() => prev()}>
+											上一步
+										</Button>
+										<Button type="primary" onClick={() => next()}>
+											下一步
+										</Button>
+									</div>
+								</div>
 							)}
-							{current > 0 && (
+							{current >= stepItems.length - 1 && (
+
 								<Button style={{margin: '0 8px'}} onClick={() => prev()}>
-									Previous
+									Done
 								</Button>
 							)}
 						</div>

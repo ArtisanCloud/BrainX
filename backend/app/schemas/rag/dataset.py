@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import constr
 
-from app.models.rag.dataset import Dataset, ImportType
+from app.models.rag.dataset import Dataset
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
 
 

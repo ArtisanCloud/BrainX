@@ -12,6 +12,11 @@ export enum DatasetImportType {
 	CUSTOM = 6,
 }
 
+export enum SegmentationMode {
+	AUTOMATIC = 1,
+	CUSTOM = 2,
+}
+
 export interface Dataset extends PowerModel {
 	tenant_uuid?: string;
 	created_user_by?: string;

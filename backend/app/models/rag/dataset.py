@@ -73,11 +73,6 @@ class Dataset(BaseModel):
         )
 
 
-class SegmentationMode(IntEnum):
-    AUTOMATIC = 1
-    CUSTOM = 2
-
-
 class SegmentID(Enum):
     line_break = '\n'
     two_line_break = '\n\n'
@@ -93,6 +88,11 @@ class PreProcessingRules(Enum):
     remove_stopwords = "delete_stopwords",
     replace_consecutive_spaces_break_tab = "replace_consecutive_spaces_break_tab",
     delete_urls_and_emails = "delete_urls_and_emails"
+
+
+class SegmentationMode(IntEnum):
+    AUTOMATIC = 1
+    CUSTOM = 2
 
 
 class DatasetSegmentRule(BaseModel):

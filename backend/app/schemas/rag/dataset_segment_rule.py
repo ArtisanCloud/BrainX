@@ -1,14 +1,13 @@
 from typing import Optional
 
-from pydantic import constr
-
-from app.models.rag.dataset import DatasetSegmentRule, ImportType
+from app.models.rag.dataset import DatasetSegmentRule
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
+
 
 
 class DatasetSegmentRuleSchema(BaseObjectSchema):
     dataset_uuid: Optional[str] = None
-    mode: Optional[str] = None
+    mode: Optional[int] = None
     rules: Optional[str] = None
 
     @classmethod
