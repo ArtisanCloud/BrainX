@@ -12,3 +12,5 @@ TBD...
 
 <image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/chat.png">
 
+<image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/segment-1.png">
+<image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/segment-2.png">
