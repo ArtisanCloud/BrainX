@@ -24,7 +24,6 @@ class DatasetSchema(BaseObjectSchema):
     @classmethod
     def from_orm(cls, obj: Dataset):
         base = super().from_orm(obj)
-        # print(base)
         return cls(
             **base,
             tenant_uuid=str(obj.tenant_uuid),
@@ -52,6 +51,7 @@ class ResponseGetDatasetList(BaseSchema):
 
 class ResponseGetDataset(BaseSchema):
     data: DatasetSchema
+
 
 class RequestCreateDataset(DatasetSchema):
     name: constr(min_length=1)

@@ -42,7 +42,7 @@ def upgrade() -> None:
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('deleted_at', sa.Boolean(), default=None, nullable=True),
+        sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
         sa.ForeignKeyConstraint(['dataset_uuid'], [table_name_dataset + '.uuid'], ),

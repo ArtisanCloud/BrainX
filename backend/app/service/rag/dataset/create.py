@@ -21,7 +21,6 @@ async def create_dataset(
 ) -> Tuple[DatasetSchema | None, Exception | None]:
     service_dataset = DatasetService(db)
     dataset, exception = await service_dataset.app_dao.create(dataset)
-
     if exception:
         return None, exception
 

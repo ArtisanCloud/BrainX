@@ -14,9 +14,8 @@ from app.service.rag.document.create import transform_document_to_reply
 from app.models.rag.document import Document
 
 
-def transform_documents_to_reply(documents: [Document]) -> List[DocumentSchema]:
-    data = [transform_document_to_reply(resource) for resource in documents]
-    # print(data)
+def transform_documents_to_reply(documents: [Document]) -> List[DocumentSchema] | None:
+    data = [transform_document_to_reply(document) for document in documents]
     return data
 
 
@@ -31,14 +30,15 @@ async def get_document_list(
         where(Document.tenant_uuid == tenant_uuid).
         where(Document.dataset_uuid == dataset_uuid).
         where(Document.deleted_at.is_(None)).
-        order_by(Document.created_at).
-        options(
-            # joinedload(Document.dataset),  # 立即加载 dataset 关联
-            subqueryload(Document.document_segments)  # 立即加载 document_segments 关联
-        )
+        order_by(Document.created_at)
+        # options(
+        #     # joinedload(Document.dataset),  # 立即加载 dataset 关联
+        #     subqueryload(Document.document_segments)  # 立即加载 document_segments 关联
+        # )
     )
     # print(stmt)
     res, pg, exception = await paginate_query(db, stmt, Document, pagination, True)
+
     if exception:
         return None, None, exception
 

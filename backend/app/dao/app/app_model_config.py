@@ -11,18 +11,18 @@ class AppModelConfigDAO:
         self.db = db
 
     async def create_app_model_config(self, config_data: AppModelConfigSchema) -> Tuple[
-        AppModelConfig | None, Exception | None]:
+        AppModelConfig | None, SQLAlchemyError | None]:
         try:
             app_model_config = AppModelConfig(**config_data.dict())
             self.db.add(app_model_config)
-            await self.db.commit()
+
             return app_model_config, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return None, e
 
     async def get_app_model_config_by_id(self, config_id: int) -> Tuple[
-        AppModelConfig | None, Exception | None]:
+        AppModelConfig | None, SQLAlchemyError | None]:
         try:
             app_model_config = await self.db.execute(
                 select(AppModelConfig).filter(AppModelConfig.id == config_id)
@@ -32,7 +32,7 @@ class AppModelConfigDAO:
             return None, e
 
     async def update_app_model_config(self, config_id: int, update_data: AppModelConfigSchema) \
-            -> Tuple[AppModelConfig | None, Exception | None]:
+            -> Tuple[AppModelConfig | None, SQLAlchemyError | None]:
         try:
             app_model_config = await self.get_app_model_config_by_id(config_id)
             if not app_model_config:
@@ -41,10 +41,9 @@ class AppModelConfigDAO:
             for field, value in update_data.dict(exclude_unset=True).items():
                 setattr(app_model_config, field, value)
 
-            await self.db.commit()
             return app_model_config, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return None, e
 
     async def patch_app_model_config(self, config_id: int, patch_data: dict) -> Tuple[
@@ -57,21 +56,19 @@ class AppModelConfigDAO:
             for field, value in patch_data.items():
                 setattr(app_model_config, field, value)
 
-            await self.db.commit()
             return app_model_config, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
             return None, e
 
-    async def delete_app_model_config(self, config_id: int) -> Tuple[bool, Exception | None]:
+    async def delete_app_model_config(self, config_id: int) -> Tuple[bool, SQLAlchemyError | None]:
         try:
             app_model_config = await self.get_app_model_config_by_id(config_id)
             if not app_model_config:
                 return False, Exception(f"AppModelConfig with id {config_id} not found")
 
             await self.db.delete(app_model_config)
-            await self.db.commit()
+
             return True, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return False, e

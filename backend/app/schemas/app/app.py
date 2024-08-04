@@ -65,6 +65,9 @@ class ResponseCreateApp(BaseSchema):
     app: AppSchema
 
 
+class ResponseGetApp(BaseSchema):
+    data: AppSchema
+
 class RequestPatchApp(AppSchema):
     pass
 

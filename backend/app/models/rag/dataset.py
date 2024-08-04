@@ -51,7 +51,10 @@ class Dataset(BaseModel):
     tenant: Mapped["Tenant"] = relationship(back_populates="datasets", foreign_keys=[tenant_uuid])
     documents: Mapped["Document"] = relationship(back_populates="dataset", foreign_keys="[Document.dataset_uuid]")
     segment_rule: Mapped["DatasetSegmentRule"] = relationship(back_populates="dataset",
-                                                              foreign_keys="[DatasetSegmentRule.dataset_uuid]")
+                                                              foreign_keys="[DatasetSegmentRule.dataset_uuid]",
+                                                              # uselist=False,
+                                                              # lazy="select"
+                                                              )
 
     def __repr__(self):
         description = self.description[:10] + '...' if self.description is not None else 'No description'

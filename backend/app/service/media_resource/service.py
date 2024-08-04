@@ -24,7 +24,7 @@ class MediaResourceService:
 
         self.oss_client = client_storage
 
-    async def find_all_media_resources(self) -> Tuple[List[MediaResource], Exception | None]:
+    async def find_all_media_resources(self) -> Tuple[List[MediaResource], SQLAlchemyError | None]:
         try:
             return await self.media_resource_dao.find_all_media_resources()
         except SQLAlchemyError as e:
@@ -44,7 +44,7 @@ class MediaResourceService:
 
     async def create_media_resource(
             self, resource: MediaResource
-    ) -> Tuple[MediaResource | None, Exception | None]:
+    ) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
         try:
             return await self.media_resource_dao.create_media_resource(resource)
         except SQLAlchemyError as e:
@@ -52,13 +52,13 @@ class MediaResourceService:
 
     async def create_media_resources(
             self, resources: List[MediaResource]
-    ) -> Tuple[List[MediaResource] | None, Exception | None]:
+    ) -> Tuple[List[MediaResource] | None, SQLAlchemyError | None]:
         try:
             return await self.media_resource_dao.create_media_resources(resources)
         except SQLAlchemyError as e:
             return None, e
 
-    async def make_media_resource(self, bucket: str, handle) -> Tuple[MediaResource | None, Exception | None]:
+    async def make_media_resource(self, bucket: str, handle) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
         return await self.make_oss_resource(bucket, handle)
 
     @staticmethod
@@ -66,7 +66,7 @@ class MediaResourceService:
         endpoint = settings.storage.minio.endpoint
         return urljoin(endpoint, f"{bucket}/{key}")
 
-    async def make_oss_resource(self, bucket: str, file: UploadFile) -> Tuple[MediaResource | None, Exception | None]:
+    async def make_oss_resource(self, bucket: str, file: UploadFile) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
         err = await self.check_bucket_exists(bucket)
         if err:
             return None, err
@@ -101,7 +101,7 @@ class MediaResourceService:
             self, user: User,
             bucket: str, base64_data: str,
             media_name: str = None, sort_index: int = None,
-    ) -> Tuple[MediaResource | None, Exception | None]:
+    ) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
 
         content_type = self.determine_content_type(base64_data)
         if content_type is None:
@@ -125,7 +125,7 @@ class MediaResourceService:
             data: bytes, content_type: str,
             media_name: str = None,
             sort_index: int = None,
-    ) -> Tuple[MediaResource | None, Exception | None]:
+    ) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
         try:
             res = await self.oss_client.check_bucket_exists(bucket)
             if res is not None:
@@ -158,7 +158,7 @@ class MediaResourceService:
         except Exception as e:
             return None, e
 
-    async def check_bucket_exists(self, bucket: str) -> Exception | None:
+    async def check_bucket_exists(self, bucket: str) -> SQLAlchemyError | None:
         return await self.oss_client.check_bucket_exists(bucket)
 
     @classmethod

@@ -1,6 +1,7 @@
 import http
 
 from fastapi import APIRouter, Depends, Response
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.deps import get_db_session
@@ -23,8 +24,10 @@ async def api_register(
 
         user, exception = await create_user_by_account(db, data.account, data.password)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -44,8 +47,10 @@ async def api_login(
 
         token, exception = await login_by_account(db, data.account, data.password)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

@@ -4,12 +4,12 @@ from pydantic import constr, Field
 
 from app.models.rag.document import Document
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
+from app.schemas.media_resource.schema import MediaResourceSchema
 from app.schemas.rag.document_segment import DocumentSegmentSchema
 from app.service.rag.document_segment.list import transform_document_segments_to_reply
 
 
 class DocumentSchema(BaseObjectSchema):
-    uuid: Optional[str] = None
     title: Optional[str] = None
     dataset_uuid: Optional[str] = None
     tenant_uuid: Optional[str] = None
@@ -21,9 +21,7 @@ class DocumentSchema(BaseObjectSchema):
     batch_index: Optional[int] = None
     word_count: Optional[int] = None
     token_count: Optional[int] = None
-    chunk_size: Optional[str] = None
     resource_url: Optional[str] = None
-    overlap_size: Optional[int] = None
     process_start_at: Optional[str] = None
     process_end_at: Optional[str] = None
     parse_start_at: Optional[str] = None
@@ -39,20 +37,18 @@ class DocumentSchema(BaseObjectSchema):
         # print(base)
         return cls(
             **base,
-            title=obj.title,
             dataset_uuid=str(obj.dataset_uuid),
             tenant_uuid=str(obj.tenant_uuid),
             created_user_by=str(obj.created_user_by),
             updated_user_by=str(obj.updated_user_by),
+            title=obj.title,
             status=obj.status,
             type=obj.type,
             document_index=obj.document_index,
             batch_index=obj.batch_index,
             word_count=obj.word_count,
             token_count=obj.token_count,
-            chunk_size=obj.chunk_size,
             resource_url=obj.resource_url,
-            overlap_size=obj.overlap_size,
             process_start_at=obj.process_start_at,
             process_end_at=obj.process_end_at,
             parse_start_at=obj.parse_start_at,
@@ -60,7 +56,7 @@ class DocumentSchema(BaseObjectSchema):
             split_start_at=obj.split_start_at,
             split_end_at=obj.split_end_at,
 
-            document_segments=transform_document_segments_to_reply(obj.document_segments)
+            # document_segments=transform_document_segments_to_reply(obj.document_segments)
         )
 
 
@@ -95,6 +91,27 @@ class ResponsePatchDocument(BaseSchema):
 
 class ResponseDeleteDocument(BaseSchema):
     result: bool
+
+
+class SegmentationRuleSchema(BaseSchema):
+    segment_id: str
+    max_chunk_length: int
+    overlap_chunk_length: int
+
+
+class RuleSchema(BaseSchema):
+    segmentation: SegmentationRuleSchema
+
+
+class RequestAddDocumentContent(DocumentSchema):
+    dataset_uuid: str
+    media_resources: List[MediaResourceSchema]
+    rule_mode: Optional[int] = None
+    rule: Optional[RuleSchema] = None
+
+
+class ResponseAddDocumentContent(BaseSchema):
+    data: list[DocumentSchema]
 
 
 def make_document(document: DocumentSchema) -> Document:

@@ -57,3 +57,7 @@ class RequestCreateMediaResourceByBase64(BaseModel):
 class ResponseCreateMediaResource(BaseModel):
     media_resource: MediaResourceSchema
     is_oss: bool
+
+
+class ResponseGetMediaResource(BaseSchema):
+    data: MediaResourceSchema

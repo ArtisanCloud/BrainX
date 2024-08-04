@@ -15,35 +15,39 @@ class BaseDAO(Generic[ModelType]):
         self.db = db
         self.model = model
 
-    async def create(self, obj: ModelType) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def create(self, obj: ModelType) -> Tuple[
+        Optional[ModelType], Optional[SQLAlchemyError]]:
         """
         创建新的模型对象
         """
         # print(obj)
         try:
             self.db.add(obj)
-            await self.db.commit()
+            
+            await self.db.flush()
 
             await self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
             return obj, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+            
             return None, e
 
-    async def create_many(self, objs: List[ModelType]) -> Tuple[Optional[List[ModelType]], Optional[Exception]]:
+    async def create_many(self, objs: List[ModelType]) -> Tuple[
+        Optional[List[ModelType]], Optional[SQLAlchemyError]]:
         """
         创建新的模型对象
         """
         try:
             self.db.add_all(objs)
-            await self.db.commit()
+            await self.db.flush()
+            # print(objs)
             return objs, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+            
             return None, e
 
-    async def get_by_id(self, obj_id: Any) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def get_by_id(self, obj_id: Any) -> Tuple[Optional[ModelType], Optional[SQLAlchemyError]]:
         """
         根据 ID 获取模型对象
         """
@@ -53,7 +57,7 @@ class BaseDAO(Generic[ModelType]):
         except SQLAlchemyError as e:
             return None, e
 
-    async def get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[SQLAlchemyError]]:
         """
         根据 UUID 获取模型对象
         """
@@ -64,7 +68,7 @@ class BaseDAO(Generic[ModelType]):
             return None, e
 
     async def get_objects_by_conditions(self, conditions: Dict[str, Any]) -> Tuple[
-        Optional[List[ModelType]], Optional[Exception]]:
+        Optional[List[ModelType]], Optional[SQLAlchemyError]]:
         """
         根据给定的条件查询模型对象
         """
@@ -115,7 +119,7 @@ class BaseDAO(Generic[ModelType]):
         return filters
 
     async def update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
-        Optional[ModelType], Optional[Exception]]:
+        Optional[ModelType], Optional[SQLAlchemyError]]:
         """
         更新模型对象
         """
@@ -129,13 +133,15 @@ class BaseDAO(Generic[ModelType]):
             for field, value in update_data.items():
                 setattr(obj, field, value)
 
-            await self.db.commit()
+            
+
             return obj, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+            
             return None, e
 
-    async def patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
+        Optional[ModelType], Optional[SQLAlchemyError]]:
         """
         部分更新模型对象
         """
@@ -151,15 +157,17 @@ class BaseDAO(Generic[ModelType]):
                 setattr(obj, field, value)
             setattr(obj, "updated_at", datetime.now())
 
-            await self.db.commit()
+            await self.db.flush()
             await self.db.refresh(obj)
+            
             return obj, None
 
         except SQLAlchemyError as e:
-            await self.db.rollback()
+            
             return None, e
 
-    async def soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[bool, Optional[Exception]]:
+    async def soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
+        bool, Optional[SQLAlchemyError]]:
         """
         通用的软删除方法，适用于任意模型对象
         """
@@ -176,14 +184,15 @@ class BaseDAO(Generic[ModelType]):
 
                 # 执行软删除操作，这里假设模型类有 deleted_at 字段
                 exist_obj.deleted_at = datetime.now()
-                await session.commit()
+                await self.db.flush()
+
                 return True, None
 
         except SQLAlchemyError as e:
-            await session.rollback()
+
             return False, e
 
-    async def delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
+    async def delete(self, obj_uuid: Any) -> Tuple[bool, Optional[SQLAlchemyError]]:
         """
         删除模型对象
         """
@@ -195,8 +204,8 @@ class BaseDAO(Generic[ModelType]):
                 return False, Exception(f"Object with uuid {obj_uuid} not found")
 
             await self.db.delete(obj)
-            await self.db.commit()
+            
             return True, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+            
             return False, e

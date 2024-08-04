@@ -1,8 +1,9 @@
 import mimetypes
 from typing import List, Tuple
 
+from app.dao.base import BaseDAO
 from pydantic import BaseModel
-from sqlalchemy import select, delete, and_
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.media_resource.model import MediaResource
@@ -16,6 +17,7 @@ def get_media_type(content_type: str) -> str:
 
 class FindManyMediaResourcesOption(BaseModel):
     ids: List[int]
+    uuids: List[str]
     like_name: str
     types: List[str]
     page_embed_option: Pagination  # Assuming PageEmbedOption is a defined class
@@ -26,13 +28,15 @@ bucket_media_resource_product = "bucket.brainx"
 DEFAULT_STORAGE_PATH = "public/static"
 
 
-class MediaResourceDAO:
+class MediaResourceDAO(BaseDAO[MediaResource]):
     def __init__(self, db: AsyncSession):
-        self.db = db
+        super().__init__(db, MediaResource)
 
     async def build_find_query_no_page(self, query: select, opt: FindManyMediaResourcesOption) -> select:
         if opt.ids:
             query = query.where(MediaResource.c.id.in_(opt.ids))
+        if opt.uuids:
+            query = query.where(MediaResource.c.uuid.in_(opt.uuids))
 
         if opt.types:
             query = query.where(MediaResource.media_type.in_(opt.types))
@@ -50,7 +54,7 @@ class MediaResourceDAO:
             return [], e
 
     async def find_many_media_resources(
-        self, opt: FindManyMediaResourcesOption
+            self, opt: FindManyMediaResourcesOption
     ) -> Tuple[List[MediaResource] | None, ResponsePagination | None, SQLAlchemyError | None]:
         try:
             stmt = select(MediaResource)
@@ -59,23 +63,23 @@ class MediaResourceDAO:
         except SQLAlchemyError as e:
             return None, None, e
 
-    async def create_media_resource(self, resource: MediaResource) -> Tuple[MediaResource | None, Exception | None]:
+    async def create_media_resource(self, resource: MediaResource) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
         try:
             self.db.add(resource)
-            await self.db.commit()
+
             await self.db.refresh(resource)
             return resource, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return None, e
 
     async def create_media_resources(
-        self, resources: List[MediaResource]
-    ) -> Tuple[List[MediaResource] | None, Exception | None]:
+            self, resources: List[MediaResource]
+    ) -> Tuple[List[MediaResource] | None, SQLAlchemyError | None]:
         try:
             self.db.add_all(resources)
-            await self.db.commit()
+
             return resources, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return None, e

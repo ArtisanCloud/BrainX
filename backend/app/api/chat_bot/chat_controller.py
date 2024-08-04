@@ -77,9 +77,11 @@ async def api_chat(
             question, data.llm,
             session_user.uuid, app_uuid, conversation_uuid
         )
-        if exception:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
         # print("conversationUUID:", conversation_uuid)
         return StreamingResponse(

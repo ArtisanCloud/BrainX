@@ -15,14 +15,14 @@ class TenantDefaultModelDAO:
         try:
             tenant_default_model = TenantDefaultModel(**model_data.dict())
             self.db.add(tenant_default_model)
-            await self.db.commit()
+
             return tenant_default_model, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return None, e
 
     async def get_tenant_default_model_by_uuid(self, tenant_uuid: str) -> Tuple[
-        List[TenantDefaultModel] | None, Exception | None]:
+        List[TenantDefaultModel] | None, SQLAlchemyError | None]:
         try:
             stmt = select(TenantDefaultModel).filter(TenantDefaultModel.tenant_uuid == tenant_uuid)
             result = await self.db.execute(stmt)
@@ -32,7 +32,7 @@ class TenantDefaultModelDAO:
             return None, e
 
     async def delete_tenant_default_model(self, tenant_uuid: str, provider_name: str, model_name: str) -> Tuple[
-        bool, Exception | None]:
+        bool, SQLAlchemyError | None]:
         try:
             stmt = delete(TenantDefaultModel).where(
                 TenantDefaultModel.tenant_uuid == tenant_uuid,
@@ -40,8 +40,8 @@ class TenantDefaultModelDAO:
                 TenantDefaultModel.name == model_name
             )
             await self.db.execute(stmt)
-            await self.db.commit()
+
             return True, None
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             return False, e

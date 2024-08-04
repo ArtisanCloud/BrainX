@@ -163,6 +163,7 @@ const DatasetList = () => {
 			render: (_, record) => (
 				<Space size="middle">
 					<Switch
+						onClick={(value, e) => handleClickEnable(e, value, record)}
 						checkedChildren="开启"
 						unCheckedChildren="关闭"
 						checked={record.is_published}
@@ -191,6 +192,12 @@ const DatasetList = () => {
 			),
 		},
 	];
+
+	const handleClickEnable = (e: any, value: boolean, dataset: Dataset) => {
+		e.stopPropagation();
+		console.log(value, dataset)
+
+	}
 
 	const onSelectRow = (dataset: Dataset) => {
 		// console.log('selectedRowKeys changed: ', dataset);

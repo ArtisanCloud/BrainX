@@ -1,4 +1,7 @@
 import http
+import traceback
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.logger import logger
 
 from fastapi import Depends, APIRouter, HTTPException
@@ -13,7 +16,9 @@ from app.models import User
 from app.schemas.base import Pagination, ResponseSchema
 from app.schemas.rag.document import ResponseGetDocumentList, RequestCreateDocument, make_document, \
     RequestPatchDocument, \
-    ResponseCreateDocument, ResponsePatchDocument, ResponseDeleteDocument, ResponseGetDocument
+    ResponseCreateDocument, ResponsePatchDocument, ResponseDeleteDocument, ResponseGetDocument, \
+    RequestAddDocumentContent, ResponseAddDocumentContent
+from app.service.rag.document.add_document_content import add_document_content
 from app.service.rag.document.create import create_document
 from app.service.rag.document.list import get_document_list
 from app.service.rag.document.get import get_document_by_uuid
@@ -42,8 +47,10 @@ async def api_get_document_list(
     try:
         documents, pagination, exception = await get_document_list(db, session_user.uuid, dataset_uuid, p)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -62,8 +69,10 @@ async def api_get_document_by_uuid(
     try:
         document, exception = await get_document_by_uuid(db, session_user, document_uuid)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -86,13 +95,40 @@ async def api_create_document(
         # print(document)
         document, exception = await create_document(db, document)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseCreateDocument(document=document)
+
+    return res
+
+
+@router.post("/add-content")
+async def api_add_document_content(
+        data: RequestAddDocumentContent,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_db_session)):
+    try:
+        # print(data)
+        documents, exception = await add_document_content(db, session_user, data)
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
+
+    except Exception as e:
+        return ResponseSchema(
+            error=str(e),
+            status_code=http.HTTPStatus.BAD_REQUEST,
+        )
+
+    res = ResponseAddDocumentContent(data=documents)
 
     return res
 
@@ -109,8 +145,10 @@ async def api_patch_document(
 
         document, exception = await patch_document(db, document_uuid, update_data)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -128,8 +166,10 @@ async def api_delete_document(
         user_id = 1
         result, exception = await soft_delete_document(db, user_id, document_uuid)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

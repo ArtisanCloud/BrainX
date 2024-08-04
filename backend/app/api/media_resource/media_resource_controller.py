@@ -1,6 +1,7 @@
 import http
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
@@ -10,8 +11,9 @@ from app.database.deps import get_db_session
 from app.models import User
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.media_resource.schema import ResponseGetMediaResourceList, ResponseCreateMediaResource, \
-    RequestCreateMediaResourceByBase64
+    RequestCreateMediaResourceByBase64, ResponseGetMediaResource
 from app.service.media_resource.create import create_media_resource_by_file, create_media_resource_by_base64_string
+from app.service.media_resource.get import get_media_resource_by_uuid
 from app.service.media_resource.list import get_media_resource_list
 
 router = APIRouter()
@@ -31,8 +33,10 @@ async def api_get_media_resource_list(
     try:
         media_resources, pagination, exception = await get_media_resource_list(db, p)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -55,8 +59,10 @@ async def create_media_resource(request: Request,
 
         media_resource, exception = await create_media_resource_by_file(db, resource)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -84,8 +90,10 @@ async def create_media_resource(
             data.mediaName, data.sortIndex,
         )
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -94,3 +102,28 @@ async def create_media_resource(
     res = ResponseCreateMediaResource(media_resource=media_resource, is_oss=(not media_resource.is_local_stored))
 
     return res
+
+
+
+@router.get("/{media_resource_uuid}")
+async def api_get_media_resource_by_uuid(
+        media_resource_uuid: str,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_db_session)
+):
+    try:
+        media_resource, exception = await get_media_resource_by_uuid(db, session_user, media_resource_uuid)
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
+
+    except Exception as e:
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseGetMediaResource(data=media_resource)
+
+    return res
+
+

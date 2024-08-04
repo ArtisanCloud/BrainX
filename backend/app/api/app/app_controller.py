@@ -1,20 +1,23 @@
 import http
 
 from fastapi import Depends, APIRouter, HTTPException
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
 from app.database.deps import get_db_session
+from app.logger import logger
 from app.models import User
 from app.models.app.app import App
 
 from app.schemas.app.app import ResponseGetAppList, RequestCreateApp, make_app, ResponseCreateApp, \
-    RequestPatchApp, ResponsePatchApp, ResponseDeleteApp
+    RequestPatchApp, ResponsePatchApp, ResponseDeleteApp, ResponseGetApp
 from app.schemas.base import Pagination, ResponseSchema
 from app.service.app.create import create_app
 from app.service.app.delete import soft_delete_app
+from app.service.app.get import get_app_by_uuid
 from app.service.app.list import get_app_list
 from app.service.app.patch import patch_app
 
@@ -36,8 +39,10 @@ async def api_get_app_list(
     try:
         apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -47,13 +52,26 @@ async def api_get_app_list(
     return res
 
 
-@router.get("/{app_id}")
-async def api_get_app_by_id(app_id: int, db: AsyncSession = Depends(get_db_session)):
-    app = await db.get(App, app_id)
-    if app is None:
-        raise HTTPException(status_code=404, detail="App not found")
-    return app
+@router.get("/{app_uuid}")
+async def api_get_app_by_uuid(
+        app_uuid: str,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_db_session)
+):
+    try:
+        app, exception = await get_app_by_uuid(db, session_user, app_uuid)
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
+    except Exception as e:
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseGetApp(data=app)
+
+    return res
 
 @router.post("/create")
 async def api_create_app(
@@ -68,8 +86,10 @@ async def api_create_app(
         # print(app)
         app, exception = await create_app(db, app)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -91,8 +111,10 @@ async def api_patch_app(
 
         app, exception = await patch_app(db, app_uuid, update_data)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
@@ -110,8 +132,10 @@ async def api_delete_app(
         user_id = 1
         result, exception = await soft_delete_app(db, user_id, app_uuid)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

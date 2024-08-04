@@ -11,9 +11,12 @@ from app.service.base import paginate_query
 from app.service.rag.dataset.create import transform_dataset_to_reply
 
 from app.models.rag.document_segment import DocumentSegment
+from app.service.rag.document_segment.create import transform_document_segment_to_reply
 
 
 def transform_document_segments_to_reply(document_segments: [DocumentSegment]) -> List[DocumentSegmentSchema]:
+    if document_segments is None:
+        return []
     data = [transform_document_segment_to_reply(resource) for resource in document_segments]
     # print(data)
     return data

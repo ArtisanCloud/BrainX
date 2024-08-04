@@ -1,15 +1,16 @@
 import http
 
 from fastapi import Request, APIRouter, Depends
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import StreamingResponse
 
 from app.api.chat_bot.chat_controller import event_generator
 from app.database.deps import get_db_session
 from app.database.seed import init_user_uuid
+from app.logger import logger
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.query import RequestQuery
-from app.schemas.robot_chat.chat import RequestChat
 from app.service.robot_chat.chat import chat
 
 router = APIRouter()
@@ -40,9 +41,11 @@ async def api_chat(
             question, data.llm,
             init_user_uuid, app_uuid, conversation_uuid
         )
-        if exception:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
         return StreamingResponse(
             event_generator(request, data.llm, stream_response),

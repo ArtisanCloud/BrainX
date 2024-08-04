@@ -1,11 +1,13 @@
 import http
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 
 from app.database.deps import get_db_session
+from app.logger import logger
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.robot_chat.conversation import ResponseGetMessageList
 from app.service.message.list import get_cached_message_list
@@ -28,8 +30,10 @@ async def api_get_message_list(
     try:
         messages, pagination, exception = await get_cached_message_list(db, conversation_uuid, p)
         if exception is not None:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
 
     except Exception as e:
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

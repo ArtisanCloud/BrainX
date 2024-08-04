@@ -15,7 +15,7 @@ class UserDAO(BaseDAO[User]):
     def __init__(self, db: AsyncSession):
         super().__init__(db, User)
 
-    async def load_owner_tenant(self, user: User) -> Tuple[User | None, Exception | None]:
+    async def load_owner_tenant(self, user: User) -> Tuple[User | None, SQLAlchemyError | None]:
         try:
             stmt = select(Tenant).filter_by(uuid=user.tenant_owner_uuid)
             result = await self.db.execute(stmt)
@@ -77,5 +77,5 @@ class UserDAO(BaseDAO[User]):
             return user, None
 
         except SQLAlchemyError as e:
-            await self.db.rollback()
+
             raise e

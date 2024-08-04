@@ -69,8 +69,8 @@ class BaseObjectSchema(BaseSchema):
         original_fields = {
             'id': obj.id,
             'uuid': obj.uuid,
-            'created_at': obj.created_at.strftime(datetime_format),
-            'updated_at': obj.updated_at.strftime(datetime_format)
+            'created_at': obj.created_at.strftime(datetime_format) if obj.created_at else None,
+            'updated_at': obj.updated_at.strftime(datetime_format) if obj.updated_at else None
         }
 
         return original_fields
