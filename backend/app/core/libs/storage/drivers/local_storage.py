@@ -4,7 +4,9 @@ from io import BytesIO
 from typing import Any
 from urllib.parse import urljoin
 
-from app.core.config import LocalStorage, settings
+from app.config.storage import LocalStorage
+from app.config.config import settings
+
 from app.core.libs.storage.storage_abc import ObjectResult
 
 

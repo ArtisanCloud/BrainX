@@ -2,7 +2,7 @@ from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint
 from langchain_openai import ChatOpenAI
 from langchain_community.llms import Ollama
 
-from app.core.config import settings
+from app.config.config import settings
 
 
 def get_openai_llm(llm: str, temperature: float, streaming: bool):

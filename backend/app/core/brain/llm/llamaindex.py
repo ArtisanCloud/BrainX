@@ -1,7 +1,7 @@
 from llama_index.llms.ollama import Ollama
 from llama_index.llms.openai import OpenAI
 
-from app.core.config import settings
+from app.config.config import settings
 
 
 def get_openai_llm(llm: str, temperature: float, streaming: bool):

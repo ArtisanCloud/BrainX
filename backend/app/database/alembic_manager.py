@@ -3,7 +3,7 @@
 from alembic import command
 from alembic.config import Config
 
-from app.core.config import settings
+from app.config.config import settings
 from app.models.base import Base  # noqa
 
 

@@ -1,13 +1,13 @@
 from typing import Tuple
 
-from llama_index.core.vector_stores.types import VectorStore, BasePydanticVectorStore
+from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.vector_stores.postgres import PGVectorStore
 from sqlalchemy.engine import make_url
 from app.database.session import SessionLocal as AppSessionLocal, db_engine as app_engine
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.core.config import settings
+from app.config.config import settings
 
 singleton_instances = {}
 did_run_setup = False

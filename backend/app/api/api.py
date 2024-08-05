@@ -8,6 +8,7 @@ from app.api.conversation import conversation_controller, message_controller
 from app.api.middleware.auth import auth_user_token, get_session_user
 from app.api.rag import dataset_controller, document_controller, document_segment_controller
 from app.api.system import status_controller, test_controller
+from app.api.task import task_controller
 from app.api.tenant import user_controller, tenant_controller
 from app.api.media_resource import media_resource_controller
 
@@ -67,6 +68,7 @@ api_router.include_router(visual_search_controller.router, prefix="/question_ans
                           dependencies=[Depends(auth_user_token)],
                           tags=["visual_search"])
 
+# rag
 api_router.include_router(dataset_controller.router, prefix="/rag",
                           dependencies=[Depends(auth_user_token)],
                           tags=["chatbot"])
@@ -80,3 +82,8 @@ api_router.include_router(document_controller.router, prefix="/rag/dataset/docum
 api_router.include_router(document_segment_controller.router, prefix="/rag/dataset/document/segment",
                           dependencies=[Depends(auth_user_token)],
                           tags=["rag", "document_segment"])
+
+# task
+api_router.include_router(task_controller.router, prefix="/task",
+                          dependencies=[Depends(auth_user_token)],
+                          tags=["task"])

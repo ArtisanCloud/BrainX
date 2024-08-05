@@ -2,7 +2,7 @@ import sys
 
 import alembic
 import uvicorn
-from app.core.config import settings
+from app.config.config import settings
 from app.logger import logger
 import asyncio
 

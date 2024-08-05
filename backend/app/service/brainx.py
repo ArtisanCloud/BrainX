@@ -15,7 +15,7 @@ from app.core.brain.index import LLMModel
 from app.core.brain.indexing.engine import generate_storage_context, get_service_context
 from app.core.brain.indexing.pg_vector import get_vector_store_singleton
 from app.core.brain.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm
-from app.core.config import settings
+from app.config.config import settings
 from app.models.app.app import App
 
 

@@ -1,6 +1,6 @@
 import os
 
-from app.core.config import settings
+from app.config.config import settings
 from app.core.libs.storage.storage import Storage
 
 # 全局变量，用于存储 Storage 实例

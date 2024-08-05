@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from app.core.config import settings
+from app.config.config import settings
 from app.database.seed.app import seed_apps
 from app.database.seed.model_provider import seed_model_providers
 from app.database.seed.tenant import seed_tenants

@@ -9,7 +9,7 @@ from llama_index.llms.openai import OpenAI
 from app.core.brain.index import LLMModel
 from app.core.brain.indexing.pg_vector import get_vector_store_singleton
 from app.core.brain.llm.llamaindex import get_ollama_llm
-from app.core.config import settings
+from app.config.config import settings
 
 
 def bind_llm(llm: str, temperature=0.5):

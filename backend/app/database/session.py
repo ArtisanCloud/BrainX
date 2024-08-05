@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from app.core.config import settings
+from app.config.config import settings
 from pytz import timezone
 
 db_engine = create_async_engine(

@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 from transformers import ViltProcessor, ViltForQuestionAnswering
 
-from app.core.config import settings
+from app.config.config import settings
 from enum import Enum
 
 

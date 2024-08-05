@@ -16,7 +16,8 @@ from sqlalchemy.engine import create_engine, Engine
 
 from app.api.api import api_router
 from app.database.wait_for_db import check_database_connection
-from app.core.config import settings, AppEnvironment
+from app.config.config import settings
+from app.config.app import AppEnvironment
 
 from contextlib import asynccontextmanager
 
@@ -103,7 +104,6 @@ app = FastAPI(
 
 app.mount("/static", StaticFiles(directory=os.path.abspath(default_local_storage_path)), name="statics")
 
-
 origins = [
     "http://localhost",
     "http://localhost:8080",
@@ -116,6 +116,7 @@ if settings.server.cors_origins:
 # print("cors with domain", origins)
 
 from starlette.middleware.sessions import SessionMiddleware
+
 app.add_middleware(SessionMiddleware, secret_key="session_key")
 # 允许所有方法和请求头
 app.add_middleware(

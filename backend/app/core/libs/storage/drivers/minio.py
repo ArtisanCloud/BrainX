@@ -3,10 +3,10 @@ from io import BytesIO
 from minio import Minio
 
 from app import settings
-from app.core.config import MinIO
+from app.config.storage import MinIO
 from app.core.libs.storage.storage_abc import StorageABC, ObjectResult
 
-from typing import Generator, Any
+from typing import Generator
 
 
 class MinioStorage(StorageABC):

@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import client_storage
-from app.core.config import settings
+from app.config.config import settings
 from app.core.libs.storage.storage import Storage
 from app.models import User
 from app.models.media_resource.model import MediaResource
