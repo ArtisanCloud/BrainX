@@ -3,11 +3,12 @@ from typing import Type
 from app.core.rag.store.base import StoreDriverType
 from app.core.rag.store.drivers.langchain.store import LangchainStore
 from app.core.rag.store.drivers.llamaindex.store import LLamaIndexStore
+from app.core.rag.store.interface import StoreInterface
 
 
 class StoreFactory:
     @staticmethod
-    def get_store(store_type: StoreDriverType) -> Type[BaseStore]:
+    def get_store(store_type: StoreDriverType) -> StoreInterface:
         match store_type:
             case StoreDriverType.LLAMA_INDEX:
                 return LLamaIndexStore()
