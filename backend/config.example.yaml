@@ -31,6 +31,17 @@ cache:
   redis:
     url: redis://mypassword@localhost:6379/0
 
+task:
+  celery_broker_url: "redis://localhost:6379/0"
+  celery_result_backend: "redis://localhost:6379/0"
+  broker_use_ssl: False
+  ssl_cert_reqs: ''
+  ssl_ca_certs: ''
+  ssl_cert_file: ''
+  ssl_keyfile: ''
+  result_expires: 3600
+  broker_connection_retry_on_startup: True
+
 models:
   qa_embedding_model_name: "shibing624/text2vec-base-chinese"
   visual_search_model_name: "clip-ViT-L-14"

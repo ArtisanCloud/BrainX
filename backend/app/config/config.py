@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from app.config.api import Api, JWT
 from app.config.baidu import BaiduQianfan
 from app.config.cache import Cache
+from app.config.celery import CeleryConfig
 from app.config.database import Database
 from app.config.kimi import Kimi
 from app.config.log import Log
@@ -37,6 +38,7 @@ class Settings(BaseModel):
     log: Log
     database: Database
     cache: Cache
+    task: CeleryConfig
     models: Models
     openai: OpenAI
     baidu_qianfan: BaiduQianfan
@@ -59,6 +61,7 @@ settings = Settings(
     openapi=OpenAPI(**config['openapi']),
     database=Database(**config['database']),
     cache=Cache(**config['cache']),
+    task=CeleryConfig(**config['task']),
     models=Models(**config['models']),
     log=Log(**config['log']),
     openai=OpenAI(**config['openai']),
