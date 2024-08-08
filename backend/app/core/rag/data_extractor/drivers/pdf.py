@@ -1,9 +1,9 @@
 import fitz
 
-from app.core.rag.data_extractor.base import BaseExtractor
+from app.core.rag.data_extractor.interface import DataExtractorInterface
 
 
-class PDFExtractor(BaseExtractor):
+class PDFDataExtractor(DataExtractorInterface):
     def __init__(self, file_path):
         self.file_path = file_path
         self.document = None

@@ -1,4 +1,4 @@
-"""add app model config  model
+"""add app models config  models
 
 Revision ID: 000000000014
 Revises: 000000000015

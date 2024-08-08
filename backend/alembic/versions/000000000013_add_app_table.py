@@ -1,4 +1,4 @@
-"""add app model
+"""add app models
 
 Revision ID: 000000000013
 Revises: 

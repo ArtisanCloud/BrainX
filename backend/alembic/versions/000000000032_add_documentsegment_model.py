@@ -1,4 +1,4 @@
-"""Add DocumentSegment model
+"""Add DocumentSegment models
 
 Revision ID: 1e27d73d41b1
 Revises: 842298164973

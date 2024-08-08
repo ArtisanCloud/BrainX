@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseExtractor(ABC):
+class DataExtractorInterface(ABC):
     """
     Define the parser interface.
     """

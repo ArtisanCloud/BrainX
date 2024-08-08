@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 from app.models.base import BaseModel, table_name_model_provider, table_name_tenant
 
 
-# Tenant's model provider
+# Tenant's models provider
 class ModelProvider(BaseModel):
     __tablename__ = table_name_model_provider
 

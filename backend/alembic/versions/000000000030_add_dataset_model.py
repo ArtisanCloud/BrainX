@@ -1,4 +1,4 @@
-"""Add Dataset model
+"""Add Dataset models
 
 Revision ID: 000000000030
 Revises: 000000000020

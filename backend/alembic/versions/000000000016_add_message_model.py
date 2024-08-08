@@ -1,4 +1,4 @@
-"""add message model
+"""add message models
 
 Revision ID: 000000000016
 Revises: 000000000020

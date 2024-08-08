@@ -1,4 +1,4 @@
-"""add tenant model
+"""add tenant models
 
 Revision ID: 000000000002
 Revises: 70a699b5a5b5

@@ -73,11 +73,11 @@ class UserSchema(BaseObjectSchema):
 
 
 class ResponseGetUser(UserSchema):
-    """User model for response"""
+    """User models for response"""
 
 
 class UserLoginModel(BaseModel):
-    """User logincart model"""
+    """User logincart models"""
     email: EmailStr
     password: str
 
@@ -87,7 +87,7 @@ class TokenType(str, Enum):
 
 
 class UserTokenResponseModel(BaseModel):
-    """User token model"""
+    """User token models"""
     user_uuid: UUID
     access_token: str
     token_type: TokenType = TokenType.bearer

@@ -1,4 +1,4 @@
-"""Add MediaResource model
+"""Add MediaResource models
 
 Revision ID: 000000000020
 Revises: 6668cc8afeca

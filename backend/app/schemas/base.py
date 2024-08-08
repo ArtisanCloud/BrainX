@@ -31,7 +31,7 @@ class ResponsePagination(BaseModel):
 
 
 class ResponseSchema(BaseModel):
-    """Generic response model for all responses"""
+    """Generic response models for all responses"""
     api_id: str | None = None
     error: str | None = None
     message: str | None = None

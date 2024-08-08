@@ -1,4 +1,4 @@
-"""add workflow model
+"""add workflow models
 
 Revision ID: 000000000010
 Revises: caa5b72ec88a

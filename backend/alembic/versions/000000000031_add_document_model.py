@@ -1,4 +1,4 @@
-"""Add Document model
+"""Add Document models
 
 Revision ID: 000000000031
 Revises: 000000000030

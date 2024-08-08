@@ -1,4 +1,4 @@
-"""add conversation model
+"""add conversation models
 
 Revision ID: 000000000015
 Revises: 000000000020

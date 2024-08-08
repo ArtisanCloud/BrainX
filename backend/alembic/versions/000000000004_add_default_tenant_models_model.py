@@ -1,4 +1,4 @@
-"""add default tenant models  model
+"""add default tenant models  models
 
 Revision ID: 000000000004
 Revises: 000000000020

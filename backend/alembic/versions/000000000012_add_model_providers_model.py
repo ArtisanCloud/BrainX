@@ -1,4 +1,4 @@
-"""add model providers  model
+"""add models providers  models
 
 Revision ID: 000000000012
 Revises: 000000000020

@@ -1,4 +1,4 @@
-# Define the MediaResource model
+# Define the MediaResource models
 from sqlalchemy.orm import mapped_column
 
 from app.models.base import BaseModel, table_name_media_resource, table_name_tenant, table_name_user
