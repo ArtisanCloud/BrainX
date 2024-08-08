@@ -9,9 +9,9 @@ from app.models.base import Base  # noqa
 
 class AlembicManager:
     def __init__(self):
-        # Change DB URL to use psycopg2 driver for this specific check
+        # Change DB URL to use psycopg driver for this specific check
         self.db_url = settings.database.url.replace(
-            "postgresql+asyncpg://", "postgresql+psycopg2://"
+            "postgresql+asyncpg://", "postgresql+psycopg://"
         )
         # Set up Alembic configuration
         self.alembic_cfg = Config("alembic.ini")
@@ -60,9 +60,9 @@ class AlembicManager:
 
 # async def perform_database_upgrade() -> Exception | None:
 #     try:
-#         # Change DB URL to use psycopg2 driver for this specific check
+#         # Change DB URL to use psycopg driver for this specific check
 #         db_url = settings.database.url.replace(
-#             "postgresql+asyncpg://", "postgresql+psycopg2://"
+#             "postgresql+asyncpg://", "postgresql+psycopg://"
 #         )
 #
 #         # Set up Alembic configuration

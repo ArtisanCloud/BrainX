@@ -63,9 +63,9 @@ async def lifespan(app: FastAPI):
     # first wait for DB to be connectable
     await check_database_connection()
     cfg = Config("alembic.ini")
-    # Change DB URL to use psycopg2 driver for this specific check
+    # Change DB URL to use psycopg driver for this specific check
     db_url = settings.database.url.replace(
-        "postgresql+asyncpg://", "postgresql+psycopg2://"
+        "postgresql+asyncpg://", "postgresql+psycopg://"
     )
     cfg.set_main_option("sqlalchemy.url", db_url)
     engine = create_engine(db_url, echo=True)
