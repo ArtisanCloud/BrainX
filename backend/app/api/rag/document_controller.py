@@ -24,7 +24,7 @@ from app.service.rag.document.get import get_document_by_uuid
 from app.service.rag.document.patch import patch_document
 from app.service.rag.document.delete import soft_delete_document
 
-from app.service.task.rag.process_dataset import process_dataset
+from app.service.task.rag.indexing import process_documents
 
 router = APIRouter()
 
@@ -126,7 +126,7 @@ async def api_add_document_content(
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
         document_dict_list = [doc.dict() for doc in documents]
-        task = process_dataset.apply_async(args=(document_dict_list,))
+        task = process_documents.apply_async(args=(data.dataset_uuid, document_dict_list,))
 
 
     except Exception as e:
