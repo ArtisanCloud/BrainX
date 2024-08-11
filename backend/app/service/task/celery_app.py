@@ -27,7 +27,10 @@ def create_celery_app():
     app.conf.update(
         result_expires= settings.task.result_expires,
         broker_connection_retry_on_startup=settings.task.broker_connection_retry_on_startup,
-        imports=['app.service.task.task'],  # 确保任务模块被导入
+        imports=[
+            'app.service.task.task',
+            'app.service.task.rag.process_dataset'
+        ],  # 确保任务模块被导入
         worker_prefetch_multiplier=1,  # 每个 worker 同时处理的任务数量
         task_acks_on_failure_or_timeout=True,  # 失败或超时任务是否确认
     )

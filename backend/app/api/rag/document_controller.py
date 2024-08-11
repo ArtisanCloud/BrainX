@@ -1,10 +1,9 @@
 import http
-import traceback
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.logger import logger
 
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
@@ -24,6 +23,8 @@ from app.service.rag.document.list import get_document_list
 from app.service.rag.document.get import get_document_by_uuid
 from app.service.rag.document.patch import patch_document
 from app.service.rag.document.delete import soft_delete_document
+
+from app.service.task.rag.process_dataset import process_dataset
 
 router = APIRouter()
 
@@ -122,13 +123,19 @@ async def api_add_document_content(
                 raise Exception("database query: pls check log")
             raise exception
 
+        # 如果保存dataset和documents 准备数据信息成功
+        # 则开始开启后台的worker，做Extractor和Indexing的工作
+        document_dict_list = [doc.dict() for doc in documents]
+        task = process_dataset.apply_async(args=(document_dict_list,))
+
+
     except Exception as e:
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
         )
 
-    res = ResponseAddDocumentContent(data=documents)
+    res = ResponseAddDocumentContent(data=documents, task_id=task.id)
 
     return res
 

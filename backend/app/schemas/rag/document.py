@@ -112,6 +112,7 @@ class RequestAddDocumentContent(DocumentSchema):
 
 class ResponseAddDocumentContent(BaseSchema):
     data: list[DocumentSchema]
+    task_id: str
 
 
 def make_document(document: DocumentSchema) -> Document:

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app import settings
 from app.service.task.celery_app import celery_app
 from app.service.task.task import _30_seconds_task
 from celery.result import AsyncResult
@@ -9,12 +10,18 @@ router = APIRouter()
 
 @router.post("/30-seconds")
 async def run_30_seconds_task():
+    if settings.server.environment == 'production':
+        return
+
     task = _30_seconds_task.apply_async()
     return {"task_id": task.id}
 
 
 @router.get("/status/{task_id}")
 async def get_task_status(task_id: str):
+    if settings.server.environment == 'production':
+        return
+
     task_result = AsyncResult(task_id, app=celery_app)
     if task_result.state == 'PROGRESS':
         return {
