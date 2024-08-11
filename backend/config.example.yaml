@@ -86,6 +86,7 @@ sentry:
 
 storage:
   driver: "local"
+  host: "127.0.0.1:8000"
   local_storage:
     storage_path: "./storage"
   minio:

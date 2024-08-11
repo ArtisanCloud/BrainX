@@ -51,6 +51,5 @@ async def create_media_resource_by_base64_string(
     media_resource, exception = await service_media_resource.create_media_resource(media_resource)
     if exception:
         return None, Exception(f"Database error: {exception}")
-
-    # print(media_resource, exception)
+    print(123321, media_resource, exception)
     return transform_media_resource_to_reply(media_resource), None

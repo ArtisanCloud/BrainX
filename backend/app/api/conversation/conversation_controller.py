@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
 
-
+from app.database.base import PER_PAGE, PAGE
 from app.database.deps import get_db_session
 from app.database.seed.user import init_user_uuid
 from app.logger import logger
@@ -30,8 +30,8 @@ async def api_get_conversation_list(
         db: AsyncSession = Depends(get_db_session),
 ) -> ResponseGetConversationList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
-    page = int(request.query_params.get("page", 1))
-    page_size = int(request.query_params.get("page_size", 10))
+    page = int(request.query_params.get("page", PAGE))
+    page_size = int(request.query_params.get("page_size", PER_PAGE))
     app_uuid = request.query_params.get("app_uuid", None)
     p = Pagination(page=page, page_size=page_size)
     # print("app_uuid:", app_uuid)

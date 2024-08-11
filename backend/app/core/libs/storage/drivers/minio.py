@@ -49,7 +49,8 @@ class MinioStorage(StorageABC):
             bucket_name=bucket_name,
             object_name=object_name,
             data=BytesIO(data),
-            length=length
+            length=length,
+            content_type=content_type
         )
         # print(info)
         return ObjectResult(

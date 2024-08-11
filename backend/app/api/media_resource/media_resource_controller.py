@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
+from app.database.base import PER_PAGE, PAGE
 from app.logger import logger
 from app.database.deps import get_db_session
 from app.models import User
@@ -25,8 +26,8 @@ async def api_get_media_resource_list(
         db: AsyncSession = Depends(get_db_session),
 ) -> ResponseGetMediaResourceList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
-    page = int(request.query_params.get("page", 1))
-    page_size = int(request.query_params.get("page_size", 10))
+    page = int(request.query_params.get("page", PAGE))
+    page_size = int(request.query_params.get("page_size", PER_PAGE))
 
     p = Pagination(page=page, page_size=page_size)
 

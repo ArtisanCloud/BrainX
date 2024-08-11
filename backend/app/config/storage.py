@@ -41,6 +41,7 @@ class S3OSS(BaseModel):
 
 class Storage(BaseModel):
     driver: str
+    host: str
     local_storage: LocalStorage
     minio: MinIO
     aliyun: AliyunOSS

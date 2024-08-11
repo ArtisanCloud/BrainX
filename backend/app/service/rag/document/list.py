@@ -43,3 +43,29 @@ async def get_document_list(
         return None, None, exception
 
     return transform_documents_to_reply(res), pg, None
+
+
+async def get_document_list_by_documents(
+        db: AsyncSession,
+        tenant_uuid: str,
+        documents_uuids: List[str],
+        pagination: Pagination
+) -> Tuple[List[DocumentSchema] | None, ResponsePagination | None, SQLAlchemyError | None]:
+    stmt = (
+        select(Document).
+        where(Document.tenant_uuid == tenant_uuid).
+        where(Document.uuid.in_(documents_uuids)).
+        where(Document.deleted_at.is_(None)).
+        order_by(Document.created_at)
+        # options(
+        #     # joinedload(Document.dataset),  # 立即加载 dataset 关联
+        #     subqueryload(Document.document_segments)  # 立即加载 document_segments 关联
+        # )
+    )
+    # print(stmt)
+    res, pg, exception = await paginate_query(db, stmt, Document, pagination, True)
+
+    if exception:
+        return None, None, exception
+
+    return transform_documents_to_reply(res), pg, None

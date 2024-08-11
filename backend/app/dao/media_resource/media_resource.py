@@ -67,6 +67,7 @@ class MediaResourceDAO(BaseDAO[MediaResource]):
         try:
             self.db.add(resource)
 
+            await self.db.flush()
             await self.db.refresh(resource)
             return resource, None
         except SQLAlchemyError as e:
@@ -78,6 +79,7 @@ class MediaResourceDAO(BaseDAO[MediaResource]):
     ) -> Tuple[List[MediaResource] | None, SQLAlchemyError | None]:
         try:
             self.db.add_all(resources)
+            await self.db.flush()
 
             return resources, None
         except SQLAlchemyError as e:

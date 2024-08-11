@@ -23,9 +23,18 @@ class MediaResource(BaseModel):
 
     def __repr__(self):
         return (
-            f"MediaResource: id: {self.id}, user_id: {self.user_id}, "
-            f"filename: {self.filename}, size: {self.size}, width: {self.width}, "
-            f"height: {self.height}, url: {self.url}, bucket_name: {self.bucket_name}, "
-            f"is_local_stored: {self.is_local_stored}, content_type: {self.content_type}, "
-            f"resource_type: {self.resource_type}, sort_index: {self.sort_index}"
+            f"MediaResource: "
+            f"id: {self.id}, "
+            f"tenant_uuid: {self.tenant_uuid}, "
+            f"created_user_by: {self.created_user_by}, "
+            f"filename: {self.filename}, "
+            f"size: {self.size}, "
+            f"width: {self.width}, "
+            f"height: {self.height}, "
+            f"url: {self.url}, "
+            f"bucket_name: {self.bucket_name}, "
+            f"is_local_stored: {self.is_local_stored}, "
+            f"content_type: {self.content_type}, "
+            f"resource_type: {self.resource_type}, "
+            f"sort_index: {self.sort_index}"
         )

@@ -1,26 +1,23 @@
+from io import BytesIO
+from typing import Tuple, List
+
 import fitz
 
 from app.core.rag.data_extractor.interface import DataExtractorInterface
 
 
 class PDFDataExtractor(DataExtractorInterface):
-    def __init__(self, file_path):
-        self.file_path = file_path
+
+    def __init__(self, file_data: BytesIO):
+        self.file_data = file_data
         self.document = None
 
-    def parse(self):
+    def parse(self, max_text_length: int = 800, overlap: int = 50):
         try:
-            self.document = fitz.open(self.file_path)
+            print(self.file_data)
         except Exception as e:
             raise ValueError(f"Error opening PDF file: {e}")
 
-    def extract(self):
-        if not self.document:
-            raise ValueError("Document not parsed. Call `parse` method first.")
+    def extract(self, doc: any, page: any, page_number: int) -> Tuple[List[any], List[any], List[any]]:
 
-        text = ""
-        for page_num in range(self.document.page_count):
-            page = self.document.load_page(page_num)
-            text += page.get_text()
-
-        return text
+        return [], [], []

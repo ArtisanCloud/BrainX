@@ -115,6 +115,14 @@ class ResponseAddDocumentContent(BaseSchema):
     task_id: str
 
 
+class RequestReProcessDocuments(DocumentSchema):
+    document_uuids: List[str]
+
+
+class ResponseReProcessDocuments(BaseSchema):
+    task_id: str
+
+
 def make_document(document: DocumentSchema) -> Document:
     return Document(
         tenant_uuid=document.tenant_uuid,

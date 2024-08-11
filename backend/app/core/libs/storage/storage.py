@@ -59,7 +59,10 @@ class Storage:
         if not self.storage_driver:
             raise RuntimeError("Storage driver is not initialized.")
         try:
-            return self.storage_driver.save(bucket_name, object_name, data, length)
+            return self.storage_driver.save(
+                bucket_name, object_name, data, length,
+                content_type=content_type
+            )
         except Exception as e:
             raise RuntimeError(f"Failed to save file '{object_name}': {str(e)}")
 

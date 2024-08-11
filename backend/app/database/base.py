@@ -1,2 +1,6 @@
+PAGE = 1
 PER_PAGE = 10
+MAX_PER_PAGE = 999
+
+
 
