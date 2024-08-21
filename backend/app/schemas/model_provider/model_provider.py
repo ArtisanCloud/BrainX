@@ -3,7 +3,7 @@ from pydantic import UUID4, constr, BaseModel
 from datetime import datetime
 
 
-class ModelProviderSchema(BaseModel):
+class ModelProviderSchema(BaseSchema):
     tenant_uuid: UUID4
     name: constr(min_length=1)
     mdl_name: constr(min_length=1)

@@ -13,7 +13,6 @@ import sqlalchemy as sa
 
 from app.models.media_resource.model import table_name_media_resource
 from sqlalchemy.dialects.postgresql import UUID
-from app.models.base import BaseModel
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000020'

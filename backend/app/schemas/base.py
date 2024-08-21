@@ -1,12 +1,17 @@
 from typing import Union, Optional
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import Field, BaseModel
 
-from app.database.base import PER_PAGE
 from app.utils.datetime import datetime_format
 
 
-class Pagination(BaseModel):
+class BaseSchema(BaseModel):
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+
+
+class Pagination(BaseSchema):
     page: int | None
     page_size: int | None
 
@@ -15,7 +20,7 @@ class Pagination(BaseModel):
     #     self.page_size = page_size
 
 
-class ResponsePagination(BaseModel):
+class ResponsePagination(BaseSchema):
     limit: int
     page: int
     sort: bool
@@ -30,7 +35,7 @@ class ResponsePagination(BaseModel):
     #     self.total_pages = total_pages
 
 
-class ResponseSchema(BaseModel):
+class ResponseSchema(BaseSchema):
     """Generic response models for all responses"""
     api_id: str | None = None
     error: str | None = None
@@ -48,12 +53,6 @@ class ResponseSchema(BaseModel):
     #     self.status_code = status_code
 
     class Config:
-        arbitrary_types_allowed = True
-
-
-class BaseSchema(BaseModel):
-    class Config:
-        from_attributes = True
         arbitrary_types_allowed = True
 
 

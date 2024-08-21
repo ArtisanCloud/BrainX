@@ -1,13 +1,13 @@
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseModel, table_name_image_embedding
+from app.models.base import BaseORM, table_name_image_embedding
 from sqlalchemy import Column, String, Text, BINARY
 from pgvector.sqlalchemy import Vector
 
 table_name_text_embedding = 'data_embeddings'
 
 
-# class Document(BaseModel):
+# class Document(BaseORM):
 #     __tablename__ = table_name_text_embedding
 #
 #     name = mapped_column('name', String)
@@ -15,7 +15,7 @@ table_name_text_embedding = 'data_embeddings'
 #     node_id = mapped_column('node_id', String)
 #
 #
-# class ImageDocument(BaseModel):
+# class ImageDocument(BaseORM):
 #     __tablename__ = table_name_image_embedding
 #
 #     name = mapped_column('name', String)

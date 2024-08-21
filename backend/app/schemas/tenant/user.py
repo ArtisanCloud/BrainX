@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr
 
 from app.models.originaztion.user import User
-from app.schemas.base import BaseObjectSchema
+from app.schemas.base import BaseObjectSchema, BaseSchema
 
 
 class UserRole(str, Enum):
@@ -20,7 +20,7 @@ class UserStatus(str, Enum):
     SUSPENDED = "suspended"
 
 
-class UserTokenData(BaseModel):
+class UserTokenData(BaseSchema):
     """User token data"""
     uuid: str
     role: UserRole
@@ -76,7 +76,7 @@ class ResponseGetUser(UserSchema):
     """User models for response"""
 
 
-class UserLoginModel(BaseModel):
+class UserLoginModel(BaseSchema):
     """User logincart models"""
     email: EmailStr
     password: str
@@ -86,7 +86,7 @@ class TokenType(str, Enum):
     bearer = "bearer"
 
 
-class UserTokenResponseModel(BaseModel):
+class UserTokenResponseModel(BaseSchema):
     """User token models"""
     user_uuid: UUID
     access_token: str

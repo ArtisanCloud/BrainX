@@ -13,7 +13,9 @@ async def get_document_by_uuid(
         document_uuid: str
 ) -> Tuple[Document | None, Exception | None]:
     service_document = DocumentService(db)
-    document, exception = await service_document.app_dao.get_by_uuid(document_uuid)
+    document, exception = await (service_document.
+                                 document_dao.
+                                 get_by_uuid(document_uuid))
 
     #
     if exception:

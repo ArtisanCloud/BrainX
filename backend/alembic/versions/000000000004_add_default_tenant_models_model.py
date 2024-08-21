@@ -12,7 +12,6 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
-from app.models.base import BaseModel
 from app.models.tenant.tenant import table_name_tenant_default_model
 
 # revision identifiers, used by Alembic.

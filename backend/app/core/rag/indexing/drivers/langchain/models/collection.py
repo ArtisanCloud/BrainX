@@ -3,12 +3,12 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 
-from app.models.base import BaseModel
+from app.models.base import BaseORM
 
 table_name_langchain_pg_collection = "langchain_pg_collection"
 
 
-class LangchainPGCollection(BaseModel):
+class LangchainPGCollection(BaseORM):
     __tablename__ = table_name_langchain_pg_collection
 
     # 表字段定义

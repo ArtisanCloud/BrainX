@@ -12,7 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
-from app.models.base import BaseModel, table_name_pivot_tenant_to_user
+from app.models.base import table_name_pivot_tenant_to_user
 
 # revision identifiers, used by Alembic.
 revision: str = '000000000003'

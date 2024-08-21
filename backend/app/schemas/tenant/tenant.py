@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from app.schemas.base import BaseSchema
 
 
-class TenantSchema(BaseModel):
+class TenantSchema(BaseSchema):
     name: str
     plan: int
     status: int
@@ -9,7 +9,7 @@ class TenantSchema(BaseModel):
     config: str
 
 
-class TenantDefaultModelSchema(BaseModel):
+class TenantDefaultModelSchema(BaseSchema):
     tenant_uuid: str
     provider_name: str
     name: str

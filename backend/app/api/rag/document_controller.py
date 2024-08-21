@@ -1,4 +1,8 @@
 import http
+import traceback
+import uuid
+
+from celery import group
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.database.base import MAX_PER_PAGE, PAGE, PER_PAGE
@@ -17,17 +21,21 @@ from app.schemas.base import Pagination, ResponseSchema
 from app.schemas.rag.document import ResponseGetDocumentList, RequestCreateDocument, make_document, \
     RequestPatchDocument, \
     ResponseCreateDocument, ResponsePatchDocument, ResponseDeleteDocument, ResponseGetDocument, \
-    RequestAddDocumentContent, ResponseAddDocumentContent, RequestReProcessDocuments, ResponseReProcessDocuments
+    RequestAddDocumentContent, ResponseAddDocumentContent, RequestReProcessDocuments, ResponseReProcessDocuments, \
+    RequestReProcessDocument
 from app.service.rag.document.add_document_content import add_document_content
 from app.service.rag.document.create import create_document
 from app.service.rag.document.list import get_document_list, get_document_list_by_documents
 from app.service.rag.document.get import get_document_by_uuid
 from app.service.rag.document.patch import patch_document
 from app.service.rag.document.delete import soft_delete_document
+from app.service.rag.document.service import DocumentService
 
-from app.service.task.rag.indexing import process_documents
+from app.service.task.rag.processor import task_process_document, process_document
 
 router = APIRouter()
+
+rag_queue = 'rag_queue'
 
 
 @router.get("/list")
@@ -173,8 +181,13 @@ async def api_add_document_content(
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
         document_dict_list = [doc.dict() for doc in documents]
-        task = process_documents.apply_async(args=(data.dataset_uuid, document_dict_list,))
-
+        # 创建一个任务组，针对每个文档启动一个独立的任务
+        tasks = group(
+            task_process_document.s(data.dataset_uuid, doc_dict)
+            for doc_dict in document_dict_list
+        )
+        # 异步执行所有任务
+        task_group_result = tasks.apply_async(queue=rag_queue)
 
     except Exception as e:
         return ResponseSchema(
@@ -182,13 +195,14 @@ async def api_add_document_content(
             status_code=http.HTTPStatus.BAD_REQUEST,
         )
 
-    res = ResponseAddDocumentContent(data=documents, task_id=task.id)
+    task_ids = [result.id for result in task_group_result]
+    res = ResponseAddDocumentContent(data=documents, task_ids=task_ids)
 
     return res
 
 
 @router.post("/re-process-documents")
-async def api_re_process_documents(
+async def api_re_task_process_document(
         data: RequestReProcessDocuments,
         session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_db_session)):
@@ -204,9 +218,13 @@ async def api_re_process_documents(
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
         document_dict_list = [doc.dict() for doc in documents]
-        # print(document_dict_list)
-        task = process_documents.apply_async(args=(data.dataset_uuid, document_dict_list,))
-
+        # 创建一个任务组，针对每个文档启动一个独立的任务
+        tasks = group(
+            task_process_document.s(data.dataset_uuid, doc_dict)
+            for doc_dict in document_dict_list
+        )
+        # 异步执行所有任务
+        task_group_result = tasks.apply_async(queue=rag_queue)
 
     except Exception as e:
         return ResponseSchema(
@@ -214,6 +232,45 @@ async def api_re_process_documents(
             status_code=http.HTTPStatus.BAD_REQUEST,
         )
 
-    res = ResponseReProcessDocuments(task_id=task.id)
+    task_ids = [result.id for result in task_group_result]
+    res = ResponseReProcessDocuments(task_ids=task_ids)
+
+    return res
+
+
+@router.post("/re-process-document")
+async def api_re_process_document(
+        data: RequestReProcessDocument,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_db_session)):
+    try:
+        # print(data)
+        # 获取用户的document
+        service_document = DocumentService(db)
+        document, exception = await (service_document.
+                                     document_dao.
+                                     get_by_uuid(data.document_uuid))
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                logger.error(exception)
+                raise Exception("database query: pls check log")
+            raise exception
+
+        # print(document)
+        task_id = str(uuid.uuid4())
+        exception = process_document(task_id, "", document.to_dict())
+        if exception is not None:
+            raise exception
+
+    except Exception as e:
+        logger.error(f"API Failed to get error: {e}\nTraceback: {traceback.format_exc()}")
+        return ResponseSchema(
+            error=str(e),
+            status_code=http.HTTPStatus.BAD_REQUEST,
+        )
+
+    res = ResponseReProcessDocuments(task_ids=[
+        task_id
+    ])
 
     return res

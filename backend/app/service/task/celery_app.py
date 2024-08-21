@@ -27,7 +27,7 @@ def create_celery_app():
     app.conf.update(
         imports=[
             'app.service.task.task',
-            'app.service.task.rag.indexing'
+            'app.service.task.rag.processor'
         ],  # 确保任务模块被导入
         result_expires=settings.task.result_expires,  # 结果过期时间
         broker_connection_retry_on_startup=settings.task.broker_connection_retry_on_startup,  # 启动时重试

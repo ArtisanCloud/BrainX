@@ -3,12 +3,12 @@ from typing import List
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, func, ForeignKey, SmallInteger, UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from app.models.base import BaseModel, table_name_workflow
+from app.models.base import BaseORM, table_name_workflow
 from app.models.originaztion.user import table_name_user
 from app.models.tenant.tenant import table_name_tenant
 
 
-class Workflow(BaseModel):
+class Workflow(BaseORM):
     __tablename__ = table_name_workflow
 
     tenant_uuid = mapped_column('tenant_uuid', String, ForeignKey(table_name_tenant + '.uuid'))

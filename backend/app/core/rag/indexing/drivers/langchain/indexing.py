@@ -1,44 +1,25 @@
-from typing import List, Optional
+from typing import List
 
-from app.core.rag.indexing.interface import IndexingInterface
-from app.models import Document, DocumentSegment, Dataset
+from app.core.rag.indexing.interface import BaseIndexing
+from app.core.rag.splitter.base import BaseTextSplitter
+from app.models.rag.document_node import DocumentNode
 
 
-class LangchainIndexer(IndexingInterface):
+class LangchainIndexer(BaseIndexing):
     """
-       Implementation of IndexingInterface for Langchain indexing.
+       Implementation of BaseIndexing for Langchain indexing.
        """
 
-    def __init__(self, config: Optional[dict] = None):
-        """
-        Initialize the LangchainIndexer with optional configuration.
+    def __init__(self, splitter: BaseTextSplitter = None):
+        self.splitter = splitter
 
-        Args:
-            config (Optional[dict]): Optional configuration dictionary for the indexer.
-        """
-        self.config = config or {}
-        # Example: Initialize other resources if needed
-        self.index = self._initialize_index()
-
-    def _initialize_index(self):
-        """
-        Private method to initialize the index.
-
-        Returns:
-            An index object.
-        """
-        # Implement index initialization logic
-        # For example, return a new instance of the index
-        pass
-
-    def load_data(self, dataset: Dataset):
-        # 实现加载数据逻辑
-        pass
-
-    def split_data(self, documents: List[Document]) -> List[DocumentSegment]:
-        # 实现数据拆分逻辑
-        pass
-
-    def store_data(self, data_chunks: List[DocumentSegment]):
+    def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
         # 实现存储数据逻辑
-        pass
+        # print("langchain transform segments:", [node.page_content for node in nodes])
+        final_nodes: list[DocumentNode] = []
+        for node in nodes:
+            split_nodes = self.splitter.split_nodes([node])
+            # print("split segments:", [node.page_content for node in split_nodes])
+            final_nodes.extend(split_nodes)
+
+        return final_nodes

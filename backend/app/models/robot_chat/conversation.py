@@ -2,12 +2,12 @@ from typing import List
 
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app.models.base import BaseModel, table_name_app, table_name_user, table_name_app_model_config, \
+from app.models.base import BaseORM, table_name_app, table_name_user, table_name_app_model_config, \
     table_name_conversation
 from sqlalchemy import String, SmallInteger, BigInteger, Text, ForeignKey, UUID
 
 
-class Conversation(BaseModel):
+class Conversation(BaseORM):
     __tablename__ = table_name_conversation
 
     user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'))
@@ -49,7 +49,7 @@ class Conversation(BaseModel):
 table_name_message = 'message'
 
 
-class Message(BaseModel):
+class Message(BaseORM):
     __tablename__ = table_name_message
 
     conversation_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_conversation + '.uuid'))

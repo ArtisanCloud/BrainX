@@ -1,11 +1,11 @@
 # Define the MediaResource models
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseModel, table_name_media_resource, table_name_tenant, table_name_user
+from app.models.base import BaseORM, table_name_media_resource, table_name_tenant, table_name_user
 from sqlalchemy import Column, Integer, String, Boolean, UUID, ForeignKey
 
 
-class MediaResource(BaseModel):
+class MediaResource(BaseORM):
     __tablename__ = table_name_media_resource
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))

@@ -1,9 +1,9 @@
 import fitz
 
-from app.core.rag.data_extractor.interface import DataExtractorInterface
+from app.core.rag.extractor.base import BaseDataExtractor
 
 
-class DocDataExtractor(DataExtractorInterface):
+class DocDataExtractor(BaseDataExtractor):
     def __init__(self, file_path):
         self.file_path = file_path
         self.document = None

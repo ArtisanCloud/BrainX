@@ -3,10 +3,10 @@ from typing import List
 from sqlalchemy import UUID, Text, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app.models.base import BaseModel, table_name_app_model_config, table_name_model_provider, table_name_app
+from app.models.base import BaseORM, table_name_app_model_config, table_name_model_provider, table_name_app
 
 
-class AppModelConfig(BaseModel):
+class AppModelConfig(BaseORM):
     __tablename__ = table_name_app_model_config
 
     app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + '.uuid'))

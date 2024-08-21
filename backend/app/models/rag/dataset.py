@@ -1,16 +1,11 @@
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Integer, Text
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from app.models.base import BaseModel, table_name_dataset, table_name_tenant, table_name_user, \
+from app.models.base import BaseORM, table_name_dataset, table_name_tenant, table_name_user, \
     table_name_dataset_segment_rule
 from app.models.base import table_name_app
 from enum import IntEnum, Enum
 
 __tablename__ = table_name_app
-
-
-class IndexingDriverType(IntEnum):
-    LANGCHAIN = 1
-    LLAMA_INDEX = 2
 
 
 class DatasetFormat(IntEnum):
@@ -28,7 +23,7 @@ class ImportType(IntEnum):
     CUSTOM = 6
 
 
-class Dataset(BaseModel):
+class Dataset(BaseORM):
     __tablename__ = table_name_dataset  # 替换为实际的表名
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
@@ -98,7 +93,7 @@ class SegmentationMode(IntEnum):
     CUSTOM = 2
 
 
-class DatasetSegmentRule(BaseModel):
+class DatasetSegmentRule(BaseORM):
     __tablename__ = table_name_dataset_segment_rule  # 替换为实际的表名
 
     dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))

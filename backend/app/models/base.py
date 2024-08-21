@@ -29,7 +29,7 @@ class BaseStatus(IntEnum):
 Base = declarative_base()
 
 
-class BaseModel(Base):
+class BaseORM(Base):
     __abstract__ = True
 
     """Base class for all db orm models"""

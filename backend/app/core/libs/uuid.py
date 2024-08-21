@@ -1,6 +1,5 @@
 from sqlalchemy import UUID
 
-
 def safe_str_to_uuid(uuid_str: str | None) -> UUID | None:
     """
     Safely convert a string to a UUID object, handling None and invalid UUID strings.
@@ -21,3 +20,5 @@ def safe_str_to_uuid(uuid_str: str | None) -> UUID | None:
     except ValueError:
         # UUID string is not valid, return None
         return None
+
+

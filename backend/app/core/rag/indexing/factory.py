@@ -1,22 +1,21 @@
-from typing import Type
-
-from app.models.rag.dataset import IndexingDriverType
+from .base import IndexingDriverType
 from .drivers.langchain.indexing import LangchainIndexer
 from .drivers.llamaindex.indexing import LLamaIndexIndexer
-from .interface import IndexingInterface
+from .interface import BaseIndexing
+from ..splitter.base import BaseTextSplitter
 
 
 class IndexingFactory:
     @staticmethod
-    def get_indexer(indexer_type: str) -> IndexingInterface:
-        match indexer_type:
+    def get_indexer(indexer_type: IndexingDriverType, splitter: BaseTextSplitter) -> BaseIndexing:
+        match indexer_type.value:
             # LLamaIndex are supported
-            case IndexingDriverType.LLAMA_INDEX:
-                return LLamaIndexIndexer()
+            case IndexingDriverType.LLAMA_INDEX.value:
+                return LLamaIndexIndexer(splitter)
 
             # Langchain are supported
-            case IndexingDriverType.LANGCHAIN:
-                return LangchainIndexer()
+            case IndexingDriverType.LANGCHAIN.value:
+                return LangchainIndexer(splitter)
 
             # Other types are not supported
             case _:

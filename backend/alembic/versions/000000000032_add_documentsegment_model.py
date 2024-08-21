@@ -36,9 +36,16 @@ def upgrade() -> None:
 
         sa.Column('status', sa.SmallInteger(), nullable=True),
         sa.Column('content', sa.Text(), nullable=True),
-        sa.Column('index', sa.Integer(), nullable=True),
+        sa.Column('position', sa.Integer(), nullable=True),
+        sa.Column('page_number', sa.Integer(), nullable=True),
         sa.Column('word_count', sa.Integer(), nullable=True),
         sa.Column('token_count', sa.Integer(), nullable=True),
+
+        sa.Column('keywords', sa.JSON(), nullable=True),
+        sa.Column('hit_count', sa.Integer(), nullable=True),
+        sa.Column('index_node_id', sa.String(), nullable=True, index=True),
+        sa.Column('index_node_hash', sa.String(), nullable=True, index=True),
+        sa.Column('error_message', sa.Text(), nullable=True),
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),

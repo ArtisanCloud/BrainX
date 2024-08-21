@@ -18,6 +18,12 @@ class DocumentSegmentSchema(BaseObjectSchema):
     word_count: Optional[int] = None
     token_count: Optional[int] = None
 
+    keywords: Optional[str] = None
+    hit_count: Optional[int] = None
+    index_node_id: Optional[str] = None
+    index_node_hash: Optional[str] = None
+    error_message: Optional[str] = None
+
     @classmethod
     def from_orm(cls, obj: DocumentSegment):
         base = super().from_orm(obj)
@@ -34,6 +40,11 @@ class DocumentSegmentSchema(BaseObjectSchema):
             document_index=obj.document_index,
             word_count=obj.word_count,
             token_count=obj.token_count,
+            keywords=obj.keywords,
+            hit_count=obj.hit_count,
+            index_node_id=obj.index_node_id,
+            index_node_hash=obj.index_node_hash,
+            error_message=obj.error_message,
         )
 
 

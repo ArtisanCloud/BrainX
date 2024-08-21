@@ -1,11 +1,11 @@
 from sqlalchemy import Column, UUID, String, Text, Boolean, SmallInteger, BigInteger, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app.models.base import BaseModel, table_name_model_provider, table_name_tenant
+from app.models.base import BaseORM, table_name_model_provider, table_name_tenant
 
 
 # Tenant's models provider
-class ModelProvider(BaseModel):
+class ModelProvider(BaseORM):
     __tablename__ = table_name_model_provider
 
     tenant_uuid = mapped_column('tenant_uuid', ForeignKey(table_name_tenant + '.uuid'), nullable=False, index=True)

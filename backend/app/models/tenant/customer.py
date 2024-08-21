@@ -5,10 +5,10 @@ from typing import List, Optional, Dict, Union, Any
 from sqlalchemy import Column, String, UUID, BigInteger, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseModel, table_name_customer
+from app.models.base import BaseORM, table_name_customer
 
 
-class ExternalId(BaseModel):
+class ExternalId(BaseORM):
     __tablename__ = 'external_id'
 
     open_id_in_mini_program = mapped_column(String)
@@ -28,7 +28,7 @@ DocumentMetadataMap = Dict[Union[CustomerMetadataKeysEnum, str], Any]
 
 
 
-class Customer(BaseModel):
+class Customer(BaseORM):
     __tablename__ = table_name_customer
 
     name = mapped_column(String)

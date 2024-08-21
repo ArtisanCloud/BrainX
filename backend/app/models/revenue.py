@@ -2,7 +2,7 @@ from enum import Enum
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseModel, table_name_revenue
+from app.models.base import BaseORM, table_name_revenue
 from typing import Dict, Union, Any
 
 
@@ -18,7 +18,7 @@ DocumentMetadataMap = Dict[Union[RevenueMetadataKeysEnum, str], Any]
 
 
 
-class Revenue(BaseModel):
+class Revenue(BaseORM):
 
     __tablename__ = table_name_revenue
 

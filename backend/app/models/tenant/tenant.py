@@ -3,12 +3,12 @@ from typing import List
 from sqlalchemy import String, Text, SmallInteger, ForeignKey, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app.models.base import BaseModel, table_name_tenant, table_name_tenant_default_model, \
+from app.models.base import BaseORM, table_name_tenant, table_name_tenant_default_model, \
     table_name_pivot_tenant_to_user, table_name_user
 
 
-# class Tenant(BaseModel):
-class Tenant(BaseModel):
+# class Tenant(BaseORM):
+class Tenant(BaseORM):
     __tablename__ = table_name_tenant
 
     name = mapped_column('name', String, nullable=False, unique=True)
@@ -38,7 +38,7 @@ class Tenant(BaseModel):
         )
 
 
-class TenantDefaultModel(BaseModel):
+class TenantDefaultModel(BaseORM):
     __tablename__ = table_name_tenant_default_model
 
     tenant_uuid = mapped_column('tenant_uuid', ForeignKey(table_name_tenant + '.uuid'), nullable=False)

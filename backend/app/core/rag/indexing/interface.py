@@ -1,23 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 
-from app.models import Document, DocumentSegment, Dataset
+from app.models.rag.document_node import DocumentNode
 
 
-class IndexingInterface(ABC):
-    """Abstract base class for indexing and retrieval functionality."""
-
-    @abstractmethod
-    def load_data(self, dataset: Dataset):
-        """Load raw data."""
-        pass
+class BaseIndexing(ABC):
 
     @abstractmethod
-    def split_data(self, documents: List[Document]) -> List[DocumentSegment]:
-        """Split documents into smaller chunks."""
-        pass
+    def transform_documents(self, segments: List[DocumentNode]) -> List[DocumentNode]:
+        raise NotImplementedError
 
-    @abstractmethod
-    def store_data(self, data_chunks: List[DocumentSegment]):
-        """Store data chunks into the index."""
-        pass

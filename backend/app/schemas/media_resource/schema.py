@@ -1,6 +1,5 @@
 from typing import List, Union, Optional
 
-from pydantic import BaseModel
 
 from app.models import MediaResource
 from app.schemas.base import BaseSchema, Pagination, ResponsePagination, BaseObjectSchema
@@ -47,14 +46,14 @@ class ResponseGetMediaResourceList(BaseSchema):
     pagination: ResponsePagination
 
 
-class RequestCreateMediaResourceByBase64(BaseModel):
+class RequestCreateMediaResourceByBase64(BaseSchema):
     mediaName: str
     bucketName: str
     base64Data: str
     sortIndex: int
 
 
-class ResponseCreateMediaResource(BaseModel):
+class ResponseCreateMediaResource(BaseSchema):
     media_resource: MediaResourceSchema
     is_oss: bool
 

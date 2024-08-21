@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseModel
+from app.models.base import BaseORM
 
 
-class Group(BaseModel):
+class Group(BaseORM):
     __tablename__ = 'group'
 
     id = mapped_column(Integer, primary_key=True)
