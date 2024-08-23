@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
-from typing import Iterable, List
+from typing import List
 
-from app.core.rag.extractor.base import Block, BlockType
+from app.core.rag.indexing.extractor.base import Block, BlockType
 from app.models.rag.document_node import DocumentNode
 
 

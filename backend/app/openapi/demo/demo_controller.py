@@ -42,8 +42,8 @@ async def api_chat(
             init_user_uuid, app_uuid, conversation_uuid
         )
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

@@ -2,7 +2,7 @@ from sqlalchemy import Column, TIMESTAMP, BigInteger, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 from pytz import timezone
 from datetime import datetime
@@ -24,6 +24,11 @@ class BaseStatus(IntEnum):
     ACTIVE = 1
     INACTIVE = 2
     PENDING = 3
+
+
+class PlatformSourceType(Enum):
+    WEB = 'web'
+    MOBILE = 'mobile'
 
 
 Base = declarative_base()

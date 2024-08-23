@@ -1,6 +1,6 @@
 import fitz
 
-from app.core.rag.extractor.base import BaseDataExtractor
+from app.core.rag.indexing.extractor.base import BaseDataExtractor
 
 
 class DocDataExtractor(BaseDataExtractor):

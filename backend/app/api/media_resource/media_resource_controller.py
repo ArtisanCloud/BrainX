@@ -35,7 +35,6 @@ async def api_get_media_resource_list(
         media_resources, pagination, exception = await get_media_resource_list(db, p)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -61,7 +60,6 @@ async def create_media_resource(request: Request,
         media_resource, exception = await create_media_resource_by_file(db, resource)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -92,7 +90,6 @@ async def create_media_resource(
         )
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -116,7 +113,6 @@ async def api_get_media_resource_by_uuid(
         media_resource, exception = await get_media_resource_by_uuid(db, session_user, media_resource_uuid)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

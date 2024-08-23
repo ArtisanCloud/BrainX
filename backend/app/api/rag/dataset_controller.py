@@ -40,8 +40,8 @@ async def api_get_dataset_list(
     try:
         datasets, pagination, exception = await get_dataset_list(db, session_user.uuid, p)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -62,8 +62,8 @@ async def api_get_dataset_by_uuid(
     try:
         dataset, exception = await get_dataset_by_uuid(db, session_user, dataset_uuid)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -88,8 +88,8 @@ async def api_create_dataset(
         # print(dataset)
         dataset, exception = await create_dataset(db, dataset)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -113,8 +113,8 @@ async def api_patch_dataset(
 
         dataset, exception = await patch_dataset(db, dataset_uuid, update_data)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -134,8 +134,8 @@ async def api_delete_dataset(
         user_id = 1
         result, exception = await soft_delete_dataset(db, user_id, dataset_uuid)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

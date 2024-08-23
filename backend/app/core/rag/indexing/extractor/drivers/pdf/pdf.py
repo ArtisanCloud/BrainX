@@ -1,12 +1,11 @@
-import uuid
 from io import BytesIO
-from typing import Tuple, List, Any, Union
+from typing import List, Union
 
 import fitz
 import requests
 
-from app.core.rag.extractor.base import BaseDataExtractor, Block, BlockType
-from app.core.rag.extractor.drivers.pdf.lib import rect_to_bbox, compare_block
+from app.core.rag.indexing.extractor.base import BaseDataExtractor, Block, BlockType
+from app.core.rag.indexing.extractor.drivers.pdf.lib import compare_block
 
 
 class PDFDataExtractor(BaseDataExtractor):

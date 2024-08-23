@@ -2,7 +2,7 @@ from .base import IndexingDriverType
 from .drivers.langchain.indexing import LangchainIndexer
 from .drivers.llamaindex.indexing import LLamaIndexIndexer
 from .interface import BaseIndexing
-from ..splitter.base import BaseTextSplitter
+from .splitter.base import BaseTextSplitter
 
 
 class IndexingFactory:

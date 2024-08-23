@@ -3,7 +3,7 @@ from typing import Union
 
 from app.utils.media import ContentType
 from .drivers.doc import DocDataExtractor
-from app.core.rag.extractor.drivers.pdf.pdf import PDFDataExtractor
+from app.core.rag.indexing.extractor.drivers.pdf.pdf import PDFDataExtractor
 from .base import BaseDataExtractor
 
 

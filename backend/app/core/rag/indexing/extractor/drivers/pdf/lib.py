@@ -1,6 +1,6 @@
 from fitz import Rect
 
-from app.core.rag.extractor.base import Block
+from app.core.rag.indexing.extractor.base import Block
 
 
 def create_block(start, end, block_id, text=None, image=None, table=None, bbox: Rect = None,

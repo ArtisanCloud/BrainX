@@ -2,7 +2,7 @@ from typing import Optional, Any, Iterable
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.core.rag.splitter.base import BaseTextSplitter
+from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.models.rag.document_node import DocumentNode
 
 

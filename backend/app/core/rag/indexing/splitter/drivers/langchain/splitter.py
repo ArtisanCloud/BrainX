@@ -1,12 +1,11 @@
-import re
 import uuid
-from typing import Optional, Any, Iterable, List, Union, Literal
+from typing import Optional, Any, List
 
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from app.core.libs.node import generate_node_hash
-from app.core.rag.splitter.base import BaseTextSplitter
+from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.models.rag.document_node import DocumentNode
 
 

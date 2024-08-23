@@ -11,7 +11,6 @@ from app.database.base import PER_PAGE, PAGE
 from app.database.deps import get_db_session
 from app.logger import logger
 from app.models import User
-from app.models.app.app import App
 
 from app.schemas.app.app import ResponseGetAppList, RequestCreateApp, make_app, ResponseCreateApp, \
     RequestPatchApp, ResponsePatchApp, ResponseDeleteApp, ResponseGetApp
@@ -40,8 +39,8 @@ async def api_get_app_list(
     try:
         apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -62,8 +61,8 @@ async def api_get_app_by_uuid(
     try:
         app, exception = await get_app_by_uuid(db, session_user, app_uuid)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -87,8 +86,8 @@ async def api_create_app(
         # print(app)
         app, exception = await create_app(db, app)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -112,8 +111,8 @@ async def api_patch_app(
 
         app, exception = await patch_app(db, app_uuid, update_data)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -133,8 +132,8 @@ async def api_delete_app(
         user_id = 1
         result, exception = await soft_delete_app(db, user_id, app_uuid)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

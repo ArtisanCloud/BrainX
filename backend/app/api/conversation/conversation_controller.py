@@ -40,7 +40,6 @@ async def api_get_conversation_list(
         conversations, pagination, exception = await get_conversation_list(db, p, app_uuid)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -72,7 +71,6 @@ async def api_create_conversation(
         conversation, exception = await create_conversation(db, conversation)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -97,7 +95,6 @@ async def api_patch_conversation(
         conversation, exception = await patch_conversation(db, conversation_uuid, update_data)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -118,7 +115,6 @@ async def api_delete_conversation(
         result, exception = await soft_delete_conversation(db, user_id, conversation_uuid)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

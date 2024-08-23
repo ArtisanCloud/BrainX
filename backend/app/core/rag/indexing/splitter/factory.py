@@ -1,8 +1,8 @@
 from enum import Enum
 
-from app.core.rag.splitter.base import BaseTextSplitter
-from app.core.rag.splitter.drivers.langchain.splitter import LangchainRecursiveCharacterTextSplitter
-from app.core.rag.splitter.drivers.llamaindex.splitter import LlamaIndexRecursiveCharacterTextSplitter
+from app.core.rag.indexing.splitter.base import BaseTextSplitter
+from app.core.rag.indexing.splitter.drivers.langchain.splitter import LangchainRecursiveCharacterTextSplitter
+from app.core.rag.indexing.splitter.drivers.llamaindex.splitter import LlamaIndexRecursiveCharacterTextSplitter
 
 
 class SplitterDriverType(Enum):

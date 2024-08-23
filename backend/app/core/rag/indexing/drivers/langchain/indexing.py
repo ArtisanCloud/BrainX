@@ -1,7 +1,7 @@
 from typing import List
 
 from app.core.rag.indexing.interface import BaseIndexing
-from app.core.rag.splitter.base import BaseTextSplitter
+from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.models.rag.document_node import DocumentNode
 
 

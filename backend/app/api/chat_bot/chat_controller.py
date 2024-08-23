@@ -4,6 +4,7 @@ from typing import Iterator
 
 from fastapi import Request, APIRouter, Depends
 from fastapi.responses import StreamingResponse
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware.auth import get_session_user
@@ -79,7 +80,6 @@ async def api_chat(
         )
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

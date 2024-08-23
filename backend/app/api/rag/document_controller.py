@@ -30,8 +30,7 @@ from app.service.rag.document.get import get_document_by_uuid
 from app.service.rag.document.patch import patch_document
 from app.service.rag.document.delete import soft_delete_document
 from app.service.rag.document.service import DocumentService
-
-from app.service.task.rag.processor import task_process_document, process_document
+from app.service.task.rag.processor import RagProcessorTaskService, task_process_document
 
 router = APIRouter()
 
@@ -58,7 +57,6 @@ async def api_get_document_list(
         documents, pagination, exception = await get_document_list(db, session_user.uuid, dataset_uuid, p)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -80,7 +78,6 @@ async def api_get_document_by_uuid(
         document, exception = await get_document_by_uuid(db, session_user, document_uuid)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -106,7 +103,6 @@ async def api_create_document(
         document, exception = await create_document(db, document)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -131,7 +127,6 @@ async def api_patch_document(
         document, exception = await patch_document(db, document_uuid, update_data)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -152,7 +147,6 @@ async def api_delete_document(
         result, exception = await soft_delete_document(db, user_id, document_uuid)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -174,22 +168,21 @@ async def api_add_document_content(
         documents, exception = await add_document_content(db, session_user, data)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
-        document_dict_list = [doc.dict() for doc in documents]
         # 创建一个任务组，针对每个文档启动一个独立的任务
-        tasks = group(
-            task_process_document.s(data.dataset_uuid, doc_dict)
-            for doc_dict in document_dict_list
-        )
-        # 异步执行所有任务
-        task_group_result = tasks.apply_async(queue=rag_queue)
-
+        # tasks = group(
+        #     task_process_document.s(doc.uuid, session_user.uuid)
+        #     for doc in documents
+        # )
+        # # 异步执行所有任务
+        # task_group_result = tasks.apply_async(queue=rag_queue)
+        task_group_result = []
     except Exception as e:
+        logger.error(e, exc_info=True)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
@@ -217,11 +210,10 @@ async def api_re_task_process_document(
 
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
-        document_dict_list = [doc.dict() for doc in documents]
         # 创建一个任务组，针对每个文档启动一个独立的任务
         tasks = group(
-            task_process_document.s(data.dataset_uuid, doc_dict)
-            for doc_dict in document_dict_list
+            task_process_document.s(doc.uuid, session_user.uuid)
+            for doc in documents
         )
         # 异步执行所有任务
         task_group_result = tasks.apply_async(queue=rag_queue)
@@ -252,13 +244,13 @@ async def api_re_process_document(
                                      get_by_uuid(data.document_uuid))
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
         # print(document)
         task_id = str(uuid.uuid4())
-        exception = process_document(task_id, "", document.to_dict())
+        service_rag_processor = RagProcessorTaskService(document)
+        exception = service_rag_processor.process_document()
         if exception is not None:
             raise exception
 

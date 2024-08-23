@@ -31,7 +31,6 @@ async def api_get_message_list(
         messages, pagination, exception = await get_cached_message_list(db, conversation_uuid, p)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

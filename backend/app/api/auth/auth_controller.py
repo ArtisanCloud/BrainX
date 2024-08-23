@@ -24,8 +24,8 @@ async def api_register(
 
         user, exception = await create_user_by_account(db, data.account, data.password)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 
@@ -47,8 +47,8 @@ async def api_login(
 
         token, exception = await login_by_account(db, data.account, data.password)
         if exception is not None:
+            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
-                logger.error(exception)
                 raise Exception("database query: pls check log")
             raise exception
 

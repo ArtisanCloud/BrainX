@@ -14,15 +14,6 @@ class DatasetFormat(IntEnum):
     IMAGE = 3
 
 
-class ImportType(IntEnum):
-    LOCAL_DOCUMENT = 1
-    ONLINE_DATA = 2
-    NOTION = 3
-    GOOGLE_DOC = 4
-    LARK = 5
-    CUSTOM = 6
-
-
 class Dataset(BaseORM):
     __tablename__ = table_name_dataset  # 替换为实际的表名
 

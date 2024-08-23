@@ -19,9 +19,8 @@ async def get_db_session() -> AsyncSession:
                 await db.commit()
         except Exception as e:
             #  rollback the db session if any exception occurs
-            logger.error(e)
+            logger.error(f"session local error: {e}")
             await db.rollback()
-            raise e
 
         finally:
             #  close the db session
