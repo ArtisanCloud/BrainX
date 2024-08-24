@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y gcc python3-dev libpq-dev python3-tk &&
 RUN pip install poetry==1.8.2
 
 COPY . /app/.
-RUN echo "This is a test file" > test.txt
+RUN echo "This is a test file" > tests.txt
 
 # # 安装项目依赖项
 RUN poetry install --only main

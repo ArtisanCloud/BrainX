@@ -69,7 +69,6 @@ class DocumentDAO(BaseDAO[Document]):
                 document.error_message = error
                 document.error_at = current_time
 
-
             # 刷新并保存
             await self.db.flush()
             await self.db.refresh(document)
@@ -77,4 +76,5 @@ class DocumentDAO(BaseDAO[Document]):
             return document, None
 
         except SQLAlchemyError as e:
+            print("error: ", e)
             return None, e

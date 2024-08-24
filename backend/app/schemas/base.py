@@ -1,14 +1,15 @@
 from typing import Union, Optional
 from uuid import UUID
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, ConfigDict
 
 from app.utils.datetime import datetime_format
 
 
 class BaseSchema(BaseModel):
-    class Config:
-        from_attributes = True
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        arbitrary_types_allowed=True
+    )
 
 
 class Pagination(BaseSchema):
@@ -51,9 +52,6 @@ class ResponseSchema(BaseSchema):
     #     self.message = message
     #     self.data = data
     #     self.status_code = status_code
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class BaseObjectSchema(BaseSchema):

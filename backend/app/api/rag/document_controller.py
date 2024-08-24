@@ -30,7 +30,8 @@ from app.service.rag.document.get import get_document_by_uuid
 from app.service.rag.document.patch import patch_document
 from app.service.rag.document.delete import soft_delete_document
 from app.service.rag.document.service import DocumentService
-from app.service.task.rag.processor import RagProcessorTaskService, task_process_document
+from app.service.task.rag.service import RagProcessorTaskService
+from app.service.task.rag.task import task_process_document
 
 router = APIRouter()
 

@@ -27,10 +27,14 @@ class ContentType(IntEnum):
     LARK = 5
     CUSTOM = 6
 
+    @classmethod
+    def get_content_type_names(cls):
+        return list(cls.__members__.keys())
+
 
 class DocumentStatus(IntEnum):
     DRAFT = 0  # 文档初始状态，可能尚未提交处理
-    NORMAL = 1  # 文档初始状态，可能尚未提交处理
+    NORMAL = 1  # 文档正常状态
 
 
 class DocumentIndexingStatus(IntEnum):

@@ -17,6 +17,7 @@ from app.config.openapi import OpenAPI
 from app.config.qa_model import Models
 from app.config.server import Server
 from app.config.storage import Storage
+from app.config.test import Test
 
 
 class Polygon(BaseModel):
@@ -36,6 +37,7 @@ class Settings(BaseModel):
     openapi: OpenAPI
     jwt: JWT
     log: Log
+    test: Test
     database: Database
     cache: Cache
     task: CeleryConfig
@@ -64,6 +66,7 @@ settings = Settings(
     task=CeleryConfig(**config['task']),
     models=Models(**config['models']),
     log=Log(**config['log']),
+    test=Test(**config['test']),
     openai=OpenAI(**config['openai']),
     baidu_qianfan=BaiduQianfan(**config['baidu_qianfan']),
     kimi=Kimi(**config['kimi']),

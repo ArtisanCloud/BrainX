@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column('type', sa.String(40), nullable=False),
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.PrimaryKeyConstraint('id')
+        sa.PrimaryKeyConstraint('uuid')
     )
 
 

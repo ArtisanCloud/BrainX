@@ -1,6 +1,8 @@
 from typing import Optional
-from pydantic import UUID4, constr, BaseModel
+from pydantic import UUID4, constr
 from datetime import datetime
+
+from app.schemas.base import BaseSchema
 
 
 class ModelProviderSchema(BaseSchema):
@@ -15,6 +17,3 @@ class ModelProviderSchema(BaseSchema):
     quota_type: Optional[int]
     quota_limit: Optional[int]
     quota_used: int = 0
-
-    class Config:
-        from_attributes = True

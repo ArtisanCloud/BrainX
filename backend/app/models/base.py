@@ -8,8 +8,7 @@ from pytz import timezone
 from datetime import datetime
 import uuid as uuid
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import declarative_base, mapped_column
 
 from app.database.deps import get_db_session
 
@@ -38,7 +37,7 @@ class BaseORM(Base):
     __abstract__ = True
 
     """Base class for all db orm models"""
-    id = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id = mapped_column(BigInteger, autoincrement=True)
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     created_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, nullable=False)
     updated_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, onupdate=time_now, nullable=False)

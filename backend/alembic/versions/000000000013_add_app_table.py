@@ -51,7 +51,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
         sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
         sa.ForeignKeyConstraint(['workflow_uuid'], [table_name_workflow + '.uuid'], ),
-        sa.PrimaryKeyConstraint('id')
+        sa.PrimaryKeyConstraint('uuid')
     )
 
 

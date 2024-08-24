@@ -50,7 +50,7 @@ def create_dataset_table() -> None:
         sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
         sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
         sa.ForeignKeyConstraint(['updated_user_by'], [table_name_user + '.uuid'], ),
-        sa.PrimaryKeyConstraint('id'),
+        sa.PrimaryKeyConstraint('uuid'),
     )
 
 
@@ -71,7 +71,7 @@ def create_dataset_segment_rule_table() -> None:
 
         sa.ForeignKeyConstraint(['dataset_uuid'], [table_name_dataset + '.uuid'], ),
 
-        sa.PrimaryKeyConstraint('id'),
+        sa.PrimaryKeyConstraint('uuid'),
     )
 
 

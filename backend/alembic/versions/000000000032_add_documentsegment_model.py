@@ -57,7 +57,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
         sa.ForeignKeyConstraint(['updated_user_by'], [table_name_user + '.uuid'], ),
 
-        sa.PrimaryKeyConstraint('id')
+        sa.PrimaryKeyConstraint('uuid')
     )
 
 

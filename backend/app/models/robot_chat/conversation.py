@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.base import BaseORM, table_name_app, table_name_user, table_name_app_model_config, \
-    table_name_conversation
+    table_name_conversation, table_name_message
 from sqlalchemy import String, SmallInteger, BigInteger, Text, ForeignKey, UUID
 
 
@@ -46,7 +46,6 @@ class Conversation(BaseORM):
             'context': self.context
         }
 
-table_name_message = 'message'
 
 
 class Message(BaseORM):

@@ -38,7 +38,7 @@ def upgrade() -> None:
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
-        sa.PrimaryKeyConstraint('id'),
+        sa.PrimaryKeyConstraint('uuid'),
 
         # 添加索引
         sa.Index('idx_message_conversation_uuid', 'conversation_uuid'),

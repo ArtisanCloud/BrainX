@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Tuple, List, Any, Optional
+from typing import List, Any, Optional
 
-from pydantic import BaseModel
-
-from app.models.rag.document_segment import DocumentSegment
+from app.schemas.base import BaseSchema
 
 
 class BlockType(Enum):
@@ -13,7 +11,7 @@ class BlockType(Enum):
     TABLE = "table"
 
 
-class Block(BaseModel):
+class Block(BaseSchema):
     block_id: Optional[str] = None
     # start: int
     # end: int
@@ -23,9 +21,6 @@ class Block(BaseModel):
     table: Optional[Any] = None
     rect: list
     page_number: int
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class BaseDataExtractor(ABC):

@@ -22,7 +22,7 @@ api_router = APIRouter()
 
 # system
 api_router.include_router(status_controller.router, prefix="/system", tags=["system"])
-api_router.include_router(test_controller.router, prefix="/system", tags=["test"])
+api_router.include_router(test_controller.router, prefix="/system", tags=["tests"])
 
 # auth
 api_router.include_router(auth_controller.router,

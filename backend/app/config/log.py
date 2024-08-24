@@ -1,6 +1,8 @@
 from typing import List
 
 from pydantic import BaseModel
+
+
 class Log(BaseModel):
     path: str
     split: List[str]

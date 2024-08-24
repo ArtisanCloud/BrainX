@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, func, ForeignKey, SmallInteger, UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from app.models.base import BaseORM, table_name_workflow
+from app.models.base import BaseORM, table_name_workflow, table_name_app
 from app.models.originaztion.user import table_name_user
 from app.models.tenant.tenant import table_name_tenant
 
@@ -11,10 +11,11 @@ from app.models.tenant.tenant import table_name_tenant
 class Workflow(BaseORM):
     __tablename__ = table_name_workflow
 
-    tenant_uuid = mapped_column('tenant_uuid', String, ForeignKey(table_name_tenant + '.uuid'))
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
+    app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + ".uuid"), nullable=False)
     created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
     updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
-    parent_uuid = mapped_column('parent_uuid', String, ForeignKey(table_name_workflow + '.uuid'))
+    parent_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_workflow + '.uuid'))
 
     name = mapped_column('name', String, nullable=False)
     tag = mapped_column('tag', String, nullable=False)

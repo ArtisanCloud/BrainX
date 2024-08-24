@@ -8,7 +8,7 @@ from app.models.base import BaseORM, table_name_model_provider, table_name_tenan
 class ModelProvider(BaseORM):
     __tablename__ = table_name_model_provider
 
-    tenant_uuid = mapped_column('tenant_uuid', ForeignKey(table_name_tenant + '.uuid'), nullable=False, index=True)
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
     name = mapped_column('name', String, nullable=False)
     model_name = mapped_column('model_name', String, nullable=False)
     model_type = mapped_column('model_type', String, nullable=False)
