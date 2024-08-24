@@ -1,7 +1,7 @@
 from typing import List
 
 from app.core.rag.indexing.cleaner.base import Cleaner
-from app.core.rag.indexing.interface import BaseIndexing
+from app.core.rag.indexing.base import BaseIndexing
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.models.rag.document_node import DocumentNode
 
@@ -10,7 +10,7 @@ class LLamaIndexIndexer(BaseIndexing):
     def __init__(self, splitter: BaseTextSplitter = None):
         self.splitter = splitter
 
-    def transform_documents(self, documents: List[DocumentNode], **kwargs) -> List[DocumentNode]:
+    def transform_documents(self, nodes: List[DocumentNode], **kwargs) -> List[DocumentNode]:
         # 实现存储数据逻辑
         # print("llamaindex transform segments:", [node.page_content for node in nodes])
         final_documents = []

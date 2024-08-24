@@ -25,7 +25,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         table_name_conversation,
-        sa.Column('id', sa.BigInteger(), nullable=False),
+        # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('user_uuid', sa.UUID(as_uuid=True), nullable=False),

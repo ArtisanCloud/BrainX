@@ -256,7 +256,7 @@ async def api_re_process_document(
             raise exception
 
     except Exception as e:
-        logger.error(f"API Failed to get error: {e}\nTraceback: {traceback.format_exc()}")
+        logger.error(f"API Failed to get error: {e}", exc_info=True)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,

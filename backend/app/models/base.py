@@ -1,4 +1,4 @@
-from sqlalchemy import Column, TIMESTAMP, BigInteger, select
+from sqlalchemy import TIMESTAMP, BigInteger, select, PrimaryKeyConstraint, Column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,7 +37,7 @@ class BaseORM(Base):
     __abstract__ = True
 
     """Base class for all db orm models"""
-    id = mapped_column(BigInteger, autoincrement=True)
+    # id = mapped_column(BigInteger, autoincrement=True)
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     created_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, nullable=False)
     updated_at = mapped_column(TIMESTAMP(timezone=True), default=time_now, onupdate=time_now, nullable=False)

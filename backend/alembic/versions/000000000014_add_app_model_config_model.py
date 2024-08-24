@@ -24,7 +24,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         table_name_app_model_config,  # 使用表名
-        sa.Column('id', sa.BigInteger(), nullable=False),
+        # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('app_uuid', sa.UUID(), nullable=False, index=True),

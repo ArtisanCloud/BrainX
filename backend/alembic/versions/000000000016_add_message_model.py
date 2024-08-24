@@ -26,7 +26,7 @@ def upgrade() -> None:
     # 检查表是否存在
     op.create_table(
         table_name_message,
-        sa.Column('id', sa.BigInteger(), nullable=False),
+        # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('conversation_uuid', UUID(as_uuid=True), nullable=False),

@@ -94,6 +94,7 @@ async def create_media_resource(
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=True)
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     # media_resource.sort_index = sort_index

@@ -41,15 +41,20 @@ async def create_media_resource_by_base64_string(
         bucket: str, base64_data: str,
         media_name: str = None, sort_index: int = None,
 ) -> Tuple[MediaResourceSchema | None, Exception | None]:
-    # Create media resource
-    service_media_resource = MediaResourceService(db)
-    media_resource, exception = await service_media_resource.make_oss_resource_by_base64_string(
-        user, bucket, base64_data, media_name, sort_index)
-    if exception:
-        return None, exception
+    try:
+        # Create media resource
+        service_media_resource = MediaResourceService(db)
+        media_resource, exception = await service_media_resource.make_oss_resource_by_base64_string(
+            user, bucket, base64_data, media_name, sort_index)
+        if exception:
+            raise exception
 
-    media_resource, exception = await service_media_resource.create_media_resource(media_resource)
-    if exception:
-        return None, Exception(f"Database error: {exception}")
-    print(123321, media_resource, exception)
+        media_resource, exception = await service_media_resource.create_media_resource(media_resource)
+        if exception:
+            raise Exception(f"Database error: {exception}")
+        # print(123321, media_resource, exception)
+    except Exception as e:
+        print(123)
+        return None, e
+
     return transform_media_resource_to_reply(media_resource), None

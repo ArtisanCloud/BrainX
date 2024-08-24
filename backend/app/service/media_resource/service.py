@@ -66,7 +66,8 @@ class MediaResourceService:
         endpoint = settings.storage.minio.endpoint
         return urljoin(endpoint, f"{bucket}/{key}")
 
-    async def make_oss_resource(self, bucket: str, file: UploadFile) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
+    async def make_oss_resource(self, bucket: str, file: UploadFile) -> Tuple[
+        MediaResource | None, SQLAlchemyError | None]:
         err = await self.check_bucket_exists(bucket)
         if err:
             return None, err
@@ -103,19 +104,21 @@ class MediaResourceService:
             media_name: str = None, sort_index: int = None,
     ) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
 
-        content_type = self.determine_content_type(base64_data)
-        if content_type is None:
-            return None, Exception(f"Invalid base64 data content type")
-
-        base64_data = remove_base64_prefix(base64_data)
-
         try:
+            content_type = self.determine_content_type(base64_data)
+            if content_type is None:
+                return None, Exception(f"Invalid base64 data content type")
+
+            base64_data = remove_base64_prefix(base64_data)
+
             data = b64decode(base64_data, validate=True)
+
             return await self.make_oss_resource_by_base64_data(
                 user, bucket,
                 data, content_type,
                 media_name, sort_index
             )
+
         except Exception as e:
             return None, e
 
@@ -155,6 +158,7 @@ class MediaResourceService:
                 resource_type=get_media_type(content_type),
                 sort_index=sort_index,
             ), None
+
         except Exception as e:
             return None, e
 

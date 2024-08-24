@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional
 
-from app.core.rag.indexing.interface import BaseIndexing
+from app.core.rag.indexing.base import BaseIndexing
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
+from app.models import DocumentSegment, User, Document
 from app.models.rag.document_node import DocumentNode
 
 
@@ -10,8 +11,14 @@ class LangchainIndexer(BaseIndexing):
        Implementation of BaseIndexing for Langchain indexing.
        """
 
-    def __init__(self, splitter: BaseTextSplitter = None):
+    def __init__(self,
+                 user: Optional[User] = None,
+                 document: Optional[Document] = None,
+                 splitter: Optional[BaseTextSplitter] = None
+                 ):
+        super().__init__(user=user, document=document)  # 初始化父类参数
         self.splitter = splitter
+        self.nodes = []
 
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
         # 实现存储数据逻辑
@@ -23,3 +30,6 @@ class LangchainIndexer(BaseIndexing):
             final_nodes.extend(split_nodes)
 
         return final_nodes
+
+    def create_document_segments(self) -> List[DocumentSegment]:
+        return []

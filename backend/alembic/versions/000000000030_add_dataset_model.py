@@ -24,7 +24,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def create_dataset_table() -> None:
     op.create_table(
         table_name_dataset,
-        sa.Column('id', sa.BigInteger(), nullable=False),
+        # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
@@ -57,7 +57,7 @@ def create_dataset_table() -> None:
 def create_dataset_segment_rule_table() -> None:
     op.create_table(
         table_name_dataset_segment_rule,
-        sa.Column('id', sa.BigInteger(), nullable=False),
+        # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
         sa.Column('dataset_uuid', UUID(as_uuid=True), nullable=False),

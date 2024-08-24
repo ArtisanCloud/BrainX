@@ -12,6 +12,7 @@ from app.core.rag.indexing.factory import IndexingFactory
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.core.rag.indexing.splitter.factory import TextSplitterFactory, SplitterDriverType
 from app.dao.rag.document import DocumentDAO
+from app.dao.rag.document_segment import DocumentSegmentDAO
 from app.dao.tenant.user import UserDAO
 from app.database.deps import get_db_session
 from app.logger import logger
@@ -29,6 +30,7 @@ class RagProcessorTaskService:
                  ):
         self.task = task
         self.document_dao = DocumentDAO(db)
+        self.document_segment_dao = DocumentSegmentDAO(db)
         self.user_dao = UserDAO(db)
         self.request = None
         self.db = db
@@ -118,6 +120,10 @@ class RagProcessorTaskService:
         if not is_available:
             return exception
 
+        # create indexer
+        splitter = TextSplitterFactory.get_splitter(SplitterDriverType.LANGCHAIN)
+        indexer = IndexingFactory.get_indexer(IndexingDriverType.LANGCHAIN, splitter)
+
             # --------------- Step Load Resource URL into Memory
         try:
             # save document indexing status
@@ -129,7 +135,7 @@ class RagProcessorTaskService:
 
             content_type = response.headers.get('Content-Type')
             if content_type is None:
-                raise ValueError(f"Content-Type not found for document UUID: {self.document.uuid}")
+                raise Exception(f"Content-Type not found for document UUID: {self.document.uuid}")
 
             file_data = BytesIO(response.content)
             # logger.info(f"File length: {file_data.getbuffer().nbytes} bytes")
@@ -152,27 +158,18 @@ class RagProcessorTaskService:
             # convert blocks into a whole text block
             document_content = BaseTextSplitter.merge_blocks_into_text(blocks)
 
-        except ValueError as e:
+        except Exception as e:
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
             logger.error(f"Task Failed to extract document segments for document UUID: {self.document.uuid} - {e}")
             return e
 
-        # --------------- Step Cleaning nodes
-        try:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.SPLITTING)
 
-        except ValueError as e:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
-            logger.error(f"Task Failed to cleaning nodes, document uuid: {self.document.uuid} - {e}")
-            return e
-
-        # --------------- Step Split into segments
+        # --------------- Step Cleaning nodes and Split into nodes
         try:
             # save document indexing status
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.SPLITTING)
+            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.CLEANING)
 
-            splitter = TextSplitterFactory.get_splitter(SplitterDriverType.LANGCHAIN)
-            indexer = IndexingFactory.get_indexer(IndexingDriverType.LANGCHAIN, splitter)
             nodes = indexer.transform_documents([DocumentNode(
                 page_content=document_content,
                 metadata={
@@ -182,17 +179,25 @@ class RagProcessorTaskService:
             )])
             # print("transformed nodes:", nodes)
 
-        except ValueError as e:
+        except Exception as e:
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
             logger.error(
                 f"Task Failed to transform the document text to segment, document uuid: {self.document.uuid} - {e}")
             return e
 
+
+
         # --------------- Step 4: Create Document Segments
         try:
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
 
-        except ValueError as e:
+            document_segments = indexer.create_document_segments(nodes)
+            print(document_segments)
+            # document_segments, exception = self.document_segment_dao.create_many(document_segments)
+            # if exception is not None:
+            #     raise exception
+
+        except Exception as e:
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
             logger.error(
                 f"Task Failed to index document segments for document UUID, document uuid: {self.document.uuid} - {e}")
@@ -201,7 +206,7 @@ class RagProcessorTaskService:
         # --------------- Step 5: Update Document with Indexing Information with status
         try:
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
-        except ValueError as e:
+        except Exception as e:
             logger.error(
                 f"Task Failed to update document with indexing information for document UUID: {self.document.uuid} - {e}")
             return e
@@ -238,3 +243,5 @@ class RagProcessorTaskService:
         except Exception as e:
             print(f"Preprocessing failed: {e}")
             return False
+
+
