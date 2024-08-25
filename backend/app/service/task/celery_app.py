@@ -27,13 +27,13 @@ def create_celery_app():
     app.conf.update(
         imports=[
             'app.service.task.task',
-            'app.service.task.rag.processor'
+            'app.service.task.rag.task'
         ],  # 确保任务模块被导入
         result_expires=settings.task.result_expires,  # 结果过期时间
         broker_connection_retry_on_startup=settings.task.broker_connection_retry_on_startup,  # 启动时重试
         # task_time_limit=settings.task.task_time_limit,  # 任务时间限制
         # task_soft_time_limit=settings.task.task_soft_time_limit,  # 软时间限制
-        # worker_concurrency=settings.task.worker_concurrency,  # 并发 worker 数量
+        worker_concurrency=settings.task.worker_concurrency,  # 并发 worker 数量
         # worker_prefetch_multiplier=settings.task.worker_prefetch_multiplier,  # 每个 worker 同时处理的任务数量
         task_acks_on_failure_or_timeout=settings.task.task_acks_on_failure_or_timeout,  # 失败或超时任务是否确认
     )

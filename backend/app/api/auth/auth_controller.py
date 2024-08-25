@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.schemas.auth import RequestRegisterUser, ResponseRegisterUser, RequestLoginUser, ResponseLoginUser
 from app.schemas.base import ResponseSchema
@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post("/register")
 async def api_register(
         data: RequestRegisterUser,
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 
 ) -> ResponseRegisterUser | ResponseSchema:
     try:
@@ -40,7 +40,7 @@ async def api_register(
 @router.post("/login")
 async def api_login(
         data: RequestLoginUser,
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 
 ) -> ResponseLoginUser | ResponseSchema:
     try:

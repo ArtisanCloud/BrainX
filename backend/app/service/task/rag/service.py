@@ -14,7 +14,7 @@ from app.core.rag.indexing.splitter.factory import TextSplitterFactory, Splitter
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
 from app.dao.tenant.user import UserDAO
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.models import DocumentSegment, User
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType
@@ -22,40 +22,41 @@ from app.models.rag.document_node import DocumentNode
 
 
 class RagProcessorTaskService:
-    def __init__(self,
-                 document_uuid: str,
-                 user_uuid: str = None,
-                 task: Any = None,
-                 db: AsyncSession = Depends(get_db_session),
-                 ):
+    def __init__(self, task: Any = None):
         self.task = task
-        self.document_dao = DocumentDAO(db)
-        self.document_segment_dao = DocumentSegmentDAO(db)
-        self.user_dao = UserDAO(db)
         self.request = None
-        self.db = db
-        self.document = Document | None
-        self.user = User | None
+        self.document = Document
+        self.user = User
+        self.db = None
+        self.document_dao = None
+        self.document_segment_dao = None
+        self.user_dao = None
 
-        self.document, exception = self.document_dao.get_by_uuid(document_uuid)
+    async def initialize(self, document_uuid: str, user_uuid: str = None):
+        async with get_async_db_session() as db:
+            self.db = db
+            self.document_dao = DocumentDAO(self.db)
+            self.document_segment_dao = DocumentSegmentDAO(self.db)
+            self.user_dao = UserDAO(self.db)
+        print(123, self.db)
+
+        self.document, exception = await self.document_dao.get_by_uuid(document_uuid)
         if exception:
             logger.error(f"get document object error: {exception}")
             raise exception
 
         if self.document is None:
             msg_error = f"document {document_uuid} cannot be found in db"
-
             logger.error(msg_error)
             raise Exception(msg_error)
 
-        self.user, exception = self.user_dao.get_by_uuid(user_uuid)
+        self.user, exception = await self.user_dao.get_by_uuid(user_uuid)
         if exception:
             logger.error(f"get user object error: {exception}")
             raise exception
 
-        if self.document is None:
-            msg_error = f"user {document_uuid} cannot be found in db"
-
+        if self.user is None:
+            msg_error = f"user {user_uuid} cannot be found in db"
             logger.error(msg_error)
             raise Exception(msg_error)
 
@@ -124,7 +125,7 @@ class RagProcessorTaskService:
         splitter = TextSplitterFactory.get_splitter(SplitterDriverType.LANGCHAIN)
         indexer = IndexingFactory.get_indexer(IndexingDriverType.LANGCHAIN, splitter)
 
-            # --------------- Step Load Resource URL into Memory
+        # --------------- Step Load Resource URL into Memory
         try:
             # save document indexing status
             await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.PARSING)
@@ -163,7 +164,6 @@ class RagProcessorTaskService:
             logger.error(f"Task Failed to extract document segments for document UUID: {self.document.uuid} - {e}")
             return e
 
-
         # --------------- Step Cleaning nodes and Split into nodes
         try:
             # save document indexing status
@@ -184,8 +184,6 @@ class RagProcessorTaskService:
             logger.error(
                 f"Task Failed to transform the document text to segment, document uuid: {self.document.uuid} - {e}")
             return e
-
-
 
         # --------------- Step 4: Create Document Segments
         try:
@@ -243,5 +241,3 @@ class RagProcessorTaskService:
         except Exception as e:
             print(f"Preprocessing failed: {e}")
             return False
-
-

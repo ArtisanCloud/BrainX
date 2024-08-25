@@ -27,4 +27,6 @@ class CeleryTask(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     def __repr__(self):
-        return f"<CeleryTask(id={self.id}, task_id={self.task_id}, name={self.name}, status={self.status})>"
+        return (f"<CeleryTask("
+                # f"id={self.id}, "
+                f"task_id={self.task_id}, name={self.name}, status={self.status})>")

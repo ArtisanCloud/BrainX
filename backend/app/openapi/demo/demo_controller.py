@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import StreamingResponse
 
 from app.api.chat_bot.chat_controller import event_generator
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.database.seed import init_user_uuid
 from app.logger import logger
 from app.schemas.base import ResponseSchema
@@ -29,7 +29,7 @@ async def api_hello_world() -> ResponseSchema:
 async def api_chat(
         request: Request,
         data: RequestQuery,
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
         question = data.question

@@ -27,7 +27,8 @@ class Workflow(BaseORM):
     app: Mapped[List["App"]] = relationship(back_populates="workflow", foreign_keys="[App.workflow_uuid]")
 
     def __repr__(self):
-        return (f"<Workflow(id={self.id}, "
+        return (f"<Workflow("
+                # f"id={self.id}, "
                 f"created_user_by='{self.created_user_by}', "
                 f"updated_user_by='{self.updated_user_by}', "
                 f"name={self.name})>"

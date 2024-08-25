@@ -1,11 +1,10 @@
 from fastapi import APIRouter
 
 from app import settings
-from app.api.rag.document_controller import rag_queue
 from app.service.task.celery_app import celery_app
 from celery.result import AsyncResult
 
-from app.service.task.task import TaskService
+from app.service.task.task import TaskService, run_connect_db
 
 router = APIRouter()
 
@@ -29,7 +28,7 @@ async def get_task_status(task_id: str):
         return {
             "state": task_result.state,
             "current": task_result.info.get('current', 0),
-            "total": task_result.info.get('total', 1)
+            "total": task_result.info.get('tot al', 1)
         }
     elif task_result.state == 'SUCCESS':
         return {
@@ -38,3 +37,10 @@ async def get_task_status(task_id: str):
         }
     else:
         return {"state": task_result.state}
+
+
+@router.post("/run_connect_db")
+async def api_run_connect_db():
+    task = TaskService.run_connect_db.apply_async()
+    # task = run_connect_db.apply_async()
+    return {"task_id": task.id}

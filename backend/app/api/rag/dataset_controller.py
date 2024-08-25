@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.models import User
 
 from app.schemas.base import Pagination, ResponseSchema
@@ -30,7 +30,7 @@ router = APIRouter()
 async def api_get_dataset_list(
         request: Request,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseGetDatasetList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -57,7 +57,7 @@ async def api_get_dataset_list(
 async def api_get_dataset_by_uuid(
         dataset_uuid: str,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)
+        db: AsyncSession = Depends(get_async_db_session)
 ):
     try:
         dataset, exception = await get_dataset_by_uuid(db, session_user, dataset_uuid)
@@ -79,7 +79,7 @@ async def api_get_dataset_by_uuid(
 async def api_create_dataset(
         data: RequestCreateDataset,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
 
         dataset = make_dataset(data)
@@ -105,7 +105,7 @@ async def api_create_dataset(
 async def api_patch_dataset(
         dataset_uuid: str,  # 接收路径参数 dataset_uuid
         data: RequestPatchDataset,
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
 
         update_data = data.dict(exclude_unset=True)
@@ -129,7 +129,7 @@ async def api_patch_dataset(
 @router.delete("/delete/{dataset_uuid}")
 async def api_delete_dataset(
         dataset_uuid: str,  # 接收路径参数 dataset_uuid
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
         user_id = 1
         result, exception = await soft_delete_dataset(db, user_id, dataset_uuid)

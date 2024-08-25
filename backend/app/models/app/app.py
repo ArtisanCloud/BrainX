@@ -61,7 +61,8 @@ class App(BaseORM):
         description = self.description[:10] + '...' if self.description is not None else 'No description'
 
         return (
-            f"<App(id={self.id}, "
+            f"<App("
+            # f"id={self.id}, "
             f"uuid={self.uuid}, "
             f"name='{self.name}', "
             f"workflow_uuid='{self.workflow_uuid}', "

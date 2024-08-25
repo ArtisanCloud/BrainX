@@ -25,7 +25,8 @@ class Conversation(BaseORM):
 
     def __repr__(self):
         return (
-            f"<Conversation(id={self.id}, "
+            f"<Conversation("
+            # f"id={self.id}, "
             f"uuid={self.uuid}, "
             f"user_uuid={self.user_uuid}, "
             f"app_uuid={self.app_uuid}, "

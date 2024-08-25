@@ -8,7 +8,7 @@ from starlette.requests import Request
 from app.api.middleware.auth import get_session_user
 from app.database.base import PER_PAGE, PAGE
 from app.logger import logger
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.models import User
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.media_resource.schema import ResponseGetMediaResourceList, ResponseCreateMediaResource, \
@@ -23,7 +23,7 @@ router = APIRouter()
 @router.get("/list")
 async def api_get_media_resource_list(
         request: Request,
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseGetMediaResourceList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -49,7 +49,7 @@ async def api_get_media_resource_list(
 @router.post("/create")
 async def create_media_resource(request: Request,
                                 sort_index: int,
-                                db: AsyncSession = Depends(get_db_session),
+                                db: AsyncSession = Depends(get_async_db_session),
                                 resource: UploadFile = File(...)
                                 ) -> ResponseCreateMediaResource | ResponseSchema:
     try:
@@ -76,7 +76,7 @@ async def create_media_resource(request: Request,
 async def create_media_resource(
         data: RequestCreateMediaResourceByBase64,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseCreateMediaResource | ResponseSchema:
     try:
         # Parse multipart form
@@ -108,7 +108,7 @@ async def create_media_resource(
 async def api_get_media_resource_by_uuid(
         media_resource_uuid: str,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)
+        db: AsyncSession = Depends(get_async_db_session)
 ):
     try:
         media_resource, exception = await get_media_resource_by_uuid(db, session_user, media_resource_uuid)

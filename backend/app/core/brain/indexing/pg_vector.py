@@ -3,7 +3,7 @@ from typing import Tuple
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.vector_stores.postgres import PGVectorStore
 from sqlalchemy.engine import make_url
-from app.database.session import SessionLocal as AppSessionLocal, db_engine as app_engine
+from app.database.session import async_session_local as app_async_session_local, async_db_engine as app_engine
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -24,7 +24,7 @@ class CustomPGVectorStore(PGVectorStore):
 
         # Use our existing app engine and session so we can use the same connection pool
         self._async_engine = app_engine
-        self._async_session = AppSessionLocal
+        self._async_session = app_async_session_local
 
     async def close(self) -> None:
         self._session.close_all()

@@ -29,7 +29,8 @@ class Tenant(BaseORM):
 
     def __repr__(self):
         return (
-            f"<Tenant(id={self.id}, "
+            f"<Tenant("
+            # f"id={self.id}, "
             f"name='{self.name}', "
             f"plan={self.plan}, "
             f"status={self.status}, "

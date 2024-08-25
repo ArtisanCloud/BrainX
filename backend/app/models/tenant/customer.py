@@ -46,4 +46,4 @@ class Customer(BaseORM):
     # inviter = relationship('Customer', remote_side=[id])
 
     def __repr__(self):
-        return f"id: {self.id}, uuid: {self.uuid}, name: {self.name}, mobile: {self.mobile}"
+        return f"uuid: {self.uuid}, name: {self.name}, mobile: {self.mobile}"

@@ -8,7 +8,7 @@ from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
 from app.database.base import PER_PAGE, PAGE
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.models import User
 
@@ -28,7 +28,7 @@ router = APIRouter()
 async def api_get_app_list(
         request: Request,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseGetAppList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -56,7 +56,7 @@ async def api_get_app_list(
 async def api_get_app_by_uuid(
         app_uuid: str,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)
+        db: AsyncSession = Depends(get_async_db_session)
 ):
     try:
         app, exception = await get_app_by_uuid(db, session_user, app_uuid)
@@ -77,7 +77,7 @@ async def api_get_app_by_uuid(
 async def api_create_app(
         data: RequestCreateApp,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
 
         app = make_app(data)
@@ -103,7 +103,7 @@ async def api_create_app(
 async def api_patch_app(
         app_uuid: str,  # 接收路径参数 app_uuid
         data: RequestPatchApp,
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
 
         update_data = data.dict(exclude_unset=True)
@@ -127,7 +127,7 @@ async def api_patch_app(
 @router.delete("/delete/{app_uuid}")
 async def api_delete_app(
         app_uuid: str,  # 接收路径参数 app_uuid
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
         user_id = 1
         result, exception = await soft_delete_app(db, user_id, app_uuid)

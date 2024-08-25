@@ -5,7 +5,7 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.visual_search import RequestVisualSearch, \
     ResponseVisualSearch
@@ -19,7 +19,7 @@ router = APIRouter()
 @router.post("/visual_search")
 async def api_visual_search(
         query: RequestVisualSearch,
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseVisualSearch | ResponseSchema:
     """
     query question_answer by text

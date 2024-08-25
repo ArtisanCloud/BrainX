@@ -45,7 +45,8 @@ class Dataset(BaseORM):
     def __repr__(self):
         description = self.description[:10] + '...' if self.description is not None else 'No description'
         return (
-            f"<Dataset(id={self.id}, "
+            f"<Dataset("
+            # f"id={self.id}, "
             f"uuid={self.uuid}, "
             f"name='{self.name}', "
             f"tenant_uuid='{self.tenant_uuid}', "
@@ -108,7 +109,8 @@ class DatasetSegmentRule(BaseORM):
 
     def __repr__(self):
         return (
-            f"<SegmentRule(id={self.id}, "
+            f"<SegmentRule("
+            # f"id={self.id}, "
             f"uuid={self.uuid}, "
             f"dataset_uuid='{self.dataset_uuid}', "
             f"mode='{self.mode}', "

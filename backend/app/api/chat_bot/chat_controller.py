@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware.auth import get_session_user
 from app.core.brain.index import LLMModel
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.database.seed.user import init_user_uuid
 from app.logger import logger
 from app.models import User
@@ -65,7 +65,7 @@ async def api_chat(
         request: Request,
         data: RequestChat,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
         question = data.messages[0].content

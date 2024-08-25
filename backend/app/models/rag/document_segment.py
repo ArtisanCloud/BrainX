@@ -48,7 +48,8 @@ class DocumentSegment(BaseORM):
     def __repr__(self):
         content_preview = self.content[:10] + '...' if self.content is not None else 'No content'
         return (
-            f"<DocumentSegment(id={self.id}, "
+            f"<DocumentSegment("
+            # f"id={self.id}, "
             f"uuid={self.uuid}, "
             f"document_uuid='{self.document_uuid}', "
             f"tenant_uuid='{self.tenant_uuid}', "

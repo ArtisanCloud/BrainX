@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.database.base import PER_PAGE, PAGE
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.robot_chat.conversation import ResponseGetMessageList
@@ -18,7 +18,7 @@ router = APIRouter()
 @router.get("/list/cached")
 async def api_get_message_list(
         request: Request,
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseGetMessageList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))

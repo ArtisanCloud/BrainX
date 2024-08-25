@@ -14,7 +14,7 @@ SQLALCHEMY_DATABASE_URL = settings.database.url
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 # 创建一个异步会话类
-AsyncSessionLocal = sessionmaker(
+async_session_local = sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False
@@ -23,7 +23,7 @@ AsyncSessionLocal = sessionmaker(
 
 # 初始化会话
 async def start_seed() -> Exception | None:
-    async with AsyncSessionLocal() as db:
+    async with async_session_local() as db:
         #  执行添加root用户租户
         e = await seed_tenants(db)
         if e:

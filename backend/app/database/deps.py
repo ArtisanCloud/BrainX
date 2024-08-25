@@ -1,13 +1,16 @@
+from contextlib import contextmanager
+
+from sqlalchemy.orm import Session
+
 from app.logger import logger
-from typing import Generator
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.session import SessionLocal
+from app.database.session import async_session_local, sync_session_local
 
 
-async def get_db_session() -> AsyncSession:
+async def get_async_db_session() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
-    async with SessionLocal() as db:
+    async with async_session_local() as db:
         try:
             yield db
             #  commit the db session if no exception occurs
@@ -25,3 +28,27 @@ async def get_db_session() -> AsyncSession:
         finally:
             #  close the db session
             await db.close()
+
+
+@contextmanager
+# 为了某些场景，比如 Celery 等需要直接调用的场景，你可以使用一个简单的函数来获取 session：
+def get_sync_db_session() -> Session:
+    db = sync_session_local()
+    # 外层一定要用 with 才能让这个上下文管理器的功能生效。
+    # 如果直接调用 get_sync_db_session() 而不使用 with，except 和 finally 块中的代码将不会被执行，
+    # 因为生成器会在 yield db 处暂停，直到被显式地继续执行。
+
+    try:
+        yield db
+        # 提交事务
+        # print("sync db commit")
+        db.commit()
+    except Exception as e:
+        # 出现异常时回滚事务
+        # print("sync db rollback")
+        db.rollback()
+        raise e
+    finally:
+        # 关闭数据库会话
+        print("sync db closed")
+        db.close()

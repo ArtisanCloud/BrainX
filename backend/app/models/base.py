@@ -10,7 +10,7 @@ import uuid as uuid
 
 from sqlalchemy.orm import declarative_base, mapped_column
 
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 
 UTC = timezone('UTC')
 
@@ -44,18 +44,20 @@ class BaseORM(Base):
     deleted_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
 
     def __repr__(self):
-        return f"id: {self.id}, uuid:{self.uuid}, created_at: {self.created_at}, updated_at:{self.updated_at}, deleted_at:{self.deleted_at}"
+        return (f"id: "
+                # f"{self.id},"
+                f" uuid:{self.uuid}, created_at: {self.created_at}, updated_at:{self.updated_at}, deleted_at:{self.deleted_at}")
 
     @classmethod
     def get_by_uuid(cls, uuid):
         stmt = select(cls).filter(cls.uuid == uuid, cls.deleted_at.is_(None)).first()
-        db: AsyncSession = get_db_session()
+        db: AsyncSession = get_async_db_session()
         return db.execute(stmt)
 
     @classmethod
     def get_by_id(cls, id):
         stmt = select(cls).filter(cls.id == id, cls.deleted_at.is_(None)).first()
-        db: AsyncSession = get_db_session()
+        db: AsyncSession = get_async_db_session()
         return db.execute(stmt)
 
 

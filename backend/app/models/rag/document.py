@@ -171,7 +171,8 @@ class Document(BaseORM):
 
     def __repr__(self):
         return (
-            f"<Document(id={self.id}, "
+            f"<Document("
+            # f"id={self.id}, "
             f"dataset_uuid={self.dataset_uuid}, "
             f"data_source_type={self.data_source_type}, "
             f"resource_uuid={self.resource_uuid}, "

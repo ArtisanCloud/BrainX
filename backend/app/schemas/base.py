@@ -64,7 +64,7 @@ class BaseObjectSchema(BaseSchema):
     def from_orm(cls, obj):
         # 保存原始字段值
         original_fields = {
-            'id': obj.id,
+            # 'id': obj.id,
             'uuid': obj.uuid,
             'created_at': obj.created_at.strftime(datetime_format) if obj.created_at else None,
             'updated_at': obj.updated_at.strftime(datetime_format) if obj.updated_at else None

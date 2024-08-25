@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
-from app.database.deps import get_db_session
+from app.database.deps import get_async_db_session
 from app.models import User
 
 from app.schemas.base import Pagination, ResponseSchema
@@ -42,7 +42,7 @@ rag_queue = 'rag_queue'
 async def api_get_document_list(
         request: Request,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session),
+        db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseGetDocumentList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -73,7 +73,7 @@ async def api_get_document_list(
 async def api_get_document_by_uuid(
         document_uuid: str,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)
+        db: AsyncSession = Depends(get_async_db_session)
 ):
     try:
         document, exception = await get_document_by_uuid(db, session_user, document_uuid)
@@ -94,7 +94,7 @@ async def api_get_document_by_uuid(
 async def api_create_document(
         data: RequestCreateDocument,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
 
         document = make_document(data)
@@ -119,7 +119,7 @@ async def api_create_document(
 async def api_patch_document(
         document_uuid: str,  # 接收路径参数 document_uuid
         data: RequestPatchDocument,
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
 
         update_data = data.dict(exclude_unset=True)
@@ -142,7 +142,7 @@ async def api_patch_document(
 @router.delete("/delete/{document_uuid}")
 async def api_delete_document(
         document_uuid: str,  # 接收路径参数 document_uuid
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
         user_id = 1
         result, exception = await soft_delete_document(db, user_id, document_uuid)
@@ -163,7 +163,7 @@ async def api_delete_document(
 async def api_add_document_content(
         data: RequestAddDocumentContent,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
         # print(data)
         documents, exception = await add_document_content(db, session_user, data)
@@ -199,7 +199,7 @@ async def api_add_document_content(
 async def api_re_task_process_document(
         data: RequestReProcessDocuments,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
         # print(data)
         # 获取用户的documents
@@ -235,7 +235,7 @@ async def api_re_task_process_document(
 async def api_re_process_document(
         data: RequestReProcessDocument,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_db_session)):
+        db: AsyncSession = Depends(get_async_db_session)):
     try:
         # print(data)
         # 获取用户的document
@@ -250,7 +250,8 @@ async def api_re_process_document(
 
         # print(document)
         task_id = str(uuid.uuid4())
-        service_rag_processor = RagProcessorTaskService(document)
+        service_rag_processor = RagProcessorTaskService()
+        await service_rag_processor.initialize(document.uuid, session_user.uuid)
         exception = service_rag_processor.process_document()
         if exception is not None:
             raise exception

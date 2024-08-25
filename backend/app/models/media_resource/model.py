@@ -24,7 +24,7 @@ class MediaResource(BaseORM):
     def __repr__(self):
         return (
             f"MediaResource: "
-            f"id: {self.id}, "
+            # f"id: {self.id}, "
             f"tenant_uuid: {self.tenant_uuid}, "
             f"created_user_by: {self.created_user_by}, "
             f"filename: {self.filename}, "

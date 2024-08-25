@@ -1,12 +1,12 @@
 import asyncio
-from app.database.session import SessionLocal
+from app.database.session import async_session_local
 from sqlalchemy.sql import text
 
 
 async def check_database_connection(max_attempts: int = 30, sleep_interval: int = 1) -> None:
     for attempt in range(1, max_attempts + 1):
         try:
-            async with SessionLocal() as db:
+            async with async_session_local() as db:
                 await db.execute(text("SELECT 1"))
                 print(f"Connected to the database on attempt {attempt}.")
                 return
