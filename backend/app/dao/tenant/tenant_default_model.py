@@ -1,3 +1,6 @@
+from typing import Union
+
+from sqlalchemy.orm import Session
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,7 +10,7 @@ from app.schemas.tenant.tenant import TenantDefaultModelSchema
 
 
 class TenantDefaultModelDAO:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         self.db = db
 
     async def create_tenant_default_model(self, model_data: TenantDefaultModelSchema) -> Tuple[

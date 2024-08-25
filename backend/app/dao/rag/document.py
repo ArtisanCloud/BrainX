@@ -1,8 +1,10 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
+
 from app.dao.base import BaseDAO
 from app.models import User
 from app.models.rag.document import Document, DocumentIndexingStatus
@@ -10,14 +12,14 @@ from datetime import datetime, timezone
 
 
 class DocumentDAO(BaseDAO[Document]):
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         super().__init__(db, Document)
+        self.db = db
 
-    async def set_indexing_status(self, document: Document,
-                                  status: DocumentIndexingStatus,
-                                  error=None,
-                                  user: User = None) -> Tuple[
-        Optional[Document], Optional[SQLAlchemyError]]:
+    def _set_indexing_status(self, document: Document,
+                             status: DocumentIndexingStatus,
+                             error=None,
+                             user: User = None) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
         try:
             # 检索文档对象
             if not document:
@@ -69,12 +71,38 @@ class DocumentDAO(BaseDAO[Document]):
                 document.error_message = error
                 document.error_at = current_time
 
-            # 刷新并保存
-            await self.db.flush()
-            await self.db.refresh(document)
-
             return document, None
 
+        except SQLAlchemyError as e:
+            print("error: ", e)
+            return None, e
+
+    async def async_set_indexing_status(self, document: Document,
+                                    status: DocumentIndexingStatus,
+                                    error=None,
+                                    user: User = None) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
+        try:
+            document, error = self._set_indexing_status(document, status, error, user)
+            if error:
+                return None, error
+            await self.db.flush()
+            await self.db.refresh(document)
+            return document, None
+        except SQLAlchemyError as e:
+            print("error: ", e)
+            return None, e
+
+    def set_indexing_status(self, document: Document,
+                            status: DocumentIndexingStatus,
+                            error=None,
+                            user: User = None) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
+        try:
+            document, error = self._set_indexing_status(document, status, error, user)
+            if error:
+                return None, error
+            self.db.flush()
+            self.db.refresh(document)
+            return document, None
         except SQLAlchemyError as e:
             print("error: ", e)
             return None, e

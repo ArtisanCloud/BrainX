@@ -1,10 +1,13 @@
+from typing import Union
+
+from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.model_provider.model_provider import ModelProvider
 from app.dao.base import BaseDAO
 
 
 class ModelProviderDAO(BaseDAO[ModelProvider]):
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         super().__init__(db, ModelProvider)
 
     # async def create_model_provider(self, provider_data: ModelProviderSchema) -> Tuple[

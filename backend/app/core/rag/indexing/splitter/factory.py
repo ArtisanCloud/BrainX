@@ -36,6 +36,7 @@ class TextSplitterFactory:
                     # separator="\n\n", # process_rule segment id
                     separators=["\n\n", "。", ". ", " ", ""],
                     keep_separator="end",
+                    length_function=len,
                 )
 
             case SplitterDriverType.LLAMA_INDEX.value:

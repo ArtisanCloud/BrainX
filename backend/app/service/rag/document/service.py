@@ -6,8 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.rag.dataset import DatasetDAO
 from app.dao.rag.document import DocumentDAO
 from app.logger import logger
-from app.models import Dataset, Document, DatasetSegmentRule
-from app.schemas.rag.document import RuleSchema
+from app.models import  Document, DatasetSegmentRule
 
 
 class DocumentService:

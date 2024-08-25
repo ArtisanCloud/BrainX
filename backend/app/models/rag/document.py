@@ -29,7 +29,7 @@ class ContentType(IntEnum):
 
     @classmethod
     def get_content_type_names(cls):
-        return list(cls.__members__.keys())
+        return list(cls.__members__.values())
 
 
 class DocumentStatus(IntEnum):

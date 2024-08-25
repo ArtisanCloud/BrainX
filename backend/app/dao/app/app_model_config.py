@@ -1,3 +1,6 @@
+from typing import Union
+
+from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,7 +10,7 @@ from app.schemas.app.app_model_config import AppModelConfigSchema
 
 
 class AppModelConfigDAO:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         self.db = db
 
     async def create_app_model_config(self, config_data: AppModelConfigSchema) -> Tuple[

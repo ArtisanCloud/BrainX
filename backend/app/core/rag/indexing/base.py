@@ -4,6 +4,7 @@ from typing import List, Tuple, Optional
 from sqlalchemy import UUID
 
 from app.models import DocumentSegment, User, Document
+from app.models.rag.document import DocumentStatus
 from app.models.rag.document_node import DocumentNode
 
 from enum import Enum
@@ -32,21 +33,21 @@ class BaseIndexing(ABC):
         segments = []
         for idx, node in enumerate(nodes):
             segment = DocumentSegment(
-                tenant_uuid=UUID(node.tenant_uuid),  # 替换为实际的 tenant_uuid
-                document_uuid=UUID(self.document.uuid),  # 替换为实际的 document_uuid
-                dataset_uuid=UUID(self.document.dataset_uuid),  # 替换为实际的 dataset_uuid
-                created_user_by=UUID(self.user.uuid),  # 替换为实际的 created_user_by
+                tenant_uuid=UUID(self.document.tenant_uuid),
+                document_uuid=UUID(self.document.uuid),
+                dataset_uuid=UUID(self.document.dataset_uuid),
+                created_user_by=UUID(self.user.uuid),
                 updated_user_by=None,  # 如果没有更新用户，可以是 None
-                status=1,  # 替换为实际的状态
+                status=DocumentStatus.NORMAL,
                 content=node.page_content,
                 position=idx,  # 当前索引
-                page_number=self._extract_page_number(node.page_content),  # 从内容中提取页面编号的自定义方法
-                word_count=self._count_words(node.page_content),  # 从内容中计算单词数的自定义方法
-                token_count=self._count_tokens(node.page_content),  # 从内容中计算 token 数的自定义方法
-                keywords=self._extract_keywords(node.page_content),  # 从内容中提取关键词的自定义方法
+                page_number=node.metadata.get("page_content"),  # 从内容中提取页面编号的自定义方法
+                word_count=len(node.page_content),  # 从内容中计算单词数的自定义方法
+                token_count=0,  # 从内容中计算 token 数的自定义方法
+                keywords="",  # 从内容中提取关键词的自定义方法
                 hit_count=0,  # 初始值
-                index_node_id="some_id",  # 替换为实际的 index_node_id
-                index_node_hash="some_hash",  # 替换为实际的 index_node_hash
+                index_node_id=node.metadata.get("index_node_id", ""),
+                index_node_hash=node.metadata.get("index_node_hash", ""),
                 error_message=None  # 如果没有错误信息，可以是 None
             )
             segments.append(segment)

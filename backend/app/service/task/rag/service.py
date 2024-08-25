@@ -2,9 +2,8 @@ from io import BytesIO
 from typing import Any, List, Tuple
 
 import requests
-from fastapi import Depends
 from requests import RequestException
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.rag.indexing.base import IndexingDriverType
 from app.core.rag.indexing.extractor.factory import DataExtractorFactory
@@ -13,55 +12,57 @@ from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.core.rag.indexing.splitter.factory import TextSplitterFactory, SplitterDriverType
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
-from app.dao.tenant.user import UserDAO
-from app.database.deps import get_async_db_session
+from app.database.deps import get_sync_db_session
 from app.logger import logger
 from app.models import DocumentSegment, User
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType
 from app.models.rag.document_node import DocumentNode
+from app.utils.url import get_storage_complete_url
 
 
 class RagProcessorTaskService:
-    def __init__(self, task: Any = None):
+    def __init__(self, document_uuid: str, user_uuid: str, task: Any = None):
         self.task = task
         self.request = None
-        self.document = Document
-        self.user = User
-        self.db = None
-        self.document_dao = None
-        self.document_segment_dao = None
-        self.user_dao = None
+        self.document: Document
+        self.user: User
 
-    async def initialize(self, document_uuid: str, user_uuid: str = None):
-        async with get_async_db_session() as db:
-            self.db = db
-            self.document_dao = DocumentDAO(self.db)
-            self.document_segment_dao = DocumentSegmentDAO(self.db)
-            self.user_dao = UserDAO(self.db)
-        print(123, self.db)
+        with get_sync_db_session() as db:
+            self.db = db  # 初始化数据库会话
 
-        self.document, exception = await self.document_dao.get_by_uuid(document_uuid)
-        if exception:
-            logger.error(f"get document object error: {exception}")
-            raise exception
+        self.document_dao = DocumentDAO(self.db)
+        self.document_segment_dao = DocumentSegmentDAO(self.db)
+        # 执行查询逻辑
+        self.document = self._get_document(document_uuid)
+        self.user = self._get_user(user_uuid)
+        # print(self.document, self.user)
 
-        if self.document is None:
+    def _get_document(self, document_uuid: str) -> Document:
+        stmt = select(Document).where(Document.uuid == document_uuid)
+        document = self.db.execute(stmt).scalars().first()
+        if document is None:
             msg_error = f"document {document_uuid} cannot be found in db"
             logger.error(msg_error)
             raise Exception(msg_error)
+        return document
 
-        self.user, exception = await self.user_dao.get_by_uuid(user_uuid)
-        if exception:
-            logger.error(f"get user object error: {exception}")
-            raise exception
-
-        if self.user is None:
+    def _get_user(self, user_uuid: str) -> User:
+        stmt = select(User).where(User.uuid == user_uuid)
+        user = self.db.execute(stmt).scalars().first()
+        if user is None:
             msg_error = f"user {user_uuid} cannot be found in db"
             logger.error(msg_error)
             raise Exception(msg_error)
+        return user
+
+    def __del__(self):
+        # 关闭数据库会话
+        if self.db:
+            self.db.close()
 
     @staticmethod
     def is_document_available_to_process(document: Document) -> Tuple[bool, Exception | None]:
+
         """
                 检查文档是否可用于处理。
 
@@ -92,7 +93,7 @@ class RagProcessorTaskService:
                 logger.info(f"Document {document.uuid} is missing both resource UUID and URL.")
                 return False, Exception("Both resource UUID and URL are missing.")
 
-            valid_document_content_types = ContentType.get_content_type_names()  # Adjust as needed
+            valid_document_content_types = ContentType.get_content_type_names()
             if document.content_type not in valid_document_content_types:
                 logger.info(f"Document {document.uuid} has an invalid document content type.")
                 return False, Exception("Document content type is not valid for processing.")
@@ -113,7 +114,7 @@ class RagProcessorTaskService:
             # 捕获任何意外的错误
             return False, e
 
-    async def process_document(self) -> Exception | None:
+    def process_document(self) -> Exception | None:
         document_segments: List[DocumentSegment] = []
         # print(task_id)
 
@@ -123,15 +124,18 @@ class RagProcessorTaskService:
 
         # create indexer
         splitter = TextSplitterFactory.get_splitter(SplitterDriverType.LANGCHAIN)
-        indexer = IndexingFactory.get_indexer(IndexingDriverType.LANGCHAIN, splitter)
+        indexer = IndexingFactory.get_indexer(
+            IndexingDriverType.LANGCHAIN, splitter,
+            self.user, self.document,
+        )
 
         # --------------- Step Load Resource URL into Memory
         try:
             # save document indexing status
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.PARSING)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.PARSING)
 
             # logger.info(f"Loading resource UUID: {resource_uuid}, URL: {resource_url}")
-            response = requests.get(self.document.resource_url)
+            response = requests.get(get_storage_complete_url(self.document.resource_url))
             response.raise_for_status()  # 抛出请求异常
 
             content_type = response.headers.get('Content-Type')
@@ -142,14 +146,14 @@ class RagProcessorTaskService:
             # logger.info(f"File length: {file_data.getbuffer().nbytes} bytes")
 
         except RequestException as e:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(f"Task Error occurred while loading resource from URL: {self.document.resource_url} - {e}")
             return e
 
         # --------------- Step Extract Document text
         try:
             # save document indexing status
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.EXTRACTING)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.EXTRACTING)
 
             data_extractor = DataExtractorFactory.get_extractor(content_type, file_data)
             # logger.info(f"Initialized {extractor.__class__.__name__} for document UUID: {resource_uuid}")
@@ -160,50 +164,50 @@ class RagProcessorTaskService:
             document_content = BaseTextSplitter.merge_blocks_into_text(blocks)
 
         except Exception as e:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(f"Task Failed to extract document segments for document UUID: {self.document.uuid} - {e}")
             return e
 
         # --------------- Step Cleaning nodes and Split into nodes
         try:
             # save document indexing status
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.SPLITTING)
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.CLEANING)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.SPLITTING)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.CLEANING)
 
             nodes = indexer.transform_documents([DocumentNode(
                 page_content=document_content,
                 metadata={
-                    "dataset_uuid": self.document.get("dataset_uuid"),
-                    "document_uuid": self.document.get("uuid"),
+                    "dataset_uuid": self.document.dataset_uuid,
+                    "document_uuid": self.document.uuid,
                 }
             )])
             # print("transformed nodes:", nodes)
 
         except Exception as e:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(
                 f"Task Failed to transform the document text to segment, document uuid: {self.document.uuid} - {e}")
             return e
 
         # --------------- Step 4: Create Document Segments
         try:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
 
             document_segments = indexer.create_document_segments(nodes)
             print(document_segments)
-            # document_segments, exception = self.document_segment_dao.create_many(document_segments)
+            # document_segments, exception = self.document_segment_dao.sync_create_many(document_segments)
             # if exception is not None:
             #     raise exception
 
         except Exception as e:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=e)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(
                 f"Task Failed to index document segments for document UUID, document uuid: {self.document.uuid} - {e}")
             return e
 
         # --------------- Step 5: Update Document with Indexing Information with status
         try:
-            await self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
         except Exception as e:
             logger.error(
                 f"Task Failed to update document with indexing information for document UUID: {self.document.uuid} - {e}")

@@ -1,5 +1,7 @@
 from typing import Type, Optional, Tuple, List
+from typing import Union
 
+from sqlalchemy.orm import Session
 from langchain_core.messages import BaseMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
@@ -7,12 +9,10 @@ from app.models.robot_chat.conversation import Message
 from app.schemas.base import Pagination
 from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
 
-from app.schemas.robot_chat.conversation import MessageSchema
-
 
 class MessageDAO(BaseDAO[Message]):
     def __init__(self,
-                 db: AsyncSession,
+                 db: Union[AsyncSession, Session],
                  chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory
                  ):
         super().__init__(db, Message)

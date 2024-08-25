@@ -1,7 +1,9 @@
 import hashlib
 import uuid
 from typing import Tuple
+from typing import Union
 
+from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
@@ -10,7 +12,7 @@ from app.models.tenant.pivot_tenant_to_user import PivotTenantToUser
 
 
 class PivotTenantToUserDAO:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         self.db = db
 
     def generate_uuid(self):

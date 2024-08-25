@@ -1,5 +1,8 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional,Union
+
 from uuid import uuid4
+
+from sqlalchemy.orm import Session
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,12 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
 from app.models.base import BaseStatus
 from app.models.originaztion.user import User
-from app.models.tenant.pivot_tenant_to_user import PivotTenantToUser
 from app.models.tenant.tenant import Tenant
 
 
 class UserDAO(BaseDAO[User]):
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         super().__init__(db, User)
 
     async def load_owner_tenant(self, user: User) -> Tuple[User | None, SQLAlchemyError | None]:

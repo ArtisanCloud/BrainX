@@ -1,3 +1,6 @@
+from typing import Union
+
+from sqlalchemy.orm import Session
 import mimetypes
 from typing import List, Tuple
 
@@ -29,7 +32,7 @@ DEFAULT_STORAGE_PATH = "public/static"
 
 
 class MediaResourceDAO(BaseDAO[MediaResource]):
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         super().__init__(db, MediaResource)
 
     async def build_find_query_no_page(self, query: select, opt: FindManyMediaResourcesOption) -> select:

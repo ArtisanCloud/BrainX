@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 from app.config.config import settings
 
 
-def get_complete_url(resource_url: str) -> str:
+def get_storage_complete_url(resource_url: str) -> str:
     # 解析 URL
     parsed_url = urlparse(resource_url)
 

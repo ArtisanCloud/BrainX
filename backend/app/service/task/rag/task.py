@@ -5,9 +5,8 @@ from app.service.task.rag.service import RagProcessorTaskService
 
 
 @celery_app.task(bind=True)
-async def task_process_document(self, document_uuid: str, user_uuid: str = None, *args, **kwargs):
-    service_rag_processor = RagProcessorTaskService(task=self)
-    await service_rag_processor.initialize(document_uuid, user_uuid)
+def task_process_document(self, document_uuid: str, user_uuid: str = None, *args, **kwargs):
+    service_rag_processor = RagProcessorTaskService(document_uuid, user_uuid, task=self)
     task_id = self.request.id
     exception = None
 

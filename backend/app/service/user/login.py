@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import settings
 from app.core.libs.security import check_password
 from app.models.originaztion.user import User
-from app.schemas.auth import ResponseLoginUser, AccessTokenSchema, ALGORITHM, auth_user_uuid_key, auth_tenant_uuid_key
+from app.schemas.auth import  AccessTokenSchema, ALGORITHM, auth_user_uuid_key, auth_tenant_uuid_key
 from app.service.user.service import UserService
-from jose import JWTError, jwt
+from jose import  jwt
 
 
 def sign_token(user: User, secret_key, expires_in) -> AccessTokenSchema:

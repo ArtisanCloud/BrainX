@@ -30,6 +30,3 @@ class LangchainIndexer(BaseIndexing):
             final_nodes.extend(split_nodes)
 
         return final_nodes
-
-    def create_document_segments(self) -> List[DocumentSegment]:
-        return []

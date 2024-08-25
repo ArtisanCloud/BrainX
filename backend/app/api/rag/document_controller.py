@@ -48,13 +48,13 @@ async def api_get_document_list(
     page = int(request.query_params.get("page", PAGE))
     page_size = int(request.query_params.get("page_size", PER_PAGE))
     dataset_uuid = request.query_params.get("dataset_uuid", '')
-
+    # print(page, page_size, dataset_uuid)
     p = Pagination(page=page, page_size=page_size)
 
-    if dataset_uuid == "":
-        return ResponseSchema(error=str("lack of dataset_uuid"), status_code=http.HTTPStatus.BAD_REQUEST)
-
     try:
+        if dataset_uuid == "":
+            raise Exception("lack of dataset_uuid")
+        print(1223344)
         documents, pagination, exception = await get_document_list(db, session_user.uuid, dataset_uuid, p)
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
@@ -242,7 +242,7 @@ async def api_re_process_document(
         service_document = DocumentService(db)
         document, exception = await (service_document.
                                      document_dao.
-                                     get_by_uuid(data.document_uuid))
+                                     async_get_by_uuid(data.document_uuid))
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
@@ -250,8 +250,7 @@ async def api_re_process_document(
 
         # print(document)
         task_id = str(uuid.uuid4())
-        service_rag_processor = RagProcessorTaskService()
-        await service_rag_processor.initialize(document.uuid, session_user.uuid)
+        service_rag_processor = RagProcessorTaskService(document.uuid, session_user.uuid)
         exception = service_rag_processor.process_document()
         if exception is not None:
             raise exception

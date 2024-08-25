@@ -27,8 +27,8 @@ async def get_session_user(
         raise session_exception
 
     service_user = UserService(db)
-    # print("", user_uuid)
-    current_user, exception = await service_user.user_dao.get_by_uuid(user_uuid)
+    # print("get session user:", user_uuid)
+    current_user, exception = await service_user.user_dao.async_get_by_uuid(user_uuid)
     # print(current_user)
     if exception is not None:
         session_exception.detail = exception

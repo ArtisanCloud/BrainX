@@ -1,4 +1,6 @@
-from typing import Tuple, Optional
+from typing import Tuple,Union
+
+from sqlalchemy.orm import Session
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,7 +13,7 @@ from app.models.rag.dataset import Dataset, DatasetSegmentRule
 
 
 class DatasetDAO(BaseDAO[Dataset]):
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Union[AsyncSession, Session]):
         super().__init__(db, Dataset)
 
     async def load_segment_rule(self, dataset: Dataset) -> Tuple[Dataset | None, SQLAlchemyError | None]:

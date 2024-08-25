@@ -57,7 +57,7 @@ class DocumentSegment(BaseORM):
             f"updated_user_by='{self.updated_user_by}', "
             f"status='{self.status}', "
             f"content='{content_preview}', "
-            f"document_index='{self.index}', "
+            f"position='{self.position}', "
             f"word_count='{self.word_count}', "
             f"token_count='{self.token_count}')>"
         )
