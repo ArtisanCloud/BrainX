@@ -7,7 +7,6 @@ from app.models.base import BaseORM
 class Group(BaseORM):
     __tablename__ = 'group'
 
-    id = mapped_column(Integer, primary_key=True)
     name = mapped_column(String)
     description = mapped_column(String)
 

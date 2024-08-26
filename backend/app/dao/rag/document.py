@@ -17,7 +17,7 @@ class DocumentDAO(BaseDAO[Document]):
         self.db = db
 
     def _set_indexing_status(self, document: Document,
-                             status: DocumentIndexingStatus,
+                             indexing_status: DocumentIndexingStatus,
                              error=None,
                              user: User = None) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
         try:
@@ -26,7 +26,7 @@ class DocumentDAO(BaseDAO[Document]):
                 return None, None  # 文档未找到
 
             # 更新 status 和 updated_user_by
-            document.status = status
+            document.indexing_status = indexing_status
             if user:
                 document.updated_user_by = user.uuid
 
@@ -35,39 +35,40 @@ class DocumentDAO(BaseDAO[Document]):
             document.updated_at = current_time
 
             # 根据状态更新不同的时间字段
-            if status == DocumentIndexingStatus.PARSING:
+            if indexing_status == DocumentIndexingStatus.PARSING:
+                document.process_start_at = current_time
                 document.parse_start_at = current_time
 
-            elif status == DocumentIndexingStatus.EXTRACTING:
+            elif indexing_status == DocumentIndexingStatus.EXTRACTING:
                 document.extract_start_at = current_time
 
-            elif status == DocumentIndexingStatus.CLEANING:
+            elif indexing_status == DocumentIndexingStatus.CLEANING:
                 document.clean_start_at = current_time
 
-            elif status == DocumentIndexingStatus.SPLITTING:
+            elif indexing_status == DocumentIndexingStatus.SPLITTING:
                 document.split_start_at = current_time
 
-            elif status == DocumentIndexingStatus.INDEXING:
+            elif indexing_status == DocumentIndexingStatus.INDEXING:
                 document.index_start_at = current_time
 
-            elif status == DocumentIndexingStatus.COMPLETED:
+            elif indexing_status == DocumentIndexingStatus.COMPLETED:
                 document.indexing_latency = (
                     current_time.timestamp() - document.parse_start_at.timestamp()
                     if document.parse_start_at else None
                 )
                 document.process_end_at = current_time
 
-            elif status == DocumentIndexingStatus.PAUSE:
+            elif indexing_status == DocumentIndexingStatus.PAUSE:
                 document.paused_at = current_time
                 if user:
                     document.paused_by = user.uuid
 
-            elif status == DocumentIndexingStatus.ARCHIVED:
+            elif indexing_status == DocumentIndexingStatus.ARCHIVED:
                 document.paused_at = current_time
                 if user:
                     document.archived_by = user.uuid
 
-            elif status == DocumentIndexingStatus.ERROR:
+            elif indexing_status == DocumentIndexingStatus.ERROR:
                 document.error_message = error
                 document.error_at = current_time
 
@@ -78,9 +79,9 @@ class DocumentDAO(BaseDAO[Document]):
             return None, e
 
     async def async_set_indexing_status(self, document: Document,
-                                    status: DocumentIndexingStatus,
-                                    error=None,
-                                    user: User = None) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
+                                        status: DocumentIndexingStatus,
+                                        error=None,
+                                        user: User = None) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
         try:
             document, error = self._set_indexing_status(document, status, error, user)
             if error:

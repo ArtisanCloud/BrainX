@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from app.core.ai_model.model_instance import ModelInstance
 from app.core.rag.indexing.cleaner.base import Cleaner
 from app.core.rag.indexing.base import BaseIndexing
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
@@ -11,9 +12,12 @@ class LLamaIndexIndexer(BaseIndexing):
     def __init__(self,
                  user: Optional[User] = None,
                  document: Optional[Document] = None,
-                 splitter: BaseTextSplitter = None
+                 splitter: BaseTextSplitter = None,
+                 embedding_model_instance: Optional[ModelInstance] = None
                  ):
         self.splitter = splitter
+        self.embedding_model_instance = embedding_model_instance
+        self.nodes = []
 
     def transform_documents(self, nodes: List[DocumentNode], **kwargs) -> List[DocumentNode]:
         # 实现存储数据逻辑

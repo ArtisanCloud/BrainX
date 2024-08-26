@@ -4,7 +4,7 @@ from app import settings
 from app.service.task.celery_app import celery_app
 from celery.result import AsyncResult
 
-from app.service.task.task import TaskService, run_connect_db
+from app.service.task.task import TaskService, run_manual_connect_db
 
 router = APIRouter()
 
@@ -41,6 +41,6 @@ async def get_task_status(task_id: str):
 
 @router.post("/run_connect_db")
 async def api_run_connect_db():
-    task = TaskService.run_connect_db.apply_async()
-    # task = run_connect_db.apply_async()
+    # task = TaskService.run_with_connect_db.apply_async()
+    task = run_manual_connect_db.apply_async()
     return {"task_id": task.id}

@@ -1,7 +1,7 @@
 """Add DocumentSegment models
 
-Revision ID: 1e27d73d41b1
-Revises: 842298164973
+Revision ID: 73000
+Revises: 72000
 Create Date: 2024-07-15 21:29:20.924179
 
 """
@@ -16,8 +16,8 @@ from app.models.base import table_name_document_segment, table_name_tenant, tabl
     table_name_dataset
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000032'
-down_revision: Union[str, None] = '000000000031'
+revision: str = '73000'
+down_revision: Union[str, None] = '72000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

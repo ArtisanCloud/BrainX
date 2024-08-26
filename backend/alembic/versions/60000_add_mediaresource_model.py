@@ -1,7 +1,7 @@
 """Add MediaResource models
 
-Revision ID: 000000000020
-Revises: 6668cc8afeca
+Revision ID: 60000
+Revises: 51700
 Create Date: 2024-05-12 22:46:49.340958
 
 """
@@ -15,8 +15,8 @@ from app.models.media_resource.model import table_name_media_resource
 from sqlalchemy.dialects.postgresql import UUID
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000020'
-down_revision: Union[str, None] = '000000000016'
+revision: str = '60000'
+down_revision: Union[str, None] = '51700'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -23,14 +23,14 @@ async def seed_tenants(db) -> Exception | None:
             db.add(tenant)
 
             # model_providers = [
-            #     ModelProvider(
+            #     ProviderModel(
             #         tenant_uuid=init_tenant_uuid,
             #         name='openai',
             #         model_name='gpt-3.5-turbo',
             #         model_type='llm',
             #         encrypted_config='{"api_key": "your_api_key", "base_url": "https://api.openai.com"}',
             #     ),
-            #     ModelProvider(
+            #     ProviderModel(
             #         tenant_uuid=init_tenant_uuid,
             #         name='baidu-ai',
             #         model_name='ERNIE-Lite-8K',
@@ -41,7 +41,7 @@ async def seed_tenants(db) -> Exception | None:
             # model_providers[0].uuid = init_model_provider_uuid
             # db.add_all(model_providers)
 
-            await db.commit()  # 添加 await 关键字
+            await db.flush()  # 添加 await 关键字
 
         print("success seed tenants -----------")
         return None

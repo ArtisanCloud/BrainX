@@ -10,7 +10,7 @@ from app.models.base import Base  # noqa
 class AlembicManager:
     def __init__(self):
         # Change DB URL to use psycopg driver for this specific check
-        self.db_url = settings.database.url.replace(
+        self.db_url = settings.database.async_url.replace(
             "postgresql+asyncpg://", "postgresql+psycopg://"
         )
         # Set up Alembic configuration

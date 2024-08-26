@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Optional
 
-from sqlalchemy import UUID
-
 from app.models import DocumentSegment, User, Document
 from app.models.rag.document import DocumentStatus
 from app.models.rag.document_node import DocumentNode
@@ -29,14 +27,17 @@ class BaseIndexing(ABC):
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
         raise NotImplementedError
 
+    def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Exception:
+        raise NotImplementedError
+
     def create_document_segments(self, nodes: List[DocumentNode]) -> List[DocumentSegment]:
         segments = []
         for idx, node in enumerate(nodes):
             segment = DocumentSegment(
-                tenant_uuid=UUID(self.document.tenant_uuid),
-                document_uuid=UUID(self.document.uuid),
-                dataset_uuid=UUID(self.document.dataset_uuid),
-                created_user_by=UUID(self.user.uuid),
+                tenant_uuid=self.document.tenant_uuid,
+                document_uuid=self.document.uuid,
+                dataset_uuid=self.document.dataset_uuid,
+                created_user_by=self.user.uuid,
                 updated_user_by=None,  # 如果没有更新用户，可以是 None
                 status=DocumentStatus.NORMAL,
                 content=node.page_content,

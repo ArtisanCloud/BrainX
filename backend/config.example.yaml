@@ -24,7 +24,8 @@ openapi:
   secret_key: "YOUR_SECRET_KEY"
 
 database:
-  url: "postgresql+asyncpg://tenant:pass@127.0.0.1:54321/brain_x"
+  async_url: "postgresql+asyncpg://tenant:pass@127.0.0.1:54321/brain_x"
+  sync_url: "postgresql://tenant:pass@127.0.0.1:54321/brain_x"
   table_name_vector_store: "embeddings"
   echo_log: False
 

@@ -1,7 +1,7 @@
 """add pivot tenant to tenant models
 
-Revision ID: 000000000003
-Revises: 000000000020
+Revision ID: 13000
+Revises: 12000
 Create Date: 2024-06-15 15:26:49.265388
 
 """
@@ -15,8 +15,8 @@ from sqlalchemy import UUID
 from app.models.base import table_name_pivot_tenant_to_user
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000003'
-down_revision: Union[str, None] = '000000000002'
+revision: str = '13000'
+down_revision: Union[str, None] = '12000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

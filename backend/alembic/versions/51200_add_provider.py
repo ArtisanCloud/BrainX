@@ -1,8 +1,8 @@
-"""add models providers  models
+"""add app models config  models
 
-Revision ID: 000000000012
-Revises: 000000000020
-Create Date: 2024-06-15 15:42:58.360088
+Revision ID: 51200
+Revises: 51000
+Create Date: 2024-06-15 15:33:28.987223
 
 """
 import datetime
@@ -12,25 +12,23 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
-from app.models.model_provider.model_provider import table_name_model_provider
+from app.models.base import  table_name_provider
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000012'
-down_revision: Union[str, None] = '000000000010'
+revision: str = '51200'
+down_revision: Union[str, None] = '51000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
     op.create_table(
-        table_name_model_provider,  # 使用表名
+        table_name_provider,  # 使用表名
         # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
-        sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
-        sa.Column('name', sa.String, nullable=False),
-        sa.Column('model_name', sa.String, nullable=False),
-        sa.Column('model_type', sa.String, nullable=False),
+        sa.Column('provider_name', sa.String, nullable=False),
+        sa.Column('provider_type', sa.String, nullable=False),
         sa.Column('encrypted_config', sa.Text, nullable=True),
         sa.Column('is_valid', sa.Boolean, nullable=False),
         sa.Column('last_used', sa.TIMESTAMP(timezone=True), nullable=True),
@@ -50,4 +48,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_model_provider)
+    op.drop_table(table_name_provider)
+

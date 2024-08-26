@@ -1,9 +1,8 @@
 from sqlalchemy import select, func
 
-from app.dao.model_provider.model_provider import ModelProviderDAO
+from app.dao.model_provider.provider_model import ProviderModelDAO
 from app.database.seed import init_model_provider_uuid, init_user_uuid
 from app.database.seed import init_tenant_uuid
-from app.logger import logger
 from app.models.app.app import App
 from app.models.app.app import AppStatus, AppType
 from app.models.app.app_model_config import AppModelConfig
@@ -56,7 +55,7 @@ async def seed_apps(db) -> Exception | None:
             apps = await get_apps_from_data(db, apps_data)
             # print(apps)
             db.add_all(apps)
-            await db.commit()  # 添加 await 关键字
+            await db.flush()  # 添加 await 关键字
 
         print("success seed apps -----------")
         return None
@@ -66,7 +65,7 @@ async def seed_apps(db) -> Exception | None:
 
 
 async def get_apps_from_data(db, data: list[dict]) -> list[App]:
-    dao = ModelProviderDAO(db)
+    dao = ProviderModelDAO(db)
     # model_providers, exception = await dao.get_objects_by_conditions({
     #     "uuid": init_model_provider_uuid
     # })
@@ -74,7 +73,7 @@ async def get_apps_from_data(db, data: list[dict]) -> list[App]:
     #     raise exception
     # print(model_providers)
 
-    model_provider, exception = await dao.get_by_uuid(init_model_provider_uuid)
+    model_provider, exception = await dao.async_get_by_uuid(init_model_provider_uuid)
     if exception:
         raise exception
 

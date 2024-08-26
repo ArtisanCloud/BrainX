@@ -7,13 +7,6 @@ from enum import IntEnum, Enum
 
 __tablename__ = table_name_app
 
-
-class DatasetFormat(IntEnum):
-    TEXT = 1
-    TABLE = 2
-    IMAGE = 3
-
-
 class Dataset(BaseORM):
     __tablename__ = table_name_dataset  # 替换为实际的表名
 

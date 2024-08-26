@@ -33,7 +33,7 @@ async def seed_users(db) -> Exception | None:
             # print(pivot)
             # db.add(pivot)
 
-            await db.commit()  # 添加 await 关键字
+            await db.flush()  # 添加 await 关键字
 
         print("success seed users -----------")
         return None

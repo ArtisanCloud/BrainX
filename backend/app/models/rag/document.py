@@ -49,6 +49,24 @@ class DocumentIndexingStatus(IntEnum):
     PAUSE = 9  # 处理过程中暂停了
     ERROR = 10  # 处理过程中出现错误
 
+    @classmethod
+    def processing_statuses(cls):
+        """返回正在处理中的状态数组"""
+        return [
+            cls.PARSING,
+            cls.EXTRACTING,
+            cls.CLEANING,
+            cls.SPLITTING,
+            cls.INDEXING
+        ]
+
+    @classmethod
+    def error_statuses(cls):
+        """返回异常状态数组"""
+        return [
+            cls.ERROR,
+            cls.PAUSE
+        ]
 
 class Document(BaseORM):
     __tablename__ = table_name_document  # 替换为实际的表名

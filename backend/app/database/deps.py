@@ -36,19 +36,23 @@ def get_sync_db_session() -> Session:
     db = sync_session_local()
     # 外层一定要用 with 才能让这个上下文管理器的功能生效。
     # 如果直接调用 get_sync_db_session() 而不使用 with，except 和 finally 块中的代码将不会被执行，
+    # 而是需要自己去维护commit，rollback，close
     # 因为生成器会在 yield db 处暂停，直到被显式地继续执行。
 
     try:
         yield db
         # 提交事务
-        # print("sync db commit")
-        db.commit()
+        if db:
+            print("sync db commit")
+            db.commit()
     except Exception as e:
         # 出现异常时回滚事务
-        # print("sync db rollback")
-        db.rollback()
+        if db:
+            print("sync db rollback")
+            db.rollback()
         raise e
     finally:
         # 关闭数据库会话
-        print("sync db closed")
-        db.close()
+        if db:
+            print("sync db closed")
+            db.close()

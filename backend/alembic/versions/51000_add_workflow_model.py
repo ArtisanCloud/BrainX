@@ -1,7 +1,7 @@
 """add workflow models
 
-Revision ID: 000000000010
-Revises: caa5b72ec88a
+Revision ID: 51000
+Revises: 14000
 Create Date: 2024-06-15 00:45:05.449070
 
 """
@@ -17,8 +17,8 @@ from app.models.originaztion.user import table_name_user
 from app.models.workflow.workflow import table_name_workflow
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000010'
-down_revision: Union[str, None] = '000000000004'
+revision: str = '51000'
+down_revision: Union[str, None] = '14000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -1,7 +1,7 @@
 """Add Dataset models
 
-Revision ID: 000000000030
-Revises: 000000000020
+Revision ID: 71000
+Revises: 60000
 Create Date: 2024-07-15 21:29:10.358912
 
 """
@@ -15,8 +15,8 @@ from sqlalchemy import UUID
 from app.models.base import table_name_dataset, table_name_tenant, table_name_user, table_name_dataset_segment_rule
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000030'
-down_revision: Union[str, None] = '000000000020'
+revision: str = '71000'
+down_revision: Union[str, None] = '60000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

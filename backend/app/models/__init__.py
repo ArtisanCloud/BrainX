@@ -4,7 +4,8 @@ from .originaztion.user import User
 from .app.app import App
 from .app.app_model_config import AppModelConfig
 from .media_resource.model import MediaResource
-from .model_provider.model_provider import ModelProvider
+from .model_provider.provider_model import ProviderModel
+from .model_provider.provider import Provider
 from .rag.dataset import Dataset, DatasetSegmentRule
 from .rag.document import Document
 from .rag.document_segment import DocumentSegment
@@ -17,7 +18,8 @@ __all__ = [
     'App',
     'AppModelConfig',
     'MediaResource',
-    'ModelProvider',
+    'Provider',
+    'ProviderModel',
     'Dataset',
     'DatasetSegmentRule',
     'Document',

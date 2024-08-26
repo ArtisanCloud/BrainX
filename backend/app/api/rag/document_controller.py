@@ -1,5 +1,4 @@
 import http
-import traceback
 import uuid
 
 from celery import group
@@ -14,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.api.middleware.auth import get_session_user
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session, get_sync_db_session
 from app.models import User
 
 from app.schemas.base import Pagination, ResponseSchema
@@ -250,10 +249,52 @@ async def api_re_process_document(
 
         # print(document)
         task_id = str(uuid.uuid4())
-        service_rag_processor = RagProcessorTaskService(document.uuid, session_user.uuid)
-        exception = service_rag_processor.process_document()
+        with get_sync_db_session() as sync_db:
+            service_rag_processor = RagProcessorTaskService(sync_db, document.uuid, session_user.uuid)
+            exception = service_rag_processor.process_document()
+            if exception is not None:
+                if isinstance(exception, SQLAlchemyError):
+                    raise Exception("database query: pls check log")
+                raise exception
+
+    except Exception as e:
+        logger.error(f"API Failed to get error: {e}", exc_info=True)
+        return ResponseSchema(
+            error=str(e),
+            status_code=http.HTTPStatus.BAD_REQUEST,
+        )
+
+    res = ResponseReProcessDocuments(task_ids=[
+        task_id
+    ])
+
+    return res
+
+
+@router.post("/reset-document")
+async def api_reset_document(
+        data: RequestReProcessDocument,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_async_db_session)):
+    try:
+        # print(data)
+        # 获取用户的document
+        service_document = DocumentService(db)
+        document, exception = await (service_document.
+                                     document_dao.
+                                     async_get_by_uuid(data.document_uuid))
         if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                raise Exception("database query: pls check log")
             raise exception
+
+        # print(document)
+        with get_sync_db_session() as sync_db:
+            task_id = str(uuid.uuid4())
+            service_rag_processor = RagProcessorTaskService(sync_db, document.uuid, session_user.uuid)
+            exception = service_rag_processor.reset_document()
+            if exception is not None:
+                raise exception
 
     except Exception as e:
         logger.error(f"API Failed to get error: {e}", exc_info=True)

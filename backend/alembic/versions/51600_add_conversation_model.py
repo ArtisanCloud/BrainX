@@ -1,7 +1,7 @@
 """add conversation models
 
-Revision ID: 000000000015
-Revises: 000000000020
+Revision ID: 51600
+Revises: 51500
 Create Date: 2024-07-06 22:53:03.223522
 
 """
@@ -16,8 +16,8 @@ from app.models.robot_chat.conversation import table_name_conversation
 from sqlalchemy import UUID
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000015'
-down_revision: Union[str, None] = '000000000014'
+revision: str = '51600'
+down_revision: Union[str, None] = '51500'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

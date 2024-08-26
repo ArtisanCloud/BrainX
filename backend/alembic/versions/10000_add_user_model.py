@@ -1,7 +1,7 @@
 """add tenant models
 
-Revision ID: 000000000001
-Revises: 38460b361a35
+Revision ID: 10000
+Revises: None
 Create Date: 2024-05-30 21:23:22.807845
 
 """
@@ -16,7 +16,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import datetime
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000001'
+revision: str = '10000'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

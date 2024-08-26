@@ -5,7 +5,7 @@ from datetime import datetime
 from app.schemas.base import BaseSchema
 
 
-class ModelProviderSchema(BaseSchema):
+class ProviderModelSchema(BaseSchema):
     tenant_uuid: UUID4
     name: constr(min_length=1)
     mdl_name: constr(min_length=1)

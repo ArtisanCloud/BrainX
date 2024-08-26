@@ -1,7 +1,7 @@
 """add default tenant models  models
 
-Revision ID: 000000000004
-Revises: 000000000020
+Revision ID: 14000
+Revises: 13000
 Create Date: 2024-06-15 15:29:48.824905
 
 """
@@ -15,8 +15,8 @@ from sqlalchemy import UUID
 from app.models.tenant.tenant import table_name_tenant_default_model
 
 # revision identifiers, used by Alembic.
-revision: str = '000000000004'
-down_revision: Union[str, None] = '000000000003'
+revision: str = '14000'
+down_revision: Union[str, None] = '13000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

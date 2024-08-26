@@ -4,7 +4,7 @@ from sqlalchemy import String, Text, SmallInteger, ForeignKey, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.models.base import BaseORM, table_name_tenant, table_name_tenant_default_model, \
-    table_name_pivot_tenant_to_user, table_name_user
+    table_name_pivot_tenant_to_user, table_name_user, table_name_provider
 
 
 # class Tenant(BaseORM):
@@ -23,7 +23,7 @@ class Tenant(BaseORM):
                                                )
     owned_user: Mapped["User"] = relationship(back_populates="owned_tenant", foreign_keys='[User.tenant_owner_uuid]')
     apps: Mapped[List["App"]] = relationship(back_populates="tenant")
-    model_providers: Mapped[List["ModelProvider"]] = relationship(back_populates="tenant")
+    model_providers: Mapped[List["ProviderModel"]] = relationship(back_populates="tenant")
     datasets: Mapped[List["Dataset"]] = relationship(back_populates="tenant",
                                                      foreign_keys="[Dataset.tenant_uuid]")
 
@@ -43,6 +43,7 @@ class TenantDefaultModel(BaseORM):
     __tablename__ = table_name_tenant_default_model
 
     tenant_uuid = mapped_column('tenant_uuid', ForeignKey(table_name_tenant + '.uuid'), nullable=False)
+    provider_uuid = mapped_column('provider_uuid', ForeignKey(table_name_provider + '.uuid'), nullable=True)
     provider_name = mapped_column('provider_name', String(40), nullable=False)
     name = mapped_column('name', String(255), nullable=False)
     type = mapped_column('type', String(40), nullable=False)

@@ -1,10 +1,13 @@
+from datetime import datetime
 from io import BytesIO
-from typing import Any, List, Tuple
+from typing import Any, List, Tuple, Optional
 
 import requests
 from requests import RequestException
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
+from app.core.ai_model.model_manager import ModelManager
 from app.core.rag.indexing.base import IndexingDriverType
 from app.core.rag.indexing.extractor.factory import DataExtractorFactory
 from app.core.rag.indexing.factory import IndexingFactory
@@ -12,26 +15,33 @@ from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.core.rag.indexing.splitter.factory import TextSplitterFactory, SplitterDriverType
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
-from app.database.deps import get_sync_db_session
 from app.logger import logger
 from app.models import DocumentSegment, User
+from app.models.base import UTC
+from app.models.model_provider.provider_model import ModelType
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType
 from app.models.rag.document_node import DocumentNode
 from app.utils.url import get_storage_complete_url
 
 
 class RagProcessorTaskService:
-    def __init__(self, document_uuid: str, user_uuid: str, task: Any = None):
+    def __init__(self,
+                 db: Optional[Session],
+                 document_uuid: str, user_uuid: str,
+                 task: Any = None
+                 ):
         self.task = task
         self.request = None
         self.document: Document
         self.user: User
 
-        with get_sync_db_session() as db:
-            self.db = db  # 初始化数据库会话
-
+        if db is None:
+            raise Exception("db session is None")
+        self.db = db
+        self.model_manager = ModelManager()
         self.document_dao = DocumentDAO(self.db)
         self.document_segment_dao = DocumentSegmentDAO(self.db)
+
         # 执行查询逻辑
         self.document = self._get_document(document_uuid)
         self.user = self._get_user(user_uuid)
@@ -69,6 +79,11 @@ class RagProcessorTaskService:
                 :return: (是否可处理, 错误或None)
                 """
         try:
+            in_process_status = DocumentIndexingStatus.processing_statuses()
+            if document.status in in_process_status:
+                logger.info(f"Document {document.uuid} is started.")
+                return False, Exception("Document is started and cannot be processed.")
+
             if document.is_archived:
                 logger.info(f"Document {document.uuid} is archived.")
                 return False, Exception("Document is archived and cannot be processed.")
@@ -124,8 +139,13 @@ class RagProcessorTaskService:
 
         # create indexer
         splitter = TextSplitterFactory.get_splitter(SplitterDriverType.LANGCHAIN)
+        embedding_model_instance = self.model_manager.get_default_model_instance(
+            self.db, self.document.tenant_uuid,
+            ModelType.TEXT_EMBEDDING
+        )
         indexer = IndexingFactory.get_indexer(
-            IndexingDriverType.LANGCHAIN, splitter,
+            IndexingDriverType.LANGCHAIN,
+            splitter, embedding_model_instance,
             self.user, self.document,
         )
 
@@ -140,7 +160,7 @@ class RagProcessorTaskService:
 
             content_type = response.headers.get('Content-Type')
             if content_type is None:
-                raise Exception(f"Content-Type not found for document UUID: {self.document.uuid}")
+                raise Exception(f"Content-Type not found for document UUID: {str(self.document.uuid)}")
 
             file_data = BytesIO(response.content)
             # logger.info(f"File length: {file_data.getbuffer().nbytes} bytes")
@@ -165,7 +185,7 @@ class RagProcessorTaskService:
 
         except Exception as e:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
-            logger.error(f"Task Failed to extract document segments for document UUID: {self.document.uuid} - {e}")
+            logger.error(f"Task Failed to extract document segments for document UUID: {str(self.document.uuid)} - {e}")
             return e
 
         # --------------- Step Cleaning nodes and Split into nodes
@@ -186,7 +206,7 @@ class RagProcessorTaskService:
         except Exception as e:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(
-                f"Task Failed to transform the document text to segment, document uuid: {self.document.uuid} - {e}")
+                f"Task Failed to transform the document text to segment, document uuid: {str(self.document.uuid)} - {e}")
             return e
 
         # --------------- Step 4: Create Document Segments
@@ -194,23 +214,29 @@ class RagProcessorTaskService:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
 
             document_segments = indexer.create_document_segments(nodes)
-            print(document_segments)
-            # document_segments, exception = self.document_segment_dao.sync_create_many(document_segments)
-            # if exception is not None:
-            #     raise exception
+            # print(document_segments)
+            document_segments, exception = self.document_segment_dao.sync_create_many(document_segments)
+            if exception is not None:
+                raise exception
 
         except Exception as e:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(
-                f"Task Failed to index document segments for document UUID, document uuid: {self.document.uuid} - {e}")
+                f"Task Failed to index document segments for document UUID, document uuid: {str(self.document.uuid)} - {e}")
             return e
 
         # --------------- Step 5: Update Document with Indexing Information with status
         try:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
+            # get embedding model from current user setup
+            exception = indexer.save_nodes_to_store_vector(nodes)
+
+            if exception is not None:
+                raise exception
+
         except Exception as e:
             logger.error(
-                f"Task Failed to update document with indexing information for document UUID: {self.document.uuid} - {e}")
+                f"Task Failed to update document with indexing information for document UUID: {str(self.document.uuid)} - {e}")
             return e
 
         return None
@@ -239,9 +265,42 @@ class RagProcessorTaskService:
                 print("Document has been unpaused.")
 
             # 保存预处理后的状态
-            self.db.commit()  # 提交数据库事务
             return True
 
         except Exception as e:
             print(f"Preprocessing failed: {e}")
             return False
+
+    def reset_document(self) -> Optional[Exception]:
+        try:
+            self.document.updated_user_by = None  # 重置更新用户
+            self.document.indexing_status = DocumentIndexingStatus.PENDING  # 设置初始索引状态，假设有一个枚举类型
+            self.document.process_start_at = None  # 重置处理开始时间
+            self.document.process_end_at = None  # 重置处理结束时间
+            self.document.word_count = 0  # 重置字数为0
+            self.document.parse_start_at = None  # 重置解析开始时间
+            self.document.clean_start_at = None  # 重置清理开始时间
+            self.document.split_start_at = None  # 重置分割开始时间
+            self.document.token_count = 0  # 重置token计数为0
+            self.document.indexing_latency = 0.0  # 重置索引延迟为0.0
+            self.document.is_paused = False  # 重置暂停状态为False
+            self.document.paused_by = None  # 重置暂停的用户
+            self.document.paused_at = None  # 重置暂停时间
+            self.document.error_message = None  # 重置错误信息
+            self.document.error_at = None  # 重置错误时间
+            self.document.is_archived = False  # 重置归档状态为False
+            self.document.archived_reason = None  # 重置归档原因
+            self.document.archived_by = None  # 重置归档的用户
+            self.document.archived_at = None  # 重置归档时间
+            self.document.updated_at = datetime.now(UTC)  # 更新操作时间为当前时间
+
+            # 保存预处理后的状态
+            # self.db.commit()  # 提交数据库事务
+            return None
+
+        except Exception as e:
+            print(f"Reset failed: {e}")
+            return e
+
+        # finally:
+        #     self.db.close()

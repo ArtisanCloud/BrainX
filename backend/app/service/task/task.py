@@ -13,33 +13,25 @@ from app.service.task.celery_app import celery_app
 
 
 @celery_app.task
-def run_connect_db():
+def run_manual_connect_db():
     # 手动启动生成器
-    # session = Session(sync_engine)
-    # session = sync_session_local()
-    with (sync_session_local() as db):
-        try:
-            # 获取数据库会话对象
-            # 使用 db 进行数据库操作
-            result = db.query(User).limit(1).scalar()
-            # user_statement = (
-            #     update(User)
-            #     .returning(User.uuid)
-            #     .where(User.uuid == UUID(init_user_uuid))
-            #     .values(account="u_root")
-            # )
-            # result = db.execute(user_statement).fetchone()
-            print(result)
-            db.commit()
-        except Exception as e:
-            # 处理异常
-            db.rollback()
-            raise e
+    db = sync_session_local()
 
-        finally:
-            db.close()
-            # 手动关闭生成器
-            logger.info("finally finished")
+    try:
+        # 获取数据库会话对象
+        # 使用 db 进行数据库操作
+        result = db.query(User).limit(1).scalar()
+        print("manual operation:", result)
+        db.commit()
+    except Exception as e:
+        # 处理异常
+        db.rollback()
+        raise e
+
+    finally:
+        db.close()
+        # 手动关闭生成器
+        logger.info("finally finished")
 
     return "connect db"
 
@@ -67,7 +59,7 @@ class TaskService:
         return "Task completed"
 
     @celery_app.task(bind=True)
-    def run_connect_db(self):
+    def run_with_connect_db(self):
         # db = sync_session_local()
         # 手动启动生成器
         with get_sync_db_session() as db:
@@ -75,7 +67,7 @@ class TaskService:
                 # 获取数据库会话对象
                 # 使用 db 进行数据库操作
                 result = db.query(User).limit(1).scalar()
-                print(result)
+                print("with auto operation:", result)
                 # db.commit()
             except Exception as e:
                 # 处理异常
