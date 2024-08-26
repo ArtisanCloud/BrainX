@@ -18,6 +18,7 @@ from app.config.qa_model import Models
 from app.config.server import Server
 from app.config.storage import Storage
 from app.config.test import Test
+from app.config.vectore_store import VectorStore
 
 
 class Polygon(BaseModel):
@@ -42,6 +43,7 @@ class Settings(BaseModel):
     cache: Cache
     task: CeleryConfig
     models: Models
+    vector_store: VectorStore
     openai: OpenAI
     baidu_qianfan: BaiduQianfan
     kimi: Kimi
@@ -65,6 +67,7 @@ settings = Settings(
     cache=Cache(**config['cache']),
     task=CeleryConfig(**config['task']),
     models=Models(**config['models']),
+    vector_store=VectorStore(**config['vector_store']),
     log=Log(**config['log']),
     test=Test(**config['test']),
     openai=OpenAI(**config['openai']),

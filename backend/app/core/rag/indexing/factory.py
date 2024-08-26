@@ -1,18 +1,18 @@
 from typing import Optional
 
 from app.models import User, Document
-from .base import IndexingDriverType
 from .drivers.langchain.indexing import LangchainIndexer
 from .drivers.llamaindex.indexing import LLamaIndexIndexer
 from .base import BaseIndexing
 from .splitter.base import BaseTextSplitter
+from .. import FrameworkDriverType
 from ...ai_model.model_instance import ModelInstance
 
 
 class IndexingFactory:
     @staticmethod
     def get_indexer(
-            indexer_type: IndexingDriverType,
+            indexer_type: FrameworkDriverType,
             splitter: BaseTextSplitter,
             embedding_model_instance: ModelInstance,
             user: Optional[User] = None,
@@ -20,7 +20,7 @@ class IndexingFactory:
     ) -> BaseIndexing:
         match indexer_type.value:
             # LLamaIndex are supported
-            case IndexingDriverType.LLAMA_INDEX.value:
+            case FrameworkDriverType.LLAMA_INDEX.value:
                 return LLamaIndexIndexer(
                     user=user, document=document,
                     splitter=splitter,
@@ -28,7 +28,7 @@ class IndexingFactory:
                 )
 
             # Langchain are supported
-            case IndexingDriverType.LANGCHAIN.value:
+            case FrameworkDriverType.LANGCHAIN.value:
                 return LangchainIndexer(
                     user=user, document=document,
                     splitter=splitter,

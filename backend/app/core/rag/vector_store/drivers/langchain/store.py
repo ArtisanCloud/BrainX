@@ -4,7 +4,7 @@ from app.core.rag.vector_store.interface import BaseVectorStore
 
 
 class LangchainVectorStore(BaseVectorStore):
-    def __init__(self, vdb_driver: Type[BaseVectorStore]) -> None:
+    def __init__(self, vdb_driver: BaseVectorStore) -> None:
         """
         初始化 LangchainVectorStore 实例。
 

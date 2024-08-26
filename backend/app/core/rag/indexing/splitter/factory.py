@@ -1,17 +1,10 @@
 from enum import Enum
 
+from app.core.rag import FrameworkDriverType
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.core.rag.indexing.splitter.drivers.langchain.splitter import LangchainRecursiveCharacterTextSplitter
 from app.core.rag.indexing.splitter.drivers.llamaindex.splitter import LlamaIndexRecursiveCharacterTextSplitter
 
-
-class SplitterDriverType(Enum):
-    DEFAULT = "default"
-    LANGCHAIN = "langchain"
-    LLAMA_INDEX = "llamaindex"
-
-    def __str__(self):
-        return self.value
 
 
 class SplitterType(Enum):
@@ -23,11 +16,11 @@ class SplitterType(Enum):
 class TextSplitterFactory:
 
     @staticmethod
-    def get_splitter(splitter_driver_type: SplitterDriverType) -> BaseTextSplitter:
+    def get_splitter(splitter_driver_type: FrameworkDriverType) -> BaseTextSplitter:
 
         match splitter_driver_type.value:
 
-            case SplitterDriverType.LANGCHAIN.value:
+            case FrameworkDriverType.LANGCHAIN.value:
                 return LangchainRecursiveCharacterTextSplitter(
                     chunk_size=800,
                     chunk_overlap=50,
@@ -39,7 +32,7 @@ class TextSplitterFactory:
                     length_function=len,
                 )
 
-            case SplitterDriverType.LLAMA_INDEX.value:
+            case FrameworkDriverType.LLAMA_INDEX.value:
                 return LlamaIndexRecursiveCharacterTextSplitter()
 
             case _:

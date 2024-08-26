@@ -49,6 +49,10 @@ models:
   visual_search_model_name: "clip-ViT-L-14"
   visual_query_model_name: "dandelin/vilt-b32-finetuned-vqa"
 
+vector_store:
+  frame_driver: langchain
+  vdb: pgvector
+
 log:
   path: logs
   split:

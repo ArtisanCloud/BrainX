@@ -1,8 +1,10 @@
 from typing import List, Optional
 
+from app import settings
 from app.core.ai_model.model_instance import ModelInstance
 from app.core.rag.indexing.base import BaseIndexing
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
+from app.core.rag.vector_store.factory import VectorStoreFactory
 from app.models import DocumentSegment, User, Document
 from app.models.rag.document_node import DocumentNode
 
@@ -23,7 +25,10 @@ class LangchainIndexer(BaseIndexing):
         self.embedding_model_instance = embedding_model_instance
         self.nodes = []
 
-        self.vector_store = settings.
+        self.vector_store = VectorStoreFactory.create_vector_store(
+            settings.vector_store.frame_driver,
+            settings.vector_store.vdb,
+        )
 
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
         # 实现存储数据逻辑

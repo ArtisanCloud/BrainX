@@ -5,17 +5,6 @@ from app.models import DocumentSegment, User, Document
 from app.models.rag.document import DocumentStatus
 from app.models.rag.document_node import DocumentNode
 
-from enum import Enum
-
-
-class IndexingDriverType(Enum):
-    DEFAULT = "default"
-    LANGCHAIN = "langchain"
-    LLAMA_INDEX = "llamaindex"
-
-    def __str__(self):
-        return self.value
-
 
 class BaseIndexing(ABC):
 

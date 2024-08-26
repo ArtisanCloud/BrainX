@@ -8,11 +8,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.ai_model.model_manager import ModelManager
-from app.core.rag.indexing.base import IndexingDriverType
+from app.core.rag import FrameworkDriverType
 from app.core.rag.indexing.extractor.factory import DataExtractorFactory
 from app.core.rag.indexing.factory import IndexingFactory
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
-from app.core.rag.indexing.splitter.factory import TextSplitterFactory, SplitterDriverType
+from app.core.rag.indexing.splitter.factory import TextSplitterFactory
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
 from app.logger import logger
@@ -138,13 +138,13 @@ class RagProcessorTaskService:
             return exception
 
         # create indexer
-        splitter = TextSplitterFactory.get_splitter(SplitterDriverType.LANGCHAIN)
+        splitter = TextSplitterFactory.get_splitter(FrameworkDriverType.LANGCHAIN)
         embedding_model_instance = self.model_manager.get_default_model_instance(
             self.db, self.document.tenant_uuid,
             ModelType.TEXT_EMBEDDING
         )
         indexer = IndexingFactory.get_indexer(
-            IndexingDriverType.LANGCHAIN,
+            FrameworkDriverType.LANGCHAIN,
             splitter, embedding_model_instance,
             self.user, self.document,
         )
