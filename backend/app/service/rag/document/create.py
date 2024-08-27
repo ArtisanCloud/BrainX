@@ -20,7 +20,7 @@ async def create_document(
         document: Document,
 ) -> Tuple[DocumentSchema | None, Exception | None]:
     service_document = DocumentService(db)
-    document, exception = await service_document.app_dao.create(document)
+    document, exception = await service_document.document_dao.async_create(document)
 
     if exception:
         return None, exception

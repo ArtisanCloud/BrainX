@@ -32,7 +32,7 @@ class AppService:
     #
     # async def get_app_by_uuid(self, app_uuid: str) -> Tuple[App | None, Exception | None]:
     #     try:
-    #         app, exception = await self.app_dao.get_by_uuid(app_uuid)
+    #         app, exception = await self.app_dao.async_get_by_uuid(app_uuid)
     #         if exception:
     #             return None, exception
     #         return app, None

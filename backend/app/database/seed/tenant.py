@@ -32,7 +32,7 @@ async def seed_tenants(db) -> Exception | None:
             #     ),
             #     ProviderModel(
             #         tenant_uuid=init_tenant_uuid,
-            #         name='baidu-ai',
+            #         name='wenxin-ai',
             #         model_name='ERNIE-Lite-8K',
             #         model_type='llm',
             #         encrypted_config='{"api_key": "your_api_key", "api_security": "your_api_security"}',

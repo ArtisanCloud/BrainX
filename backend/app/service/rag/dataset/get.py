@@ -13,7 +13,7 @@ async def get_dataset_by_uuid(
         dataset_uuid: str
 ) -> Tuple[Dataset | None, Exception | None]:
     service_dataset = DatasetService(db)
-    dataset, exception = await service_dataset.app_dao.get_by_uuid(dataset_uuid)
+    dataset, exception = await service_dataset.app_dao.async_get_by_uuid(dataset_uuid)
 
     #
     if exception:

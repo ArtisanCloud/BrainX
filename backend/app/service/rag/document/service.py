@@ -19,12 +19,12 @@ class DocumentService:
         try:
             # 先创建分割规则
             if segment_rule is not None:
-                segment_rule, exception = await self.dataset_dao.create(segment_rule)
+                segment_rule, exception = await self.dataset_dao.async_create(segment_rule)
                 if exception is not None:
                     return None, None, exception
 
             # 创建文档
-            documents, exception = await self.document_dao.create_many(documents)
+            documents, exception = await self.document_dao.async_create_many(documents)
             if exception is not None:
                 return None, None, exception
 

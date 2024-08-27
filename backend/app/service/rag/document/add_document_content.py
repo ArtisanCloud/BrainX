@@ -26,7 +26,7 @@ async def add_document_content(
 
         # 先获取dataset对象，确认用户拥有这个dataset
         service_dataset = DatasetService(db)
-        dataset, exception = await service_dataset.app_dao.get_by_uuid(data.dataset_uuid)
+        dataset, exception = await service_dataset.app_dao.async_get_by_uuid(data.dataset_uuid)
         if exception is not None:
             return None, exception
         if dataset is None:

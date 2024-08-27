@@ -43,4 +43,7 @@ class LangchainIndexer(BaseIndexing):
 
     def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Optional[Exception]:
 
+        print(self.embedding_model_instance)
+
+
         return None

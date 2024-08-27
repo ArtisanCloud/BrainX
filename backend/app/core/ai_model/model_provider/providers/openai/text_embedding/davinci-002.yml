@@ -1,0 +1,30 @@
+title:
+  en_US: Davinci 002
+  zh_Hans: Davinci 002
+model_credential_schema:
+  model:
+    title:
+      en_US: Model Name
+      zh_Hans: 模型名称
+    placeholder:
+      en_US: Enter your model name
+      zh_Hans: 输入模型名称
+  credential_form_schemas:
+    - variable: openai_api_key
+      title:
+        en_US: API Key
+        zh_Hans: API Key
+      type: secret-input
+      required: true
+      placeholder:
+        en_US: Enter your API Key
+        zh_Hans: 输入您的 API Key
+    - variable: openai_organization
+      title:
+        en_US: Organization
+        zh_Hans: 组织 ID
+      type: text-input
+      required: false
+      placeholder:
+        en_US: Enter your Organization ID
+        zh_Hans: 输入您的组织 ID

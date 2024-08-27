@@ -15,7 +15,7 @@ async def chat(db: AsyncSession,
     if app_uuid != '':
         # 获取app
         service_app = AppService(db)
-        app, exception = await service_app.app_dao.get_by_uuid(app_uuid)
+        app, exception = await service_app.app_dao.async_get_by_uuid(app_uuid)
         if exception:
             return None, None, exception
     else:
@@ -41,14 +41,14 @@ async def chat(db: AsyncSession,
     elif app_uuid != '' and conversation_uuid != '':
         # 如果是app的对话，则从数据库中获取对话历史记录
         service_conversation = ConversationService(db)
-        conversation, exception = await service_conversation.conversation_dao.get_by_uuid(conversation_uuid)
+        conversation, exception = await service_conversation.conversation_dao.async_get_by_uuid(conversation_uuid)
         if exception:
             return None, None, exception
 
         # 如果对话历史记录不存在，则创建新的对话历史记录
         question = question[:15] if len(question) > 15 else question
         if conversation is None:
-            new_conversation, exception = await service_conversation.conversation_dao.create(Conversation(
+            new_conversation, exception = await service_conversation.conversation_dao.async_create(Conversation(
                 uuid=conversation_uuid,
                 user_uuid=user_uuid,
                 app_uuid=app_uuid,

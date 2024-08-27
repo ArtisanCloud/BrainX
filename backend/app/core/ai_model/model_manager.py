@@ -18,7 +18,7 @@ class ModelManager:
             tenant_uuid: str, model_type: ModelType
     ) -> ModelInstance:
 
-        ProviderModelDAO
+
 
         # 获取默认模型实例
         return ModelInstance(

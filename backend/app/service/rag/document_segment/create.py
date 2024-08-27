@@ -20,7 +20,7 @@ async def create_document_segment(
         document_segment: DocumentSegment,
 ) -> Tuple[DocumentSegmentSchema | None, Exception | None]:
     service_document_segment = DocumentSegmentService(db)
-    document_segment, exception = await service_document_segment.app_dao.create(document_segment)
+    document_segment, exception = await service_document_segment.app_dao.async_create(document_segment)
 
     if exception:
         return None, exception

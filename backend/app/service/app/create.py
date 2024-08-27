@@ -20,7 +20,7 @@ async def create_app(
         app: App,
 ) -> Tuple[AppSchema | None, Exception | None]:
     service_app = AppService(db)
-    app, exception = await service_app.app_dao.create(app)
+    app, exception = await service_app.app_dao.async_create(app)
 
     if exception:
         return None, exception

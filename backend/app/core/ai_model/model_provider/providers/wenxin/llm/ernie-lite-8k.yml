@@ -1,0 +1,21 @@
+title:
+  en_US: ERNIE Lite 8K
+  zh_Hans: ERNIE Lite 8K
+model_credential_schema:
+  model:
+    title:
+      en_US: Model Name
+      zh_Hans: 模型名称
+    placeholder:
+      en_US: Enter your model name
+      zh_Hans: 输入模型名称
+  credential_form_schemas:
+    - variable: wenxin_api_key
+      title:
+        en_US: API Key
+        zh_Hans: API Key
+      type: secret-input
+      required: true
+      placeholder:
+        en_US: Enter your API Key
+        zh_Hans: 输入您的 API Key

@@ -13,7 +13,7 @@ async def get_app_by_uuid(
         app_uuid: str
 ) -> Tuple[App | None, Exception | None]:
     service_app = AppService(db)
-    app, exception = await service_app.app_dao.get_by_uuid(app_uuid)
+    app, exception = await service_app.app_dao.async_get_by_uuid(app_uuid)
 
     if exception:
         return None, exception
