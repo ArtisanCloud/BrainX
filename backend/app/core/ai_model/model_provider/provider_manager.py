@@ -7,11 +7,12 @@ from app.core.libs.file import get_project_path
 from app.core.libs.yaml import load_yaml_file
 from app.models import ProviderModel
 
+_global_provider_cache: Dict[str, Any] | None = None
+
 
 class ProviderManager:
     def __init__(self):
-        # 初始化提供商管理器
-        self.providers = {}
+        pass
 
     def register_provider(self, provider_name: str, provider: ProviderModel):
         # 注册一个新的模型提供商
@@ -28,8 +29,15 @@ class ProviderManager:
 
     def load_provider_models(self) -> Dict[str, Any]:
         """Gather all configuration files under the given base path."""
+        global _global_provider_cache
+
+        # 如果全局缓存存在，直接返回它
+        if _global_provider_cache is not None:
+            return _global_provider_cache
+
         base_path = os.path.join(get_project_path(), 'core/ai_model/model_provider/providers')
 
+        providers = {}
         for folder_name in os.listdir(base_path):
             folder_path = os.path.join(base_path, folder_name)
             if os.path.isdir(folder_path):  # 确保是一个目录
@@ -58,9 +66,13 @@ class ProviderManager:
                                 model_config = load_yaml_file(model_filepath)
                                 provider_config["models"][model_type][model_name] = model_config
                 # print(provider_config)
-                self.providers[folder_name] = provider_config
+                providers[folder_name] = provider_config
 
-        return self.providers
+        # 保存到全局缓存中
+        _global_provider_cache = providers
+        # print(_global_provider_cache)
+
+        return providers
 
     def load_providers(self) -> List[str]:
         # 列出所有注册的模型提供商

@@ -29,6 +29,7 @@ class ProviderModel(BaseORM):
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
     provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_provider + ".uuid"), nullable=True)
+    provider_name = mapped_column('provider_name', String, nullable=False)
     model_name = mapped_column('model_name', String, nullable=False)
     model_type = mapped_column('model_type', String, nullable=False)
     encrypted_config = mapped_column('encrypted_config', Text)

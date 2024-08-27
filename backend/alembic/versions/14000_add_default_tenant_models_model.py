@@ -27,12 +27,15 @@ def upgrade() -> None:
         # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
-        sa.Column('tenant_uuid', sa.String(), nullable=False),
-        sa.Column('provider_name', sa.String(40), nullable=False),
+        sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
+        sa.Column('provider_uuid', UUID(as_uuid=True), nullable=False, index=False),
+        sa.Column('provider_name', sa.String, nullable=False),
         sa.Column('name', sa.String(255), nullable=False),
         sa.Column('type', sa.String(40), nullable=False),
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid')
     )
 

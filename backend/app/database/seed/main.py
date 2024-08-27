@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.config.config import settings
 from app.database.seed.app import seed_apps
-from app.database.seed.model_provider import seed_model_providers
+from app.database.seed.model_provider import seed_default_tenant_models
 from app.database.seed.tenant import seed_tenants
 from app.database.seed.user import seed_users
 
@@ -36,7 +36,7 @@ async def start_seed() -> Exception | None:
                 raise e
 
             # 执行添加种子数据的函数
-            e = await seed_model_providers(db)
+            e = await seed_default_tenant_models(db)
             if e:
                 raise e
 

@@ -29,6 +29,7 @@ def upgrade() -> None:
 
         sa.Column('tenant_uuid', UUID(as_uuid=True), nullable=False, index=True),
         sa.Column('provider_uuid', UUID(as_uuid=True), nullable=False, index=False),
+        sa.Column('provider_name', sa.String, nullable=False),
         sa.Column('model_name', sa.String, nullable=False),
         sa.Column('model_type', sa.String, nullable=False),
         sa.Column('encrypted_config', sa.Text, nullable=True),
