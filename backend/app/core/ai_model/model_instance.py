@@ -2,7 +2,7 @@ from typing import Any
 
 
 class ModelInstance:
-    def __init__(self,  provider_model, config: dict):
+    def __init__(self,  provider_model: Any, config: dict):
         # 初始化模型实例
 
         self.provider_model = provider_model

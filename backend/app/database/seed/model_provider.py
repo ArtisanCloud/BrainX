@@ -76,7 +76,7 @@ async def seed_default_tenant_models(db)-> Exception | None:
 #
 #                 for model_type, model_configs in config["models"].items():
 #                     for model_name, model_config in model_configs.items():
-#                         model_display_name = model_config.get("title", {}).get("zh_Hans", model_name)
+#                         model_display_name = model_config.get("title", {}).get("zh_CN", model_name)
 #                         model = ProviderModel(
 #                             provider_uuid=provider.uuid,
 #                             provider_name=config["provider"],

@@ -1,0 +1,9 @@
+model: roberta-large
+title:
+  en_US: RoBERTa Large
+  zh_CN: RoBERTa 大型版
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties: {}
+deprecated: false

@@ -1,0 +1,16 @@
+model: text-embedding-3-large
+title:
+  en_US: Text Embedding 3 Large
+  zh_CN: 文本嵌入3 大型版
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties:
+  CONTEXT_SIZE: 8192
+  MAX_CHUNKS: 32
+  SUPPORTED_FILE_EXTENSIONS:
+    - .txt
+    - .pdf
+    - .docx
+  MAX_CHARACTERS_PER_CHUNK: 10000
+deprecated: false

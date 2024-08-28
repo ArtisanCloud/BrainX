@@ -1,0 +1,17 @@
+model: text-embedding-ada-002
+title:
+  en_US: Text Embedding ADA 002
+  zh_CN: 文本嵌入 ADA 002
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties:
+  CONTEXT_SIZE: 4096
+  MAX_CHUNKS: 20
+  SUPPORTED_FILE_EXTENSIONS:
+    - .txt
+    - .pdf
+    - .docx
+    - .md
+  MAX_CHARACTERS_PER_CHUNK: 8000
+deprecated: false

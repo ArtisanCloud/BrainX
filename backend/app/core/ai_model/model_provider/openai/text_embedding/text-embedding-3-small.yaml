@@ -1,0 +1,15 @@
+model: text-embedding-3-small
+title:
+  en_US: Text Embedding 3 Small
+  zh_CN: 文本嵌入3 小型版
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties:
+  CONTEXT_SIZE: 2048
+  MAX_CHUNKS: 16
+  SUPPORTED_FILE_EXTENSIONS:
+    - .txt
+    - .pdf
+  MAX_CHARACTERS_PER_CHUNK: 5000
+deprecated: false

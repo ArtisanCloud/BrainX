@@ -1,22 +1,16 @@
-from typing import List
+from abc import ABC
+from typing import List, Dict, Any
 
 from app.core.ai_model.model_instance import ModelInstance
+from app.core.ai_model.model_provider.schema.provider import ProviderSchema
 
 
-class ProviderModel:
+class ModelProvider(ABC):
     def __init__(self, name: str, config: dict):
         # 初始化提供商
-        self.name = name
         self.config = config
+        self.provider_schema: ProviderSchema | None = None
+        self.dict_provider_model = Dict[str, Any]
 
-    def create_instance(self, model_name: str, config: dict) -> ModelInstance:
-        # 根据模型名和配置创建模型实例
-        raise NotImplementedError("This method should be implemented by subclasses")
-
-    def list_available_models(self) -> List[str]:
-        # 列出可用模型
-        raise NotImplementedError("This method should be implemented by subclasses")
-
-    def get_model_info(self, model_name: str) -> dict:
-        # 获取模型信息
+    def verify_provider_credentials(self, credentials: dict) -> Exception:
         raise NotImplementedError("This method should be implemented by subclasses")

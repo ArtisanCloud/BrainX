@@ -1,0 +1,16 @@
+model: ernie-lite-8k
+title:
+  en_US: ERNIE Lite 8K
+  zh_CN: ERNIE Lite 8K
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties:
+  CONTEXT_SIZE: 8192
+  MAX_CHUNKS: 30
+  SUPPORTED_FILE_EXTENSIONS:
+    - .txt
+    - .pdf
+    - .docx
+  MAX_CHARACTERS_PER_CHUNK: 7500
+deprecated: false

@@ -1,0 +1,9 @@
+model: shibing624_text2vec-base-chinese
+title:
+  en_US: Text2Vec Base Chinese
+  zh_CN: Text2Vec 基础版（中文）
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties: {}
+deprecated: false

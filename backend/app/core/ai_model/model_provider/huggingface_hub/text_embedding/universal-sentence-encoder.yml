@@ -1,0 +1,9 @@
+model: universal-sentence-encoder
+title:
+  en_US: Universal Sentence Encoder
+  zh_CN: 通用句子编码器
+model_type: text-embedding
+features: []
+fetch_from: customized
+model_properties: {}
+deprecated: false
