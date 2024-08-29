@@ -1,19 +1,18 @@
 from typing import Any
 
+from app.core.ai_model.drivers.interface.model_provider import ModelProviderInterface
+
 
 class ModelInstance:
-    def __init__(self,  provider_model: Any, config: dict):
+    def __init__(self, model_provider: ModelProviderInterface, config: dict):
         # 初始化模型实例
 
-        self.provider_model = provider_model
-        self.config = config
-
+        self.model_provider = model_provider
 
     def run_inference(self, input_data: Any) -> Any:
         # 运行推理任务
-        raise NotImplementedError("This method should be implemented by subclasses")
+        pass
 
-
-    def update_config(self, new_config: dict):
-        # 更新模型配置
-        self.config.update(new_config)
+    def run_text_embedding(self, input_text: str) -> Any:
+        # 运行向量化
+        pass

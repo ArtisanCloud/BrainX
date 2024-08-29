@@ -16,7 +16,7 @@ from app.core.rag.indexing.splitter.factory import TextSplitterFactory
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
 from app.logger import logger
-from app.models import DocumentSegment, User
+from app.models import DocumentSegment, User, Dataset
 from app.models.base import UTC
 from app.models.model_provider.provider_model import ModelType
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType
@@ -33,6 +33,7 @@ class RagProcessorTaskService:
         self.task = task
         self.request = None
         self.document: Document
+        self.dataset: Dataset
         self.user: User
 
         if db is None:
@@ -44,6 +45,7 @@ class RagProcessorTaskService:
 
         # 执行查询逻辑
         self.document = self._get_document(document_uuid)
+        self.dataset = self._get_dataset(self.document.dataset_uuid)
         self.user = self._get_user(user_uuid)
         # print(self.document, self.user)
 
@@ -55,6 +57,16 @@ class RagProcessorTaskService:
             logger.error(msg_error)
             raise Exception(msg_error)
         return document
+
+    def _get_dataset(self, dataset_uuid: str) -> Dataset:
+        stmt = select(Dataset).where(Dataset.uuid == dataset_uuid)
+        dataset = self.db.execute(stmt).scalars().first()
+        if dataset is None:
+            msg_error = f"dataset {dataset_uuid} cannot be found in db"
+            logger.error(msg_error)
+            raise Exception(msg_error)
+
+        return dataset
 
     def _get_user(self, user_uuid: str) -> User:
         stmt = select(User).where(User.uuid == user_uuid)
@@ -139,15 +151,22 @@ class RagProcessorTaskService:
 
         # create indexer
         splitter = TextSplitterFactory.get_splitter(FrameworkDriverType.LANGCHAIN)
-        embedding_model_instance = self.model_manager.get_default_model_instance(
+        embedding_model_instance, exception = self.model_manager.get_model_instance(
             self.db, self.document.tenant_uuid,
+            self.dataset.embedding_model_provider,
             ModelType.TEXT_EMBEDDING
         )
+        if exception is not None:
+            return exception
+
         indexer = IndexingFactory.get_indexer(
             FrameworkDriverType.LANGCHAIN,
             splitter, embedding_model_instance,
             self.user, self.document,
         )
+
+        print(indexer)
+        return None
 
         # --------------- Step Load Resource URL into Memory
         try:
@@ -228,7 +247,7 @@ class RagProcessorTaskService:
         # --------------- Step 5: Update Document with Indexing Information with status
         try:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
-            # get embedding model from current user setup
+            # get embedding model_provider from current user setup
             exception = indexer.save_nodes_to_store_vector(nodes)
 
             if exception is not None:

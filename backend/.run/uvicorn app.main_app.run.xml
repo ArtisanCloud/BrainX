@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="uvicorn app.main:app" type="Python.FastAPI">
+    <option name="file" value="$PROJECT_DIR$/app/main.py" />
+    <module name="backend" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="false" />
+    <envs>
+      <env name="OPENAI_API_BASE" value="https://api.chatanywhere.tech" />
+      <env name="OPENAI_API_KEY" value="sk-yGj9jNFjm23RJXYLelamBEZCsLRqHLPECmuEdbdV1Y6R2sK9" />
+    </envs>
+    <option name="SDK_HOME" value="/opt/anaconda3/envs/brainx/bin/python" />
+    <option name="SDK_NAME" value="Poetry (backend)" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="launchJavascriptDebuger" value="false" />
+    <method v="2" />
+  </configuration>
+</component>

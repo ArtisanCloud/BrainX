@@ -1,9 +1,0 @@
-model: sentence-transformers
-title:
-  en_US: Sentence Transformers
-  zh_CN: 句子转换器
-model_type: text-embedding
-features: []
-fetch_from: customized
-model_properties: {}
-deprecated: false

@@ -31,10 +31,9 @@ def check_current_head(alembic_cfg: Config, connectable: Engine) -> bool:
     directory = script.ScriptDirectory.from_config(alembic_cfg)
     # print("-----", directory)
     with connectable.begin() as connection:
-        print(connection)
+        # print(connection)
         context = migration.MigrationContext.configure(connection)
         # print("-----", context)
-        # print(123, set(context.get_current_heads()), 543, set(directory.get_heads()))
         return set(context.get_current_heads()) == set(directory.get_heads())
 
 
@@ -68,7 +67,7 @@ async def lifespan(app: FastAPI):
         "postgresql+asyncpg://", "postgresql+psycopg://"
     )
     cfg.set_main_option("sqlalchemy.url", db_url)
-    engine = create_engine(db_url, echo=True)
+    engine = create_engine(db_url, echo=settings.database.echo_log)
     # print("robot_chat:", robot_chat)
     if not check_current_head(cfg, engine):
         raise Exception(

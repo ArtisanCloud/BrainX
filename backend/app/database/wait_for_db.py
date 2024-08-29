@@ -8,7 +8,7 @@ async def check_database_connection(max_attempts: int = 30, sleep_interval: int 
         try:
             async with async_session_local() as db:
                 await db.execute(text("SELECT 1"))
-                print(f"Connected to the database on attempt {attempt}.")
+                # print(f"Connected to the database on attempt {attempt}.")
                 return
         except Exception as e:
             print(f"Attempt {attempt}: Database is not yet available. Error: {e}")

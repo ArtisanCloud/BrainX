@@ -24,6 +24,7 @@ async def get_async_db_session() -> AsyncSession:
             #  rollback the db session if any exception occurs
             logger.error(f"session local error: {e}")
             await db.rollback()
+            raise e
 
         finally:
             #  close the db session

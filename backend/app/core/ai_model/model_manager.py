@@ -1,32 +1,56 @@
-from typing import List, Optional
+from enum import Enum
+from typing import Optional, Tuple
 
 from sqlalchemy.orm import Session
 
+from app.constant.ai_model.provider import ProviderID
 from app.core.ai_model.model_instance import ModelInstance
-from app.core.ai_model.model_provider.provider_manager import ProviderManager
-from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
-from app.models import ProviderModel
+from app.core.ai_model.provider_manager import ProviderManager
+from app.core.rag import FrameworkDriverType
 from app.models.model_provider.provider_model import ModelType
 
 
 class ModelManager:
-    def __init__(self):
+    def __init__(self, framework_type: FrameworkDriverType):
         # 初始化模型管理器
-        self._provider_manager = ProviderManager()
+        # 提供底层的提供商管理功能
+        self.provider_manager = ProviderManager(framework_type)
+
+
+    def get_model_instance(self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType) -> Tuple[
+        Optional[ModelInstance], Optional[Exception]]:
+        if not provider:
+            return self.get_default_model_instance(db, tenant_uuid, model_type)
+
+        model_provider, exception = self.provider_manager.get_model_provider(
+            db, tenant_uuid,
+            provider, model_type
+        )
+        if exception is not None:
+            return None, exception
+
+        return ModelInstance(
+            model_provider=model_provider,
+            config={},
+        ), None
 
     def get_default_model_instance(
-            self, db: Session,
-            tenant_uuid: str, model_type: ModelType
-    ) -> Optional[ModelInstance]:
-        try:
-            service_tenant_default_model = TenantDefaultModelDAO(db)
-            default_model, exception = service_tenant_default_model.get_default_model_by_uuid(tenant_uuid, ModelType.TEXT_EMBEDDING.value)
+            self, db: Session, tenant_uuid: str, model_type: ModelType
+    ) -> Tuple[Optional[ModelInstance], Optional[Exception]]:
 
-        except Exception as e:
-            return None
+        model_provider, exception = self.provider_manager.get_default_model_provider(db, tenant_uuid, model_type)
+        if exception is not None:
+            return None, exception
 
         # 获取默认模型实例
         return ModelInstance(
-            tenant_uuid=tenant_uuid,
-            model_type=model_type,
-        )
+            model_provider=model_provider,
+            config={},
+        ), None
+
+    @classmethod
+    def generate_model_id(cls, provider_id: ProviderID, model_enum: Enum) -> str:
+        """
+        将 provider_id 和 model_provider name 组合生成唯一的 model_id。
+        """
+        return f"{provider_id.value}.{model_enum.value}"

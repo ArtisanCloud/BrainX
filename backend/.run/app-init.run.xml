@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="app-init" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile">
+    <makefile filename="$PROJECT_DIR$/Makefile" target="app-init" workingDirectory="$PROJECT_DIR$" arguments="">
+      <envs>
+        <env name="PATH" value="/opt/anaconda3/envs/brainx/bin" />
+      </envs>
+    </makefile>
+    <method v="2" />
+  </configuration>
+</component>

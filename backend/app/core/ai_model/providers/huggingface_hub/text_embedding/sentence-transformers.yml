@@ -1,0 +1,15 @@
+model: sentence-transformers/all-mpnet-base-v2
+title:
+  en_US: Sentence Transformers (all-mpnet-base-v2)
+  zh_CN: 句子转换器 (all-mpnet-base-v2)
+model_type: text-embedding
+features: []
+fetch_from: huggingface
+model_properties:
+  architecture: mpnet
+  embeddings_size: 768
+  languages_supported: 
+    - en
+  pooling: mean
+  max_sequence_length: 128
+deprecated: false

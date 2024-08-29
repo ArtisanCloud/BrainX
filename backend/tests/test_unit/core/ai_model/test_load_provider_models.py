@@ -1,12 +1,17 @@
 from typing import Dict
 
-from app.core.ai_model.model_provider.provider_manager import ProviderManager
-from app.core.ai_model.model_provider.schema.provider import ProviderSchema
+from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
+from app.constant.ai_model.openai import OpenAIModelID
+from app.constant.ai_model.provider import ProviderID
+from app.constant.ai_model.wenxin import WenxinModelID
+from app.core.ai_model.provider_manager import ProviderManager
+from app.core.ai_model.schema.provider import ProviderSchema
+from app.core.rag import FrameworkDriverType
 
 
 def test_load_provider_models(tmp_path, monkeypatch):
     # 调用 load_provider_models 方法
-    configurations: Dict[str: ProviderSchema] = ProviderManager().load_provider_models()
+    configurations: Dict[str: ProviderSchema] = ProviderManager(FrameworkDriverType.LANGCHAIN ).load_provider_models()
 
     # 验证 configurations 是否正确加载
     assert configurations is not None
@@ -16,23 +21,23 @@ def test_load_provider_models(tmp_path, monkeypatch):
         assert isinstance(schema, ProviderSchema), f"{provider_name} 的配置应该是 ProviderSchema 类型."
 
     # 验证特定提供者是否存在
-    assert "openai" in configurations, "OpenAI provider should be in configurations."
-    assert "huggingface_hub" in configurations, "Huggingface Hub provider should be in configurations."
-    assert "wenxin" in configurations, "Wenxin provider should be in configurations."
+    assert ProviderID.OPENAI.value in configurations, "OpenAI provider should be in configurations."
+    assert ProviderID.HUGGINGFACE_HUB.value in configurations, "HuggingFace Hub provider should be in configurations."
+    assert ProviderID.WENXIN.value in configurations, "Wenxin provider should be in configurations."
 
     # 验证 OpenAI 提供商的模型列表是否正确
-    openai_schema = configurations["openai"]
-    assert any(model.model == "gpt-3.5-turbo" for model in openai_schema.models), \
-        "Huggingface Hub provider should have 'gpt-3.5-turbo' model."
+    openai_schema = configurations[ProviderID.OPENAI.value]
+    assert any(model.model == OpenAIModelID.GPT_3_5_TURBO.value for model in openai_schema.models), \
+        "Huggingface Hub provider should have 'gpt-3.5-turbo' model_provider."
 
     # 验证 Huggingface Hub 提供商的具体模型名称
-    hf_schema = configurations["huggingface_hub"]
-    assert any(model.model == "bert-base-uncased" for model in hf_schema.models), \
-        "Huggingface Hub provider should have 'bert-base-uncased' model."
-    assert any(model.model == "shibing624_text2vec-base-chinese" for model in hf_schema.models), \
-        "Huggingface Hub provider should have 'shibing624_text2vec-base-chinese' model."
+    hf_schema = configurations[ProviderID.HUGGINGFACE_HUB.value]
+    assert any(model.model == HuggingFaceHubModelID.BERT_BASE_UNCASED.value  for model in hf_schema.models), \
+        "Huggingface Hub provider should have 'bert-base-uncased' model_provider."
+    assert any(model.model == HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value for model in hf_schema.models), \
+        "Huggingface Hub provider should have 'shibing624_text2vec-base-chinese' model_provider."
 
     # 验证 Wenxin 提供商的具体模型名称
-    wenxin_schema = configurations["wenxin"]
-    assert any(model.model == "ernie-lite-8k" for model in wenxin_schema.models), \
-            "Wenxin provider should have 'ernie-lite-8k' model."
+    wenxin_schema = configurations[ProviderID.WENXIN.value]
+    assert any(model.model == WenxinModelID.ERNIE_LITE_8K.value for model in wenxin_schema.models), \
+        "Wenxin provider should have 'ernie-lite-8k' model_provider."

@@ -47,7 +47,7 @@ async def api_login(
 
         token, exception = await login_by_account(db, data.account, data.password)
         if exception is not None:
-            logger.error(exception)
+            logger.error(exception, exc_info=True)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception

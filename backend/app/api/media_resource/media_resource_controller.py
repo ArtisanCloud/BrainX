@@ -47,15 +47,12 @@ async def api_get_media_resource_list(
 
 
 @router.post("/create")
-async def create_media_resource(request: Request,
-                                sort_index: int,
-                                db: AsyncSession = Depends(get_async_db_session),
-                                resource: UploadFile = File(...)
-                                ) -> ResponseCreateMediaResource | ResponseSchema:
+async def create_media_resource(
+        sort_index: int,
+        db: AsyncSession = Depends(get_async_db_session),
+        resource: UploadFile = File(...)
+) -> ResponseCreateMediaResource | ResponseSchema:
     try:
-        # Parse multipart form
-        # print(resource)
-        #
 
         media_resource, exception = await create_media_resource_by_file(db, resource)
         if exception is not None:
@@ -103,7 +100,6 @@ async def create_media_resource(
     return res
 
 
-
 @router.get("/{media_resource_uuid}")
 async def api_get_media_resource_by_uuid(
         media_resource_uuid: str,
@@ -123,5 +119,3 @@ async def api_get_media_resource_by_uuid(
     res = ResponseGetMediaResource(data=media_resource)
 
     return res
-
-

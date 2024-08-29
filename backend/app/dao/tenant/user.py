@@ -32,9 +32,9 @@ class UserDAO(BaseDAO[User]):
         """
         根据 Account 获取模型对象
         """
-        stmt = select(User).filter(User.account == account)
 
         try:
+            stmt = select(User).filter(User.account == account)
             result = await self.db.execute(stmt)
             return result.scalar_one_or_none(), None
 
