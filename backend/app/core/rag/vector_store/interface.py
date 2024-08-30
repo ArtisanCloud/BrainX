@@ -1,11 +1,18 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple, Dict, Any
 
-from app.core.rag.retrieval.interface import BaseRetriever
+from app.core.rag.retrieval.interface import BaseRetriever, RetrieverDriver
 from app.models.rag.document_node import DocumentNode
 
 
 class BaseVectorStore(ABC):
+
+    def __init__(self):
+        self.vector_store = None
+
+    def get_vector_store(self) -> any:
+        return self.vector_store
+
     @abstractmethod
     def add_documents(self, nodes: List[DocumentNode], **kwargs: Any) -> List[str]:
         """
@@ -45,7 +52,7 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def get_retriever(self) -> BaseRetriever:
+    def get_retriever_driver(self) -> RetrieverDriver:
         pass
 
 

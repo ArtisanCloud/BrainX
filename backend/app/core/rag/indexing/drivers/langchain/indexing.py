@@ -44,10 +44,10 @@ class LangchainIndexer(BaseIndexing):
         )
 
         # create retriever
-        self.retriever = (
+        self.retriever_driver = (
             self.vector_store_driver
             .get_vector_store()
-            .get_retriever()
+            .get_retriever_driver()
         )
 
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:

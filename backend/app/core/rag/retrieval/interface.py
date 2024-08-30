@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional, Any
 from app.models import Document
+from app.models.rag.document_node import DocumentNode
 
 
 class BaseRetriever(ABC):
@@ -9,14 +10,9 @@ class BaseRetriever(ABC):
     """
 
     @abstractmethod
-    def retrieve(self, query: str) -> List[Document]:
-        """
-        Retrieve documents based on a given query.
+    def invoke(self, input: str, config: Optional[Any] = None, **kwargs: Any) -> List[DocumentNode]:
+        raise NotImplementedError
 
-        Args:
-            query (str): The query string used for retrieving documents.
 
-        Returns:
-            List[Document]: A list of documents that match the query.
-        """
-        pass
+class RetrieverDriver(ABC):
+    pass

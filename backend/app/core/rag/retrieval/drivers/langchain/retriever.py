@@ -1,50 +1,31 @@
-from typing import List, Optional
-from app.core.rag.retrieval.interface import BaseRetriever
+from typing import List, Optional, Any
+
+from langchain_postgres import PGVector
+
+from app.core.rag.indexing.drivers.langchain.helper import convert_documents_to_nodes
+from app.core.rag.retrieval.interface import RetrieverDriver
 from app.core.rag.vector_store.interface import BaseVectorStore
 from app.models import Document
+from app.models.rag.document_node import DocumentNode
 
 
-class LangchainRetrieverDriver(BaseRetriever):
+class LangchainRetrieverDriver(RetrieverDriver):
     """
     Implementation of BaseRetriever for Langchain retrieval.
     """
 
     def __init__(self, vector_store: BaseVectorStore):
-        """
-        Initialize the LangchainRetriever with optional configuration.
+        super().__init__()
 
-        Args:
-            config (Optional[dict]): Optional configuration dictionary for the retriever.
-        """
-        self.vector_store = vector_store
-        # Initialize Langchain resources
-        self.retriever = self.vector_store.get_retriever()
+        self.vector_store: PGVector = vector_store.get_vector_store()
+        self.retriever = self.vector_store.as_retriever()
 
-    def _initialize_retriever(self):
-        """
-        Private method to initialize the Langchain retriever.
+    def invoke(self, input: str, config: Optional[Any] = None, **kwargs: Any) -> List[DocumentNode]:
 
-        Returns:
-            An retriever object.
-        """
-        # Implement retriever initialization logic
-        # For example, return a new instance of Langchain
-        pass
-
-    def retrieve(self, query: str) -> List[Document]:
-        """
-        Retrieve documents based on the given query using Langchain.
-
-        Args:
-            query (str): The query string used for retrieving documents.
-
-        Returns:
-            List[Document]: A list of documents that match the query.
-        """
         try:
-            # Implement the retrieval logic using Langchain
-            documents = []
-            # Example: Retrieve documents from Langchain
-            return documents
+            list_documents = self.retriever.invoke(input, config=config, kwargs=kwargs)
+            list_nodes = convert_documents_to_nodes(list_documents)
+
+            return list_nodes
         except Exception as e:
             raise RuntimeError(f"Failed to retrieve documents: {e}")
