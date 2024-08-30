@@ -93,7 +93,7 @@ class RagProcessorTaskService:
                 """
         try:
             in_process_status = DocumentIndexingStatus.processing_statuses()
-            if document.status in in_process_status:
+            if document.indexing_status in in_process_status:
                 logger.info(f"Document {document.uuid} is started.")
                 return False, Exception("Document is started and cannot be processed.")
 

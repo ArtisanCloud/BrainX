@@ -53,19 +53,19 @@ class DocumentIndexingStatus(IntEnum):
     def processing_statuses(cls):
         """返回正在处理中的状态数组"""
         return [
-            cls.PARSING,
-            cls.EXTRACTING,
-            cls.CLEANING,
-            cls.SPLITTING,
-            cls.INDEXING
+            cls.PARSING.value,
+            cls.EXTRACTING.value,
+            cls.CLEANING.value,
+            cls.SPLITTING.value,
+            cls.INDEXING.value
         ]
 
     @classmethod
     def error_statuses(cls):
         """返回异常状态数组"""
         return [
-            cls.ERROR,
-            cls.PAUSE
+            cls.ERROR.value,
+            cls.PAUSE.value
         ]
 
 class Document(BaseORM):
