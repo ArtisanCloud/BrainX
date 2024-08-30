@@ -1,23 +1,24 @@
 from typing import List, Optional
-from app.core.rag.retrieval.interface import RetrieverInterface
+from app.core.rag.retrieval.interface import BaseRetriever
+from app.core.rag.vector_store.interface import BaseVectorStore
 from app.models import Document
 
 
-class LangchainRetriever(RetrieverInterface):
+class LangchainRetrieverDriver(BaseRetriever):
     """
-    Implementation of RetrieverInterface for Langchain retrieval.
+    Implementation of BaseRetriever for Langchain retrieval.
     """
 
-    def __init__(self, config: Optional[dict] = None):
+    def __init__(self, vector_store: BaseVectorStore):
         """
         Initialize the LangchainRetriever with optional configuration.
 
         Args:
             config (Optional[dict]): Optional configuration dictionary for the retriever.
         """
-        self.config = config or {}
+        self.vector_store = vector_store
         # Initialize Langchain resources
-        self.retriever = self._initialize_retriever()
+        self.retriever = self.vector_store.get_retriever()
 
     def _initialize_retriever(self):
         """

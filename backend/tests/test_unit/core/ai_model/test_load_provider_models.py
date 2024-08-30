@@ -12,7 +12,9 @@ from app.core.rag import FrameworkDriverType
 
 def test_load_provider_models(tmp_path, monkeypatch):
     # 调用 load_provider_models 方法
-    configurations: Dict[str: ProviderSchema] = ProviderManager(settings.agent.framework_driver ).load_provider_models()
+    configurations: Dict[str: ProviderSchema] = ProviderManager(
+        FrameworkDriverType(settings.agent.framework_driver)
+    ).load_provider_models()
 
     # 验证 configurations 是否正确加载
     assert configurations is not None
@@ -33,9 +35,10 @@ def test_load_provider_models(tmp_path, monkeypatch):
 
     # 验证 Huggingface Hub 提供商的具体模型名称
     hf_schema = configurations[ProviderID.HUGGINGFACE_HUB.value]
-    assert any(model.model == HuggingFaceHubModelID.BERT_BASE_UNCASED.value  for model in hf_schema.models), \
+    assert any(model.model == HuggingFaceHubModelID.BERT_BASE_UNCASED.value for model in hf_schema.models), \
         "Huggingface Hub provider should have 'bert-base-uncased' model_provider."
-    assert any(model.model == HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value for model in hf_schema.models), \
+    assert any(
+        model.model == HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value for model in hf_schema.models), \
         "Huggingface Hub provider should have 'shibing624_text2vec-base-chinese' model_provider."
 
     # 验证 Wenxin 提供商的具体模型名称

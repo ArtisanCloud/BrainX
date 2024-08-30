@@ -3,12 +3,12 @@ from typing import Type
 from .base import RetrieverDriverType
 from .drivers.langchain.retriever import LangchainRetriever
 from .drivers.llamaindex.retriever import LLamaIndexRetriever
-from .interface import RetrieverInterface
+from .interface import BaseRetriever
 
 
 class RetrieverFactory:
     @staticmethod
-    def get_retriever(retriever_type: str) -> RetrieverInterface:
+    def get_retriever(retriever_type: str) -> BaseRetriever:
         match retriever_type:
             # LLamaIndex are supported
             case RetrieverDriverType.LLAMA_INDEX:

@@ -255,14 +255,22 @@ class RagProcessorTaskService:
             return e
 
         # --------------- Step 5: Update Document with Indexing Information with status
-        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, Update Document with Indexing Information with status")
+        logger.info(
+            f"~~~~~~~ Process document UUID: {self.document.uuid}, Update Document with Indexing Information with status")
         try:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
             # get embedding model_provider from current user setup
-            exception = indexer.save_nodes_to_store_vector(nodes)
+            word_count, token, exception = indexer.save_nodes_to_store_vector(nodes)
 
             if exception is not None:
                 raise exception
+
+            # save dataset and document status completion
+            self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.COMPLETED)
+
+            # save word count and used token
+            # self.document_dao.set_word_count(self.document, word_count)
+
 
         except Exception as e:
             logger.error(

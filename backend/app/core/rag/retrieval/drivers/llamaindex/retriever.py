@@ -1,11 +1,11 @@
 from typing import List, Optional
-from app.core.rag.retrieval.interface import RetrieverInterface
+from app.core.rag.retrieval.interface import BaseRetriever
 from app.models import Document
 
 
-class LLamaIndexRetriever(RetrieverInterface):
+class LLamaIndexRetriever(BaseRetriever):
     """
-    Implementation of RetrieverInterface for LLamaIndex retrieval.
+    Implementation of BaseRetriever for LLamaIndex retrieval.
     """
 
     def __init__(self, config: Optional[dict] = None):

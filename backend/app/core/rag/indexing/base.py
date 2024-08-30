@@ -18,7 +18,7 @@ class BaseIndexing(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Exception:
+    def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Tuple[int, int, Exception]:
         raise NotImplementedError
 
     @abstractmethod

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from app import settings
 from app.core.ai_model.model_instance import ModelInstance
@@ -34,12 +34,20 @@ class LangchainIndexer(BaseIndexing):
         # get framework driver embedding model from embedding_model_instance
         embedding_model = embedding_model_instance.model.get_provider_model()
         # print("get embedding model:", embedding_model)
+
         # get vector store
         self.vector_store_driver = VectorStoreDriverFactory.create_vector_store_driver(
             FrameworkDriverType(settings.agent.framework_driver),
             VectorStoreType(settings.agent.vdb),
             collection_name=collection_name,
             embedding_model=embedding_model
+        )
+
+        # create retriever
+        self.retriever = (
+            self.vector_store_driver
+            .get_vector_store()
+            .get_retriever()
         )
 
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
@@ -56,7 +64,7 @@ class LangchainIndexer(BaseIndexing):
     def get_vector_store(self) -> BaseVectorStore:
         return self.vector_store_driver.get_vector_store()
 
-    def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Optional[Exception]:
+    def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Tuple[int, int, Optional[Exception]]:
         # print(self.embedding_model_instance, self.llm_model_instance)
 
         try:
@@ -68,11 +76,15 @@ class LangchainIndexer(BaseIndexing):
             if not vector_store:
                 raise ValueError("vector store is not initialized.")
 
-            vector_store.add_documents(nodes)
+            word_count = 0
+            token = 0
+            result_list = vector_store.add_documents(nodes)
+            # for node, vector in zip(nodes, result_list):
+            #     word_count += len(node.page_content.split())
 
             # 如果一切顺利，返回None表示没有异常
-            return None
+            return word_count, token, None
 
         except Exception as e:
             # 捕获所有异常并返回
-            return e
+            return 0, 0, e

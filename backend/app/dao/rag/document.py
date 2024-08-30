@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.dao.base import BaseDAO
 from app.models import User
-from app.models.rag.document import Document, DocumentIndexingStatus
+from app.models.rag.document import Document, DocumentIndexingStatus, DocumentStatus
 from datetime import datetime, timezone
 
 
@@ -57,6 +57,7 @@ class DocumentDAO(BaseDAO[Document]):
                     if document.parse_start_at else None
                 )
                 document.process_end_at = current_time
+                document.status = DocumentStatus.NORMAL
 
             elif indexing_status == DocumentIndexingStatus.PAUSE:
                 document.paused_at = current_time
