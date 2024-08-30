@@ -60,6 +60,7 @@ asgiref = "^3.8.1"
 eventlet = "^0.36.1"
 faiss-cpu = "^1.8.0.post1"
 pyyaml = "^6.0.2"
+langchain-huggingface = "^0.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"

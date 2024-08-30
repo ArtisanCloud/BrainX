@@ -25,3 +25,7 @@ class AIModel(ABC):
     @abstractmethod
     def verify_credentials(self, model: str, credentials: Mapping) -> None:
         raise NotImplementedError
+
+    @abstractmethod
+    def get_provider_model(self) -> any:
+        raise NotImplementedError

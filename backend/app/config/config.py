@@ -9,7 +9,6 @@ from app.config.baidu import BaiduQianfan
 from app.config.cache import Cache
 from app.config.celery import CeleryConfig
 from app.config.database import Database
-from app.config.kimi import Kimi
 from app.config.log import Log
 from app.config.ollama import OLLAMA
 from app.config.openai import OpenAI
@@ -18,7 +17,7 @@ from app.config.qa_model import Models
 from app.config.server import Server
 from app.config.storage import Storage
 from app.config.test import Test
-from app.config.vectore_store import VectorStore
+from app.config.agent.agent import Agent
 
 
 class Polygon(BaseModel):
@@ -43,10 +42,9 @@ class Settings(BaseModel):
     cache: Cache
     task: CeleryConfig
     models: Models
-    vector_store: VectorStore
+    agent: Agent
     openai: OpenAI
     baidu_qianfan: BaiduQianfan
-    kimi: Kimi
     ollama: OLLAMA
     polygon: Polygon
     sentry: Sentry
@@ -67,12 +65,11 @@ settings = Settings(
     cache=Cache(**config['cache']),
     task=CeleryConfig(**config['task']),
     models=Models(**config['models']),
-    vector_store=VectorStore(**config['vector_store']),
+    agent=Agent(**config['agent']),
     log=Log(**config['log']),
     test=Test(**config['test']),
     openai=OpenAI(**config['openai']),
     baidu_qianfan=BaiduQianfan(**config['baidu_qianfan']),
-    kimi=Kimi(**config['kimi']),
     ollama=OLLAMA(**config['ollama']),
     polygon=Polygon(**config['polygon']),
     sentry=Sentry(**config['sentry']),

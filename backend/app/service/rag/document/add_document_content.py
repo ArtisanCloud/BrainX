@@ -50,6 +50,9 @@ async def add_document_content(
                 mode=data.rule_mode,
                 rules=rule,
             )
+            db.add(segment_rule)
+            await db.flush()
+            await db.refresh(segment_rule)
         else:
             # 如果易经存在了，则不需要更新segment_rule
             pass

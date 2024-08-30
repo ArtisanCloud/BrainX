@@ -1,13 +1,13 @@
 from typing import Any
 
-from app.core.ai_model.drivers.interface.model_provider import ModelProviderInterface
+from app.core.ai_model.drivers.interface.ai_model import AIModel
 
 
 class ModelInstance:
-    def __init__(self, model_provider: ModelProviderInterface, config: dict):
+    def __init__(self, model: AIModel, config: dict):
         # 初始化模型实例
 
-        self.model_provider = model_provider
+        self.model = model
 
     def run_inference(self, input_data: Any) -> Any:
         # 运行推理任务

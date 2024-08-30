@@ -1,17 +1,26 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple, Dict
+from typing import List, Optional, Tuple, Dict, Any
 
+from app.models.rag.document_node import DocumentNode
+
+
+class VectorStoreDriver(ABC):
+    @abstractmethod
+    def get_vector_store(self):
+        raise NotImplementedError
 
 class BaseVectorStore(ABC):
     @abstractmethod
-    def add_vectors(self, vectors: List[List[float]], document_ids: List[str],
-                    metadata: Optional[List[Dict]] = None) -> None:
+    def add_documents(self, nodes: List[DocumentNode], **kwargs: Any) -> List[str]:
         """
-        添加一组向量到存储中，与每个向量相关联的文档ID一起保存。
+        添加多个文档到向量存储中，并返回每个文档的唯一标识符列表。
 
-        :param vectors: 要添加的向量列表
-        :param document_ids: 与每个向量相关联的文档ID列表
-        :param metadata: 选填，相关联的元数据列表
+        参数:
+        - documents (List[DocumentNode]): 需要存储的文档列表。每个文档可以是文本、向量或其他数据类型，具体取决于实现。
+        - **kwargs (Any): 其他可选参数，用于配置或调整存储行为。具体参数根据实现不同可能有所变化。
+
+        返回:
+        - List[str]: 每个文档的唯一标识符列表，用于后续检索或管理。
         """
         pass
 

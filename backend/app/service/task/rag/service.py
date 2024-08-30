@@ -7,6 +7,7 @@ from requests import RequestException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app import settings
 from app.core.ai_model.model_manager import ModelManager
 from app.core.rag import FrameworkDriverType
 from app.core.rag.indexing.extractor.factory import DataExtractorFactory
@@ -39,7 +40,7 @@ class RagProcessorTaskService:
         if db is None:
             raise Exception("db session is None")
         self.db = db
-        self.model_manager = ModelManager()
+        self.model_manager = ModelManager(FrameworkDriverType(settings.agent.framework_driver))
         self.document_dao = DocumentDAO(self.db)
         self.document_segment_dao = DocumentSegmentDAO(self.db)
 
@@ -149,26 +150,29 @@ class RagProcessorTaskService:
         if not is_available:
             return exception
 
-        # create indexer
+        # create splitter
         splitter = TextSplitterFactory.get_splitter(FrameworkDriverType.LANGCHAIN)
+
+        # create embedding model instance
         embedding_model_instance, exception = self.model_manager.get_model_instance(
             self.db, self.document.tenant_uuid,
             self.dataset.embedding_model_provider,
             ModelType.TEXT_EMBEDDING
         )
+
         if exception is not None:
             return exception
 
+        # create indexer
         indexer = IndexingFactory.get_indexer(
-            FrameworkDriverType.LANGCHAIN,
+            FrameworkDriverType(settings.agent.framework_driver),
             splitter, embedding_model_instance,
             self.user, self.document,
         )
 
-        print(indexer)
-        return None
-
         # --------------- Step Load Resource URL into Memory
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
+                    f"loading resource UUID: {self.document.resource_uuid}, URL: {self.document.resource_url}")
         try:
             # save document indexing status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.PARSING)
@@ -190,6 +194,8 @@ class RagProcessorTaskService:
             return e
 
         # --------------- Step Extract Document text
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
+                    f"Step Extract Document text")
         try:
             # save document indexing status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.EXTRACTING)
@@ -208,6 +214,8 @@ class RagProcessorTaskService:
             return e
 
         # --------------- Step Cleaning nodes and Split into nodes
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
+                    f"Step Cleaning nodes and Split into nodes")
         try:
             # save document indexing status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.SPLITTING)
@@ -216,8 +224,8 @@ class RagProcessorTaskService:
             nodes = indexer.transform_documents([DocumentNode(
                 page_content=document_content,
                 metadata={
-                    "dataset_uuid": self.document.dataset_uuid,
-                    "document_uuid": self.document.uuid,
+                    "dataset_uuid": str(self.document.dataset_uuid),
+                    "document_uuid": str(self.document.uuid),
                 }
             )])
             # print("transformed nodes:", nodes)
@@ -229,6 +237,8 @@ class RagProcessorTaskService:
             return e
 
         # --------------- Step 4: Create Document Segments
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
+                    f"Create Document Segments, split nodes length: {len(nodes)}")
         try:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
 
@@ -245,6 +255,7 @@ class RagProcessorTaskService:
             return e
 
         # --------------- Step 5: Update Document with Indexing Information with status
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, Update Document with Indexing Information with status")
         try:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.INDEXING)
             # get embedding model_provider from current user setup

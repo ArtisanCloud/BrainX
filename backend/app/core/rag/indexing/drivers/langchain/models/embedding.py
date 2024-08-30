@@ -2,12 +2,12 @@ from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column, String, UUID
 from sqlalchemy.dialects.postgresql import JSONB
 
-from app.models.base import BaseModel
+from app.models.base import BaseORM
 
 table_name_langchain_pg_embedding = "langchain_pg_embedding"
 
 
-class LangchainPGEmbedding(BaseModel):
+class LangchainPGEmbedding(BaseORM):
     __tablename__ = table_name_langchain_pg_embedding
 
     # 表字段定义
@@ -18,8 +18,8 @@ class LangchainPGEmbedding(BaseModel):
     cmetadata = Column(JSONB, nullable=True)
 
     def __repr__(self):
-        return (f"<LangchainPGEmbedding(id='{self.id}',"
-                f" collection_id={self.collection_id}, "
+        return (f"<LangchainPGEmbedding(id='{self.id}', "
+                f"collection_id={self.collection_id}, "
                 f"embedding={self.embedding}, "
                 f"document='{self.document}', "
                 f"cmetadata={self.cmetadata})>")

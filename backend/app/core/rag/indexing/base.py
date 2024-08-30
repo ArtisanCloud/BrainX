@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Optional
 
+from app.core.rag.vector_store.interface import BaseVectorStore
 from app.models import DocumentSegment, User, Document
 from app.models.rag.document import DocumentStatus
 from app.models.rag.document_node import DocumentNode
@@ -16,7 +17,12 @@ class BaseIndexing(ABC):
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
         raise NotImplementedError
 
+    @abstractmethod
     def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Exception:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_vector_store(self) -> BaseVectorStore:
         raise NotImplementedError
 
     def create_document_segments(self, nodes: List[DocumentNode]) -> List[DocumentSegment]:

@@ -1,5 +1,6 @@
 from typing import Dict
 
+from app import settings
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.openai import OpenAIModelID
 from app.constant.ai_model.provider import ProviderID
@@ -11,7 +12,7 @@ from app.core.rag import FrameworkDriverType
 
 def test_load_provider_models(tmp_path, monkeypatch):
     # 调用 load_provider_models 方法
-    configurations: Dict[str: ProviderSchema] = ProviderManager(FrameworkDriverType.LANGCHAIN ).load_provider_models()
+    configurations: Dict[str: ProviderSchema] = ProviderManager(settings.agent.framework_driver ).load_provider_models()
 
     # 验证 configurations 是否正确加载
     assert configurations is not None

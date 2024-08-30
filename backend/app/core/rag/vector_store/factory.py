@@ -1,33 +1,44 @@
+from app import settings
 from app.core.rag import FrameworkDriverType
-from app.core.rag.vector_store.drivers.langchain.store import LangchainVectorStore
+from app.core.rag.vector_store.drivers.langchain.store import LangchainVectorStoreDriver
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
-from app.core.rag.vector_store.drivers.langchain.vdb.faiss.faiss import FaissVectorStoreDriver
-from app.core.rag.vector_store.drivers.langchain.vdb.pgvector.pgvector import PGVectorStoreDriver
-from app.core.rag.vector_store.drivers.llamaindex.store import LLamaIndexVectorStore
-from app.core.rag.vector_store.interface import BaseVectorStore
+from app.core.rag.vector_store.drivers.langchain.vdb.faiss.faiss import FaissVectorStore
+from app.core.rag.vector_store.drivers.langchain.vdb.pgvector.pgvector import PGVectorStore
+from app.core.rag.vector_store.drivers.llamaindex.store import LLamaIndexVectorStoreDriver
+from app.core.rag.vector_store.interface import BaseVectorStore, VectorStoreDriver
 
-class VectorStoreFactory:
+
+class VectorStoreDriverFactory:
     @classmethod
-    def create_vector_store(cls, framework_type: FrameworkDriverType, vdb_type: VectorStoreType) -> BaseVectorStore:
+    def create_vector_store_driver(
+            cls, framework_type: FrameworkDriverType, vdb_type: VectorStoreType,
+            collection_name: str = "embedding",
+            embedding_model: any = None,
+    ) -> VectorStoreDriver:
 
-        vdb_instance = VDBFactory.create_vector_store(vdb_type)
+        vdb = VDBFactory.create_vector_store(vdb_type, collection_name, embedding_model=embedding_model)
 
-        if framework_type.value == FrameworkDriverType.LANGCHAIN:
-            return LangchainVectorStore(vdb_instance)
+        if framework_type.value == FrameworkDriverType.LANGCHAIN.value:
+            return LangchainVectorStoreDriver(vdb)
 
-        elif framework_type.value == FrameworkDriverType.LLAMA_INDEX:
-            return LLamaIndexVectorStore(vdb_instance)
+        elif framework_type.value == FrameworkDriverType.LLAMA_INDEX.value:
+            return LLamaIndexVectorStoreDriver(vdb)
+
         else:
             raise ValueError(f"Unknown framework: {framework_type.value}")
 
 
 class VDBFactory:
     @classmethod
-    def create_vector_store(cls, vdb_type: VectorStoreType) -> BaseVectorStore:
+    def create_vector_store(
+            cls,
+            vdb_type: VectorStoreType,
+            collection_name: str = "embedding",
+            embedding_model: any = None,
+    ) -> BaseVectorStore:
 
         match vdb_type.value:
             case VectorStoreType.PGVECTOR.value:
-                return PGVectorStoreDriver("", "rag_embeddings")
+                return PGVectorStore(settings.agent.pgvector, collection_name, embedding_model=embedding_model)
             case VectorStoreType.FAISS.value:
-                return FaissVectorStoreDriver(1, None)
-
+                return FaissVectorStore(1, None)

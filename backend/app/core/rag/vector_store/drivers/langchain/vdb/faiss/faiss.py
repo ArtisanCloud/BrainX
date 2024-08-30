@@ -5,10 +5,10 @@ import numpy as np
 from app.core.rag.vector_store.interface import BaseVectorStore
 
 
-class FaissVectorStoreDriver(BaseVectorStore):
+class FaissVectorStore(BaseVectorStore):
     def __init__(self, dimension: int, index_path: Optional[str] = None):
         """
-        初始化 FaissVectorStoreDriver 实例。
+        初始化 FaissVectorStore 实例。
 
         :param dimension: 向量的维度
         :param index_path: 索引文件的路径（如果存在）

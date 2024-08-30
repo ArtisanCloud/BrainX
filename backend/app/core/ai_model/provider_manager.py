@@ -3,23 +3,24 @@ from typing import Dict, Optional, Tuple
 
 from sqlalchemy.orm import Session
 
+from app.constant.ai_model.provider import ProviderID
+from app.core.ai_model.drivers.interface.ai_model import AIModel
 from app.core.ai_model.drivers.langchain.driver import LangchainModelProviderDriver
-from app.core.ai_model.drivers.interface.model_provider import ModelProviderInterface
 from app.core.ai_model.schema.provider import ProviderSchema
 from app.core.ai_model.schema.provider_model import ProviderModelSchema
 from app.core.libs.file import get_project_path
 from app.core.libs.yaml import load_yaml_file
 from app.core.rag import FrameworkDriverType
 from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
-from app.models.model_provider.provider_model import ModelType
+from app.models.model_provider.provider_model import ModelType, ProviderModel
 
 _global_provider_cache: Dict[str, ProviderSchema] | None = None
 
 
 class ProviderManager:
     def __init__(self, framework_type: FrameworkDriverType):
-        self._initialize(framework_type)
         self.model_provider_driver = None
+        self._initialize(framework_type)
 
     def _initialize(self, framework_type: FrameworkDriverType):
         match framework_type.value:
@@ -28,18 +29,18 @@ class ProviderManager:
             case _:
                 raise Exception("Unsupported framework type for Provider Manager")
 
-    def get_model_provider(self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType) -> Tuple[
-        Optional[ModelProviderInterface], Optional[Exception]]:
+    def get_model(self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType) -> Tuple[
+        Optional[AIModel], Optional[Exception]]:
 
         # self.model_provider_driver
         _global_provider_cache[provider]
 
         return None, None
 
-    def get_default_model_provider(
+    def get_default_model(
             self, db: Session,
             tenant_uuid: str, model_type: ModelType
-    ) -> Tuple[Optional[ModelProviderInterface], Optional[Exception]]:
+    ) -> Tuple[Optional[AIModel], Optional[Exception]]:
         try:
             # 获取默认模型
             service_tenant_default_model = TenantDefaultModelDAO(db)
@@ -53,17 +54,18 @@ class ProviderManager:
             if default_model is None:
                 raise Exception("Cannot query the default_model")
 
-            model_provider, exception = self.model_provider_driver.convert_model_provider(
-                db, tenant_uuid,
-                default_model.provider_name, model_type)
-            if exception is not None:
-                return None, exception
+            model = (
+                self.model_provider_driver.
+                generate_provider_model(model_type, ProviderID(default_model.provider_name), default_model.name)
+            )
+            if not model:
+                return None, Exception("Cannot generate the provider model")
 
         except Exception as e:
             # 记录异常或打印日志（可选）
             return None, e
 
-        return model_provider, None
+        return model, None
 
     def load_provider_models(self) -> Dict[str, ProviderSchema]:
         """Gather all configuration files under the given base path."""
@@ -119,3 +121,7 @@ class ProviderManager:
         # print(_global_provider_cache)
 
         return provider_schemas
+
+    def convert_default_model_to_model(self, default_model: ProviderModel) -> Tuple[
+        Optional[AIModel], Optional[Exception]]:
+        return None, None

@@ -1,32 +1,44 @@
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Any
+
 from langchain_postgres.vectorstores import PGVector  # 从 langchain_postgres 导入 PostgreSQL 向量存储接口
 
+from app.core.rag.indexing.drivers.langchain.helper import convert_nodes_to_documents
 from app.core.rag.vector_store.interface import BaseVectorStore
+from app.config.agent.pgvector import PGVector as PGVectorConfig
+from app.models.rag.document_node import DocumentNode
 
 
-class PGVectorStoreDriver(BaseVectorStore):
-    def __init__(self, connection_string: str, table_name: str):
+class PGVectorStore(BaseVectorStore):
+    def __init__(
+            self,
+            config: PGVectorConfig, collection_name: str,
+            embedding_model: any
+    ):
         """
         初始化 PgVectorStoreDriver 实例。
 
         :param connection_string: PostgreSQL 数据库连接字符串
         :param table_name: 存储向量的表名
         """
-        self.connection_string = connection_string
-        self.table_name = table_name
-        self.store = PGVector(connection_string, table_name)
 
-    def add_vectors(self, vectors: List[List[float]], document_ids: List[str],
-                    metadata: Optional[List[Dict]] = None) -> None:
-        """
-        将向量添加到 PostgreSQL 向量存储中。
+        self.connection_string = config.url
+        self.collection_name = collection_name
+        self.store = PGVector(
+            embeddings=embedding_model,
+            connection=self.connection_string,
+            collection_name=collection_name,
+            use_jsonb=config.use_jsonb,
+        )
 
-        :param vectors: 向量列表
-        :param document_ids: 文档 ID 列表
-        :param metadata: 元数据列表（可选）
-        """
+    def add_documents(self, nodes: List[DocumentNode], **kwargs: Any) -> List[str]:
+        # convert nodes to documents
+        documents = convert_nodes_to_documents(nodes)
+        # print(documents)
         # 实现向量添加功能
-        self.store.add(vectors, document_ids, metadata)
+        return self.store.add_documents(
+            documents,
+            ids=[node.metadata["node_id"] for node in nodes],
+        )
 
     def search_vectors(self, query_vector: List[float], top_k: int) -> List[Tuple[str, float]]:
         """

@@ -24,15 +24,15 @@ openapi:
   secret_key: "YOUR_SECRET_KEY"
 
 database:
-  async_url: "postgresql+asyncpg://tenant:pass@127.0.0.1:54321/brain_x"
-  sync_url: "postgresql://tenant:pass@127.0.0.1:54321/brain_x"
+  async_url: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
+  sync_url: "postgresql://user:pass@127.0.0.1:54321/brain_x"
   table_name_vector_store: "embeddings"
   echo_log: False
 
 cache:
   redis:
     url: redis://mypassword@localhost:6379/0
-
+    use_jsonb: True
 task:
   celery_broker_url: "redis://localhost:6379/0"
   celery_result_backend: "redis://localhost:6379/0"
@@ -49,9 +49,11 @@ models:
   visual_search_model_name: "clip-ViT-L-14"
   visual_query_model_name: "dandelin/vilt-b32-finetuned-vqa"
 
-vector_store:
-  frame_driver: langchain
+agent:
+  framework_driver: langchain
   vdb: pgvector
+  pgvector:
+    url: "postgresql://user:pass@127.0.0.1:54321/brain_x"
 
 log:
   path: logs
@@ -74,12 +76,6 @@ openai:
 baidu_qianfan:
   api_key: "YOUR_API_KEY"
   secret_key: "YOUR_SECRET_KEY"
-  request_timeout: 30
-
-kimi:
-  llm_name: "moonshot-v1-8k"
-  api_key: "YOUR_API_KEY"
-  api_base: "https://api.moonshot.cn/v1"
   request_timeout: 30
 
 ollama:

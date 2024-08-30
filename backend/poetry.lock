@@ -2167,6 +2167,24 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
 typing-extensions = ">=4.7"
 
 [[package]]
+name = "langchain-huggingface"
+version = "0.0.3"
+description = "An integration package connecting Hugging Face and LangChain"
+optional = false
+python-versions = "<4.0,>=3.8.1"
+files = [
+    {file = "langchain_huggingface-0.0.3-py3-none-any.whl", hash = "sha256:d6827adf3c7c8fcc0bca8c43c7e900c3bf68af9a1532a83d4b8ace137e02887e"},
+    {file = "langchain_huggingface-0.0.3.tar.gz", hash = "sha256:0637acf484c47323cf3dcc46745a93467f6955989af9b7c01e2382fe1b630aaf"},
+]
+
+[package.dependencies]
+huggingface-hub = ">=0.23.0"
+langchain-core = ">=0.1.52,<0.3"
+sentence-transformers = ">=2.6.0"
+tokenizers = ">=0.19.1"
+transformers = ">=4.39.0"
+
+[[package]]
 name = "langchain-openai"
 version = "0.1.7"
 description = "An integration package connecting OpenAI and LangChain"
@@ -5996,4 +6014,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "a49d62e01b1c19162b70b5fb8e8def894b7518a6a63b34e4006a97d944bf0f84"
+content-hash = "dde18aa2a3c386590d7b1661b16a0c238f7e3222cb313f7bbfa1fb5e12f9e364"

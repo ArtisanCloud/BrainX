@@ -12,13 +12,13 @@ from ...ai_model.model_instance import ModelInstance
 class IndexingFactory:
     @staticmethod
     def get_indexer(
-            indexer_type: FrameworkDriverType,
+            framework_type: FrameworkDriverType,
             splitter: BaseTextSplitter,
             embedding_model_instance: ModelInstance,
             user: Optional[User] = None,
             document: Optional[Document] = None,
     ) -> BaseIndexing:
-        match indexer_type.value:
+        match framework_type.value:
             # LLamaIndex are supported
             case FrameworkDriverType.LLAMA_INDEX.value:
                 return LLamaIndexIndexer(
@@ -37,4 +37,4 @@ class IndexingFactory:
 
             # Other types are not supported
             case _:
-                raise ValueError(f"Unknown indexer type: {indexer_type}")
+                raise ValueError(f"Unknown indexer type: {framework_type}")

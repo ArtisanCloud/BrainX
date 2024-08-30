@@ -46,7 +46,7 @@ def upgrade() -> None:
 
         sa.Column('batch', sa.String(), nullable=True),
         sa.Column('dataset_process_rule_uuid', UUID(as_uuid=True),
-                  sa.ForeignKey(table_name_dataset_segment_rule + '.uuid'), nullable=True),
+                  sa.ForeignKey(table_name_dataset_segment_rule + '.uuid'), nullable=False),
 
         sa.Column('created_source', sa.String(), nullable=True),
         sa.Column('created_user_by', UUID(as_uuid=True), sa.ForeignKey(table_name_user + '.uuid'), nullable=False,
