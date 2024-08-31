@@ -64,6 +64,7 @@ langchain-huggingface = "^0.0.3"
 langchain-unstructured = "^0.1.2"
 markdown = "^3.7"
 unstructured = {extras = ["docx"], version = "^0.15.9"}
+openpyxl = "^3.1.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"

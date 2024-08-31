@@ -31,19 +31,19 @@ async def test_set_indexing_status(db: AsyncSession):
     await db.flush()
 
     # 设置状态
-    document, error = await dao.set_indexing_status(doc, DocumentIndexingStatus.PARSING, user=user)
+    document, error = await dao.async_set_indexing_status(doc, DocumentIndexingStatus.PARSING, user=user)
 
     assert document is not None
     assert error is None
-    assert document.status == DocumentIndexingStatus.PARSING
+    assert document.indexing_status == DocumentIndexingStatus.PARSING.value
     assert document.parse_start_at is not None
     assert document.updated_user_by == user_uuid
 
     # 设置错误状态
-    document, error = await dao.set_indexing_status(doc, DocumentIndexingStatus.ERROR, error="Test error")
+    document, error = await dao.async_set_indexing_status(doc, DocumentIndexingStatus.ERROR, error="Test error")
 
     assert document is not None
     assert error is None
-    assert document.status == DocumentIndexingStatus.ERROR
+    assert document.indexing_status == DocumentIndexingStatus.ERROR.value
     assert document.error_message == "Test error"
     assert document.error_at is not None
