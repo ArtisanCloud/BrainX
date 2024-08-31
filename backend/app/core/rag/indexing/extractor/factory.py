@@ -5,6 +5,8 @@ from app.utils.media import ContentType
 from app.core.rag.indexing.extractor.drivers.word_doc.doc import DocDataExtractor
 from app.core.rag.indexing.extractor.drivers.pdf.pdf import PDFDataExtractor
 from .base import BaseDataExtractor
+from .drivers.excel.excel import ExcelDataExtractor
+from .drivers.markdown.markdown import MarkdownDataExtractor
 
 
 class DataExtractorFactory:
@@ -20,10 +22,10 @@ class DataExtractorFactory:
             case (ContentType.DOC.value | ContentType.DOCX.value):
                 return DocDataExtractor(file_input)
             # Excel files are supported
-            case(ContentType.DOC.value | ContentType.DOCX.value):
+            case(ContentType.XLS.value | ContentType.XLSX.value):
                 return ExcelDataExtractor(file_input)
             # MD files are supported
-            case(ContentType.DOC.value | ContentType.DOCX.value):
+            case(ContentType.MARKDOWN.value):
                 return MarkdownDataExtractor(file_input)
             # Other file types are not supported
             case _:

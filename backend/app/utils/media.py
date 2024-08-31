@@ -14,7 +14,9 @@ class ContentType(Enum):
     PDF = 'application/pdf'
     DOC = 'application/msword'
     DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    # TXT 和 MD 文件没有特定的魔术字节，无法通过魔术字节检测
+    XLS = 'application/vnd.ms-excel'  # Excel xls 文件格式
+    XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'  # Excel xlsx 文件格式
+    MARKDOWN = 'text/markdown'  # Markdown 文件格式
 
 
 # 常见文件类型的魔术字节

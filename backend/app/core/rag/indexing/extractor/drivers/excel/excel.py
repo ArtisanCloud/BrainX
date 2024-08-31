@@ -4,17 +4,17 @@ from io import BytesIO
 from typing import Union, List
 
 import requests
-from langchain_community.document_loaders import UnstructuredWordDocumentLoader
+from langchain_community.document_loaders import UnstructuredExcelLoader
 
 from app.core.rag.indexing.extractor.base import BaseDataExtractor, Block, BlockType
 
 
-class DocDataExtractor(BaseDataExtractor):
-    def __init__(self, file_input: Union[str, BytesIO], mode: str = "paged"):
+class ExcelDataExtractor(BaseDataExtractor):
+
+    def __init__(self, file_input: Union[str, BytesIO]):
         self.file_input = file_input
         self.loader = None
         self.doc = None
-        self.mode = mode
 
     def load(self):
         """Initialize the document based on the input."""
@@ -24,7 +24,7 @@ class DocDataExtractor(BaseDataExtractor):
                 with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                     tmp_file.write(self.file_input.getvalue())
                     tmp_file_path = tmp_file.name
-                self.loader = UnstructuredWordDocumentLoader(tmp_file_path, mode=self.mode)
+                self.loader = UnstructuredExcelLoader(tmp_file_path)
             except Exception as e:
                 raise RuntimeError(f"Failed to open the document from BytesIO: {e}")
 
@@ -37,7 +37,7 @@ class DocDataExtractor(BaseDataExtractor):
                     with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                         tmp_file.write(response.content)
                         tmp_file_path = tmp_file.name
-                    self.loader = UnstructuredWordDocumentLoader(tmp_file_path, mode=self.mode)
+                    self.loader = UnstructuredExcelLoader(tmp_file_path)
                 except requests.RequestException as e:
                     raise RuntimeError(f"Failed to download the document: {e}")
                 except Exception as e:
@@ -46,7 +46,7 @@ class DocDataExtractor(BaseDataExtractor):
             else:
                 # 如果输入是文件路径，直接加载 Doc
                 try:
-                    self.loader = UnstructuredWordDocumentLoader(self.file_input, mode=self.mode)
+                    self.loader = UnstructuredExcelLoader(self.file_input)
                 except Exception as e:
                     raise RuntimeError(f"Failed to open the Doc file: {e}")
         else:
@@ -60,20 +60,18 @@ class DocDataExtractor(BaseDataExtractor):
         if not self.loader:
             self.load()
 
+        blocks = []
+        text_content = ""
         try:
 
             self.doc = self.loader.load()
-            # print(len(self.doc))
-            for index, page in enumerate(self.doc):
+            print(len(self.doc))
+            for sheet in self.doc:
                 blocks.append(Block(
                     block_id=str(uuid.uuid4()),
                     type=BlockType.TEXT.value,
-                    text=page.page_content,
-                    page_number=index,
+                    text=sheet.page_content,
                 ))
-        except Exception as e:
-            raise ValueError(f"Error extracting Doc data: {e}")
-
         finally:
             # Ensure the document object is closed
             pass

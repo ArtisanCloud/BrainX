@@ -19,8 +19,8 @@ class Block(BaseSchema):
     text: str = ""  # 默认值为空字符串
     image: Optional[Any] = None
     table: Optional[Any] = None
-    rect: list
-    page_number: int
+    rect: list = ()
+    page_number: int = 0
 
 
 class BaseDataExtractor(ABC):
