@@ -151,7 +151,7 @@ class RagProcessorTaskService:
             return exception
 
         # create splitter
-        splitter = TextSplitterFactory.get_splitter(FrameworkDriverType.LANGCHAIN)
+        splitter = TextSplitterFactory.get_splitter(FrameworkDriverType(settings.agent.framework_driver))
 
         # create embedding model instance
         embedding_model_instance, exception = self.model_manager.get_model_instance(

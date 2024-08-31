@@ -2,7 +2,7 @@ from io import BytesIO
 from typing import Union
 
 from app.utils.media import ContentType
-from .drivers.doc import DocDataExtractor
+from app.core.rag.indexing.extractor.drivers.word_doc.doc import DocDataExtractor
 from app.core.rag.indexing.extractor.drivers.pdf.pdf import PDFDataExtractor
 from .base import BaseDataExtractor
 
@@ -19,6 +19,12 @@ class DataExtractorFactory:
             # Doc files are supported
             case (ContentType.DOC.value | ContentType.DOCX.value):
                 return DocDataExtractor(file_input)
+            # Excel files are supported
+            case(ContentType.DOC.value | ContentType.DOCX.value):
+                return ExcelDataExtractor(file_input)
+            # MD files are supported
+            case(ContentType.DOC.value | ContentType.DOCX.value):
+                return MarkdownDataExtractor(file_input)
             # Other file types are not supported
             case _:
                 raise ValueError(f"Unknown extractor type: {extractor_type}")

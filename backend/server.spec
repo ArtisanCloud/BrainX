@@ -5,8 +5,8 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-    # ("nltk_data/stopwords","./llama_index/core/_static/nltk_cache/stopwords"),
-    # ("nltk_data/punkt","./llama_index/core/_static/nltk_cache/punkt")
+    # ("docker_dependency_supplement/stopwords","./llama_index/core/_static/nltk_cache/stopwords"),
+    # ("docker_dependency_supplement/punkt","./llama_index/core/_static/nltk_cache/punkt")
     ],
     hiddenimports=[
     'asyncpg.pgproto.pgproto',

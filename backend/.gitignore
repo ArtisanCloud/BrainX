@@ -6,8 +6,8 @@ logs
 test.db
 alembic.ini
 
-nltk_data/*
-!nltk_data/
+docker_dependency_supplement/*
+!docker_dependency_supplement/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
