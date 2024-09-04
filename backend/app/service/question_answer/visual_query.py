@@ -1,6 +1,6 @@
 import base64
 
-from app.core.brain.index import get_visual_query_embedding_model
+from app.core.brain.base import get_visual_query_embedding_model
 from app.schemas.question_answer.visual_query import ResponseVisualQuery
 
 from PIL import Image

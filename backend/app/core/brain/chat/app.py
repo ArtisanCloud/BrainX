@@ -6,7 +6,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from llama_index.core import Document
 from pydantic import BaseModel, Field
 
-from app.core.brain.index import LLMModel
+from app.core.brain.base import LLMModel
 from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 

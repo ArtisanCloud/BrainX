@@ -4,10 +4,6 @@ from typing import List
 import re
 import uuid
 
-from playground.rag.extractor.drivers.pdf.lib import Block, BlockType
-from playground.rag.model.document_node import DocumentNode
-from playground.rag.model.document_segment import DocumentSegment
-
 
 class TextSplitter:
     def __init__(self, max_length: int = 800, overlap: int = 50):

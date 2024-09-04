@@ -11,7 +11,7 @@ from llama_index.core import VectorStoreIndex, get_response_synthesizer
 from llama_index.core.indices.vector_store import VectorIndexRetriever
 
 from app.core.brain.chat.app import get_chat_prompt_template
-from app.core.brain.index import LLMModel
+from app.core.brain.base import LLMModel
 from app.core.brain.indexing.engine import generate_storage_context, get_service_context
 from app.core.brain.indexing.pg_vector import get_vector_store_singleton
 from app.core.brain.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm

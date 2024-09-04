@@ -11,7 +11,7 @@ from app.schemas.question_answer.visual_search import RequestVisualSearch, \
     ResponseVisualSearch
 from app.service.question_answer.visual_search import visual_search
 from app.utils.media import image_base64_to_embed
-from app.core.brain.index import get_visual_search_embedding_model
+from app.core.brain.base import get_visual_search_embedding_model
 
 router = APIRouter()
 

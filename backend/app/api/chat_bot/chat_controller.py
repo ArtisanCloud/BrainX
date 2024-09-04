@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware.auth import get_session_user
-from app.core.brain.index import LLMModel
+from app.core.brain.base import LLMModel
 from app.database.deps import get_async_db_session
 from app.database.seed.user import init_user_uuid
 from app.logger import logger
