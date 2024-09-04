@@ -67,11 +67,17 @@ unstructured = {extras = ["docx"], version = "^0.15.9"}
 openpyxl = "^3.1.5"
 langgraph = "^0.2.16"
 
+# custom
+# add your own custoized project dependency here
+
+
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"
 aiosqlite = "^0.20.0"
 pytest-asyncio = "^0.24.0"
 
+# custom
+# add your own custoized project dev dependency here
 
 [build-system]
 requires = ["poetry-core"]
