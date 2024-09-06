@@ -18,6 +18,8 @@ __all__ = [
     'App',
     'AppModelConfig',
     'MediaResource',
+
+    # rag
     'Provider',
     'ProviderModel',
     'Dataset',
@@ -26,5 +28,8 @@ __all__ = [
     'DocumentSegment',
     'Conversation',
     'Message',
+
+    # openplatform
+    'Platform',
 
 ]

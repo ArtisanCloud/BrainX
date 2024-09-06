@@ -19,7 +19,7 @@ router = APIRouter()
 @router.post("/hello-world")
 async def api_hello_world() -> ResponseSchema:
     data = ResponseSchema(
-        message="hello world for openapi"
+        message="hello world for openapi_provider"
     )
 
     return data

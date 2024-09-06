@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Depends
 
-from app.openapi.demo import demo_controller
-from app.openapi.middleware.auth import auth_openapi_access_key
+from app.openapi.api import auth_controller
+from app.openapi.api.demo import demo_controller
+from app.openapi.middleware.auth import auth_platform_token
 
-openapi_router = APIRouter(
-    dependencies=[Depends(auth_openapi_access_key)],
-)
+openapi_router = APIRouter()
 
-openapi_router.include_router(demo_controller.router, prefix="/demo", tags=["demo"])
+# auth
+openapi_router.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
+
+# demo
+openapi_router.include_router(demo_controller.router,
+                              dependencies=[Depends(auth_platform_token)],
+                              prefix="/demo", tags=["demo"])

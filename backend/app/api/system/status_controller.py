@@ -12,7 +12,7 @@ async def server_status():
         "version": settings.server.version,
         "WorkerCount": settings.server.worker_count,
         "OllamaUrl": settings.ollama.url,
-        # "auth": WEBUI_AUTH,
+        # "api_auth": WEBUI_AUTH,
         # "default_models": app.state.DEFAULT_MODELS,
         # "default_prompt_suggestions": app.state.DEFAULT_PROMPT_SUGGESTIONS,
     }

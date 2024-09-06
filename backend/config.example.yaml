@@ -16,12 +16,20 @@ jwt:
 
 api:
   api_prefix: "/api"
-  openapi_prefix: "/openapi"
+  openapi_prefix: "/openapi_provider"
   request_timeout: 60
 
 openapi:
-  access_key: "YOUR_ACCESS_KEY"
-  secret_key: "YOUR_SECRET_KEY"
+  Platforms:
+    # 访问BrainX OpenAPI的restful 配置
+    access_key: "key_brain_x"
+    secret_key: "987654321"
+
+  providers:
+    # 访问PowerX OpenAPI的restful 配置
+    - power_x:
+        base_url: "http://127.0.0.1:8888/openapi/v1"
+        secret_key: 'xxxxxxxxxxxx'
 
 database:
   async_url: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"

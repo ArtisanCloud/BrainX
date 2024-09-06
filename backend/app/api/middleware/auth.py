@@ -60,6 +60,6 @@ def auth_user_token(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    # print("auth token user_uuid:", user_uuid)
+    # print("api_auth token user_uuid:", user_uuid)
     request.session[auth_user_uuid_key] = user_uuid
     # print("set current context user uuid from token")
