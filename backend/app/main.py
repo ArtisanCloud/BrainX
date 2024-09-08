@@ -4,6 +4,7 @@ from typing import cast
 from starlette.staticfiles import StaticFiles
 
 from app import default_local_storage_path
+from app.cache.factory import CacheFactory
 from app.logger import logger
 
 from fastapi import FastAPI
@@ -81,12 +82,12 @@ async def lifespan(app: FastAPI):
     vector_store = cast(CustomPGVectorStore, vector_store)
     await vector_store.run_setup()
 
-    # try:
-    #     # Some setup is required to initialize the llama-indexing sentence splitter
-    #     split_by_sentence_tokenizer()
-    # except FileExistsError:
-    #     # Sometimes seen in deployments, should be benign.
-    #     logger.info("Tried to re-download NLTK files but already exists.")
+    # setup cache resource
+    CacheFactory.initialize_cache(
+        cache_type=settings.cache.driver,
+        redis_url=settings.cache.redis.url
+    )
+    await CacheFactory.get_cache().connect()
 
     # start the scheduler for jobs
     scheduler = Scheduler()
@@ -95,8 +96,13 @@ async def lifespan(app: FastAPI):
         scheduler.start()
 
     yield
+
     # This section is run on app shutdown
     await vector_store.close()
+
+    # release cache resource
+    await CacheFactory.get_cache().disconnect()
+
     # shut down the scheduler
     if settings.schedule.enable:
         scheduler.shutdown()

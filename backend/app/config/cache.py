@@ -6,4 +6,5 @@ class Redis(BaseModel):
 
 
 class Cache(BaseModel):
+    driver: str = "redis"
     redis: Redis

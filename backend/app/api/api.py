@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from starlette.staticfiles import StaticFiles
 
 from app.api.auth import auth_controller
+from app.api.cache import cache_controller
 from app.api.conversation import conversation_controller, message_controller
 from app.api.middleware.auth import auth_user_token, get_session_user
 from app.api.rag import dataset_controller, document_controller, document_segment_controller
@@ -23,6 +24,10 @@ api_router = APIRouter()
 # system
 api_router.include_router(status_controller.router, prefix="/system", tags=["system"])
 api_router.include_router(test_controller.router, prefix="/system", tags=["tests"])
+
+# cache
+api_router.include_router(cache_controller.router, prefix="/cache", tags=["cache"])
+
 
 # auth
 api_router.include_router(auth_controller.router,
