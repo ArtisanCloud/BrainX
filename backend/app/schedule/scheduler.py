@@ -25,7 +25,8 @@ class Scheduler:
         # 启动测试任务执行
         # self.scheduler.add_job(echo_task, IntervalTrigger(seconds=10))
         # self.scheduler.add_job(TaskService.run_30_seconds_task, IntervalTrigger(seconds=10))
-        self.scheduler.add_job(run_task, IntervalTrigger(seconds=10))
+        # self.scheduler.add_job(run_task, IntervalTrigger(seconds=10))
 
         # 添加和配置项目任务
+        pass
 
