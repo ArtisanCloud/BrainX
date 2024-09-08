@@ -69,6 +69,7 @@ langgraph = "^0.2.16"
 
 # custom
 # add your own custoized project dependency here
+apscheduler = "^3.10.4"
 
 
 [tool.poetry.dev-dependencies]

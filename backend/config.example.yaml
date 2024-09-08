@@ -41,7 +41,23 @@ cache:
   redis:
     url: redis://mypassword@localhost:6379/0
     use_jsonb: True
+
+schedule:
+  driver: apscheduler
+  job_stores:
+    default:
+      type: sqlalchemy
+      url: postgresql+psycopg2://username:password@localhost/dbname
+  executors:
+    default:
+      type: threadpool
+      max_workers: 10
+  job_defaults:
+    coalesce: false
+    max_instances: 3
+
 task:
+  queue: rag_queue
   celery_broker_url: "redis://localhost:6379/0"
   celery_result_backend: "redis://localhost:6379/0"
   broker_use_ssl: False

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app import settings
+from app.logger import logger
 from app.service.task.celery_app import celery_app
 from celery.result import AsyncResult
 
@@ -13,8 +14,8 @@ router = APIRouter()
 async def run_30_seconds_task():
     if settings.server.environment == 'production':
         return
-
-    task = TaskService.run_30_seconds_task.apply_async()
+    print(settings.task.queue)
+    task = TaskService.run_30_seconds_task.apply_async(queue=settings.task.queue)
     return {"task_id": task.id}
 
 
@@ -41,6 +42,18 @@ async def get_task_status(task_id: str):
 
 @router.post("/run_connect_db")
 async def api_run_connect_db():
-    # task = TaskService.run_with_connect_db.apply_async()
-    task = run_manual_connect_db.apply_async()
+    # task = TaskService.run_with_connect_db.apply_async(queue=settings.task.queue)
+    task = run_manual_connect_db.apply_async(queue=settings.task.queue)
+    return {"task_id": task.id}
+
+
+@router.get("/echo_task")
+async def echo_task():
+    task = "Task executed"
+    logger.info(task)
+    return {task: task}
+
+@router.get("/run_task")
+async def run_task():
+    task = TaskService.run_task.apply_async(queue=settings.task.queue)
     return {"task_id": task.id}

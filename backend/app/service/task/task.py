@@ -44,6 +44,10 @@ class TaskService:
         pass
 
     @celery_app.task(bind=True)
+    def run_task(self, *args, **kwargs):
+        logger.info(f"run task done")
+
+    @celery_app.task(bind=True)
     def run_30_seconds_task(self, *args, **kwargs):
         # 使用类实例调用任务
         # print("task _30_seconds_task:", self, args, kwargs)

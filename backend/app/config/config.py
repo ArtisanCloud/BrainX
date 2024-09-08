@@ -14,6 +14,7 @@ from app.config.ollama import OLLAMA
 from app.config.openai import OpenAI
 from app.config.openapi import OpenAPI
 from app.config.qa_model import Models
+from app.config.schedule import Schedule
 from app.config.server import Server
 from app.config.storage import Storage
 from app.config.test import Test
@@ -40,6 +41,7 @@ class Settings(BaseModel):
     test: Test
     database: Database
     cache: Cache
+    schedule: Schedule
     task: CeleryConfig
     models: Models
     agent: Agent
@@ -63,6 +65,7 @@ settings = Settings(
     openapi=OpenAPI(**config['openapi']),
     database=Database(**config['database']),
     cache=Cache(**config['cache']),
+    schedule=Schedule(**config['schedule']),
     task=CeleryConfig(**config['task']),
     models=Models(**config['models']),
     agent=Agent(**config['agent']),

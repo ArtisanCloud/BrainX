@@ -4,6 +4,7 @@ import uuid
 from celery import group
 from sqlalchemy.exc import SQLAlchemyError
 
+from app import settings
 from app.database.base import MAX_PER_PAGE, PAGE, PER_PAGE
 from app.logger import logger
 
@@ -34,7 +35,7 @@ from app.service.task.rag.task import task_process_document
 
 router = APIRouter()
 
-rag_queue = 'rag_queue'
+rag_queue = settings.task.queue
 
 
 @router.get("/list")

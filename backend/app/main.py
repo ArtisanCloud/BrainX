@@ -23,6 +23,7 @@ from contextlib import asynccontextmanager
 
 from app.core.brain.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
+from app.schedule.scheduler import Scheduler
 from server import start
 
 
@@ -86,9 +87,19 @@ async def lifespan(app: FastAPI):
     # except FileExistsError:
     #     # Sometimes seen in deployments, should be benign.
     #     logger.info("Tried to re-download NLTK files but already exists.")
+
+    # start the scheduler for jobs
+    scheduler = Scheduler()
+    if settings.schedule.enable:
+        scheduler.init_scheduler()
+        scheduler.start()
+
     yield
     # This section is run on app shutdown
     await vector_store.close()
+    # shut down the scheduler
+    if settings.schedule.enable:
+        scheduler.shutdown()
 
 
 app = FastAPI(
@@ -129,6 +140,8 @@ app.add_middleware(
 
 app.include_router(api_router, prefix=settings.api.api_prefix)
 app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
+
+
 
 if __name__ == '__main__':
     start()

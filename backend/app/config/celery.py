@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
-
 class CeleryConfig(BaseModel):
     celery_broker_url: str = "redis://localhost:6379/0"
     celery_result_backend: str = "redis://localhost:6379/0"
+    queue: str = "rag_queue"
     broker_use_ssl: bool = False
     ssl_cert_reqs: str = None
     ssl_ca_certs: str = None
@@ -16,3 +16,4 @@ class CeleryConfig(BaseModel):
     worker_concurrency: int = 4  # 并发 worker 数量
     worker_prefetch_multiplier: int = 1  # 每个 worker 同时处理的任务数量
     task_acks_on_failure_or_timeout: bool = True
+
