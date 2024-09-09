@@ -45,6 +45,10 @@ class CacheInterface(ABC):
         pass
 
     @abstractmethod
+    async def is_locked(self, lock_key: str) -> bool:
+        pass
+
+    @abstractmethod
     def release_lock(self, lock_key: str):
         """释放分布式锁"""
         pass
@@ -88,6 +92,10 @@ class CacheInterface(ABC):
     @abstractmethod
     async def a_acquire_lock(self, lock_key: str, timeout: int = 10) -> bool:
         """异步尝试获取一个分布式锁"""
+
+    @abstractmethod
+    async def a_is_locked(self, lock_key: str) -> bool:
+        pass
 
     @abstractmethod
     async def a_release_lock(self, lock_key: str):
