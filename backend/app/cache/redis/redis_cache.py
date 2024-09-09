@@ -116,7 +116,7 @@ class RedisCache(CacheInterface):
     async def a_acquire_lock(self, lock_key: str, timeout: int = 10) -> bool:
         """尝试获取一个分布式锁"""
         if self.a_redis:
-            return await self.a_redis.setnx(lock_key, "1", ex=timeout)
+            return await self.a_redis.setnx(lock_key, "True")
         return False
 
     async def a_is_locked(self, lock_key: str) -> bool:
