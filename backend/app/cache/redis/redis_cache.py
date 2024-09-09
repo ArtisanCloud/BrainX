@@ -1,3 +1,6 @@
+import json
+
+from pydantic import BaseModel
 from redis import asyncio as aioredis
 from redis import StrictRedis
 from typing import Any, Optional
@@ -24,6 +27,12 @@ class RedisCache(CacheInterface):
     def set(self, key: str, value: Any, expire: Optional[int] = None):
         """设置缓存，支持设置过期时间（秒）"""
         if self.redis:
+            if isinstance(value, BaseModel):
+                # 如果 value 是 Pydantic 模型，将其序列化为 JSON 字符串
+                value = value.json()
+            elif not isinstance(value, (str, bytes, int, float)):
+                # 如果不是原生类型，也不是 Pydantic 模型，尝试将其转换为 JSON 字符串
+                value = json.dumps(value)
             self.redis.set(key, value, ex=expire)
 
     def get(self, key: str) -> Optional[Any]:
@@ -87,6 +96,12 @@ class RedisCache(CacheInterface):
     async def a_set(self, key: str, value: Any, expire: Optional[int] = None):
         """设置缓存，支持设置过期时间（秒）"""
         if self.a_redis:
+            if isinstance(value, BaseModel):
+                # 如果 value 是 Pydantic 模型，将其序列化为 JSON 字符串
+                value = value.json()
+            elif not isinstance(value, (str, bytes, int, float)):
+                # 如果不是原生类型，也不是 Pydantic 模型，尝试将其转换为 JSON 字符串
+                value = json.dumps(value)
             await self.a_redis.set(key, value, ex=expire)
 
     async def a_get(self, key: str) -> Optional[Any]:

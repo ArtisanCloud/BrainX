@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.cache.factory import CacheFactory
+from app.schemas.base import BaseSchema
 
 router = APIRouter()
 
@@ -9,16 +10,16 @@ router = APIRouter()
 def api_remember():
     def return_version():
         print("returned no cached version")
-        return "1.0.0"
+        return BaseSchema(
+            version="0.1.0"
+        )
 
     cache = CacheFactory.get_cache()
     cache.connect()
 
     version = cache.remember("brain_x_version", 3600, func=return_version)
 
-    return {
-        "version": version
-    }
+    return version
 
 
 @router.get("/set")
