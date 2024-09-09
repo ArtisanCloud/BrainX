@@ -50,3 +50,34 @@ async def api_a_set():
         "key": key,
         "value": value,
     }
+
+
+@router.get("/lock")
+def api_lock():
+    cache = CacheFactory.get_cache()
+    cache.connect()
+
+    key = "_lock"
+    if cache.is_locked(key):
+        return {
+            "status": "is_locked"
+        }
+    locked = cache.acquire_lock(key)
+    print("locked:", locked)
+
+    return {
+        "status": "locked",
+    }
+
+
+@router.get("/unlock")
+def api_unlock():
+    cache = CacheFactory.get_cache()
+    cache.connect()
+
+    key = "_lock"
+    cache.release_lock(key)
+
+    return {
+        "unlocked": key,
+    }

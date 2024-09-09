@@ -2,14 +2,16 @@ from redis import asyncio as aioredis
 from redis import StrictRedis
 from typing import Any, Optional
 
+from redis.asyncio import Redis
+
 from app.cache.interface import CacheInterface
 
 
 class RedisCache(CacheInterface):
-    def __init__(self, redis_url: str):
+    def __init__(self, redis_url: str, **kwargs):
         self.redis_url = redis_url
-        self.a_redis = None
-        self.redis = None
+        self.a_redis: Optional[Redis] = None
+        self.redis: Optional[StrictRedis] = None
 
     def connect(self):
         if self.redis is None:
@@ -51,7 +53,12 @@ class RedisCache(CacheInterface):
     def acquire_lock(self, lock_key: str, timeout: int = 10) -> bool:
         """尝试获取一个分布式锁"""
         if self.redis:
-            return self.redis.setnx(lock_key, "1", ex=timeout)
+            return self.redis.setnx(lock_key, "True")
+
+    def is_locked(self, lock_key: str) -> bool:
+        if self.redis:
+            return self.get(lock_key)
+        return False
 
     def release_lock(self, lock_key: str):
         """释放分布式锁"""
@@ -110,6 +117,12 @@ class RedisCache(CacheInterface):
         """尝试获取一个分布式锁"""
         if self.a_redis:
             return await self.a_redis.setnx(lock_key, "1", ex=timeout)
+        return False
+
+    async def a_is_locked(self, lock_key: str) -> bool:
+        if self.a_redis:
+            return await self.a_get(lock_key)
+        return False
 
     async def a_release_lock(self, lock_key: str):
         """释放分布式锁"""

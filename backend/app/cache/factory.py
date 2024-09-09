@@ -1,5 +1,6 @@
 from typing import Optional
 
+from app import settings
 from app.cache.interface import CacheInterface
 from app.cache.redis.redis_cache import RedisCache
 
@@ -10,7 +11,7 @@ class CacheFactory:
     @staticmethod
     def create_cache(cache_type: str, **kwargs) -> CacheInterface:
         if cache_type == "redis":
-            return RedisCache(**kwargs)
+            return RedisCache(redis_url=settings.cache.redis.url, kwargs=kwargs)
         # 可以扩展其他缓存实现
         # elif cache_type == "memcached":
         #     return MemcachedCache(**kwargs)
