@@ -35,7 +35,7 @@ from app.service.task.rag.task import task_process_document
 
 router = APIRouter()
 
-rag_queue = settings.task.queue.get("rag_queue")
+rag_queue = settings.task.queue.get("rag_queue", "rag_queue")
 
 
 @router.get("/list")

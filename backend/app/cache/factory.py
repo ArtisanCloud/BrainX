@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.cache.interface import CacheInterface
-from app.cache.redis.cache import RedisCache
+from app.cache.redis.redis_cache import RedisCache
 
 
 class CacheFactory:

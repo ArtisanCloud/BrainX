@@ -87,7 +87,8 @@ async def lifespan(app: FastAPI):
         cache_type=settings.cache.driver,
         redis_url=settings.cache.redis.url
     )
-    await CacheFactory.get_cache().connect()
+
+    await CacheFactory.get_cache().async_connect()
 
     # start the scheduler for jobs
     scheduler = Scheduler()
@@ -101,7 +102,7 @@ async def lifespan(app: FastAPI):
     await vector_store.close()
 
     # release cache resource
-    await CacheFactory.get_cache().disconnect()
+    await CacheFactory.get_cache().async_disconnect()
 
     # shut down the scheduler
     if settings.schedule.enable:
