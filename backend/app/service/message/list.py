@@ -33,8 +33,8 @@ async def get_cached_message_list(
         conversation_uuid: str,
         pagination: Pagination,
 ) -> Tuple[List[MessageSchema] | None, ResponsePagination | None, SQLAlchemyError | None]:
-    message_service = MessageService(db)
-    messages, pg, exception = await message_service.get_cached_message_list(conversation_uuid, pagination)
+    service_message = MessageService(db)
+    messages, pg, exception = await service_message.get_cached_message_list(conversation_uuid, pagination)
 
     # print(res, pg, exception)
     if exception:
