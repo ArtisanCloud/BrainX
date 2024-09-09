@@ -44,7 +44,10 @@ async def api_a_set():
     cache = CacheFactory.get_cache()
 
     key = "a_set_key"
-    await cache.a_set(key, 123321)
+    await cache.a_set(key, {
+        "test": 123,
+        "ttt": "456"
+    })
     value = await cache.a_get(key)
 
     return {

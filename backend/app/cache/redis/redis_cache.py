@@ -30,6 +30,9 @@ class RedisCache(CacheInterface):
             if isinstance(value, BaseModel):
                 # 如果 value 是 Pydantic 模型，将其序列化为 JSON 字符串
                 value = value.json()
+            elif isinstance(value, dict):
+                # 如果 value 是 dict 类型，将其序列化为 JSON 字符串
+                value = json.dumps(value)
             elif not isinstance(value, (str, bytes, int, float)):
                 # 如果不是原生类型，也不是 Pydantic 模型，尝试将其转换为 JSON 字符串
                 value = json.dumps(value)
@@ -39,7 +42,13 @@ class RedisCache(CacheInterface):
         """获取缓存"""
         if self.redis:
             value_str = self.redis.get(key)
-            return value_str
+            try:
+                # 尝试将字符串解析为 JSON
+                value = json.loads(value_str)
+                return value
+            except (json.JSONDecodeError, TypeError):
+                # 如果不是 JSON 格式，直接返回原始字符串
+                return value_str
         return None
 
     def delete(self, key: str):
@@ -99,6 +108,9 @@ class RedisCache(CacheInterface):
             if isinstance(value, BaseModel):
                 # 如果 value 是 Pydantic 模型，将其序列化为 JSON 字符串
                 value = value.json()
+            elif isinstance(value, dict):
+                # 如果 value 是 dict 类型，将其序列化为 JSON 字符串
+                value = json.dumps(value)
             elif not isinstance(value, (str, bytes, int, float)):
                 # 如果不是原生类型，也不是 Pydantic 模型，尝试将其转换为 JSON 字符串
                 value = json.dumps(value)
@@ -108,7 +120,13 @@ class RedisCache(CacheInterface):
         """获取缓存"""
         if self.a_redis:
             value_str = await self.a_redis.get(key)
-            return value_str
+            try:
+                # 尝试将字符串解析为 JSON
+                value = json.loads(value_str)
+                return value
+            except (json.JSONDecodeError, TypeError):
+                # 如果不是 JSON 格式，直接返回原始字符串
+                return value_str
         return None
 
     async def a_delete(self, key: str):
