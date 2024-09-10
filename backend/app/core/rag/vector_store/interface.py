@@ -36,11 +36,14 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def delete_vectors(self, document_ids: List[str]) -> None:
+    def delete_documents(self, document_ids: List[str]) -> None:
         pass
 
     @abstractmethod
-    def update_vector(self, nodes: List[DocumentNode], **kwargs: Any):
+    def update_documents(self, nodes: List[DocumentNode], **kwargs: Any):
+        pass
+
+    def upsert_documents(self, nodes: List[DocumentNode], **kwargs: Any):
         pass
 
     @abstractmethod

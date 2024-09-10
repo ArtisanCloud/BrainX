@@ -31,12 +31,13 @@ class PGVectorStore(BaseVectorStore):
             connection=self.connection_string,
             collection_name=collection_name,
             use_jsonb=config.use_jsonb,
+            # embedding_length=768,
         )
 
     def add_documents(self, nodes: List[DocumentNode], **kwargs: Any) -> List[str]:
         # convert nodes to documents
         documents = convert_nodes_to_documents(nodes)
-        # print(documents)
+
         # 实现向量添加功能
         return self.vector_store.add_documents(
             documents,
@@ -64,7 +65,14 @@ class PGVectorStore(BaseVectorStore):
             **kwargs: Any, ) -> None:
         self.vector_store.delete(ids, collection_only, kwargs=kwargs)
 
-    def update_vector(self, nodes: List[DocumentNode], **kwargs: Any):
+    def update_documents(self, nodes: List[DocumentNode], **kwargs: Any):
+        items = convert_nodes_to_documents(nodes)
+
+        response = self.vector_store.upsert(items, kwargs=kwargs)
+        if not response:
+            raise ValueError("Failed to update vectors")
+
+    def upsert_documents(self, nodes: List[DocumentNode], **kwargs: Any):
         items = convert_nodes_to_documents(nodes)
 
         response = self.vector_store.upsert(items, kwargs=kwargs)

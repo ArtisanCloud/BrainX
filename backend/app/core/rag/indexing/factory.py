@@ -13,8 +13,8 @@ class IndexingFactory:
     @staticmethod
     def get_indexer(
             framework_type: FrameworkDriverType,
-            splitter: BaseTextSplitter,
-            embedding_model_instance: ModelInstance,
+            splitter: BaseTextSplitter = None,
+            embedding_model_instance: ModelInstance = None,
             user: Optional[User] = None,
             document: Optional[Document] = None,
     ) -> BaseIndexing:
