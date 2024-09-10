@@ -1,31 +1,30 @@
-# powerx/interface.py
-from fastapi import APIRouter, Depends
+from typing import Optional, Dict
 
-import requests
+from fastapi import APIRouter
 
-from app import settings
-from app.openapi.providers.powerx.provider_auth.authenticate import verify_token
+from app.openapi.providers.powerx.service.base import PowerXServiceProvider
+from app.schemas.base import ResponseSchema
 
 router = APIRouter()
 
-# PowerX 的 OpenAPI 基础 URL
-POWERX_BASE_URL = settings.openapi.provider.power_x.base_url
+
+@router.get("/version")
+async def api_version() -> Optional[Dict | ResponseSchema]:
+    service_power_x = PowerXServiceProvider()
+    res, exception = service_power_x.query_get_version()
+    if exception is not None:
+        return ResponseSchema(
+            error=str(exception)
+        )
+    return res
 
 
-@router.get("/version", tags=["PowerX"])
-async def get_version(token: str = Depends(verify_token)):
-    """获取 PowerX 的版本信息"""
-    response = requests.get(f"{POWERX_BASE_URL}/version", headers={"Authorization": f"Bearer {token}"})
-    if response.status_code == 200:
-        return response.json()
-    return {"error": "Failed to fetch version"}
-
-
-@router.get("/echo", tags=["PowerX"])
-async def echo(message: str, token: str = Depends(verify_token)):
-    """将传入的信息返回"""
-    response = requests.get(f"{POWERX_BASE_URL}/echo", params={"message": message},
-                            headers={"Authorization": f"Bearer {token}"})
-    if response.status_code == 200:
-        return response.json()
-    return {"error": "Failed to echo message"}
+@router.post("/echo")
+async def api_echo() -> Optional[Dict | ResponseSchema]:
+    service_power_x = PowerXServiceProvider()
+    res, exception = service_power_x.query_echo()
+    if exception is not None:
+        return ResponseSchema(
+            error=exception
+        )
+    return res
