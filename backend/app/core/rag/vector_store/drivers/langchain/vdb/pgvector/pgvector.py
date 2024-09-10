@@ -4,8 +4,7 @@ from langchain_postgres.vectorstores import PGVector
 
 from app.core.rag.indexing.drivers.langchain.helper import convert_nodes_to_documents, convert_documents_to_nodes, \
     convert_document_to_node
-from app.core.rag.retrieval.drivers.langchain.retriever import LangchainRetrieverDriver
-from app.core.rag.retrieval.interface import BaseRetriever, RetrieverDriver
+
 from app.core.rag.vector_store.interface import BaseVectorStore
 from app.config.agent.pgvector import PGVector as PGVectorConfig
 from app.models.rag.document_node import DocumentNode
@@ -94,7 +93,3 @@ class PGVectorStore(BaseVectorStore):
             )
 
         return list_nodes
-
-    def get_retriever_driver(self) -> RetrieverDriver:
-
-        return LangchainRetrieverDriver(self)

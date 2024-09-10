@@ -4,7 +4,7 @@ from app.core.rag.vector_store.drivers.langchain.store import LangchainVectorSto
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
 from app.core.rag.vector_store.drivers.langchain.vdb.faiss.faiss import FaissVectorStore
 from app.core.rag.vector_store.drivers.langchain.vdb.pgvector.pgvector import PGVectorStore
-from app.core.rag.vector_store.drivers.llamaindex.store import LLamaIndexVectorStoreDriver
+from app.core.rag.vector_store.drivers.llamaindex.store import LlamaIndexVectorStoreDriver
 from app.core.rag.vector_store.interface import BaseVectorStore, VectorStoreDriver
 
 
@@ -22,7 +22,7 @@ class VectorStoreDriverFactory:
             return LangchainVectorStoreDriver(vdb)
 
         elif framework_type.value == FrameworkDriverType.LLAMA_INDEX.value:
-            return LLamaIndexVectorStoreDriver(vdb)
+            return LlamaIndexVectorStoreDriver(vdb)
 
         else:
             raise ValueError(f"Unknown framework: {framework_type.value}")

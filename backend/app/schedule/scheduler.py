@@ -28,5 +28,5 @@ class Scheduler:
         self.scheduler.add_job(run_task, IntervalTrigger(seconds=10))
 
         # 添加和配置项目任务
-        pass
+        return
 

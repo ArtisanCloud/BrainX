@@ -1,4 +1,4 @@
-# powerx/base.py
+# powerx/interface.py
 from fastapi import APIRouter, Depends
 
 import requests

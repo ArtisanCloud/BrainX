@@ -22,7 +22,7 @@ class BaseIndexing(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_vector_store(self) -> BaseVectorStore:
+    def get_base_vector_store(self) -> BaseVectorStore:
         raise NotImplementedError
 
     def create_document_segments(self, nodes: List[DocumentNode]) -> List[DocumentSegment]:

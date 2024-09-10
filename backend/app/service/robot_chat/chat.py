@@ -24,9 +24,10 @@ async def chat(db: AsyncSession,
     # stream_response = chat_by_llm(question, llm, app, 0.5)
     service_brain_x = BrainXService(
         llm, 0.5, True,
+        table_name=settings.database.table_name_vector_store,
         chat_history_kwargs={
             "url": settings.cache.redis.url,
-        })
+        }),
 
     # print(
     #     "question:", question, "llm:", llm,

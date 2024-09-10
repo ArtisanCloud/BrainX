@@ -2,13 +2,13 @@ from typing import List, Optional
 
 from app.core.ai_model.model_instance import ModelInstance
 from app.core.rag.indexing.cleaner.base import Cleaner
-from app.core.rag.indexing.base import BaseIndexing
+from app.core.rag.indexing.interface import BaseIndexing
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.models import User, Document
 from app.models.rag.document_node import DocumentNode
 
 
-class LLamaIndexIndexer(BaseIndexing):
+class LlamaIndexIndexer(BaseIndexing):
     def __init__(self,
                  user: Optional[User] = None,
                  document: Optional[Document] = None,

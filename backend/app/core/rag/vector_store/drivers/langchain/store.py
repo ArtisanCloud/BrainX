@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import List, Optional, Tuple, Dict, Type, Any
 
+from app.core.rag.retriever.interface import BaseRetriever
 from app.core.rag.vector_store.interface import VectorStoreDriver, BaseVectorStore
 from app.models.rag.document_node import DocumentNode
 
@@ -14,5 +15,6 @@ class LangchainVectorStoreDriver(VectorStoreDriver):
         """
         self.vector_store = vector_store
 
-    def get_vector_store(self) -> BaseVectorStore:
+    def get_base_vector_store(self) -> BaseVectorStore:
         return self.vector_store
+

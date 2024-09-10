@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 from app import settings
 from app.core.ai_model.model_instance import ModelInstance
 from app.core.rag import FrameworkDriverType
-from app.core.rag.indexing.base import BaseIndexing
+from app.core.rag.indexing.interface import BaseIndexing
 from app.core.rag.indexing.splitter.base import BaseTextSplitter
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
 from app.core.rag.vector_store.factory import VectorStoreDriverFactory
@@ -46,8 +46,7 @@ class LangchainIndexer(BaseIndexing):
         # create retriever
         self.retriever_driver = (
             self.vector_store_driver
-            .get_vector_store()
-            .get_retriever_driver()
+            .get_base_vector_store()
         )
 
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
@@ -62,7 +61,7 @@ class LangchainIndexer(BaseIndexing):
         return final_nodes
 
     def get_vector_store(self) -> BaseVectorStore:
-        return self.vector_store_driver.get_vector_store()
+        return self.vector_store_driver.get_base_vector_store()
 
     def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Tuple[int, int, Optional[Exception]]:
         # print(self.embedding_model_instance, self.llm_model_instance)
@@ -72,7 +71,7 @@ class LangchainIndexer(BaseIndexing):
             if not self.embedding_model_instance:
                 raise ValueError("Embedding model instance is not initialized.")
 
-            vector_store = self.vector_store_driver.get_vector_store()
+            vector_store = self.vector_store_driver.get_base_vector_store()
             if not vector_store:
                 raise ValueError("vector store is not initialized.")
 

@@ -10,13 +10,22 @@ from langchain_core.runnables.utils import Output, Input
 from llama_index.core import VectorStoreIndex, get_response_synthesizer
 from llama_index.core.indices.vector_store import VectorIndexRetriever
 
+from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
+from app.constant.ai_model.provider import ProviderID
+from app.core.ai_model.drivers.langchain.factory import ModelProviderFactory
+from app.core.ai_model.model_instance import ModelInstance
 from app.core.brain.chat.app import get_chat_prompt_template
 from app.core.brain.base import LLMModel
 from app.core.brain.indexing.engine import generate_storage_context, get_service_context
-from app.core.brain.indexing.pg_vector import get_vector_store_singleton
 from app.core.brain.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm
 from app.config.config import settings
+from app.core.rag import FrameworkDriverType
+from app.core.rag.agent_executor.factory import AgentExecutorFactory
+from app.core.rag.indexing.factory import IndexingFactory
+from app.core.rag.retriever.factory import RetrieverFactory
+from app.core.rag.retriever.interface import BaseRetriever
 from app.models.app.app import App
+from app.models.rag.document_node import DocumentNode
 
 
 class BrainXService:
@@ -26,140 +35,96 @@ class BrainXService:
                  streaming: bool = False,
                  chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory,  # ChatMessageHistory 动态驱动
                  chat_history_kwargs: dict = {},  # 传递给 ChatMessageHistory 的其他参数
+                 collection_name: str = "rag_embeddings",
+                 table_name: str = "embeddings",
                  ):
-        self.llm = llm
-        self.temperature = temperature
-        self.streaming = streaming
 
         self.chat_history_cls = chat_history_cls
         self.chat_history_kwargs = chat_history_kwargs
 
-        query_embedding_table = settings.database.table_name_vector_store
-        self.vector_store, e = get_vector_store_singleton(query_embedding_table)
-        if e:
-            raise e
+        # 进行其他初始化操作
+        # create the embedding model
+        embedding_model_instance = self._create_embedding_model()
+
+        # define the indexing
+        self.indexer = self._create_indexer(embedding_model_instance)
+
+        # define the retriever
+        self.retriever = self._create_retriever(collection_name, embedding_model_instance)
+        self.vector_store = self.retriever.get_vector_store()
+
+        # define the Agent Bot
+        self.AgentBot = None
+
+        # define the agent executor
+        self.agent_executor = self._create_agent_executor()
+
+    def _create_embedding_model(self):
+        model_provider = ModelProviderFactory.create_text_embedding_provider(ProviderID.HUGGINGFACE_HUB,
+                                                                             HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value)
+        model = model_provider.get_provider_model()
+        embedding_model_instance = ModelInstance(
+            model=model
+        )
+        return embedding_model_instance
+
+    def _create_indexer(self, embedding_model_instance: ModelInstance = None):
+        return IndexingFactory.get_indexer(
+            FrameworkDriverType(settings.agent.framework_driver),
+            None, embedding_model_instance,
+            None, None,
+        )
+
+    def _create_retriever(self, collection_name: str, embedding_model_instance: ModelInstance = None) -> BaseRetriever:
+        return RetrieverFactory.get_retriever(
+            settings.agent.framework_driver,
+            collection_name=collection_name,
+            embedding_model_instance=embedding_model_instance
+        )
+
+    def _create_agent_executor(self,
+                               llm: str,
+                               temperature: float = 0.5,
+                               streaming: bool = False,
+                               ):
+
+        return AgentExecutorFactory.get_agent_executor(
+            FrameworkDriverType(settings.agent.framework_driver),
+            llm, temperature, streaming
+        )
 
     def bind_llm(self, llm: str):
         self.llm = llm
+        return self
 
-    def get_llm(self, streaming: bool = False) -> Tuple[Any, Exception | None]:
-        match self.llm:
-            case LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
-                mdl_llm = get_openai_llm(self.llm, self.temperature, streaming=streaming)
+    def set_temperature(self, temperature: float):
+        self.temperature = temperature
+        return self
 
-            case LLMModel.KIMI_MOONSHOT_V1_8K.value:
-                mdl_llm = get_kimi_llm(self.llm, self.temperature, streaming=streaming)
+    def set_streaming(self, streaming: bool):
+        self.streaming = streaming
+        return self
 
-            case (
-            LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value |
-            LLMModel.BAIDU_ERNIE_3_D_5_8K.value |
-            LLMModel.BAIDU_ERNIE_4_D_0_8K.value |
-            LLMModel.BAIDU_ERNIE_Speed_128K.value |
-            LLMModel.BAIDU_ERNIE_Lite_8K.value
-            ):
-                mdl_llm = get_baidu_qianfan_llm(self.llm, self.temperature, streaming=streaming)
+    async def retrieve(self, content: str, top_k: int, filters: dict = None) -> Tuple[
+        List[DocumentNode] | None, Exception | None]:
+        return self.retriever.retrieve(content, top_k, filters)
 
-            case (LLMModel.OLLAMA_13B_ALPACA_16K.value | LLMModel.OLLAMA_GEMMA_2B.value):
-                mdl_llm = get_ollama_llm(self.llm, self.temperature, streaming=streaming)
-            case _:
-                return None, Exception(f"Unsupported LLM model: {self.llm}")
 
-        # print("query llm:", mdl_llm)
+    def stream(
+            self,
+            inputs: str,
+            input_variables=list[str],
+            template: str = ''
+    ) -> Tuple[Output | None, Exception | None]:
+        return self.agent_executor.stream(inputs, input_variables, template)
 
-        return mdl_llm, None
+    def complete(self,
+                 inputs: Input,
+                 input_variables=list[str],
+                 template: str = ''
+                 ) -> Tuple[Any | None, Exception | None]:
+        return self.agent_executor.completion(inputs, input_variables, template)
 
-    async def retrieve(self, content: str, top_k: int) -> Tuple[
-        List[Document] | None, Exception | None]:
-        try:
-
-            # 存储上下文
-            storage_context = generate_storage_context(self.vector_store)
-
-            # 服务上下文
-            service_context = get_service_context(self.llm)
-
-            index = VectorStoreIndex.from_vector_store(
-                self.vector_store,
-                storage_context=storage_context,
-                service_context=service_context
-            )
-
-            # configure retriever
-            retriever = VectorIndexRetriever(
-                index=index,
-                similarity_top_k=top_k,
-            )
-
-            # configure response synthesizer
-            response_synthesizer = get_response_synthesizer()
-
-            match_docs = retriever.retrieve(content)
-            # print(match_docs)
-
-            return (
-                list(Document(
-                    page_content=doc.node.text,
-                    metadata={
-                        'score': doc.score,
-                        'node_id': doc.node_id,
-                        'metadata': doc.node.metadata
-                    },
-                ) for doc in match_docs),
-                None
-            )
-
-        except Exception as e:
-            return None, e
-
-    def complete(self, inputs: Input, input_variables=list[str], template: str = '') -> Tuple[
-        Output | None, Exception | None]:
-        try:
-            completion_llm, exception = self.get_llm(streaming=False)
-            print("complete llm:", completion_llm)
-            if exception:
-                raise exception
-
-            prompt_template = PromptTemplate(
-                input_variables=input_variables,
-                template=template
-            )
-            # print(prompt_template.format(query=question))
-
-            chain = prompt_template | completion_llm
-
-            response = chain.invoke(
-                input=inputs,
-            )
-
-            return response, None
-
-        except Exception as e:
-            return None, e
-
-    def stream(self, inputs: Input, input_variables=list[str], template: str = ''
-               ) -> Tuple[
-        Output | None, Exception | None]:
-        try:
-            completion_llm, exception = self.get_llm(streaming=True)
-            if exception:
-                raise exception
-
-            prompt_template = PromptTemplate(
-                input_variables=input_variables,
-                template=template
-            )
-            # print(prompt_template.format(query=question))
-
-            chain = prompt_template | completion_llm
-
-            response = chain.stream(
-                input=inputs,
-            )
-
-            return response, None
-
-        except Exception as e:
-            return None, e
 
     def generate_session_id(self) -> str:
         """生成会话ID"""
@@ -173,107 +138,11 @@ class BrainXService:
                         app: App = None,
                         session_id: str = "",
                         ) -> Tuple[Iterator | None, Exception | None]:
-        try:
-            chat_llm, exception = self.get_llm(streaming=False)
-            if exception:
-                raise exception
-
-            prompt = get_chat_prompt_template(app)
-
-            # chat_history = RedisChatMessageHistory(session_id=session_id)
-            chat_history = self.get_chat_history(session_id)
-
-            chain = prompt | chat_llm
-
-            # Add message history to the chain
-            chain_with_message_history = RunnableWithMessageHistory(
-                chain,
-                lambda session_id: chat_history,
-                input_messages_key="question",
-                history_messages_key="history",
-            )
-
-            # Define a function to trim messages
-            def trim_messages(chain_input):
-                stored_messages = chat_history.messages
-                if len(stored_messages) <= 6:
-                    return False
-
-                chat_history.clear()
-
-                for message in stored_messages[-2:]:
-                    chat_history.add_message(message)
-
-                return True
-
-            # Add message trimming to the chain
-            chain_with_trimming = (
-                    RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                    | chain_with_message_history)
-
-            # Stream the response
-            completion_response = chain_with_trimming.invoke(
-                {"question": question},
-                config={"configurable": {"session_id": "test_session_id"}},
-            )
-
-            return completion_response, None
-
-        except Exception as e:
-            return None, e
+        return self.agent_executor.chat_completion(question, app, session_id)
 
     def chat_stream(self,
                     question: str,
                     app: App = None,
                     session_id: str = ""
                     ) -> Tuple[Iterator | None, Exception | None]:
-
-        try:
-            chat_llm, exception = self.get_llm(streaming=True)
-            if exception is not None:
-                raise exception
-
-            prompt = get_chat_prompt_template(app)
-
-            chat_history = self.get_chat_history(session_id)
-
-            chain = prompt | chat_llm
-
-            # Add message history to the chain
-            chain_with_message_history = RunnableWithMessageHistory(
-                chain,
-                lambda session_id: chat_history,
-                input_messages_key="question",
-                history_messages_key="history",
-            )
-
-            # Define a function to trim messages
-            num_to_keep = 6
-            def trim_messages(chain_input):
-                stored_messages = chat_history.messages
-                if len(stored_messages) <= num_to_keep:
-                    return False
-
-                # chat_history.clear()
-                # for message in stored_messages[-2:]:
-                #     chat_history.add_message(message)
-                # return True
-                # 这是裁剪给context的数据，暂时历史数据都会保存下来，后续可以调整。
-                trimmed_messages = stored_messages[-num_to_keep:]
-                return trimmed_messages
-
-            # Add message trimming to the chain
-            chain_with_trimming = (
-                    RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                    | chain_with_message_history)
-
-            # Stream the response
-            stream_response = chain_with_trimming.stream(
-                {"question": question},
-                config={"configurable": {"session_id": "test_session_id"}},
-            )
-
-            return stream_response, None
-
-        except Exception as e:
-            return None, e
+        return self.agent_executor.chat_stream(question, app, session_id)

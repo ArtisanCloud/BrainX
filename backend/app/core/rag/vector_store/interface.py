@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple, Dict, Any
 
-from app.core.rag.retrieval.interface import BaseRetriever, RetrieverDriver
 from app.models.rag.document_node import DocumentNode
 
 
@@ -54,12 +53,8 @@ class BaseVectorStore(ABC):
                           ) -> List[Tuple[DocumentNode, float]]:
         pass
 
-    @abstractmethod
-    def get_retriever_driver(self) -> RetrieverDriver:
-        pass
-
 
 class VectorStoreDriver(ABC):
     @abstractmethod
-    def get_vector_store(self) -> BaseVectorStore:
+    def get_base_vector_store(self) -> "BaseVectorStore":
         raise NotImplementedError

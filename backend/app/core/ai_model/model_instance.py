@@ -4,7 +4,7 @@ from app.core.ai_model.drivers.interface.ai_model import AIModel
 
 
 class ModelInstance:
-    def __init__(self, model: AIModel, config: dict):
+    def __init__(self, model: AIModel, config: dict = None):
         # 初始化模型实例
 
         self.model = model
