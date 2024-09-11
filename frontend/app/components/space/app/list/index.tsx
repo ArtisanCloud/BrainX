@@ -48,7 +48,7 @@ const AppList = () => {
 		<div className={styles.container}>
 			<div className={styles.list}>
 				{appList?.map((app:App) => (
-					<AppBot key={app.id} app={app}/>
+					<AppBot key={app.uuid} app={app}/>
 				))}
 			</div>
 			{appList?.length > 0 && (

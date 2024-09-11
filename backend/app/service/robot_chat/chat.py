@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
+from app.core.brainx.chat.app import generate_session_id
 from app.models.app.app import App
 from app.models.robot_chat.conversation import Conversation
 from app.service.app.service import AppService
@@ -16,6 +17,7 @@ async def chat(db: AsyncSession,
         # 获取app
         service_app = AppService(db)
         app, exception = await service_app.app_dao.async_get_by_uuid(app_uuid)
+
         if exception:
             return None, None, exception
     else:
@@ -23,21 +25,20 @@ async def chat(db: AsyncSession,
 
     # stream_response = chat_by_llm(question, llm, app, 0.5)
     service_brain_x = BrainXService(
-        llm, 0.5, True,
+        llm,
+        streaming=True,
         table_name=settings.database.table_name_vector_store,
-        chat_history_kwargs={
-            "url": settings.cache.redis.url,
-        }),
+    )
 
     # print(
     #     "question:", question, "llm:", llm,
     #     "user_uuid:", user_uuid,
-    #     "app_uuid:",   app_uuid, "conversation_uuid:", conversation_uuid
-    #       )
+    #     "app_uuid:", app_uuid, "conversation_uuid:", conversation_uuid
+    # )
 
     # 如果不是app的对话，则生成临时的新会话ID
     if app_uuid == '' and conversation_uuid == '':
-        conversation_uuid = service_brain_x.generate_session_id()
+        conversation_uuid = generate_session_id()
 
     elif app_uuid != '' and conversation_uuid != '':
         # 如果是app的对话，则从数据库中获取对话历史记录
@@ -67,8 +68,11 @@ async def chat(db: AsyncSession,
             if str(conversation.user_uuid) != user_uuid or str(conversation.app_uuid) != app_uuid:
                 return None, None, Exception("Conversation " + conversation_uuid + " not belong to this app or tenant")
 
-    stream_response, exception = service_brain_x.chat_stream(question, app, conversation_uuid)
+    stream_response, exception = service_brain_x.chat_stream(
+        question, temperature=0.5,
+        app=app, session_id=conversation_uuid
+    )
     if exception:
-        return None, exception
+        return None, None, exception
 
     return stream_response, conversation_uuid, None

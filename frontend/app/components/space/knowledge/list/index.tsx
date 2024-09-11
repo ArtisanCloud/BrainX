@@ -209,7 +209,7 @@ const DatasetList = () => {
 		<div className={styles.container}>
 			<Table columns={columns}
 						 dataSource={datasetList}
-						 rowKey="id"
+						 rowKey="uuid"
 						 onRow={(record) => ({
 							 onClick: () => onSelectRow(record),
 						 })}

@@ -6,6 +6,10 @@ from PIL import Image
 import numpy as np
 import re
 
+from sentence_transformers import SentenceTransformer
+
+from app.logger import logger
+
 
 class ContentType(Enum):
     PNG = 'image/png'
@@ -30,28 +34,40 @@ MAGIC_NUMBERS = {
 }
 
 
-def image_base64_to_embed(image_string, clip_model):
-    # Step 1: Decode the base64 string
-    decoded_image = base64.b64decode(image_string)
+def image_base64_to_embed(image_string: str, clip_model: SentenceTransformer):
+    try:
+        # Step 1: Decode the base64 string
+        decoded_image = base64.b64decode(image_string)
+        # print("step 1", decoded_image)
 
-    # Step 2: Create a BytesIO buffer from the decoded image
-    image_buffer = io.BytesIO(decoded_image)
+        # Step 2: Create a BytesIO buffer from the decoded image
+        image_buffer = io.BytesIO(decoded_image)
+        # print("step 2", image_buffer)
 
-    # Step 3: Create a BufferedReader from the BytesIO buffer
-    image_reader = io.BufferedReader(image_buffer)
+        # Step 3: Create a BufferedReader from the BytesIO buffer
+        image_reader = io.BufferedReader(image_buffer)
+        # print("step 3", image_reader)
 
-    # Step 4: Open the image using Image.open
-    l_image = Image.open(image_reader)
+        # Step 4: Open the image using Image.open
+        l_image = Image.open(image_reader)
+        # print("step 4", l_image)
 
-    # Step 5: Encode the image using clip_model.encode
-    image_embedding = clip_model.encode(l_image)
+        # Step 5: Encode the image using clip_model.encode
+        # print(clip_model, l_image)
+        image_embedding = clip_model.encode(l_image)
+        # print("step 5", image_embedding)
 
-    # Step 6: Convert the embedding to a NumPy array
-    image_embedding_array = np.array(image_embedding)
+        # Step 6: Convert the embedding to a NumPy array
+        image_embedding_array = np.array(image_embedding)
+        # print("step 6")
 
-    # Step 7: Convert the array to a list
-    image_embedding_list = image_embedding_array.tolist()
+        # Step 7: Convert the array to a list
+        image_embedding_list = image_embedding_array.tolist()
+        # print("step 7")
 
+    except Exception as e:
+        logger.error(f"Error in image_base64_to_embed: {e}", exc_info=True)
+        raise e
     return image_embedding_list
 
 

@@ -9,7 +9,7 @@ from app.schemas.question_answer.query import ResponseQuery, Document as Documen
 from app.service.brainx import BrainXService
 
 
-def transform_documents_to_reply(answer: str, documents: List[DocumentNode] ) -> ResponseQuery:
+def transform_documents_to_reply(answer: str, documents: List[DocumentNode]) -> ResponseQuery:
     return ResponseQuery(
         answer=answer,
         documents=[
@@ -59,7 +59,7 @@ async def query_by_text(
                         " \n\n 请根据以上召回内容，针对此问题'{query}'，做一个回答")
             # print(template)
             response, exception = service_brain_x.complete(
-                inputs={"query": question},
+                query=question,
                 input_variables=["query"],
                 template=template
             )

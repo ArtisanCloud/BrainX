@@ -45,16 +45,16 @@ export const menuItems = [
 			},
 		],
 	},
-	{
-		title: "分析",
-		list: [
-			{
-				title: "仪表盘",
-				path: "/space/dashboard",
-				icon: <MdDashboard/>,
-			},
-		],
-	},
+	// {
+	// 	title: "分析",
+	// 	list: [
+	// 		{
+	// 			title: "仪表盘",
+	// 			path: "/space/dashboard",
+	// 			icon: <MdDashboard/>,
+	// 		},
+	// 	],
+	// },
 	{
 		title: "协作",
 		list: [

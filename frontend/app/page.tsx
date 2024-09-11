@@ -1,7 +1,7 @@
 import {ArrowRightIcon} from '@heroicons/react/24/outline';
 import styles from '@/app/components/home/home.module.scss';
 import HomeNavbar from "@/app/components/home/navbar";
-import brainxImage from '/public/images/brainx.jpeg';
+import brainXImage from '/public/images/brainx.jpeg';
 import {Button, Image, Link} from "@nextui-org/react"
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
 						<Button
 							color={'primary'}
 							as={Link}
-							href="space"
+							href="space/workspace/robot-chat"
 							className={'rounded opacity-75'}
 							endContent={<ArrowRightIcon
 								className={'text-white w-10 scale-75'}/>}>开始</Button>
@@ -26,10 +26,10 @@ export default function Home() {
 					<div className={'relative h-800 w-800 scale-50 -ml-52'}>
 						<Image
 							alt={'BrainX'}
-							src={brainxImage.src} width={800} height={800}
+							src={brainXImage.src} width={800} height={800}
 									 className={'absolute left-0 top-0 z-10 rounded-full'}/>
 						<div id={'card-item-bg'} style={{
-							'--image': `url(${brainxImage.src})`,
+							'--image': `url(${brainXImage.src})`,
 							backgroundImage: `var(--image)`,
 							backgroundSize: 'cover',
 							transition: '0.3s ease-in-out',

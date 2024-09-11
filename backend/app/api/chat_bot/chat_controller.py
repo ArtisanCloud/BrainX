@@ -7,10 +7,10 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import settings
 from app.api.middleware.auth import get_session_user
-from app.core.brain.base import LLMModel
+from app.core.brainx.base import LLMModel
 from app.database.deps import get_async_db_session
-from app.database.seed.user import init_user_uuid
 from app.logger import logger
 from app.models import User
 from app.schemas.robot_chat.chat import RequestChat
@@ -74,9 +74,9 @@ async def api_chat(
         conversation_uuid = data.conversationUUID
 
         stream_response, conversation_uuid, exception = await chat(
-            db,
-            question, data.llm,
-            session_user.uuid, app_uuid, conversation_uuid
+            db=db,
+            question=question, llm=data.llm,
+            user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
         )
         if exception is not None:
             if isinstance(exception, SQLAlchemyError):
@@ -94,7 +94,7 @@ async def api_chat(
         )
 
     except Exception as e:
-        # logger.error(f"Failed to robot_chat: {e}")
+        logger.error(f"Failed to robot_chat: {e}", exc_info=settings.log.exc_info)
         return StreamingResponse(
             [f"data: ERROR: {e}\n\n"],
             media_type="text/event-stream",

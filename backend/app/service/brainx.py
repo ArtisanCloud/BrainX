@@ -1,8 +1,5 @@
 from typing import Tuple, Iterator, Any, List, Type
-import uuid
 
-from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
-from langchain_core.runnables.utils import Output, Input
 
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
@@ -23,13 +20,9 @@ class BrainXService:
     def __init__(self,
                  llm: str,
                  streaming: bool = False,
-                 chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory,  # ChatMessageHistory 动态驱动
-                 chat_history_kwargs: dict = {},  # 传递给 ChatMessageHistory 的其他参数
                  collection_name: str = "rag_embeddings",
                  table_name: str = "embeddings",
                  ):
-        self.chat_history_cls = chat_history_cls
-        self.chat_history_kwargs = chat_history_kwargs
 
         # 进行其他初始化操作
         # create the embedding model
@@ -109,20 +102,14 @@ class BrainXService:
                                           template=template)
 
     def complete(self,
-                 inputs: Input,
+                 query: str,
                  temperature: float = 0.5,
                  input_variables=list[str],
                  template: str = '',
                  ) -> Tuple[RetrievalResponse | None, Exception | None]:
-        return self.agent_executor.completion(inputs, temperature=temperature, input_variables=input_variables,
+        return self.agent_executor.completion(query, temperature=temperature, input_variables=input_variables,
                                               template=template)
 
-    def generate_session_id(self) -> str:
-        """生成会话ID"""
-        return str(uuid.uuid4())
-
-    def get_chat_history(self, session_id: str) -> ChatMessageHistory:
-        return self.chat_history_cls(session_id=session_id, **self.chat_history_kwargs)
 
     def chat_completion(self,
                         question: str,

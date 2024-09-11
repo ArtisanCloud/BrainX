@@ -6,9 +6,9 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 from llama_index.llms.openai import OpenAI
 
-from app.core.brain.base import LLMModel
-from app.core.brain.indexing.pg_vector import get_vector_store_singleton
-from app.core.brain.llm.llamaindex import get_ollama_llm
+from app.core.brainx.base import LLMModel
+from app.core.brainx.indexing.pg_vector import get_vector_store_singleton
+from app.core.brainx.llm.llamaindex import get_ollama_llm
 from app.config.config import settings
 
 

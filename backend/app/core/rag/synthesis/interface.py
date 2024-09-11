@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional, List, Iterator, Tuple
 
-from app.core.brain.base import LLMModel
-from app.core.brain.llm.langchain import get_openai_llm, get_kimi_llm, get_baidu_qianfan_llm
-from app.core.brain.llm.llamaindex import get_ollama_llm
+from app.core.brainx.base import LLMModel
+from app.core.brainx.llm.langchain import get_openai_llm, get_kimi_llm, get_baidu_qianfan_llm
+from app.core.brainx.llm.llamaindex import get_ollama_llm
 from app.models import App
 
 

@@ -4,14 +4,14 @@ from fastapi import Depends, APIRouter
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
+from app import settings
 from app.database.deps import get_async_db_session
+from app.logger import logger
 from app.schemas.base import ResponseSchema
-from app.schemas.question_answer.visual_search import RequestVisualSearch, \
-    ResponseVisualSearch
+from app.schemas.question_answer.visual_search import RequestVisualSearch, ResponseVisualSearch
 from app.service.question_answer.visual_search import visual_search
 from app.utils.media import image_base64_to_embed
-from app.core.brain.base import get_visual_search_embedding_model
+from app.core.brainx.base import get_visual_search_embedding_model
 
 router = APIRouter()
 
@@ -41,5 +41,6 @@ async def api_visual_search(
         return res
 
     except Exception as e:
+        logger.info(f"visual_search error: {str(e)}", exc_info=settings.log.exc_info)
         # 在这里处理异常，您可以记录日志、返回特定的错误响应等
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)

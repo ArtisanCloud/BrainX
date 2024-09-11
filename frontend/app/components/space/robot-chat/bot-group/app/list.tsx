@@ -11,7 +11,7 @@ const AppList: React.FC<AppListProps> = ({list}) => {
 	return (
 		<div className={styles.container}>
 			{list && list.map((app) => (
-				<AppBot key={app.id} app={app}/>
+				<AppBot key={app.uuid} app={app}/>
 			))}
 		</div>
 	);

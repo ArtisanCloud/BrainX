@@ -22,7 +22,7 @@ from app.config.app import AppEnvironment
 
 from contextlib import asynccontextmanager
 
-from app.core.brain.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
+from app.core.brainx.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
 from app.schedule.scheduler import Scheduler
 from server import start

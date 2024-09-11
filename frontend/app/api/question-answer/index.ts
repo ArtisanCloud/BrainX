@@ -1,4 +1,5 @@
 export interface Document{
+	similarity: number
 	text: string
 	node_id: string
 	metadata: any

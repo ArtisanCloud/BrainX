@@ -11,7 +11,7 @@ from langgraph.prebuilt import ToolInvocation
 from pydantic import BaseModel, Field
 
 from app import settings
-from app.core.brain.llm.langchain import get_openai_llm
+from app.core.brainx.llm.langchain import get_openai_llm
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node.factory import NodeFactory

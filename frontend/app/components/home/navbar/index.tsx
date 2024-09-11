@@ -66,7 +66,7 @@ export default function HomeNavbar() {
 				) : (
 					<>
 						<Link href={'/user/register'} className={'text-primary text-md font-bold opacity-65'}>注册</Link>
-						<Link href={'/auth/login'} className={'text-primary text-md font-bold opacity-65 hover:text-foreground'}>登录</Link>
+						<Link href={'/user/login'} className={'text-primary text-md font-bold opacity-65 hover:text-foreground'}>登录</Link>
 					</>
 				)}
 			</div>

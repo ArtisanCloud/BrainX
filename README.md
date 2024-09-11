@@ -14,3 +14,6 @@ TBD...
 
 <image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/segment-1.png">
 <image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/segment-2.png">
+
+<image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/qa-query.png">	
+<image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/qa-visual-search.png">		

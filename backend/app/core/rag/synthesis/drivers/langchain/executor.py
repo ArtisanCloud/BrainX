@@ -1,11 +1,12 @@
-from typing import Optional, Any, List, Iterator, Tuple
+from typing import Optional, Any, List, Iterator, Tuple, Type
+from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
 
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
 from langchain_core.runnables.utils import Input
 
 from app import settings
-from app.core.brain.chat.app import get_chat_prompt_template
+from app.core.brainx.chat.app import get_chat_prompt_template
 from app.core.rag.ingestion.drivers.langchain.helper import convert_document_to_response
 from app.core.rag.synthesis.interface import BaseAgentExecutor
 from app.logger import logger
@@ -191,3 +192,15 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
     def invoke(self, query: str, temperature: float = 0.5, config: Optional[Any] = None, **kwargs: Any) -> str:
         return ""
+
+    def get_chat_history(self, session_id: str) -> ChatMessageHistory:
+        chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory  # ChatMessageHistory 动态驱动
+        chat_history_kwargs: dict = {
+            "url": settings.cache.redis.url,
+        }  # 传递给 ChatMessageHistory 的其他参数
+        try:
+            return chat_history_cls(session_id=session_id, **chat_history_kwargs)
+        except Exception as e:
+            # 处理错误，可能记录日志或抛出自定义异常
+            raise Exception(f"Failed to create chat history: {e}")
+

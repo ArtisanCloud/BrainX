@@ -88,7 +88,7 @@ const AppBot: React.FC<AppItemProps> = ({app}) => {
 		<div className={styles.container}>
 			{contextHolder}
 			<Link
-				key={app.id}
+				key={app.uuid}
 				href={{
 					pathname: routeRobotChat,
 					query: {

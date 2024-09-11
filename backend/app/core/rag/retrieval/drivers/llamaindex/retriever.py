@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple, Dict
 from llama_index.core import VectorStoreIndex, get_response_synthesizer
 from llama_index.core.indices.vector_store import VectorIndexRetriever
 
-from app.core.brain.indexing.engine import generate_storage_context, get_service_context
+from app.core.brainx.indexing.engine import generate_storage_context, get_service_context
 from app.core.rag.retrieval.interface import BaseRetriever
 from app.models import Document
 from app.models.rag.document_node import DocumentNode

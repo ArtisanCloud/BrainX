@@ -41,7 +41,7 @@ class VisualSearchModelSingleton:
         return cls._instance
 
 
-def get_visual_search_embedding_model():
+def get_visual_search_embedding_model() -> SentenceTransformer:
     return VisualSearchModelSingleton()
 
 

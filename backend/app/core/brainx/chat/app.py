@@ -1,3 +1,4 @@
+import uuid
 from typing import List
 
 from langchain_community.chat_message_histories import RedisChatMessageHistory
@@ -6,13 +7,13 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from llama_index.core import Document
 from pydantic import BaseModel, Field
 
-from app.core.brain.base import LLMModel
+from app.core.brainx.base import LLMModel
 from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from langchain_core.chat_history import BaseChatMessageHistory
 
-from app.core.brain.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm
+from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm
 from app.models.app.app import App
 
 from langchain_core.runnables import (
@@ -36,6 +37,10 @@ class InMemoryHistory(BaseChatMessageHistory, BaseModel):
 
 store = {}
 
+
+def generate_session_id() -> str:
+    """生成会话ID"""
+    return str(uuid.uuid4())
 
 def get_session_history(user_uuid: str, conversation_id: str) -> BaseChatMessageHistory:
     if (user_uuid, conversation_id) not in store:
