@@ -10,6 +10,7 @@ from langgraph.graph import StateGraph
 from langgraph.prebuilt import ToolInvocation
 from pydantic import BaseModel, Field
 
+from app import settings
 from app.core.brain.llm.langchain import get_openai_llm
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
@@ -218,7 +219,7 @@ class AgentBot:
 
             # print(self.graph)
         except Exception as e:
-            logging.error(f"Failed to build graph: {e}", exc_info=True)
+            logger.error(f"Failed to build graph: {e}", exc_info=settings.log.exc_info)
 
     def save_graph_image(self):
         try:

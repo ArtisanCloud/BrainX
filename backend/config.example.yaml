@@ -87,8 +87,9 @@ log:
     - error
   level: info
   keep_days: 30
-  console: true
-  stat: false
+  console: True
+  stat: False
+  exc_info: False
 
 test:
   db_url: 'postgresql+psycopg2://username:password@localhost/test_db'

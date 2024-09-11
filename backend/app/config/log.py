@@ -10,3 +10,4 @@ class Log(BaseModel):
     keep_days: int
     console: bool
     stat: bool
+    exc_info: bool = False

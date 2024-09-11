@@ -1,11 +1,12 @@
-import logging
 import uuid
 import pytest
 
+from app import settings
 from app.core.workflow.graph import create_graph_from_json
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node_variable.base import VariableType, InputType
 from app.core.workflow.state import GraphState
+from app.logger import logger
 
 
 @pytest.fixture
@@ -117,5 +118,5 @@ def test_graph_run(graph_json):
             GraphState(messages=["1+1*3/2=?"])
         )
     except Exception as e:
-        logging.error(e, exc_info=True)
+        logger.error(e, exc_info=settings.log.exc_info)
         pytest.fail(f"Test failed with exception: {e}")

@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional, Any, Sequence
 
 from langchain_postgres.vectorstores import PGVector
 
-from app.core.rag.indexing.drivers.langchain.helper import convert_nodes_to_documents, convert_documents_to_nodes, \
+from app.core.rag.ingestion.drivers.langchain.helper import convert_nodes_to_documents, convert_documents_to_nodes, \
     convert_document_to_node
 
 from app.core.rag.vector_store.interface import BaseVectorStore

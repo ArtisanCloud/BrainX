@@ -109,7 +109,7 @@ class Document(BaseORM):
     # step splitting
     split_start_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
 
-    # step indexing with embedding and vector store
+    # step ingestion with embedding and vector store
     token_count = mapped_column(Integer)
     indexing_latency = mapped_column(Float)
 

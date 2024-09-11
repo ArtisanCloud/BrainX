@@ -183,7 +183,7 @@ async def api_add_document_content(
         # task_group_result = tasks.apply_async(queue=rag_queue)
         task_group_result = []
     except Exception as e:
-        logger.error(e, exc_info=True)
+        logger.error(e, exc_info=settings.log.exc_info)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
@@ -259,7 +259,7 @@ async def api_re_process_document(
                 raise exception
 
     except Exception as e:
-        logger.error(f"API Failed to get error: {e}", exc_info=True)
+        logger.error(f"API Failed to get error: {e}", exc_info=settings.log.exc_info)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
@@ -298,7 +298,7 @@ async def api_reset_document(
                 raise exception
 
     except Exception as e:
-        logger.error(f"API Failed to get error: {e}", exc_info=True)
+        logger.error(f"API Failed to get error: {e}", exc_info=settings.log.exc_info)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,

@@ -1,6 +1,6 @@
 import os
 
-from app.core.rag.indexing.extractor.drivers.markdown.markdown import MarkdownDataExtractor
+from app.core.rag.ingestion.extractor.drivers.markdown.markdown import MarkdownDataExtractor
 
 
 def test_extract_doc():

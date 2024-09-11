@@ -1,4 +1,4 @@
-from typing import  Dict, Any
+from typing import Dict, Any
 from pydantic import SkipValidation
 
 from app.schemas.base import BaseSchema
@@ -9,6 +9,7 @@ class Document(BaseSchema):
     node_id: str
     similarity: SkipValidation[float]
     metadata: Dict[str, Any]
+
 
 class ImageDocument(BaseSchema):
     image: str

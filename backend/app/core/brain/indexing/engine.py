@@ -82,7 +82,7 @@ async def generate_query_engine(llm):
         service_context=service_context
     )
 
-    # configure retriever
+    # configure retrieval
     retriever = VectorIndexRetriever(
         index=index,
         similarity_top_k=1,

@@ -1,6 +1,6 @@
 import os
 
-from app.core.rag.indexing.extractor.drivers.word_doc.doc import DocDataExtractor
+from app.core.rag.ingestion.extractor.drivers.word_doc.doc import DocDataExtractor
 
 
 def test_extract_doc():

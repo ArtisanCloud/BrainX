@@ -4,7 +4,6 @@ from app import settings
 from app.cache.factory import CacheFactory
 from app.openapi.providers.powerx.schemas.auth import ResponseAuthToken
 from app.openapi.providers.service_provider import ServiceProvider
-from app.openapi.schemas.apqp.opl import ResponsePaginationOPL
 
 # PowerX 的 OpenAPI 基础 URL
 POWERX_BASE_URL = settings.openapi.providers.power_x.base_url
@@ -78,23 +77,3 @@ class PowerXServiceProvider(ServiceProvider):
         except Exception as e:
             return None, e
 
-    def query_opl_data(
-            self,
-            page: int, page_count: int,
-            order_by: str = 'desc',
-    ) -> Tuple[ResponsePaginationOPL | None, Exception | None]:
-        url = f"{self.base_url}/aqpq/question-answer/opl/page-list"
-        params = {
-            "pageIndex": page,
-            "pageSize": page_count,
-            "orderBy": order_by,
-        }
-        try:
-            res = self.http_get(url, params=params)
-
-            # 将 JSON 数据转换为 ResponsePaginationOPL 对象
-            response_pagination_opl = ResponsePaginationOPL(**res)
-            return response_pagination_opl, None
-
-        except Exception as e:
-            return None, e

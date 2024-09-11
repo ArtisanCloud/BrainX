@@ -94,7 +94,7 @@ class Graph:
 
             # print(self.graph)
         except Exception as e:
-            logging.error(f"Failed to build graph: {e}", exc_info=True)
+            logger.error(f"Failed to build graph: {e}", exc_info=settings.log.exc_info)
 
     def save_graph_image(self):
         try:

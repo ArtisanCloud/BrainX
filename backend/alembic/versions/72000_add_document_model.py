@@ -69,7 +69,7 @@ def upgrade() -> None:
         # Step splitting
         sa.Column('split_start_at', sa.TIMESTAMP(timezone=True), nullable=True),
 
-        # Step indexing with embedding and vector store
+        # Step ingestion with embedding and vector store
         sa.Column('token_count', sa.Integer(), nullable=True),
         sa.Column('indexing_latency', sa.Float(), nullable=True),
 

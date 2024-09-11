@@ -10,10 +10,10 @@ from sqlalchemy.orm import Session
 from app import settings
 from app.core.ai_model.model_manager import ModelManager
 from app.core.rag import FrameworkDriverType
-from app.core.rag.indexing.extractor.factory import DataExtractorFactory
-from app.core.rag.indexing.factory import IndexingFactory
-from app.core.rag.indexing.splitter.base import BaseTextSplitter
-from app.core.rag.indexing.splitter.factory import TextSplitterFactory
+from app.core.rag.ingestion.extractor.factory import DataExtractorFactory
+from app.core.rag.ingestion.factory import IndexingFactory
+from app.core.rag.ingestion.splitter.base import BaseTextSplitter
+from app.core.rag.ingestion.splitter.factory import TextSplitterFactory
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
 from app.logger import logger
@@ -174,7 +174,7 @@ class RagProcessorTaskService:
         logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
                     f"loading resource UUID: {self.document.resource_uuid}, URL: {self.document.resource_url}")
         try:
-            # save document indexing status
+            # save document ingestion status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.PARSING)
 
             # logger.info(f"Loading resource UUID: {resource_uuid}, URL: {resource_url}")
@@ -197,7 +197,7 @@ class RagProcessorTaskService:
         logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
                     f"Step Extract Document text")
         try:
-            # save document indexing status
+            # save document ingestion status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.EXTRACTING)
 
             data_extractor = DataExtractorFactory.get_extractor(content_type, file_data)
@@ -217,7 +217,7 @@ class RagProcessorTaskService:
         logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
                     f"Step Cleaning nodes and Split into nodes")
         try:
-            # save document indexing status
+            # save document ingestion status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.SPLITTING)
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.CLEANING)
 

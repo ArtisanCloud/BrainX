@@ -6,7 +6,6 @@ from app.utils.datetime import datetime_format
 
 
 class BaseSchema(BaseModel):
-    version: str = "0.0.1"
     model_config = ConfigDict(
         from_attributes=True,
         arbitrary_types_allowed=True

@@ -1,3 +1,4 @@
+from app import settings
 from app.logger import logger
 
 from app.service.task.celery_app import celery_app
@@ -18,7 +19,7 @@ def task_process_document(self, document_uuid: str, user_uuid: str = None, *args
     except Exception as e:
         logger.error(
             f"Task: {task_id}, document uuid: {service_rag_processor.document.uuid}, Failed to get error: {e}",
-            exc_info=True
+            exc_info=settings.log.exc_info
         )
         exception = e
 

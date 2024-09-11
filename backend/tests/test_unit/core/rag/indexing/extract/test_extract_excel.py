@@ -1,6 +1,6 @@
 import os
 
-from app.core.rag.indexing.extractor.drivers.excel.excel import ExcelDataExtractor
+from app.core.rag.ingestion.extractor.drivers.excel.excel import ExcelDataExtractor
 
 
 def test_extract_doc():

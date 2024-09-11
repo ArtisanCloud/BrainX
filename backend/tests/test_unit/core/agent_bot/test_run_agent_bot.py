@@ -40,6 +40,6 @@ def test_agent_bot_run(setup_agent_bot):
         agent_bot.run(state)
 
     except Exception as e:
-        logging.error(e, exc_info=True)
+        logger.error(e, exc_info=settings.log.exc_info)
         pytest.fail(f"Test failed with exception: {e}")
 

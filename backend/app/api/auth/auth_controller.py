@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import settings
 from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.schemas.auth import RequestRegisterUser, ResponseRegisterUser, RequestLoginUser, ResponseLoginUser
@@ -47,7 +48,7 @@ async def api_login(
 
         token, exception = await login_by_account(db, data.account, data.password)
         if exception is not None:
-            logger.error(exception, exc_info=True)
+            logger.error(exception, exc_info=settings.log.exc_info)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception

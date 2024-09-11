@@ -78,7 +78,7 @@ def auth_platform_token(
         if platform_uuid is None:
             raise credentials_exception
     except JWTError as e:
-        logging.error(e, exc_info=True)
+        logger.error(e, exc_info=settings.log.exc_info)
         raise credentials_exception
     # print("api_auth token platform_uuid:", platform_uuid)
     request.session[auth_platform_uuid_key] = platform_uuid

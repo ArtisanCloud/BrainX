@@ -24,7 +24,7 @@ async def api_auth(
         # token, exception = await service_platform.auth_by_platform(db, data.account, data.password)
         token, exception = auth_openapi_access_key(data)
         if exception is not None:
-            logger.error(exception, exc_info=True)
+            logger.error(exception, exc_info=settings.log.exc_info)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception

@@ -2,8 +2,6 @@ import http
 
 from fastapi import Depends, APIRouter
 
-
-
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.query import RequestQuery, ResponseQuery
 
@@ -15,7 +13,7 @@ router = APIRouter()
 @router.post("/query")
 async def api_query(
         query: RequestQuery,
-        
+
 ) -> ResponseQuery | ResponseSchema:
     """
     query question_answer by text
