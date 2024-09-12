@@ -63,13 +63,13 @@ api_router.include_router(message_controller.router, prefix="/chat_bot/conversat
                           tags=["chatbot"])
 
 # question answer
-api_router.include_router(query_controller.router, prefix="/question_answer",
+api_router.include_router(query_controller.router, prefix="/question-answer",
                           dependencies=[Depends(auth_user_token)],
                           tags=["query"])
-api_router.include_router(visual_query_controller.router, prefix="/question_answer",
+api_router.include_router(visual_query_controller.router, prefix="/question-answer",
                           dependencies=[Depends(auth_user_token)],
                           tags=["visual_query"])
-api_router.include_router(visual_search_controller.router, prefix="/question_answer",
+api_router.include_router(visual_search_controller.router, prefix="/question-answer",
                           dependencies=[Depends(auth_user_token)],
                           tags=["visual_search"])
 

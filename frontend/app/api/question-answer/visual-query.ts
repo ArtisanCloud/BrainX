@@ -15,7 +15,7 @@ export interface ResponseVisualQuery extends Response {
 export const ActionVisualQuery = async (
 	params: RequestVisualQuery
 ): Promise<ResponseVisualQuery> => {
-	const endpoint = `/api/question_answer/visual_query`;
+	const endpoint = `/api/question-answer/visual-query`;
 	const res = await backendClient.backend_post(endpoint, params);
 
 	return res as ResponseVisualQuery;

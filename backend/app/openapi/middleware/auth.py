@@ -1,4 +1,3 @@
-import logging
 from typing import Tuple
 
 from fastapi import HTTPException, Depends
@@ -7,6 +6,7 @@ from starlette.requests import Request
 
 from app import settings
 from app.api.middleware.auth import oauth2_scheme
+from app.logger import logger
 from app.openapi.api.token import sign_token
 from app.openapi.models.platform import Platform
 from app.openapi.schemas.auth import RequestAuthPlatform

@@ -16,7 +16,7 @@ export const ActionVisualSearch = async (
 ): Promise<ResponseVisualSearch> => {
 	// const endpoint = `/api/system/test/timeout?timeout=3`
 	// const res = await backendClient.backend_get(endpoint, params);
-	const endpoint = `/api/question_answer/visual_search`;
+	const endpoint = `/api/question-answer/visual-search`;
 	const res = await backendClient.backend_post(endpoint, params);
 
 	return res as ResponseVisualSearch;
