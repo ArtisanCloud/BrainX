@@ -1,6 +1,6 @@
 import {backendClient} from "@/app/api/backend";
 
-export interface RequestAQQuery {
+export interface RequestQAQuery {
 	question: string
 	llm:string
 }
@@ -10,7 +10,7 @@ export interface ResponseQAQuery {
 }
 
 export const ActionQAQuery = async (
-	params: RequestAQQuery
+	params: RequestQAQuery
 ): Promise<ResponseQAQuery> => {
 	// const endpoint = `/api/system/test/timeout?timeout=3`
 	// const res = await backendClient.backend_get(endpoint, params);

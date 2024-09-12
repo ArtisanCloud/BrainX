@@ -1,5 +1,5 @@
 import styles from './index.module.scss';
-import {ActionQAQuery, RequestAQQuery} from "@/app/api/question-answer/query";
+import {ActionQAQuery, RequestQAQuery} from "@/app/api/question-answer/query";
 import classnames from "classnames";
 import {Fragment, useContext, useEffect, useState} from "react";
 
@@ -17,7 +17,7 @@ const QuestionAnswer = () => {
 
 	const secondsCountDown = 60
 
-	const onFinish: FormProps<RequestAQQuery>["onFinish"] = async (values: RequestAQQuery) => {
+	const onFinish: FormProps<RequestQAQuery>["onFinish"] = async (values: RequestQAQuery) => {
 
 		values.llm = selectedLlm!
 		// console.log('Success:', values.question);
@@ -37,7 +37,7 @@ const QuestionAnswer = () => {
 		}
 	};
 
-	const onFinishFailed: FormProps<RequestAQQuery>["onFinishFailed"] = (errorInfo: any) => {
+	const onFinishFailed: FormProps<RequestQAQuery>["onFinishFailed"] = (errorInfo: any) => {
 		console.log('Failed:', errorInfo);
 	};
 
@@ -64,7 +64,7 @@ const QuestionAnswer = () => {
 				autoComplete="off"
 				// className={styles.form}
 			>
-				<Form.Item<RequestAQQuery>
+				<Form.Item<RequestQAQuery>
 					label="问题"
 					name="question"
 					rules={[{required: true, message: '请写下你的问题'}]}
