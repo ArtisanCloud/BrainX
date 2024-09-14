@@ -35,7 +35,7 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def delete_documents(self, document_ids: List[str]) -> None:
+    def delete_documents(self, document_ids: List[str], collection_only: bool = False, ) -> None:
         pass
 
     @abstractmethod
