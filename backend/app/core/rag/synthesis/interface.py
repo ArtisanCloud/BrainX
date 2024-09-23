@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional, List, Iterator, Tuple
+from typing import Any, Optional, List, Iterator, Tuple, Dict
 
 from app.core.brainx.base import LLMModel
 from app.core.brainx.llm.langchain import get_openai_llm, get_kimi_llm, get_baidu_qianfan_llm
@@ -50,12 +50,12 @@ class BaseAgentExecutor(ABC):
         return mdl_llm, None
 
     @abstractmethod
-    def invoke(self, query: str, temperature: float = 0.5, config: Optional[Any] = None, **kwargs: Any) -> str:
+    def invoke(self, query: Dict, temperature: float = 0.5, config: Optional[Any] = None, **kwargs: Any) -> str:
 
         raise NotImplementedError
 
     @abstractmethod
-    def stream(self, query: str,
+    def stream(self, query: Dict,
                temperature: float = 0.5,
                input_variables=list[str], template: str = '',
                **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
@@ -63,7 +63,7 @@ class BaseAgentExecutor(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def completion(self, query: str,
+    def completion(self, query: Dict,
                    temperature: float = 0.5,
                    input_variables=list[str], template: str = '',
                    **kwargs: Any) -> Tuple[Any | None, Exception | None]:
@@ -72,7 +72,7 @@ class BaseAgentExecutor(ABC):
 
     @abstractmethod
     def chat_completion(self,
-                        question: str,
+                        question: Dict,
                         temperature: float = 0.5,
                         app: App = None,
                         session_id: str = "",
@@ -82,7 +82,7 @@ class BaseAgentExecutor(ABC):
 
     @abstractmethod
     def chat_stream(self,
-                    question: str,
+                    question: Dict,
                     temperature: float = 0.5,
                     app: App = None,
                     session_id: str = "",

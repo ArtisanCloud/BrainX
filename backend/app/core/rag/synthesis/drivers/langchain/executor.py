@@ -1,4 +1,4 @@
-from typing import Optional, Any, List, Iterator, Tuple, Type
+from typing import Optional, Any, List, Iterator, Tuple, Type, Dict
 from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
 
 from langchain_core.prompts import PromptTemplate
@@ -47,7 +47,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
         except Exception as e:
             return None, e
 
-    def completion(self, query: str,
+    def completion(self, query: Dict,
                    temperature: float = 0.5,
                    input_variables=list[str], template: str = '',
                    **kwargs: Any) -> Tuple[Any | None, Exception | None]:
@@ -66,7 +66,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             chain = prompt_template | completion_llm
 
             output = chain.invoke(
-                input={"query": query},
+                input=query,
             )
 
             response = convert_document_to_response(output)
@@ -78,7 +78,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return None, e
 
     def chat_completion(self,
-                        question: str,
+                        query: Dict,
                         temperature: float = 0.5,
                         app: App = None,
                         session_id: str = "",
@@ -123,7 +123,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Stream the response
             completion_response = chain_with_trimming.invoke(
-                {"question": question},
+                query,
                 config={"configurable": {"session_id": "test_session_id"}},
             )
 
@@ -133,7 +133,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return None, e
 
     def chat_stream(self,
-                    question: str,
+                    query: Dict,
                     app: App = None,
                     temperature: float = 0.5,
                     session_id: str = "",
@@ -181,7 +181,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Stream the response
             stream_response = chain_with_trimming.stream(
-                {"question": question},
+                query,
                 config={"configurable": {"session_id": "test_session_id"}},
             )
 
@@ -190,7 +190,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
         except Exception as e:
             return None, e
 
-    def invoke(self, query: str, temperature: float = 0.5, config: Optional[Any] = None, **kwargs: Any) -> str:
+    def invoke(self, query: Dict, temperature: float = 0.5, config: Optional[Any] = None, **kwargs: Any) -> str:
         return ""
 
     def get_chat_history(self, session_id: str) -> ChatMessageHistory:

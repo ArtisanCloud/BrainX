@@ -1,5 +1,4 @@
-from typing import Tuple, Iterator, Any, List, Type
-
+from typing import Tuple, Iterator, Any, List, Type, Dict
 
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
@@ -93,16 +92,16 @@ class BrainXService:
 
     def stream(
             self,
-            inputs: str,
+            query: Dict,
             temperature: float = 0.5,
             input_variables=list[str],
             template: str = ''
     ) -> Tuple[Iterator | None, Exception | None]:
-        return self.agent_executor.stream(inputs, temperature=temperature, input_variables=input_variables,
+        return self.agent_executor.stream(query, temperature=temperature, input_variables=input_variables,
                                           template=template)
 
     def complete(self,
-                 query: str,
+                 query: Dict,
                  temperature: float = 0.5,
                  input_variables=list[str],
                  template: str = '',
@@ -112,17 +111,17 @@ class BrainXService:
 
 
     def chat_completion(self,
-                        question: str,
+                        query: Dict,
                         temperature: float = 0.5,
                         app: App = None,
                         session_id: str = "",
                         ) -> Tuple[str | None, Exception | None]:
-        return self.agent_executor.chat_completion(question, app=app, session_id=session_id, temperature=temperature)
+        return self.agent_executor.chat_completion(query, app=app, session_id=session_id, temperature=temperature)
 
     def chat_stream(self,
-                    question: str,
+                    query: Dict,
                     temperature: float = 0.5,
                     app: App = None,
                     session_id: str = ""
                     ) -> Tuple[Iterator | None, Exception | None]:
-        return self.agent_executor.chat_stream(question, app=app, session_id=session_id, temperature=temperature)
+        return self.agent_executor.chat_stream(query, app=app, session_id=session_id, temperature=temperature)

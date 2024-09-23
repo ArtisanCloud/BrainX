@@ -1,5 +1,5 @@
 import uuid
-from typing import List
+from typing import List, Dict
 
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
@@ -42,6 +42,7 @@ def generate_session_id() -> str:
     """生成会话ID"""
     return str(uuid.uuid4())
 
+
 def get_session_history(user_uuid: str, conversation_id: str) -> BaseChatMessageHistory:
     if (user_uuid, conversation_id) not in store:
         store[(user_uuid, conversation_id)] = InMemoryHistory()
@@ -78,7 +79,7 @@ def get_chat_prompt_template(app: App) -> ChatPromptTemplate:
     return prompt
 
 
-def chat_by_llm(question: str, llm: str, app: App = None, temperature: float = 0.5, stream_handler=None):
+def chat_by_llm(input_data: Dict, llm: str, app: App = None, temperature: float = 0.5, stream_handler=None):
     # 初始化一个大模型
     # OpenAI的模型
     if llm == LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
@@ -141,7 +142,7 @@ def chat_by_llm(question: str, llm: str, app: App = None, temperature: float = 0
 
     # Stream the response
     stream_response = chain_with_trimming.stream(
-        {"question": question},
+        input=input_data,
         config={"configurable": {"session_id": "test_session_id"}},
     )
 

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import settings
 from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.openapi.middleware.auth import auth_openapi_access_key

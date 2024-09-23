@@ -9,7 +9,7 @@ from app.api.chat_bot.chat_controller import event_generator
 from app.database.deps import get_async_db_session
 from app.database.seed import init_user_uuid
 from app.logger import logger
-from app.schemas.base import ResponseSchema
+from app.openapi.schemas.demo import ResponseHelloWorld, RequestHelloWorld
 from app.schemas.question_answer.query import RequestQuery
 from app.service.robot_chat.chat import chat
 
@@ -17,12 +17,14 @@ router = APIRouter()
 
 
 @router.post("/hello-world")
-async def api_hello_world() -> ResponseSchema:
-    data = ResponseSchema(
-        message="hello world for openapi_provider"
+async def api_hello_world(
+        data: RequestHelloWorld,
+) -> ResponseHelloWorld:
+    res = ResponseHelloWorld(
+        message=f"hi {data.name}, I get your messge '{data.message}'"
     )
 
-    return data
+    return res
 
 
 @router.post("/stream")
