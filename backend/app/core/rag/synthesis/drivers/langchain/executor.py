@@ -21,7 +21,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                  **kwargs):
         super().__init__(llm=llm, temperature=temperature, streaming=streaming, **kwargs)
 
-    def stream(self, query: str,
+    def stream(self, query: Dict,
                temperature: float = 0.5,
                input_variables=list[str], template: str = '',
                **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
