@@ -6,7 +6,7 @@ from app.logger import logger
 from app.models.rag.document_node import DocumentNode
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.query import ResponseQuery, Document as DocumentSchema
-from app.service.brainx import BrainXService
+from app.service.brainx.service import BrainXService
 
 
 def transform_documents_to_reply(answer: str, documents: List[DocumentNode]) -> ResponseQuery:
@@ -58,8 +58,8 @@ async def query_by_text(
             template = (docs[0].page_content +
                         " \n\n 请根据以上召回内容，针对此问题'{query}'，做一个回答")
             # print(template)
-            response, exception = service_brain_x.complete(
-                query=question,
+            response, exception = service_brain_x.invoke(
+                query={"query": question},
                 input_variables=["query"],
                 template=template
             )

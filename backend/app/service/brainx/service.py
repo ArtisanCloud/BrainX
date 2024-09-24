@@ -1,4 +1,4 @@
-from typing import Tuple, Iterator, Any, List, Type, Dict
+from typing import Tuple, Iterator, Any, List, Type, Dict, Optional
 
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
@@ -12,7 +12,7 @@ from app.core.rag.retrieval.factory import RetrieverFactory
 from app.core.rag.retrieval.interface import BaseRetriever
 from app.models.app.app import App
 from app.models.rag.document_node import DocumentNode
-from app.models.rag.retrievial_response import RetrievalResponse
+from app.models.rag.invoke_response import InvokeResponse
 
 
 class BrainXService:
@@ -22,7 +22,6 @@ class BrainXService:
                  collection_name: str = "rag_embeddings",
                  table_name: str = "embeddings",
                  ):
-
         # 进行其他初始化操作
         # create the embedding model
         embedding_model_instance = self._create_embedding_model()
@@ -100,15 +99,29 @@ class BrainXService:
         return self.agent_executor.stream(query, temperature=temperature, input_variables=input_variables,
                                           template=template)
 
-    def complete(self,
-                 query: Dict,
-                 temperature: float = 0.5,
-                 input_variables=list[str],
-                 template: str = '',
-                 ) -> Tuple[RetrievalResponse | None, Exception | None]:
-        return self.agent_executor.completion(query, temperature=temperature, input_variables=input_variables,
-                                              template=template)
+    def invoke(self,
+               query: Dict,
+               temperature: float = 0.5,
+               input_variables=list[str],
+               template: str = '',
+               output_schemas: Any = None,
+               ) -> Tuple[InvokeResponse | None, Exception | None]:
 
+        return self.agent_executor.invoke(
+            query, temperature=temperature,
+            input_variables=input_variables,
+            template=template,
+            output_schemas=output_schemas,
+        )
+
+    def completion(self, query: str,
+                   temperature: float = 0.5, config: Optional[Any] = None,
+                   output_schemas: Any = None,
+                   **kwargs: Any) -> Tuple[Any, Exception | None]:
+        return self.agent_executor.invoke(
+            query=query, temperature=temperature, config=config,
+            output_schemas=output_schemas,
+            **kwargs)
 
     def chat_completion(self,
                         query: Dict,

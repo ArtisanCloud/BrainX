@@ -5,7 +5,7 @@ from app.core.brainx.chat.app import generate_session_id
 from app.models.app.app import App
 from app.models.robot_chat.conversation import Conversation
 from app.service.app.service import AppService
-from app.service.brainx import BrainXService
+from app.service.brainx.service import BrainXService
 from app.service.conversation.service import ConversationService
 
 

@@ -6,7 +6,7 @@ from langchain_core.runnables.utils import Output
 
 from app.core.libs.node import generate_node_hash
 from app.models.rag.document_node import DocumentNode
-from app.models.rag.retrievial_response import RetrievalResponse
+from app.models.rag.invoke_response import InvokeResponse
 
 
 def convert_node_to_document(node: DocumentNode) -> Document:
@@ -57,9 +57,11 @@ def convert_documents_to_nodes_with_score(documents: List[Document | Tuple[Docum
     ]
 
 
-def convert_document_to_response(output: Output) -> RetrievalResponse:
-    return RetrievalResponse(
+def convert_document_to_response(output: Output) -> InvokeResponse:
+    return InvokeResponse(
         id=output.id,
+        name=output.name,
+        type=output.type,
         content=output.content,
         additional_kwargs=output.additional_kwargs,
         metadata=output.response_metadata,

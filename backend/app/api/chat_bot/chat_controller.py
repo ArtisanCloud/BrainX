@@ -100,3 +100,4 @@ async def api_chat(
             media_type="text/event-stream",
             status_code=http.HTTPStatus.BAD_REQUEST,
         )
+

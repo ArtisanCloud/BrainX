@@ -16,6 +16,7 @@ class LLMModel(Enum):
     KIMI_MOONSHOT_V1_8K = 'moonshot-v1-8k'
     OLLAMA_13B_ALPACA_16K = '13B-alpaca-16k:latest'
     OLLAMA_GEMMA_2B = 'gemma:2b'
+    OLLAMA_GEMMA_7B = 'gemma:7b'
 
 
 class VisualQueryModelSingleton:

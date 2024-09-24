@@ -1,7 +1,6 @@
 import os
 
 from fastapi import APIRouter, Depends
-from starlette.staticfiles import StaticFiles
 
 from app.api.auth import auth_controller
 from app.api.cache import cache_controller
@@ -15,6 +14,7 @@ from app.api.media_resource import media_resource_controller
 
 from app.api.app import app_controller
 from app.api.chat_bot import chat_controller
+from app.api.brainx import brainx_controller
 from app.api.question_answer import query_controller, visual_search_controller, visual_query_controller
 
 err_code_400 = 400
@@ -72,6 +72,12 @@ api_router.include_router(visual_query_controller.router, prefix="/question-answ
 api_router.include_router(visual_search_controller.router, prefix="/question-answer",
                           dependencies=[Depends(auth_user_token)],
                           tags=["visual_search"])
+
+# BrainX
+api_router.include_router(brainx_controller.router, prefix="/brainx",
+                          dependencies=[Depends(auth_user_token)],
+                          tags=["brainx"])
+
 
 # rag
 api_router.include_router(dataset_controller.router, prefix="/rag",
