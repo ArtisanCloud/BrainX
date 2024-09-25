@@ -32,7 +32,7 @@ export default function LoginPage() {
 
 			// 跳转到个人中心
 			messageApi.info('登录成功');
-			router.push('/space');
+			router.push('/space/workspace/robot-chat');
 
 		} else {
 			messageApi.error('登录失败:' + response.error);

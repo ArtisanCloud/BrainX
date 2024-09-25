@@ -119,9 +119,9 @@ class BackendClient {
 				description: "需要重新登录",
 				duration: 3,
 			});
-			// sleep(2000).then(() => {
-			// 	window.location.href = '/user/login'; // 替换为你的登录页面路径
-			// })
+			sleep(2000).then(() => {
+				window.location.href = '/user/login'; // 替换为你的登录页面路径
+			})
 			return;
 		}
 
