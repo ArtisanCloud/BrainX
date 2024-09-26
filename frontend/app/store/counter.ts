@@ -1,4 +1,4 @@
-import create from 'zustand';
+import {create} from 'zustand';
 
 const useCounterStore = create(set => ({
   count: 0,
