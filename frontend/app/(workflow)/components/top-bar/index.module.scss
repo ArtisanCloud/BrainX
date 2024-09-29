@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  background: var(--light-color-grey-grey-0, #f7f7fa);
+  border-bottom: 1px solid var(--light-usage-border-color-border, #1d1c2314);
+  justify-content: space-between;
+  padding: 16px 24px;
+
+  .leftBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+
+    .backButton {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      margin-left: 4px;
+      margin-right: 20px;
+    }
+
+    .workflowAvatar {
+      border-radius: 6px;
+      height: 32px;
+      margin-right: 12px;
+      width: 32px;
+      align-items: center;
+      display: inline-flex;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      vertical-align: middle;
+      white-space: nowrap;
+      background-color: #76bd76;
+    }
+  }
+
+  .rightBox {
+    align-items: center;
+    column-gap: 12px;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+
+    .splitButton {
+      display: flex;
+      flex-direction: row;
+      height: 32px;
+
+      .testButton {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: white;
+        color: #4d53e8;
+        border: 1px #f0f0f5 solid;
+        transition: background-color 0.3s ease-in 0s, border 0.3s ease-in 0s;
+        border-bottom-left-radius: 8px;
+        border-right-width: 0;
+        border-top-left-radius: 8px;
+        min-width: 96px;
+        height: 32px;
+        padding: 8px 16px 8px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 22px;
+
+        &:hover {
+          background-color: #f0f0f0; /* 鼠标悬停时的灰色背景 */
+        }
+      }
+
+      .moreButton {
+        color: #4d53e8;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        border-bottom-right-radius: 8px;
+        border-top-right-radius: 8px;
+        border: 1px #f0f0f5 solid;
+
+        &:hover {
+          background-color: #f0f0f0; /* 鼠标悬停时的灰色背景 */
+        }
+      }
+    }
+
+    .publishButton {
+      background-color: #4e40e5;
+      color: white;
+      border-radius: 8px;
+      border-width: 0;
+      font-size: 14px;
+      height: 32px;
+      min-width: 32px;
+      padding: 6px 15px 6px 15px;
+      &:hover {
+        background-color: #3e30e3; /* 鼠标悬停时的灰色背景 */
+      }
+    }
+
+    .copyButton {
+      padding: 6px 7px;
+      align-items: center;
+      justify-content: center;
+      display: inline-flex;
+      background-color: white;
+      border: 1px solid #f0f0f5;
+      border-radius: 8px;
+      &:hover {
+        background-color: #f0f0f0; /* 鼠标悬停时的灰色背景 */
+      }
+    }
+  }
+
+}

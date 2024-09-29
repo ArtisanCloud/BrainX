@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, TypedDict
 
 from enum import Enum
 
@@ -10,40 +10,32 @@ from app.core.workflow.node_variable.base import BaseNodeVariable
 from app.core.workflow.state import GraphState
 
 
+class NodeInfo(BaseModel):
+    id: str
+    type: str
+    name: str
+    icon: str
+    description: str
+    support_batch: bool
+
+
 class NodeType(Enum):
-    AGENT = ("agent_bot", "agent_bot", "Agent Node")
-    START = ("start_input", "start", "Start Node")
-    END = ("end_result", "end", "End Node")
-    PLUGIN = ("plugin", "plugin", "Plugin Node")
-    LLM = ("llm", "llm", "LLM Node")
-    CODE = ("code", "code", "Code Node")
-    KNOWLEDGE = ("knowledge", "knowledge", "Knowledge Node")
-    WORKFLOW = ("workflow", "workflow", "Workflow Node")
-    CONDITION = ("condition", "condition", "Condition Node")
-    loop = ("loop", "loop", "Loop Node")
-    INTENT_RECOGNITION = ("intent_recognition", "intent_recognition", "Intent Recognition Node")
-    TEXT_PROCESSING = ("text_processing", "text_processing", "Text Processing Node")
-    MESSAGE = ("message", "message", "Message Node")
-    QUESTION = ("question", "question", "Question Node")
-    VARIABLE = ("variable", "variable", "Variable Node")
-    DATABASE = ("database", "database", "Database Node")
-
-    def __init__(self, id: str, type: str, name: str):
-        self._id = id
-        self._type = type
-        self._name = name
-
-    @property
-    def id(self) -> str:
-        return self._id
-
-    @property
-    def type(self) -> str:
-        return self._type
-
-    @property
-    def name(self) -> str:
-        return self._name
+    AGENT = "agent_bot"
+    START = "start_input"
+    END = "end_result"
+    PLUGIN = "plugin"
+    LLM = "llm"
+    CODE = "code"
+    KNOWLEDGE = "knowledge"
+    WORKFLOW = "workflow"
+    CONDITION = "condition"
+    LOOP = "loop"
+    INTENT_RECOGNITION = "intent_recognition"
+    TEXT_PROCESSING = "text_processing"
+    MESSAGE = "message"
+    QUESTION = "question"
+    VARIABLE = "variable"
+    DATABASE = "database"
 
 
 class BaseNode(ABC, BaseModel):
@@ -99,7 +91,6 @@ class BaseNode(ABC, BaseModel):
         if self.context_manager:
             self.context_manager.set(key, value)
 
-
     @abstractmethod
     def execute(self, state: GraphState):
         print(f"~~~ "
@@ -135,3 +126,60 @@ class BaseNode(ABC, BaseModel):
     @classmethod
     def from_dict(cls, data):
         return cls(**data)
+
+
+# 定义节点信息
+node_info_list: List[NodeInfo] = [
+    NodeInfo(id="plugin", type=NodeType.PLUGIN.value, name="插件",
+             icon="plugin",  # icon_key
+             description="Integrates external plugins.", support_batch=True),
+
+    NodeInfo(id="llm", type=NodeType.LLM.value, name="LLM",
+             icon="llm",  # icon_key
+             description="Invoke the large language model, generate responses using variables and prompt words.",
+             support_batch=True),
+
+    NodeInfo(id="code", type=NodeType.CODE.value, name="代码",
+             icon="code",  # icon_key
+             description="Executes custom code snippets.", support_batch=True),
+
+    NodeInfo(id="knowledge", type=NodeType.KNOWLEDGE.value, name="知识库",
+             icon="knowledge",  # icon_key
+             description="Handles knowledge base interactions.", support_batch=False),
+
+    NodeInfo(id="workflow", type=NodeType.WORKFLOW.value, name="工作流",
+             icon="workflow",  # icon_key
+             description="Invokes another workflow.", support_batch=True),
+
+    NodeInfo(id="condition", type=NodeType.CONDITION.value, name="条件",
+             icon="condition",  # icon_key
+             description="Evaluates conditions to control workflow flow.", support_batch=False),
+
+    NodeInfo(id="loop", type=NodeType.LOOP.value, name="循环",
+             icon="loop",  # icon_key
+             description="Handles looping logic within the workflow.", support_batch=True),
+
+    NodeInfo(id="intent_recognition", type=NodeType.INTENT_RECOGNITION.value, name="认知度",
+             icon="intent_recognition",  # icon_key
+             description="Recognizes user intents.", support_batch=False),
+
+    NodeInfo(id="text_processing", type=NodeType.TEXT_PROCESSING.value, name="文本处理",
+             icon="text_processing",  # icon_key
+             description="Processes and manipulates text.", support_batch=True),
+
+    NodeInfo(id="message", type=NodeType.MESSAGE.value, name="消息",
+             icon="message",  # icon_key
+             description="Sends or receives messages.", support_batch=False),
+
+    NodeInfo(id="question", type=NodeType.QUESTION.value, name="问题",
+             icon="question",  # icon_key
+             description="Handles question and answer interactions.", support_batch=False),
+
+    NodeInfo(id="variable", type=NodeType.VARIABLE.value, name="变量",
+             icon="variable",  # icon_key
+             description="Manages variables within the workflow.", support_batch=True),
+
+    NodeInfo(id="database", type=NodeType.DATABASE.value, name="数据库",
+             icon="database",  # icon_key
+             description="Interacts with the database.", support_batch=True),
+]

@@ -1,0 +1,140 @@
+.container {
+  display: flex;
+  flex: 1 1;
+  flex-direction: row;
+  overflow: auto;
+  position: relative;
+
+  .sidebar {
+    width: 260px;
+    height: 100%;
+    background: #f7f7fa;
+    border-right: 1px solid rgba(29, 28, 35, .08);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 0;
+    position: relative;
+    transition: width .1s linear, padding .1s linear;
+
+    .labelBox {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-bottom:8px;
+
+      .label {
+        font-family: PingFang SC, Noto Sans SC, sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 24px;
+        margin: 0;
+        padding: 8px 16px 8px 16px;
+      }
+
+      .buttonBox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .hideSidebarButton {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 8px;
+          margin-right: 32px;
+          background-color: white;
+          width: 24px;
+          height: 24px;
+          border-radius: 8px;
+          border: 1px #f0f0f5 solid;
+          color: #4d53e8;
+
+          &:hover {
+            background-color: #f0f0f0; /* 鼠标悬停时的灰色背景 */
+          }
+        }
+      }
+    }
+
+    .nodeList {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: auto;
+
+      .nodeContainer {
+        margin: 0 0 12px;
+
+        .nodeBox {
+          width: calc(100% - 32px);
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 6px 8px 0 rgba(29, 28, 35, .06);
+          font-size: 12px;
+          line-height: 16px;
+          margin: 0 16px;
+          overflow: hidden;
+          padding: 12px 16px;
+
+          .nodeItem {
+            display: flex;
+            flex-direction: row;
+            .imgBox {
+              margin-right: 6px;
+
+              .nodeIcon {
+                background-color: #74b674;
+                border-radius: 4px;
+                padding: 4px;
+                color: white;
+                width: 28px;
+                height: 28px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+            }
+
+            .nodeName {
+              color: #1c1f23;
+              flex: 1 1;
+              font-size: 16px;
+              font-weight: 600;
+              display: flex;
+              justify-content: left;
+              align-items: center;
+              max-width: 100%;
+              vertical-align: top;
+            }
+            .addButton{
+              border-radius: 4px;
+              height: 24px;
+              padding: 4px !important;
+              align-items: center;
+              justify-content: center;
+              &:hover{
+                background-color: #f0f0f0; /* 鼠标悬停时的灰色背景 */
+              }
+            }
+
+
+            .nodeDescription {
+
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    background-color: #f2f3f5;
+    display: block;
+    left: -734.5581450943371px;
+    top: -426.3328565169156px;
+    overflow: visible;
+    position: absolute;
+    box-sizing: border-box;
+  }
+}

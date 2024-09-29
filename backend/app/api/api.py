@@ -16,6 +16,7 @@ from app.api.app import app_controller
 from app.api.chat_bot import chat_controller
 from app.api.brainx import brainx_controller
 from app.api.question_answer import query_controller, visual_search_controller, visual_query_controller
+from app.api.workflow import node_controller
 
 err_code_400 = 400
 
@@ -27,7 +28,6 @@ api_router.include_router(test_controller.router, prefix="/system", tags=["tests
 
 # cache
 api_router.include_router(cache_controller.router, prefix="/cache", tags=["cache"])
-
 
 # auth
 api_router.include_router(auth_controller.router,
@@ -78,7 +78,6 @@ api_router.include_router(brainx_controller.router, prefix="/brainx",
                           dependencies=[Depends(auth_user_token)],
                           tags=["brainx"])
 
-
 # rag
 api_router.include_router(dataset_controller.router, prefix="/rag",
                           dependencies=[Depends(auth_user_token)],
@@ -98,3 +97,8 @@ api_router.include_router(document_segment_controller.router, prefix="/rag/datas
 api_router.include_router(task_controller.router, prefix="/task",
                           dependencies=[Depends(auth_user_token)],
                           tags=["task"])
+
+# workflow
+api_router.include_router(node_controller.router, prefix="/workflow/node",
+                          dependencies=[Depends(auth_user_token)],
+                          tags=["workflow", "node"])

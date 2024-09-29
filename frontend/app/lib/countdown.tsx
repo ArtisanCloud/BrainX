@@ -21,7 +21,7 @@ const useCountdown = (initialSeconds: number, onCountdownEnd?: () => void) => {
 			// 清除计时器
 			return () => {
 				if (timerRef.current) {
-					clearInterval(timerRef.current);
+					clearInterval(timerRef.current!);
 					timerRef.current = null; // 清除引用
 				}
 			};
@@ -37,7 +37,7 @@ const useCountdown = (initialSeconds: number, onCountdownEnd?: () => void) => {
 		setStarted(false);
 		setCountdown(0);
 		if (timerRef.current) {
-			clearInterval(timerRef.current);
+			clearInterval(timerRef.current!);
 			timerRef.current = null; // 清除引用
 		}
 	};
