@@ -1,0 +1,34 @@
+
+
+.nodeItem {
+  display: flex;
+  flex-direction: row;
+
+
+  .nodeItemName {
+    color: #1c1f23;
+    flex: 1 1;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    max-width: 100%;
+    vertical-align: top;
+  }
+  .addButton{
+    border-radius: 4px;
+    height: 24px;
+    padding: 4px !important;
+    align-items: center;
+    justify-content: center;
+    &:hover{
+      background-color: #f0f0f0; /* 鼠标悬停时的灰色背景 */
+    }
+  }
+
+
+  .nodeItemDescription {
+
+  }
+}

@@ -5,77 +5,72 @@ import {LeftOutlined, PlusOutlined} from '@ant-design/icons';
 import {useEffect, useState} from "react";
 import {ActionFetchNodeList, NodeTypeInfo} from "@/app/api/workflow/node";
 import {iconMapping} from '@/app/(workflow)/components/icon'; // 导入图标映射对象
+import '@xyflow/react/dist/style.css';
+import FlowGround from "@/app/(workflow)/components/flow-board/flow-ground";
+import {
+  DndContext,
+  useDroppable,
+  useDraggable,
+} from '@dnd-kit/core';
+import NodeMenu from "@/app/(workflow)/components/flow-board/node-menu/node-menu";
 
 const FlowBoard = () => {
-
-  const [nodeList, setNodeList] = useState<NodeTypeInfo[]>([])
+  const [nodeList, setNodeList] = useState<NodeTypeInfo[]>([]);
+  const [flowGroundNodes, setFlowGroundNodes] = useState<NodeTypeInfo[]>([]);
 
   useEffect(() => {
-    ActionFetchNodeList().then((res) => {
-      console.log(res.data)
-      setNodeList(res.data)
-    })
+    const fetchNodeList = async () => {
+      try {
+        const res = await ActionFetchNodeList();
+        setNodeList(res.data);
+      } catch (error) {
+        console.error("Error fetching node list:", error);
+      }
+    };
+    fetchNodeList();
   }, []);
 
+  const handleDragEnd = (event) => {
+    const {active, over} = event;
+
+    if (over) {
+      // 将拖动的节点添加到 flowGroundNodes
+      const newNode = {
+        id: active.id,
+        name: active.data.current.name,
+        icon: active.data.current.icon,
+      };
+      // setFlowGroundNodes((prev) => [...prev, newNode]);
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <div className={styles.sidebar}>
-        <div className={styles.labelBox}>
-          <span className={styles.label}>选择节点</span>
+    <DndContext onDragEnd={handleDragEnd}>
 
-          <div className={styles.buttonBox}>
-            <button className={styles.hideSidebarButton}>
-              <LeftOutlined style={{fontSize: '8px', color: "#6b6b75"}}/>
-            </button>
-
+      <div className={styles.container}>
+        {/* 侧边栏 */}
+        <div className={styles.sidebar}>
+          <div className={styles.labelBox}>
+            <span className={styles.label}>选择节点</span>
+            <div className={styles.buttonBox}>
+              <button className={styles.hideSidebarButton}>
+                <LeftOutlined style={{fontSize: '8px', color: "#6b6b75"}}/>
+              </button>
+            </div>
           </div>
+
+          {/* 渲染节点列表 */}
+          <NodeMenu nodeList={nodeList} iconMapping={iconMapping} />
+
         </div>
-        {/* 渲染节点列表 */}
-        <div className={styles.nodeList}>
-          {nodeList.map((node) => {
 
-            // 尝试从 iconMapping 中获取对应的组件
-            const iconInfo = iconMapping[node.icon];
-
-            // 如果没有找到，给一个默认的图标组件
-            const {component: IconComponent = null, size = 24, backgroundColor = 'transparent'} = iconInfo || {};
-
-            return (
-              <div key={node.id} className={styles.nodeContainer}>
-                <div className={styles.nodeBox}>
-                  <div className={styles.nodeItem}>
-                    <div className={styles.imgBox}>
-                      {IconComponent ? (
-                        <IconComponent
-                          style={{
-                            width: `${size}px`,
-                            height: `${size}px`,
-                            backgroundColor: backgroundColor,
-                          }}
-                          className={styles.nodeIcon}
-                        />
-                      ) : (
-                        <div className={styles.nodeIcon}> {/* 如果没有对应组件，显示默认图标或占位符 */}
-                          <span>?</span>
-                        </div>
-                      )}
-                    </div>
-                    <span className={styles.nodeName}>{node.name}</span>
-                    <button className={styles.addButton}>
-                      <PlusOutlined style={{fontSize: '16px', color: "#4d53e8"}}/>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {/* 拖放的目标区域 */}
+        <div className={styles.content}>
+          <FlowGround nodes={flowGroundNodes}/>
         </div>
       </div>
-      <div className={styles.content}></div>
-    </div>
-  )
-
-
-}
+    </DndContext>
+  );
+};
 
 export default FlowBoard;
