@@ -1,7 +1,7 @@
-from typing import Optional, Any, List, Iterator, Tuple, Type, Dict
+from typing import Any, Iterator, Tuple, Type, Dict
 from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
 from langchain_core.language_models import BaseChatModel
-from langchain_core.output_parsers import PydanticOutputParser, JsonOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
@@ -11,12 +11,11 @@ from app import settings
 from app.core.brainx.base import LLMModel
 from app.core.brainx.chat.app import get_chat_prompt_template
 from app.core.brainx.llm.langchain import get_openai_llm, get_kimi_llm, get_baidu_qianfan_llm, get_ollama_llm
+from app.core.libs.json import sanitize_json
 from app.core.rag.ingestion.drivers.langchain.helper import convert_document_to_response
-from app.core.rag.synthesis.drivers.langchain.helper import process_json
 from app.core.rag.synthesis.interface import BaseAgentExecutor
 from app.logger import logger
 from app.models import App
-from app.models.rag.invoke_response import InvokeResponse
 
 
 class LangchainAgentExecutor(BaseAgentExecutor):
@@ -124,14 +123,22 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # 返回结构化输出结果
             if output_schemas:
+
                 # 处理非正规格式的json
                 if isinstance(output, str):
                     content = output
                 else:
                     content = output.content
+                try:
+                    # 尝试将输入通过 sanitize_json 处理成合法的JSON格式
+                    content = sanitize_json(content)
+                except ValueError as e:
+                    print(f"JSON解析失败: {e}")
+                    return None, e
 
-                # print(111111, type(content), content)
+                # print("before json parser invoke", type(content), content)
                 obj = parser.invoke(content)
+                # print("after json parser invoke", obj)
                 return obj, None
 
             response = convert_document_to_response(output)
