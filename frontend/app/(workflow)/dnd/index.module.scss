@@ -1,0 +1,61 @@
+// index.module.scss
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.draggableItem {
+  padding: 8px;
+  background-color: red;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  cursor: grab;
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.placeholder {
+  //opacity: 0.5;
+  //background-color: #f0f0f0;
+  //border: 2px dashed #ccc;
+  padding: 8px; // 占位符内边距
+}
+
+.dropZone {
+  width: 300px;
+  height: 300px;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.dropZoneActive {
+  background-color: #e0ffe0;
+}
+
+.droppedItems {
+  margin-top: 16px;
+  padding: 8px;
+}
+
+.droppedItem {
+  padding: 8px;
+  background-color: #e0e0e0;
+  margin-bottom: 4px;
+  border-radius: 4px;
+}

@@ -6,6 +6,7 @@
   position: relative;
 
   .sidebar {
+
     width: 260px;
     height: 100%;
     background: #f7f7fa;
@@ -56,37 +57,51 @@
         }
       }
 
+
     }
+
+    .nodeList {
+      top:60px;
+      position: absolute; /* 每个 node 绝对定位 */
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: auto;
+
+
+      .nodeContainer {
+
+        width: 260px !important; /* 设置 node 的宽度 */
+        height: 70px;
+        left: 0; /* 可以根据需要动态设置 */
+        margin: 0 0 12px;
+        z-index: 1;
+
+        .nodeItemBox {
+
+          //width: calc(100% - 32px);
+          width: 228px;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 6px 8px 0 rgba(29, 28, 35, .06);
+          font-size: 12px;
+          line-height: 16px;
+          margin: 0 16px;
+          overflow: hidden;
+          padding: 12px 16px;
+
+        }
+      }
+    }
+
   }
 
   .content {
     width: calc(100vw - 260px); /* 宽度为全屏宽度减去260px */
     height: calc(100vh - 73px); /* 高度为全屏高度减去73px */
     background-color: #f2f3f5;
-    //display: block;
-    //left: -734.5581450943371px;
-    //top: -426.3328565169156px;
-    //position: absolute;
     overflow: visible;
     box-sizing: border-box;
   }
 
-  .droppableArea {
-    border: 2px dashed #4d53e8; // 虚线边框
-    background-color: #f0f8ff; // 背景色
-    min-height: 400px; // 设置最小高度
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; // 左对齐
-  }
-
-  .droppedNode {
-    padding: 8px 12px;
-    border: 1px solid #4d53e8; // 已放置节点的边框
-    border-radius: 4px;
-    background-color: #fff; // 背景色
-    margin: 5px 0; // 节点间隔
-    width: 100%; // 节点占满可用宽度
-  }
 }

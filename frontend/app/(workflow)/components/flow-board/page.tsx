@@ -1,28 +1,29 @@
 "use client";
 
 import styles from './index.module.scss';
-import {LeftOutlined, PlusOutlined} from '@ant-design/icons';
-import {useEffect, useState} from "react";
+import {LeftOutlined} from '@ant-design/icons';
+import React, { useEffect, useState} from "react";
 import {ActionFetchNodeList, NodeTypeInfo} from "@/app/api/workflow/node";
 import {iconMapping} from '@/app/(workflow)/components/icon'; // 导入图标映射对象
 import '@xyflow/react/dist/style.css';
 import FlowGround from "@/app/(workflow)/components/flow-board/flow-ground";
 import {
   DndContext,
-  useDroppable,
-  useDraggable,
 } from '@dnd-kit/core';
-import NodeMenu from "@/app/(workflow)/components/flow-board/node-menu/node-menu";
+import Droppable from "@/app/components/drag-and-drop/droppable";
+import Draggable from "@/app/components/drag-and-drop/draggable";
+import NodeMenuItem from "@/app/(workflow)/components/flow-board/node-menu/node-menu-item";
 
 const FlowBoard = () => {
   const [nodeList, setNodeList] = useState<NodeTypeInfo[]>([]);
-  const [flowGroundNodes, setFlowGroundNodes] = useState<NodeTypeInfo[]>([]);
+  const [containerRefs, setContainerRefs] = useState<>({}); // 本地状态管理 refs
 
   useEffect(() => {
     const fetchNodeList = async () => {
       try {
         const res = await ActionFetchNodeList();
         setNodeList(res.data);
+
       } catch (error) {
         console.error("Error fetching node list:", error);
       }
@@ -30,18 +31,26 @@ const FlowBoard = () => {
     fetchNodeList();
   }, []);
 
+  // 初始化 containerRefs
+  useEffect(() => {
+    const refs = {}; // 创建一个新的 refs 对象
+    nodeList.forEach(node => {
+      refs[node.id] = React.createRef(); // 为每个节点创建一个 ref
+    });
+    setContainerRefs(refs); // 更新状态
+  }, [nodeList]);
+
   const handleDragEnd = (event) => {
     const {active, over} = event;
-
-    if (over) {
-      // 将拖动的节点添加到 flowGroundNodes
-      const newNode = {
-        id: active.id,
-        name: active.data.current.name,
-        icon: active.data.current.icon,
-      };
-      // setFlowGroundNodes((prev) => [...prev, newNode]);
-    }
+    console.log(active, over)
+    // if (over) {
+    //   // 将拖动的节点添加到 flowGroundNodes
+    //   const newNode = {
+    //     id: active.id,
+    //     name: active.data.current.name,
+    //     icon: active.data.current.icon,
+    //   };
+    // }
   };
 
   return (
@@ -59,15 +68,42 @@ const FlowBoard = () => {
             </div>
           </div>
 
-          {/* 渲染节点列表 */}
-          <NodeMenu nodeList={nodeList} iconMapping={iconMapping} />
+          <div
+            className={styles.nodeList}>
+            {nodeList.map((node, index) => {
+              const iconInfo = iconMapping[node.icon];
+
+              // 计算每个节点的 top 位置，假设每个 node 的高度是 100px
+              const nodeTop = index * 64; // 动态设置 top，根据需要调整间距
+
+              return (
+
+                <div
+                  key={node.id} className={styles.nodeContainer} ref={containerRefs[node.id]}
+                  style={{top: `${nodeTop}px`}} // 动态设置 top
+                >
+                  {/*<Draggable id={node.id}*/}
+                  {/*           nodeTop={nodeTop}*/}
+                  {/*           style={{zIndex: `999`}} // 动态设置 top*/}
+                  {/*           containerRef={containerRefs[node.id]?.current}*/}
+                  {/*>*/}
+                    <div className={styles.nodeItemBox}>
+                      <NodeMenuItem node={node} iconInfo={iconInfo}/>
+                    </div>
+                  {/*</Draggable>*/}
+                </div>
+              );
+            })}
+          </div>
 
         </div>
 
         {/* 拖放的目标区域 */}
-        <div className={styles.content}>
-          <FlowGround nodes={flowGroundNodes}/>
-        </div>
+        {/*<Droppable>*/}
+          <div className={styles.content}>
+            <FlowGround/>
+          </div>
+        {/*</Droppable>*/}
       </div>
     </DndContext>
   );
