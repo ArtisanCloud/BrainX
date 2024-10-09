@@ -15,8 +15,8 @@ class PivotTenantToUser(BasePivotModel):
         {'schema': 'public'},  # 这里不应使用字典，而是使用约束
     )
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + ".uuid"), nullable=False)
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + ".uuid"), nullable=False)
+    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + ".uuid"), nullable=False)
 
     tenant: Mapped["Tenant"] = relationship(uselist=False, overlaps="tenants")
     user: Mapped["User"] = relationship(uselist=False, overlaps="users")

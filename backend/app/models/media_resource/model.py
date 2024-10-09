@@ -10,8 +10,8 @@ class MediaResource(BaseORM):
     __tablename__ = table_name_media_resource
     __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
-    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'))
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=False)
     filename = mapped_column(String, comment='名称')
     size = mapped_column(Integer, comment='尺寸')
     width = mapped_column(Integer, comment='宽度')

@@ -18,7 +18,7 @@ class Tenant(BaseORM):
     encrypted_public_key = mapped_column('encrypted_public_key', Text)
     config = mapped_column('config', Text)
 
-    users: Mapped[List["User"]] = relationship(secondary=table_name_pivot_tenant_to_user,
+    users: Mapped[List["User"]] = relationship(secondary="public." + table_name_pivot_tenant_to_user,
                                                back_populates="tenants",
                                                overlaps="user, tenant"
                                                )
@@ -44,8 +44,10 @@ class TenantDefaultModel(BaseORM):
     __tablename__ = table_name_tenant_default_model
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column('tenant_uuid', ForeignKey(table_name_tenant + '.uuid'), nullable=False)
-    provider_uuid = mapped_column('provider_uuid', ForeignKey(table_name_provider + '.uuid'), nullable=True)
+    tenant_uuid = mapped_column('tenant_uuid', ForeignKey("public." + table_name_tenant + '.uuid'), nullable=False)
+    provider_uuid = mapped_column('provider_uuid',
+                                  ForeignKey(settings.database.db_schema + "." + table_name_provider + '.uuid'),
+                                  nullable=True)
     provider_name = mapped_column('provider_name', String(40), nullable=False)
     name = mapped_column('name', String(255), nullable=False)
     type = mapped_column('type', String(40), nullable=False)

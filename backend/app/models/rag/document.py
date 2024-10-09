@@ -74,12 +74,12 @@ class Document(BaseORM):
     __tablename__ = table_name_document  # 替换为实际的表名
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
-    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'))
+    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_dataset + '.uuid'))
 
     # resource info
     data_source_type = mapped_column(SmallInteger)
-    resource_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_media_resource + '.uuid'), nullable=True)
+    resource_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_media_resource + '.uuid'), nullable=True)
     resource_url = mapped_column(String)
 
     # Document metadata
@@ -89,13 +89,13 @@ class Document(BaseORM):
 
     # Batch and process rule
     batch = mapped_column(String)
-    dataset_process_rule_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset_segment_rule + '.uuid'),
+    dataset_process_rule_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_dataset_segment_rule + '.uuid'),
                                               nullable=True)
 
     # Created and updated info
     created_source = mapped_column(String)
-    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
-    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=False)
+    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=True)
 
     # step flow
     indexing_status = mapped_column(SmallInteger)
@@ -118,7 +118,7 @@ class Document(BaseORM):
 
     # pause
     is_paused = mapped_column(Boolean, default=False)
-    paused_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
+    paused_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=True)
     paused_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
 
     # error
@@ -128,7 +128,7 @@ class Document(BaseORM):
     # archive
     is_archived = mapped_column(Boolean, nullable=True)
     archived_reason = mapped_column(String, nullable=True)
-    archived_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
+    archived_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=True)
     archived_at = mapped_column(TIMESTAMP(timezone=True), default=None, nullable=True)
 
     # document info

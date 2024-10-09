@@ -11,8 +11,8 @@ class AppModelConfig(BaseORM):
     __tablename__ = table_name_app_model_config
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + '.uuid'))
-    model_provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_provider_model + '.uuid'))
+    app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_app + '.uuid'))
+    model_provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_provider_model + '.uuid'))
     configs = mapped_column(Text, nullable=True)
     persona_prompt = mapped_column(Text)
 

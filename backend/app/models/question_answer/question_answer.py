@@ -1,9 +1,10 @@
+from sqlalchemy.dialects.postgresql import BYTEA , TSVECTOR
 from sqlalchemy.orm import mapped_column
 
-from app.models.base import BaseORM, table_name_image_embedding
-from sqlalchemy import Column, String, Text, BINARY
+from app import settings
+from app.models.base import BaseORM,  table_name_data_image_embedding
+from sqlalchemy import Integer, VARCHAR
 from pgvector.sqlalchemy import Vector
-
 
 
 # class Document(BaseORM):
@@ -22,3 +23,13 @@ from pgvector.sqlalchemy import Vector
 #     question = mapped_column('question', String)
 #     image = mapped_column('image', BINARY)
 #     embedding = mapped_column('embedding', Vector(768))
+
+
+class DataImageEmbedding(BaseORM):
+    __tablename__ = table_name_data_image_embedding  # 表名
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
+
+    doc_id = mapped_column(VARCHAR(36), nullable=False)  # VARCHAR(36), not null
+    question = mapped_column(VARCHAR(800))  # varchar(800)
+    image = mapped_column(BYTEA)  # bytea, 存储二进制数据
+    embedding = mapped_column(Vector(768))  # vector(768)

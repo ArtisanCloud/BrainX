@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from app.schemas.base import BaseSchema
 
@@ -9,7 +9,7 @@ class RequestDemoQuery(BaseSchema):
 
 
 class ResponseDemoQuery(BaseSchema):
-    data: any
+    data: Any
 
 
 class DemoStructuredUserInfo(BaseSchema):

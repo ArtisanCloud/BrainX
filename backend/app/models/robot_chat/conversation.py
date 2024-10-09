@@ -12,9 +12,11 @@ class Conversation(BaseORM):
     __tablename__ = table_name_conversation
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'))
-    app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + '.uuid'))
-    app_model_config_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app_model_config + '.uuid'))
+    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public." + table_name_user + '.uuid'))
+    app_uuid = mapped_column(UUID(as_uuid=True),
+                             ForeignKey(settings.database.db_schema + "." + table_name_app + '.uuid'))
+    app_model_config_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(
+        settings.database.db_schema + "." + table_name_app_model_config + '.uuid'))
     name = mapped_column(String)
     status = mapped_column(SmallInteger)
     context = mapped_column(Text)
@@ -50,13 +52,12 @@ class Conversation(BaseORM):
         }
 
 
-
 class Message(BaseORM):
     __tablename__ = table_name_message
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    conversation_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_conversation + '.uuid'))
-    reply_to_message_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_message + '.uuid'))
+    conversation_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_conversation + '.uuid'))
+    reply_to_message_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_message + '.uuid'))
     content = mapped_column(String)
     role = mapped_column(SmallInteger)
     type = mapped_column(SmallInteger)

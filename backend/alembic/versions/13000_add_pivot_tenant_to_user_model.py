@@ -1,4 +1,4 @@
-"""add pivot tenant to tenant models
+"""add pivot tenant to user models
 
 Revision ID: 13000
 Revises: 12000

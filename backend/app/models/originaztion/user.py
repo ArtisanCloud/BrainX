@@ -22,7 +22,7 @@ class User(BaseORM):
     __tablename__ = table_name_user
     __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
-    tenant_owner_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
+    tenant_owner_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'))
     account = mapped_column(String, unique=True, nullable=False)
     name = mapped_column(String)
     nick_name = mapped_column(String)
@@ -41,7 +41,7 @@ class User(BaseORM):
     is_activated = mapped_column(Boolean, default=False)
     we_work_user_id = mapped_column(String)
 
-    tenants: Mapped[List["Tenant"]] = relationship(secondary=table_name_pivot_tenant_to_user,
+    tenants: Mapped[List["Tenant"]] = relationship(secondary="public." + table_name_pivot_tenant_to_user,
                                                    back_populates="users",
                                                    overlaps="user, tenant",
                                                    )

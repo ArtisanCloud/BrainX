@@ -29,8 +29,8 @@ class ProviderModel(BaseORM):
     __tablename__ = table_name_provider_model
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
-    provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_provider + ".uuid"), nullable=True)
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + ".uuid"), nullable=False)
+    provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_provider + ".uuid"), nullable=True)
     provider_name = mapped_column('provider_name', String, nullable=False)
     model_name = mapped_column('model_name', String, nullable=False)
     model_type = mapped_column('model_type', String, nullable=False)

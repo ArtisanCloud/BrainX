@@ -1,7 +1,7 @@
 """Add MediaResource models
 
 Revision ID: 60000
-Revises: 51700
+Revises: 52000
 Create Date: 2024-05-12 22:46:49.340958
 
 """
@@ -18,7 +18,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 # revision identifiers, used by Alembic.
 revision: str = '60000'
-down_revision: Union[str, None] = '51700'
+down_revision: Union[str, None] = '52000'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -48,10 +48,10 @@ def upgrade() -> None:
             sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
             sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
             sa.PrimaryKeyConstraint('uuid'),
-            schema=settings.database.db_schema
+            schema='public'
         )
 
 
 def downgrade() -> None:
     if settings.server.project_type == ProjectType.Standalone.value:
-        op.drop_table(table_name_media_resource, schema=settings.database.db_schema)
+        op.drop_table(table_name_media_resource, schema='public')

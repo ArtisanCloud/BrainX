@@ -13,11 +13,11 @@ class Workflow(BaseORM):
     __tablename__ = table_name_workflow
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
-    app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + ".uuid"), nullable=False)
-    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
-    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
-    parent_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_workflow + '.uuid'))
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + ".uuid"), nullable=False)
+    app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_app + ".uuid"), nullable=False)
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=False)
+    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=True)
+    parent_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_workflow + '.uuid'))
 
     name = mapped_column('name', String, nullable=False)
     tag = mapped_column('tag', String, nullable=False)

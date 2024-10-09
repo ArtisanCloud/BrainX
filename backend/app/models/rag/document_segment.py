@@ -23,12 +23,12 @@ class DocumentSegment(BaseORM):
     __tablename__ = table_name_document_segment  # 替换为实际的表名
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'), index=True)
-    document_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_document + '.uuid'), index=True)
-    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'), index=True)
-    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False,
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'), index=True)
+    document_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_document + '.uuid'), index=True)
+    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_dataset + '.uuid'), index=True)
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=False,
                                     index=True)
-    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True,
+    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=True,
                                     index=True)
 
     status = mapped_column(SmallInteger)

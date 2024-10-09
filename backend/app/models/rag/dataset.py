@@ -11,9 +11,9 @@ class Dataset(BaseORM):
     __tablename__ = table_name_dataset  # 替换为实际的表名
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
-    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
-    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=True)
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'))
+    created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=False)
+    updated_user_by = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_user + '.uuid'), nullable=True)
 
     name = mapped_column(String)
     description = mapped_column(String)
@@ -83,7 +83,7 @@ class DatasetSegmentRule(BaseORM):
     __tablename__ = table_name_dataset_segment_rule  # 替换为实际的表名
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))
+    dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_dataset + '.uuid'))
     mode = mapped_column(SmallInteger, nullable=False, default=SegmentationMode.AUTOMATIC)  # 使用枚举类型定义
     rules = mapped_column(Text, nullable=True)  # 自定义分段规则
 
