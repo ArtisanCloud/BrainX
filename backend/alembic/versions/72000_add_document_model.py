@@ -12,6 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
 
+from app import settings
+from app.models import Dataset, Tenant, MediaResource, User, DatasetSegmentRule
 from app.models.base import table_name_document, table_name_tenant, table_name_user, table_name_dataset, \
     table_name_media_resource, table_name_dataset_segment_rule
 
@@ -28,14 +30,15 @@ def upgrade() -> None:
         # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
         sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
-        sa.Column('tenant_uuid', UUID(as_uuid=True), sa.ForeignKey(table_name_tenant + '.uuid'), nullable=False,
+        sa.Column('tenant_uuid', UUID(as_uuid=True), sa.ForeignKey(Tenant.__table__.fullname + '.uuid'), nullable=False,
                   index=True),
-        sa.Column('dataset_uuid', UUID(as_uuid=True), sa.ForeignKey(table_name_dataset + '.uuid'), nullable=False,
+        sa.Column('dataset_uuid', UUID(as_uuid=True), sa.ForeignKey(Dataset.__table__.fullname + '.uuid'),
+                  nullable=False,
                   index=True),
 
         # Resource info
         sa.Column('data_source_type', sa.SmallInteger(), nullable=False),
-        sa.Column('resource_uuid', UUID(as_uuid=True), sa.ForeignKey(table_name_media_resource + '.uuid'),
+        sa.Column('resource_uuid', UUID(as_uuid=True), sa.ForeignKey(MediaResource.__table__.fullname + '.uuid'),
                   nullable=True, index=True),
         sa.Column('resource_url', sa.String(), nullable=False),
 
@@ -46,12 +49,14 @@ def upgrade() -> None:
 
         sa.Column('batch', sa.String(), nullable=True),
         sa.Column('dataset_process_rule_uuid', UUID(as_uuid=True),
-                  sa.ForeignKey(table_name_dataset_segment_rule + '.uuid'), nullable=False),
+                  sa.ForeignKey(DatasetSegmentRule.__table__.fullname + '.uuid'), nullable=False),
 
         sa.Column('created_source', sa.String(), nullable=True),
-        sa.Column('created_user_by', UUID(as_uuid=True), sa.ForeignKey(table_name_user + '.uuid'), nullable=False,
+        sa.Column('created_user_by', UUID(as_uuid=True), sa.ForeignKey(User.__table__.fullname + '.uuid'),
+                  nullable=False,
                   index=True),
-        sa.Column('updated_user_by', UUID(as_uuid=True), sa.ForeignKey(table_name_user + '.uuid'), nullable=True,
+        sa.Column('updated_user_by', UUID(as_uuid=True), sa.ForeignKey(User.__table__.fullname + '.uuid'),
+                  nullable=True,
                   index=True),
 
         # Step flow
@@ -72,7 +77,6 @@ def upgrade() -> None:
         # Step ingestion with embedding and vector store
         sa.Column('token_count', sa.Integer(), nullable=True),
         sa.Column('indexing_latency', sa.Float(), nullable=True),
-
 
         # Pause
         sa.Column('is_paused', sa.Boolean(), nullable=False, default=False),
@@ -99,9 +103,10 @@ def upgrade() -> None:
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
-        sa.PrimaryKeyConstraint('uuid')
+        sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_document)
+    op.drop_table(table_name_document, schema=settings.database.db_schema)

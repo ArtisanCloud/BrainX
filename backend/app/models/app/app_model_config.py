@@ -3,11 +3,13 @@ from typing import List
 from sqlalchemy import UUID, Text, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
+from app import settings
 from app.models.base import BaseORM, table_name_app_model_config, table_name_provider_model, table_name_app
 
 
 class AppModelConfig(BaseORM):
     __tablename__ = table_name_app_model_config
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + '.uuid'))
     model_provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_provider_model + '.uuid'))

@@ -1,8 +1,9 @@
 import pytest
-import logging
 
+from app import settings
 from app.core.agent_bot.agent import AgentBot, create_graph_from_json
 from app.core.workflow.state import GraphState
+from app.logger import logger
 from app.models import AppModelConfig
 
 

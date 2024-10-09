@@ -10,6 +10,7 @@ from app.models.base import BaseORM, table_name_customer
 
 class ExternalId(BaseORM):
     __tablename__ = 'external_id'
+    __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
     open_id_in_mini_program = mapped_column(String)
     open_id_in_we_chat_official_account = mapped_column(String)
@@ -30,6 +31,7 @@ DocumentMetadataMap = Dict[Union[CustomerMetadataKeysEnum, str], Any]
 
 class Customer(BaseORM):
     __tablename__ = table_name_customer
+    __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
     name = mapped_column(String)
     mobile = mapped_column(String, unique=True, nullable=False)

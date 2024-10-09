@@ -4,6 +4,8 @@ from sqlalchemy.orm import declarative_base
 from enum import Enum as PyEnum
 import datetime
 
+from app import settings
+
 Base = declarative_base()
 
 class TaskStatus(PyEnum):
@@ -16,6 +18,7 @@ class TaskStatus(PyEnum):
 
 class CeleryTask(Base):
     __tablename__ = 'celery_tasks'
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     id = Column(Integer, primary_key=True, index=True)
     task_id = Column(String(255), unique=True, index=True)

@@ -10,6 +10,7 @@ from .rag.dataset import Dataset, DatasetSegmentRule
 from .rag.document import Document
 from .rag.document_segment import DocumentSegment
 from .robot_chat.conversation import Conversation, Message
+from ..openapi.models.platform import Platform
 
 __all__ = [
     'User',
@@ -33,3 +34,4 @@ __all__ = [
     'Platform',
 
 ]
+

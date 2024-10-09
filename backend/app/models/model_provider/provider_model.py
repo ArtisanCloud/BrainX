@@ -3,6 +3,7 @@ from enum import Enum
 from sqlalchemy import Column, UUID, String, Text, Boolean, SmallInteger, BigInteger, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
+from app import settings
 from app.models.base import BaseORM, table_name_provider_model, table_name_tenant, table_name_provider
 
 
@@ -26,6 +27,7 @@ class ModelType(Enum):
 # Tenant's models provider
 class ProviderModel(BaseORM):
     __tablename__ = table_name_provider_model
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)
     provider_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_provider + ".uuid"), nullable=True)

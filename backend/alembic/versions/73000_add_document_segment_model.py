@@ -12,6 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
+from app.models import Tenant, Dataset, Document, User
 from app.models.base import table_name_document_segment, table_name_tenant, table_name_document, table_name_user, \
     table_name_dataset
 
@@ -51,15 +53,16 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
-        sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
-        sa.ForeignKeyConstraint(['dataset_uuid'], [table_name_dataset + '.uuid'], ),
-        sa.ForeignKeyConstraint(['document_uuid'], [table_name_document + '.uuid'], ),
-        sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
-        sa.ForeignKeyConstraint(['updated_user_by'], [table_name_user + '.uuid'], ),
+        sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['dataset_uuid'], [Dataset.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['document_uuid'], [Document.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['created_user_by'], [User.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['updated_user_by'], [User.__table__.fullname + '.uuid'], ),
 
-        sa.PrimaryKeyConstraint('uuid')
+        sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_document_segment)
+    op.drop_table(table_name_document_segment, schema=settings.database.db_schema)

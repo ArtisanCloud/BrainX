@@ -18,6 +18,7 @@ from app.core.workflow.node.factory import NodeFactory
 from app.core.workflow.node.knowledge.node import KnowledgeNode
 from app.core.workflow.node.plugin.node import PluginNode
 from app.core.workflow.state import GraphState
+from app.logger import logger
 from app.models import AppModelConfig, App
 
 

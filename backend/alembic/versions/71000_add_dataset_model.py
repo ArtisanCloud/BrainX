@@ -12,6 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
+from app.models import Dataset, User, Tenant
 from app.models.base import table_name_dataset, table_name_tenant, table_name_user, table_name_dataset_segment_rule
 
 # revision identifiers, used by Alembic.
@@ -47,10 +49,11 @@ def create_dataset_table() -> None:
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
-        sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
-        sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
-        sa.ForeignKeyConstraint(['updated_user_by'], [table_name_user + '.uuid'], ),
+        sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['created_user_by'], [User.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['updated_user_by'], [User.__table__.fullname + '.uuid'], ),
         sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
@@ -69,9 +72,10 @@ def create_dataset_segment_rule_table() -> None:
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
-        sa.ForeignKeyConstraint(['dataset_uuid'], [table_name_dataset + '.uuid'], ),
+        sa.ForeignKeyConstraint(['dataset_uuid'], [Dataset.__table__.fullname + '.uuid'], ),
 
         sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
@@ -81,5 +85,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_dataset_segment_rule)
-    op.drop_table(table_name_dataset)
+    op.drop_table(table_name_dataset_segment_rule, schema=settings.database.db_schema)
+    op.drop_table(table_name_dataset, schema=settings.database.db_schema)

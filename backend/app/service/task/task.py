@@ -4,6 +4,7 @@ from typing import Any
 from sqlalchemy import text, update, UUID
 from sqlalchemy.orm import Session
 
+from app import settings
 from app.database.deps import get_sync_db_session
 from app.database.seed import init_user_uuid
 from app.database.session import sync_session_local
@@ -16,6 +17,7 @@ from app.service.task.celery_app import celery_app
 def run_manual_connect_db():
     # 手动启动生成器
     db = sync_session_local()
+    db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
 
     try:
         # 获取数据库会话对象

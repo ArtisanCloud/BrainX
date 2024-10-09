@@ -16,7 +16,7 @@ from app.api.app import app_controller
 from app.api.chat_bot import chat_controller
 from app.api.brainx import brainx_controller
 from app.api.question_answer import query_controller, visual_search_controller, visual_query_controller
-from app.api.workflow import node_controller
+from app.api.workflow import node_info_controller
 
 err_code_400 = 400
 
@@ -99,6 +99,6 @@ api_router.include_router(task_controller.router, prefix="/task",
                           tags=["task"])
 
 # workflow
-api_router.include_router(node_controller.router, prefix="/workflow/node",
+api_router.include_router(node_info_controller.router, prefix="/workflow/node",
                           dependencies=[Depends(auth_user_token)],
                           tags=["workflow", "node"])

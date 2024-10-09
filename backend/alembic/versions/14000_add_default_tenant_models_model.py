@@ -12,6 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
 from app.models.tenant.tenant import table_name_tenant_default_model
 
 # revision identifiers, used by Alembic.
@@ -36,9 +37,10 @@ def upgrade() -> None:
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
-        sa.PrimaryKeyConstraint('uuid')
+        sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_tenant_default_model)
+    op.drop_table(table_name_tenant_default_model, schema=settings.database.db_schema)

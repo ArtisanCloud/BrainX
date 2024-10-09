@@ -12,6 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
 from app.models.base import table_name_message, table_name_conversation
 
 # revision identifiers, used by Alembic.
@@ -19,7 +20,6 @@ revision: str = '51700'
 down_revision: Union[str, None] = '51600'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
-
 
 
 def upgrade() -> None:
@@ -44,8 +44,9 @@ def upgrade() -> None:
         sa.Index('idx_message_conversation_uuid', 'conversation_uuid'),
         sa.Index('idx_message_reply_to_message_uuid', 'reply_to_message_uuid'),
 
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_message)
+    op.drop_table(table_name_message, schema=settings.database.db_schema)

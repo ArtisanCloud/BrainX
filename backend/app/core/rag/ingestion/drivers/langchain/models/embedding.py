@@ -2,6 +2,7 @@ from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column, String, UUID
 from sqlalchemy.dialects.postgresql import JSONB
 
+from app import settings
 from app.models.base import BaseORM
 
 table_name_langchain_pg_embedding = "langchain_pg_embedding"
@@ -9,6 +10,7 @@ table_name_langchain_pg_embedding = "langchain_pg_embedding"
 
 class LangchainPGEmbedding(BaseORM):
     __tablename__ = table_name_langchain_pg_embedding
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     # 表字段定义
     id = Column(String, primary_key=True, unique=True, nullable=False)

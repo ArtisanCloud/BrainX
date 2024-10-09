@@ -4,6 +4,7 @@ from typing import List, Optional, Dict, Union, Any
 from sqlalchemy import Column, String, UUID, BigInteger, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
+from app import settings
 from app.models.base import BaseORM, table_name_user, table_name_pivot_tenant_to_user, table_name_tenant
 
 
@@ -19,6 +20,7 @@ DocumentMetadataMap = Dict[Union[UserMetadataKeysEnum, str], Any]
 
 class User(BaseORM):
     __tablename__ = table_name_user
+    __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
     tenant_owner_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     account = mapped_column(String, unique=True, nullable=False)

@@ -12,6 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
+from app.models import Tenant
 from app.models.base import table_name_tenant
 from app.models.originaztion.user import table_name_user
 from app.models.workflow.workflow import table_name_workflow
@@ -41,14 +43,15 @@ def upgrade() -> None:
         sa.Column('graph', sa.Text(), nullable=True),
         sa.Column('meta', sa.Text(), nullable=True),
 
-        sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
+        sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
-        sa.PrimaryKeyConstraint('uuid')
+        sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_workflow)
+    op.drop_table(table_name_workflow, schema=settings.database.db_schema)

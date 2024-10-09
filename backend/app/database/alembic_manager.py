@@ -2,8 +2,10 @@
 # imported by Alembic
 from alembic import command
 from alembic.config import Config
+from sqlalchemy import text
 
 from app.config.config import settings
+from app.database.deps import get_sync_db_session
 from app.models.base import Base  # noqa
 
 
@@ -16,6 +18,23 @@ class AlembicManager:
         # Set up Alembic configuration
         self.alembic_cfg = Config("alembic.ini")
         self.alembic_cfg.set_main_option("sqlalchemy.url", self.db_url)
+
+        self.check_and_create_schema(settings.database.db_schema)
+
+    def check_and_create_schema(self, schema_name: str):
+        with get_sync_db_session() as sync_db:
+            # Check if schema exists
+            result = sync_db.execute(text(
+                f"SELECT schema_name FROM information_schema.schemata WHERE schema_name = :schema_name"
+            ), {"schema_name": schema_name})
+            schema_exists = result.fetchone() is not None
+
+            # Create schema if it doesn't exist
+            if not schema_exists:
+                sync_db.execute(text(f"CREATE SCHEMA {schema_name}"))
+                print(f"Schema '{schema_name}' created.")
+            else:
+                print(f"Schema '{schema_name}' already exists.")
 
     def upgrade(self):
         try:

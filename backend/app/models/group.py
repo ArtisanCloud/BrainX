@@ -1,11 +1,13 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import mapped_column
 
+from app import settings
 from app.models.base import BaseORM
 
 
 class Group(BaseORM):
-    __tablename__ = 'group'
+    __tablename__ = 'groups'
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     name = mapped_column(String)
     description = mapped_column(String)

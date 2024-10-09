@@ -2,6 +2,7 @@ from typing import List
 
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
+from app import settings
 from app.models.base import BaseORM, table_name_app, table_name_user, table_name_app_model_config, \
     table_name_conversation, table_name_message
 from sqlalchemy import String, SmallInteger, BigInteger, Text, ForeignKey, UUID
@@ -9,6 +10,7 @@ from sqlalchemy import String, SmallInteger, BigInteger, Text, ForeignKey, UUID
 
 class Conversation(BaseORM):
     __tablename__ = table_name_conversation
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'))
     app_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_app + '.uuid'))
@@ -51,6 +53,7 @@ class Conversation(BaseORM):
 
 class Message(BaseORM):
     __tablename__ = table_name_message
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     conversation_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_conversation + '.uuid'))
     reply_to_message_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_message + '.uuid'))

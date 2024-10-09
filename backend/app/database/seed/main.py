@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -24,6 +25,7 @@ async_session_local = sessionmaker(
 # 初始化会话
 async def start_seed() -> Exception | None:
     async with async_session_local() as db:
+        db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
         try:
             #  执行添加root用户租户
             e = await seed_tenants(db)

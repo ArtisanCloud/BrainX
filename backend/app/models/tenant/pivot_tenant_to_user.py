@@ -9,9 +9,10 @@ from app.models.tenant.tenant import table_name_tenant
 
 class PivotTenantToUser(BasePivotModel):
     __tablename__ = table_name_pivot_tenant_to_user
-
+    # 合并 schema 和约束条件
     __table_args__ = (
         UniqueConstraint('tenant_uuid', 'user_uuid', name='uq_tenant_to_user'),
+        {'schema': 'public'},  # 这里不应使用字典，而是使用约束
     )
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + ".uuid"), nullable=False)

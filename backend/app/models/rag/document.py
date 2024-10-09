@@ -2,6 +2,8 @@ from enum import IntEnum
 
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Text, Integer, TIMESTAMP, Float, JSON
 from sqlalchemy.orm import relationship, mapped_column, Mapped
+
+from app import settings
 from app.models.base import BaseORM, table_name_document, table_name_dataset, table_name_user, table_name_tenant, \
     table_name_media_resource, table_name_dataset_segment_rule
 
@@ -70,6 +72,7 @@ class DocumentIndexingStatus(IntEnum):
 
 class Document(BaseORM):
     __tablename__ = table_name_document  # 替换为实际的表名
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))

@@ -1,14 +1,15 @@
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Integer, Text
 from sqlalchemy.orm import relationship, mapped_column, Mapped
+
+from app import settings
 from app.models.base import BaseORM, table_name_dataset, table_name_tenant, table_name_user, \
     table_name_dataset_segment_rule
-from app.models.base import table_name_app
 from enum import IntEnum, Enum
 
-__tablename__ = table_name_app
 
 class Dataset(BaseORM):
     __tablename__ = table_name_dataset  # 替换为实际的表名
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
@@ -80,6 +81,7 @@ class SegmentationMode(IntEnum):
 
 class DatasetSegmentRule(BaseORM):
     __tablename__ = table_name_dataset_segment_rule  # 替换为实际的表名
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     dataset_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_dataset + '.uuid'))
     mode = mapped_column(SmallInteger, nullable=False, default=SegmentationMode.AUTOMATIC)  # 使用枚举类型定义

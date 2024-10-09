@@ -3,13 +3,14 @@ from typing import List
 from sqlalchemy import String, Text, SmallInteger, ForeignKey, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
+from app import settings
 from app.models.base import BaseORM, table_name_tenant, table_name_tenant_default_model, \
     table_name_pivot_tenant_to_user, table_name_user, table_name_provider
 
 
-# class Tenant(BaseORM):
 class Tenant(BaseORM):
     __tablename__ = table_name_tenant
+    __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
     name = mapped_column('name', String, nullable=False, unique=True)
     plan = mapped_column('plan', SmallInteger)
@@ -41,6 +42,7 @@ class Tenant(BaseORM):
 
 class TenantDefaultModel(BaseORM):
     __tablename__ = table_name_tenant_default_model
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     tenant_uuid = mapped_column('tenant_uuid', ForeignKey(table_name_tenant + '.uuid'), nullable=False)
     provider_uuid = mapped_column('provider_uuid', ForeignKey(table_name_provider + '.uuid'), nullable=True)

@@ -12,6 +12,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
 from app.models.app.app_model_config import table_name_app_model_config
 
 # revision identifiers, used by Alembic.
@@ -39,9 +40,11 @@ def upgrade() -> None:
 
         # 添加索引
         sa.Index('idx_app_model_config_app_uuid', 'app_uuid'),
-        sa.Index('idx_app_model_config_model_provider_uuid', 'model_provider_uuid')
+        sa.Index('idx_app_model_config_model_provider_uuid', 'model_provider_uuid'),
+
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_app_model_config)
+    op.drop_table(table_name_app_model_config, schema=settings.database.db_schema)

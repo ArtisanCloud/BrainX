@@ -12,10 +12,11 @@ from sqlalchemy.dialects.postgresql import UUID
 from alembic import op
 import sqlalchemy as sa
 
+from app import settings
 from app.models.app.app import table_name_app
-from app.models.originaztion.user import table_name_user
-from app.models.tenant.tenant import table_name_tenant
-from app.models.workflow.workflow import table_name_workflow
+from app.models.originaztion.user import table_name_user, User
+from app.models.tenant.tenant import table_name_tenant, Tenant
+from app.models.workflow.workflow import table_name_workflow, Workflow
 
 # revision identifiers, used by Alembic.
 revision: str = '51400'
@@ -48,12 +49,13 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
-        sa.ForeignKeyConstraint(['tenant_uuid'], [table_name_tenant + '.uuid'], ),
-        sa.ForeignKeyConstraint(['created_user_by'], [table_name_user + '.uuid'], ),
-        sa.ForeignKeyConstraint(['workflow_uuid'], [table_name_workflow + '.uuid'], ),
-        sa.PrimaryKeyConstraint('uuid')
+        sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['created_user_by'], [User.__table__.fullname + '.uuid'], ),
+        sa.ForeignKeyConstraint(['workflow_uuid'], [Workflow.__table__.fullname + '.uuid'], ),
+        sa.PrimaryKeyConstraint('uuid'),
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_app)
+    op.drop_table(table_name_app, schema=settings.database.db_schema)

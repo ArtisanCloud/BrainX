@@ -2,6 +2,8 @@ from enum import IntEnum
 
 from sqlalchemy import String, SmallInteger, ForeignKey, JSON, UUID, Text, Integer, TIMESTAMP
 from sqlalchemy.orm import relationship, mapped_column, Mapped
+
+from app import settings
 from app.models.base import BaseORM, table_name_document_segment, table_name_document, table_name_user, \
     table_name_tenant, table_name_dataset
 from app.models.rag.document_node import DocumentNode
@@ -19,6 +21,7 @@ class DocumentSegmentStatus(IntEnum):
 
 class DocumentSegment(BaseORM):
     __tablename__ = table_name_document_segment  # 替换为实际的表名
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'), index=True)
     document_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_document + '.uuid'), index=True)

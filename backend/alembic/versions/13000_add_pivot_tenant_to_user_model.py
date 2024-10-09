@@ -12,6 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import UUID
 
+from app import settings
+from app.config.server import ProjectType
 from app.models.base import table_name_pivot_tenant_to_user
 
 # revision identifiers, used by Alembic.
@@ -22,18 +24,21 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        table_name_pivot_tenant_to_user,  # 替换为你的实际表名
-        sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
+    if settings.server.project_type == ProjectType.Standalone.value:
+        op.create_table(
+            table_name_pivot_tenant_to_user,  # 替换为你的实际表名
+            sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
 
-        sa.Column('tenant_uuid', sa.UUID(), nullable=False, index=True),
-        sa.Column('user_uuid', sa.UUID(), nullable=False, index=True),
-        # 可选: 添加主键约束，可以根据需要决定是否使用组合键作为主键
-        sa.PrimaryKeyConstraint('tenant_uuid', 'user_uuid', name='pivot_tenant_to_user_pkey'),
+            sa.Column('tenant_uuid', sa.UUID(), nullable=False, index=True),
+            sa.Column('user_uuid', sa.UUID(), nullable=False, index=True),
+            # 可选: 添加主键约束，可以根据需要决定是否使用组合键作为主键
+            sa.PrimaryKeyConstraint('tenant_uuid', 'user_uuid', name='pivot_tenant_to_user_pkey'),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-    )
+            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+            schema="public"
+        )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_pivot_tenant_to_user)
+    if settings.server.project_type == ProjectType.Standalone.value:
+        op.drop_table(table_name_pivot_tenant_to_user, schema="public")

@@ -4,7 +4,6 @@ from app.models.base import BaseORM, table_name_image_embedding
 from sqlalchemy import Column, String, Text, BINARY
 from pgvector.sqlalchemy import Vector
 
-table_name_text_embedding = 'data_embeddings'
 
 
 # class Document(BaseORM):

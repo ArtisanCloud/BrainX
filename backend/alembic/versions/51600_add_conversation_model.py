@@ -11,6 +11,8 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
+from app import settings
+from app.models import AppModelConfig, App, User
 from app.models.base import table_name_user, table_name_app, table_name_app_model_config
 from app.models.robot_chat.conversation import table_name_conversation
 from sqlalchemy import UUID
@@ -44,11 +46,13 @@ def upgrade() -> None:
         sa.Index('idx_conversation_app_uuid', 'app_uuid'),
         sa.Index('idx_conversation_model_provider_uuid', 'app_model_config_uuid'),
 
-        sa.ForeignKeyConstraint(['user_uuid'], [table_name_user + '.uuid']),
-        sa.ForeignKeyConstraint(['app_uuid'], [table_name_app + '.uuid']),
-        sa.ForeignKeyConstraint(['app_model_config_uuid'], [table_name_app_model_config + '.uuid']),
+        sa.ForeignKeyConstraint(['user_uuid'], [User.__table__.fullname + '.uuid']),
+        sa.ForeignKeyConstraint(['app_uuid'], [App.__table__.fullname + '.uuid']),
+        sa.ForeignKeyConstraint(['app_model_config_uuid'], [AppModelConfig.__table__.fullname + '.uuid']),
+
+        schema=settings.database.db_schema
     )
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_conversation)
+    op.drop_table(table_name_conversation, schema=settings.database.db_schema)

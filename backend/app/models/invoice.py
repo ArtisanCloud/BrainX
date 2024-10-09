@@ -3,6 +3,7 @@ from enum import Enum
 from sqlalchemy import Column, String
 from sqlalchemy.orm import mapped_column
 
+from app import settings
 from app.models.base import BaseORM, table_name_invoice
 from typing import Dict, Union, Any
 
@@ -22,6 +23,7 @@ DocumentMetadataMap = Dict[Union[InvoiceMetadataKeysEnum, str], Any]
 
 class Invoice(BaseORM):
     __tablename__ = table_name_invoice
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     user_id = mapped_column('User_id', String(255))
     amount = mapped_column('Amount', String)

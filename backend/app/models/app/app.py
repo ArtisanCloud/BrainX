@@ -4,6 +4,7 @@ from typing import List
 from sqlalchemy import Text, String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
+from app import settings
 from app.models.app.app_model_config import table_name_app_model_config
 from app.models.base import BaseORM, table_name_app, table_name_user
 from app.models.tenant.tenant import table_name_tenant
@@ -28,6 +29,7 @@ class AppMode(IntEnum):
 
 class App(BaseORM):
     __tablename__ = table_name_app
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)

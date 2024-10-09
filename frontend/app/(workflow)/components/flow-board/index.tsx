@@ -15,30 +15,30 @@ import Draggable from "@/app/components/drag-and-drop/draggable";
 import NodeMenuItem from "@/app/(workflow)/components/flow-board/node-menu/node-menu-item";
 
 const FlowBoard = () => {
-  const [nodeList, setNodeList] = useState<NodeTypeInfo[]>([]);
+  const [nodeMenuList, setNodeMenuList] = useState<NodeTypeInfo[]>([]);
   const [containerRefs, setContainerRefs] = useState<>({}); // 本地状态管理 refs
 
   useEffect(() => {
-    const fetchNodeList = async () => {
+    const fetchNodeMenuList = async () => {
       try {
         const res = await ActionFetchNodeList();
-        setNodeList(res.data);
+        setNodeMenuList(res.data);
 
       } catch (error) {
         console.error("Error fetching node list:", error);
       }
     };
-    fetchNodeList();
+    fetchNodeMenuList();
   }, []);
 
   // 初始化 containerRefs
   useEffect(() => {
     const refs = {}; // 创建一个新的 refs 对象
-    nodeList.forEach(node => {
+    nodeMenuList.forEach(node => {
       refs[node.id] = React.createRef(); // 为每个节点创建一个 ref
     });
     setContainerRefs(refs); // 更新状态
-  }, [nodeList]);
+  }, [nodeMenuList]);
 
   const handleDragEnd = (event) => {
     const {active, over} = event;
@@ -69,8 +69,8 @@ const FlowBoard = () => {
           </div>
 
           <div
-            className={styles.nodeList}>
-            {nodeList.map((node, index) => {
+            className={styles.nodeMenuList}>
+            {nodeMenuList.map((node, index) => {
               const iconInfo = iconMapping[node.icon];
 
               // 计算每个节点的 top 位置，假设每个 node 的高度是 100px

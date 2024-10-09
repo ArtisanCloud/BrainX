@@ -1,7 +1,9 @@
 from contextlib import contextmanager
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app import settings
 from app.logger import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,6 +13,8 @@ from app.database.session import async_session_local, sync_session_local
 async def get_async_db_session() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
     async with async_session_local() as db:
+        db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
+
         try:
             yield db
             #  commit the db session if no exception occurs
@@ -35,6 +39,7 @@ async def get_async_db_session() -> AsyncSession:
 # 为了某些场景，比如 Celery 等需要直接调用的场景，你可以使用一个简单的函数来获取 session：
 def get_sync_db_session() -> Session:
     db = sync_session_local()
+    db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
     # 外层一定要用 with 才能让这个上下文管理器的功能生效。
     # 如果直接调用 get_sync_db_session() 而不使用 with，except 和 finally 块中的代码将不会被执行，
     # 而是需要自己去维护commit，rollback，close

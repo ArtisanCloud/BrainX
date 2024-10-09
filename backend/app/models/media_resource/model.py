@@ -1,12 +1,14 @@
 # Define the MediaResource models
 from sqlalchemy.orm import mapped_column
 
+from app import settings
 from app.models.base import BaseORM, table_name_media_resource, table_name_tenant, table_name_user
 from sqlalchemy import Column, Integer, String, Boolean, UUID, ForeignKey
 
 
 class MediaResource(BaseORM):
     __tablename__ = table_name_media_resource
+    __table_args__ = {'schema': 'public'}  # 动态指定 schema
 
     tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_tenant + '.uuid'))
     created_user_by = mapped_column(UUID(as_uuid=True), ForeignKey(table_name_user + '.uuid'), nullable=False)
