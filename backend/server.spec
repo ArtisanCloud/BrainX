@@ -14,7 +14,12 @@ a = Analysis(
     'socksio',
     'tkinter',
     'tiktoken_ext.openai_public',
-    'tiktoken_ext'
+    'tiktoken_ext',
+    'celery.fixups',  # 添加这里
+    'celery.backends',
+    'celery.concurrency',
+    'celery.worker',
+    'celery.fixups.django',
     ],
     hookspath=[],
     hooksconfig={},

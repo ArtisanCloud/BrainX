@@ -74,6 +74,6 @@ EXPOSE 8000
 # 定义容器启动时执行的默认命令
 # CMD ["tail", "-f", "/dev/null"]
 # CMD ["./dist/server/server"]
-CMD ["make", "-f", "/app/Makefile","-C", "/app", "app-init"]
+# CMD ["make", "-f", "/app/Makefile","-C", "/app", "app-init"]
 
 
