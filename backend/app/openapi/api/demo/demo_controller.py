@@ -23,7 +23,7 @@ async def api_hello_world(
         data: RequestHelloWorld,
 ) -> ResponseHelloWorld:
     res = ResponseHelloWorld(
-        message=f"hi {data.name}, I get your messge '{data.message}'"
+        message=f"hi {data.name}, I get your message '{data.message}'"
     )
 
     return res

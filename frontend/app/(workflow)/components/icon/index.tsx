@@ -15,8 +15,41 @@ import {
 } from '@heroicons/react/24/outline';
 
 const size = 28
+
+// 定义图标键的联合类型（可选，根据实际情况调整）
+export type NodeIconKey =
+  | 'plugin'
+  | 'llm'
+  | 'code'
+  | 'knowledge'
+  | 'workflow'
+  | 'condition'
+  | 'loop'
+  | 'message'
+  | 'database';
+
+export interface IconProps {
+  size: number;
+  style?: React.CSSProperties;
+  className?: string;
+  // 其他可能的 props 可以在这里添加
+}
+
+export interface IconInfo {
+  component: React.ComponentType<React.HTMLProps<HTMLElement>> | React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>;
+  size?: number;
+  backgroundColor?: string;
+}
+
+// 定义默认图标信息
+export const defaultIconInfo: IconInfo = {
+  component: () => <span>?</span>, // 使用一个默认的占位符图标组件
+  size: size,
+  backgroundColor: "transparent",
+};
+
 // 图标映射对象
-export const iconMapping = {
+export const iconMapping: Record<NodeIconKey, IconInfo> = {
   plugin: {
     component: ApiOutlined,
     size: size,

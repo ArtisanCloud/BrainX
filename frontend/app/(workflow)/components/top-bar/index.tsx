@@ -30,7 +30,7 @@ const TopBar = () => {
               </svg>
             </div>
             <div className="flex items-center justify-center w-4 h-4 hover:bg-[#0607091A] rounded-[4px] cursor-pointer"
-                 tabIndex="0" aria-describedby="6lkrfxg" data-popupid="6lkrfxg">
+                 tabIndex={0} aria-describedby="6lkrfxg" data-popupid="6lkrfxg">
               <svg className="icon-icon icon-icon-coz_edit text-[#060709]/[50%] text-xs" width="1em" height="1em"
                    viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path

@@ -2,9 +2,9 @@
 
 import styles from './index.module.scss';
 import {LeftOutlined} from '@ant-design/icons';
-import React, { useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ActionFetchNodeList, NodeTypeInfo} from "@/app/api/workflow/node";
-import {iconMapping} from '@/app/(workflow)/components/icon'; // 导入图标映射对象
+import {iconMapping, NodeIconKey} from '@/app/(workflow)/components/icon'; // 导入图标映射对象
 import '@xyflow/react/dist/style.css';
 import FlowGround from "@/app/(workflow)/components/flow-board/flow-ground";
 import {
@@ -16,7 +16,7 @@ import NodeMenuItem from "@/app/(workflow)/components/flow-board/node-menu/node-
 
 const FlowBoard = () => {
   const [nodeMenuList, setNodeMenuList] = useState<NodeTypeInfo[]>([]);
-  const [containerRefs, setContainerRefs] = useState<>({}); // 本地状态管理 refs
+  const [containerRefs, setContainerRefs] = useState<any>({}); // 本地状态管理 refs
 
   useEffect(() => {
     const fetchNodeMenuList = async () => {
@@ -33,14 +33,14 @@ const FlowBoard = () => {
 
   // 初始化 containerRefs
   useEffect(() => {
-    const refs = {}; // 创建一个新的 refs 对象
+    const refs: any = {}; // 创建一个新的 refs 对象
     nodeMenuList.forEach(node => {
       refs[node.id] = React.createRef(); // 为每个节点创建一个 ref
     });
     setContainerRefs(refs); // 更新状态
   }, [nodeMenuList]);
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     const {active, over} = event;
     console.log(active, over)
     // if (over) {
@@ -71,7 +71,7 @@ const FlowBoard = () => {
           <div
             className={styles.nodeMenuList}>
             {nodeMenuList.map((node, index) => {
-              const iconInfo = iconMapping[node.icon];
+              const iconInfo = iconMapping[node.icon as NodeIconKey];
 
               // 计算每个节点的 top 位置，假设每个 node 的高度是 100px
               const nodeTop = index * 64; // 动态设置 top，根据需要调整间距
@@ -87,9 +87,9 @@ const FlowBoard = () => {
                   {/*           style={{zIndex: `999`}} // 动态设置 top*/}
                   {/*           containerRef={containerRefs[node.id]?.current}*/}
                   {/*>*/}
-                    <div className={styles.nodeItemBox}>
-                      <NodeMenuItem node={node} iconInfo={iconInfo}/>
-                    </div>
+                  <div className={styles.nodeItemBox}>
+                    <NodeMenuItem node={node} iconInfo={iconInfo}/>
+                  </div>
                   {/*</Draggable>*/}
                 </div>
               );
@@ -100,9 +100,9 @@ const FlowBoard = () => {
 
         {/* 拖放的目标区域 */}
         {/*<Droppable>*/}
-          <div className={styles.content}>
-            <FlowGround/>
-          </div>
+        <div className={styles.content}>
+          <FlowGround/>
+        </div>
         {/*</Droppable>*/}
       </div>
     </DndContext>

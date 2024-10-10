@@ -14,6 +14,9 @@ export const AllowedFileTypes = [
 	'.md'
 ];
 
+export const allowedFileTypesString = AllowedFileTypes.join(',');
+
+
 export const segmentationOptions = [
 	{ value: '\n', label: '换行' },
 	{ value: '\n\n', label: '两个换行' },

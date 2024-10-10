@@ -5,7 +5,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.logger import logger
-from app.models.base import table_name_text_embedding, table_name_image_embedding
 from app.models.question_answer.question_answer import DataImageEmbedding
 from app.schemas.question_answer.visual_search import ResponseVisualSearch
 from app.schemas.question_answer.query import Document as DocumentSchema

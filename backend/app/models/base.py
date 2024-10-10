@@ -104,4 +104,3 @@ table_name_provider_model = "provider_models"
 table_name_image_embedding = 'data_image_embedding'
 table_name_tenant_default_model = "tenant_default_models"
 table_name_platform = "platform"
-table_name_text_embedding = 'data_embeddings'

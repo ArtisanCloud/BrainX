@@ -1,8 +1,14 @@
-import React, { CSSProperties, useRef, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core';
 import styles from './index.module.scss';
 
-const DraggableItem = ({ id, children, isDragging }) => {
+interface DraggableItemProps {
+  id: string;
+  children: React.ReactNode; // 使用 ReactNode 替代 any，确保更严格的类型检查
+  isDragging: boolean;
+}
+
+const DraggableItem: React.FC<DraggableItemProps> = ({ id, children, isDragging }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     data: { label: children }, // 仍然可以保留 label 信息
@@ -27,7 +33,11 @@ const DraggableItem = ({ id, children, isDragging }) => {
   );
 };
 
-const DroppableArea = ({ onDrop }) => {
+interface DroppableAreaProps {
+  onDrop?: (event: any) => void; // 使用 any 以便灵活处理 DnD 事件，具体类型可根据需要进一步定义
+}
+
+const DroppableArea: React.FC<DroppableAreaProps> = ({ onDrop }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: 'droppable',
   });
@@ -43,24 +53,29 @@ const DroppableArea = ({ onDrop }) => {
   );
 };
 
-const DragAndDropDemo = () => {
-  const [items] = useState([
+interface DroppedItem {
+  id: string;
+  label: string;
+}
+
+const DragAndDropDemo: React.FC = () => {
+  const [items] = useState<{ id: string; label: string }[]>([
     { id: '1', label: 'Item 1' },
     { id: '2', label: 'Item 2' },
     { id: '3', label: 'Item 3' },
   ]);
-  const [droppedItems, setDroppedItems] = useState([]);
-  const [draggingItemId, setDraggingItemId] = useState(null);
+  const [droppedItems, setDroppedItems] = useState<DroppedItem[]>([]);
+  const [draggingItemId, setDraggingItemId] = useState<string | null>(null); // 允许为 null
 
-  const handleDragStart = (event) => {
+  const handleDragStart = (event: any) => {
     setDraggingItemId(event.active.id);
   };
 
-  const handleDrop = (event) => {
+  const handleDrop = (event: any) => {
     const { active } = event;
     if (active) {
       const label = active.data.current.label || 'Unnamed Item';
-      if (!droppedItems.some(item => item.id === active.id)) {
+      if (!droppedItems.some((item) => item.id === active.id)) {
         setDroppedItems((prev) => [...prev, { id: active.id, label }]);
       }
     }
@@ -74,10 +89,7 @@ const DragAndDropDemo = () => {
           <h3>Drag from here</h3>
           {items.map((item) => (
             <div key={item.id} style={{ position: 'relative' }}>
-              <DraggableItem
-                id={item.id}
-                isDragging={draggingItemId === item.id}
-              >
+              <DraggableItem id={item.id} isDragging={draggingItemId === item.id}>
                 {item.label}
               </DraggableItem>
               {draggingItemId === item.id && (

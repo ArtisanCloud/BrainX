@@ -5,7 +5,7 @@ import classnames from "classnames";
 import {Fragment, useEffect, useRef, useState} from "react";
 
 import {Form, Divider, Input, FormProps, Typography} from 'antd';
-import {GetDemoChatSSEActionUrl, RequestChat} from "@/app/api/demo/chat";
+import {GetDemoChatSSEActionUrl, RequestChat} from "@/app/openapi/demo/chat";
 import useSSE from "@/app/lib/sse/EventSourceHelper";
 import {baidu_ernie_lite_8k, baidu_qianfan_ernie_3_d_5_8k} from "@/app/config/llm";
 import {FormatSSEMessageReply} from "@/app/lib/sse/format";

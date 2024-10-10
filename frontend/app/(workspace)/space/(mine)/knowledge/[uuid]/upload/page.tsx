@@ -1,7 +1,7 @@
 "use client";
 
 import {useParams} from "next/navigation";
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import {Dataset, SegmentationMode} from "@/app/api/knowledge/dataset";
 import Link from 'next/link'
 import styles from "@/app/(workspace)/space/(mine)/knowledge/[uuid]/upload/index.module.scss";
@@ -30,7 +30,7 @@ import {
 	CheckCircleOutlined,
 	CloseCircleOutlined
 } from '@ant-design/icons';
-import {AllowedFileTypes, segmentationOptions} from "@/app/utils/dataset";
+import {AllowedFileTypes, allowedFileTypesString, segmentationOptions} from "@/app/utils/dataset";
 
 import uiStyles from "@/app/styles/component.module.scss";
 import {ActionCreateMediaResource, bucket_name, MediaResource} from "@/app/api/media-resource";
@@ -152,11 +152,11 @@ const UploadLocalDocumentPage = () => {
 		);
 	}
 
-	const handleChangeSelectedSegmentID = (value) => {
+	const handleChangeSelectedSegmentID = (value:any) => {
 		setSelectedSegmentID(value);
 	};
 
-	const handleChangeSegmentMaxLength = (value) => {
+	const handleChangeSegmentMaxLength = (value:any) => {
 		setSegmentMaxLength(value);
 	};
 
@@ -252,7 +252,7 @@ const UploadLocalDocumentPage = () => {
 									<Dragger
 										showUploadList={false}
 										maxCount={300}
-										accept={AllowedFileTypes}
+										accept={allowedFileTypesString}
 										{...uploadProps}
 									>
 										<p className="ant-upload-drag-icon">
