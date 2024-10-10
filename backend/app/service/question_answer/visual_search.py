@@ -5,7 +5,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.logger import logger
-from app.models.question_answer.question_answer import table_name_text_embedding, table_name_image_embedding
+from app.models.base import table_name_text_embedding, table_name_image_embedding
+from app.models.question_answer.question_answer import DataImageEmbedding
 from app.schemas.question_answer.visual_search import ResponseVisualSearch
 from app.schemas.question_answer.query import Document as DocumentSchema
 from app.schemas.question_answer.visual_search import ImageDocument as ImageDocumentSchema
@@ -38,12 +39,13 @@ async def visual_search(
         db: AsyncSession,
         target_embedding: any,
         match_threshold=0.5,
+        limit=3,
 ) -> ResponseVisualSearch | None:
     # print(db)
     try:
         target_embedding_json = json.dumps(target_embedding)
 
-        query = text("""
+        query = text(f"""
                     SELECT 
                         ie.image as image,
                         ie.question as question,
@@ -51,18 +53,17 @@ async def visual_search(
                         te.id as node_id,
                         te.cmetadata as metadata, 
                         (ie.embedding <=> :target_embedding) AS similarity
-                    FROM data_image_embeddings ie
+                    FROM {DataImageEmbedding.__table__.fullname} ie
                     LEFT JOIN 
-                    langchain_pg_embedding te ON ie.doc_id = te.id
+                    public.langchain_pg_embedding te ON ie.doc_id = te.id
                     WHERE (ie.embedding <=> :target_embedding) < :match_threshold
                     ORDER BY similarity ASC
-                    LIMIT 3;
+                    LIMIT {limit};
                 """)
         params = {
             "target_embedding": target_embedding_json,
             "match_threshold": match_threshold,
-            "data_embeddings": table_name_text_embedding,
-            "data_image_embeddings": table_name_image_embedding
+
         }
         # print(query, params)
         result = await db.execute(query, params)
@@ -77,6 +78,3 @@ async def visual_search(
         logger.error(f"Error in visual_search: {exception}", exc_info=True)
         if isinstance(exception, SQLAlchemyError):
             raise Exception("database query: pls check log")
-
-
-

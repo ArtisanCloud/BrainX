@@ -16,7 +16,7 @@ from app.core.brainx.base import get_visual_search_embedding_model
 router = APIRouter()
 
 
-@router.post("/visual_search")
+@router.post("/visual-search")
 async def api_visual_search(
         query: RequestVisualSearch,
         db: AsyncSession = Depends(get_async_db_session),

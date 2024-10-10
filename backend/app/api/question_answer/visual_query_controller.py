@@ -2,8 +2,7 @@ import http
 
 from fastapi import Depends, APIRouter
 
-
-
+from app.logger import logger
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.visual_query import RequestVisualQuery, ResponseVisualQuery
 from app.service.question_answer.visual_query import visual_query
@@ -11,7 +10,7 @@ from app.service.question_answer.visual_query import visual_query
 router = APIRouter()
 
 
-@router.post("/visual_query")
+@router.post("/visual-query")
 async def api_visual_query(
         query: RequestVisualQuery,
 ) -> ResponseVisualQuery | ResponseSchema:
