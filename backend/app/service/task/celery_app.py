@@ -1,7 +1,6 @@
 from celery import Celery
-
 from app import settings
-from app.config.celery import CeleryConfig
+import click
 
 
 class CelerySingleton:
@@ -41,15 +40,63 @@ def create_celery_app():
     if settings.task.broker_use_ssl:
         app.conf.update(
             broker_use_ssl={
-                "ssl_cert_reqs":  settings.task.ssl_cert_reqs,
-                "ssl_ca_certs":  settings.task.ssl_ca_certs,
+                "ssl_cert_reqs": settings.task.ssl_cert_reqs,
+                "ssl_ca_certs": settings.task.ssl_ca_certs,
                 "ssl_certfile": settings.task.ssl_cert_file,
-                "ssl_keyfile":  settings.task.ssl_keyfile,
+                "ssl_keyfile": settings.task.ssl_keyfile,
             }
         )
 
     return app
 
 
-# Create and export a Celery instance
-celery_app = create_celery_app()
+celery_app = None
+if celery_app is None:
+    celery_app = create_celery_app()
+
+
+@click.command(context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,  # 允许传递任意额外的参数
+))
+@click.option('--loglevel', default='info', help='Logging level.')
+@click.option('-A', '--app', default=None, help='Celery app path.')
+@click.option('-Q', '--queue', default=None, help='Queue to listen to.')
+@click.option('-P', '--pool', default=None, help='Pool execution method (e.g., prefork, gevent).')
+@click.argument('args', nargs=-1, type=click.UNPROCESSED)  # 允许额外的命令行参数
+def main(loglevel, app, queue, pool, args):
+    """Start the Celery worker."""
+
+    # 全局参数
+    command = []
+
+    # 如果有指定 app 则将 -A 选项添加到全局位置
+    if app:
+        command += ['-A', app]
+
+    # 如果没有显式提供 worker 子命令，则手动添加
+    if 'worker' not in args:
+        command += ['worker']
+
+    # 添加 loglevel
+    command += ['--loglevel=' + loglevel]
+
+    # 如果有指定 queue 则添加 -Q 选项
+    if queue:
+        command += ['-Q', queue]
+
+    # 如果有指定 pool 则添加 -P 选项
+    if pool:
+        command += ['-P', pool]
+
+    # 添加其余的命令行参数
+    command += list(args)
+
+    # 打印用于调试
+    print("Executing Celery command: ", command)
+
+    # 启动 celery worker
+    celery_app.start(command)
+
+if __name__ == "__main__":
+    main()

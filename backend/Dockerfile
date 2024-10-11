@@ -25,12 +25,13 @@ RUN pip install poetry==1.8.2
 COPY . /app/.
 RUN echo "This is a test file" > tests.txt
 
-# # 安装项目依赖项
+# 安装项目依赖项
 RUN poetry install --only main
 
 # 运行 PyInstaller 来构建应用程序
 # RUN poetry run pyinstaller server.py --clean -y
 RUN poetry run pyinstaller server.spec -y
+RUN poetry run pyinstaller task.spec -y
 
 # CMD ["tail", "-f", "/dev/null"]
 
@@ -47,13 +48,11 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
 # 从构建器镜像中复制构建好的应用程序到当前镜像中
 COPY --from=builder /app/dist /app/dist
 
 # 赋予应用程序可执行权限
 RUN chmod +x /app/dist/server/server
-
 
 
 # 设置代理服务器并安装 NLTK 及其依赖包
