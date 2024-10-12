@@ -29,7 +29,7 @@ class DataImageEmbedding(BaseORM):
     __tablename__ = table_name_data_image_embedding  # 表名
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    doc_id = mapped_column(VARCHAR(36), nullable=False)  # VARCHAR(36), not null
+    collection_id = mapped_column(VARCHAR(36), nullable=False)  # VARCHAR(36), not null
     question = mapped_column(VARCHAR(800))  # varchar(800)
     image = mapped_column(BYTEA)  # bytea, 存储二进制数据
     embedding = mapped_column(Vector(768))  # vector(768)
