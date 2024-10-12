@@ -2,9 +2,9 @@ from typing import Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.dao.model_provider.provider_model import ProviderModelDAO
 from app.models.model_provider.provider_model import ProviderModel
 from app.schemas.model_provider.model_provider import ProviderModelSchema
-from app.dao.model_provider.provider import ProviderModelDAO
 
 
 class ProviderModelService:

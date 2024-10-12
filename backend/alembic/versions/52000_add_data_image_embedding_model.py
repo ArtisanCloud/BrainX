@@ -11,6 +11,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 from pgvector.sqlalchemy import Vector
+from sqlalchemy import Text
 
 from app import settings
 from app.models.base import table_name_data_image_embedding
@@ -27,10 +28,10 @@ def upgrade() -> None:
     op.create_table(
         table_name_data_image_embedding,
         # sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
-        sa.Column('uuid', UUID(as_uuid=True), nullable=False, index=True, unique=True),
+        sa.Column('uuid', VARCHAR(36), nullable=False, comment='集合ID', index=True, unique=True),
 
-        # doc_id 字段
-        sa.Column('doc_id', VARCHAR(36), nullable=False, comment='文档ID'),
+        # collection_id 字段
+        sa.Column('collection_id', VARCHAR(36), nullable=False, comment='集合ID'),
 
         # question 字段
         sa.Column('question', VARCHAR(800), comment='问题'),
@@ -40,6 +41,8 @@ def upgrade() -> None:
 
         # embedding 字段
         sa.Column('embedding', Vector(768), comment='768维的向量'),
+
+        sa.Column('c_metadata', Text, comment='metadata'),
 
         sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
@@ -51,4 +54,3 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table(table_name_data_image_embedding, schema=settings.database.db_schema)
-

@@ -46,16 +46,16 @@ async def visual_search(
 
         query = text(f"""
                     SELECT 
-                        ie.image as image,
-                        ie.question as question,
-                        te.document as text,
-                        te.id as node_id,
-                        te.cmetadata as metadata, 
-                        (ie.embedding <=> :target_embedding) AS similarity
-                    FROM {DataImageEmbedding.__table__.fullname} ie
+                        tb_img_embed.image as image,
+                        tb_img_embed.question as question,
+                        tb_txt_embed.document as text,
+                        tb_txt_embed.id as node_id,
+                        tb_txt_embed.cmetadata as metadata, 
+                        (tb_img_embed.embedding <=> :target_embedding) AS similarity
+                    FROM {DataImageEmbedding.__table__.fullname} tb_img_embed
                     LEFT JOIN 
-                    public.langchain_pg_embedding te ON ie.doc_id = te.id
-                    WHERE (ie.embedding <=> :target_embedding) < :match_threshold
+                    public.langchain_pg_embedding tb_txt_embed ON tb_img_embed.uuid = tb_txt_embed.id
+                    WHERE (tb_img_embed.embedding <=> :target_embedding) < :match_threshold
                     ORDER BY similarity ASC
                     LIMIT {limit};
                 """)

@@ -3,7 +3,7 @@ from sqlalchemy.orm import mapped_column
 
 from app import settings
 from app.models.base import BaseORM,  table_name_data_image_embedding
-from sqlalchemy import Integer, VARCHAR
+from sqlalchemy import Integer, VARCHAR, Text
 from pgvector.sqlalchemy import Vector
 
 
@@ -33,3 +33,4 @@ class DataImageEmbedding(BaseORM):
     question = mapped_column(VARCHAR(800))  # varchar(800)
     image = mapped_column(BYTEA)  # bytea, 存储二进制数据
     embedding = mapped_column(Vector(768))  # vector(768)
+    c_metadata = mapped_column(Text)  # meta text
