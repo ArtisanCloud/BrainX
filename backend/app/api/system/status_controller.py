@@ -8,6 +8,7 @@ router = APIRouter()
 async def server_status():
 
     return {
+        "name": settings.server.project_name,
         "system": True,
         "version": settings.server.version,
         "WorkerCount": settings.server.worker_count,
