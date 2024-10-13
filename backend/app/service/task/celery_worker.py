@@ -1,24 +1,13 @@
+from gevent import monkey
+import click
+from celery import Celery
 
+monkey.patch_all()
 
 from app import settings
-import click
-
-class CelerySingleton:
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = create_celery_app()
-        return cls._instance
 
 
-def get_celery_app():
-    return CelerySingleton()
-
-
-def create_celery_app():
-    from celery import Celery
-
+def create_celery_worker():
     app = Celery(
         'app',
         broker=settings.task.celery_broker_url,
@@ -56,7 +45,43 @@ def create_celery_app():
     return app
 
 
-celery_app = None
-if celery_app is None:
-    celery_app = create_celery_app()
+celery_worker = create_celery_worker()
 
+
+@click.command(context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
+@click.option('--loglevel', default='info', help='Logging level.')
+@click.option('-A', '--app', default=None, help='Celery app path.')
+@click.option('-Q', '--queue', default=None, help='Queue to listen to.')
+@click.option('-P', '--pool', default=None, help='Pool execution method (e.g., prefork, gevent).')
+@click.argument('args', nargs=-1, type=click.UNPROCESSED)
+def main(loglevel, app, queue, pool, args):
+    """Start the Celery worker."""
+
+    command = []
+
+    if app:
+        command += ['-A', app]
+
+    if 'worker' not in args:
+        command += ['worker']
+
+    command += ['--loglevel=' + loglevel]
+
+    if queue:
+        command += ['-Q', queue]
+
+    if pool:
+        command += ['-P', pool]
+
+    command += list(args)
+
+    print("Executing Celery command: ", command)
+
+    celery_worker.start(command)
+
+
+if __name__ == "__main__":
+    main()

@@ -14,7 +14,7 @@ asyncpg_submodules = collect_submodules('asyncpg')
 asyncpg_binaries = collect_dynamic_libs('asyncpg')
 
 a = Analysis(
-    ['app/service/task/celery_app.py'],
+    ['app/service/task/celery_worker.py'],
     pathex=[project_root],
     binaries=[],
     datas=[],

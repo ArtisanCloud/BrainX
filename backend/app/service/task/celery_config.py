@@ -1,20 +1,6 @@
 
 
 from app import settings
-import click
-
-class CelerySingleton:
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = create_celery_app()
-        return cls._instance
-
-
-def get_celery_app():
-    return CelerySingleton()
-
 
 def create_celery_app():
     from celery import Celery
@@ -54,9 +40,4 @@ def create_celery_app():
         )
 
     return app
-
-
-celery_app = None
-if celery_app is None:
-    celery_app = create_celery_app()
 
