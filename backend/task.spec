@@ -9,6 +9,7 @@ project_root = os.path.abspath(os.path.dirname(sys.argv[0]))
 # 自动收集 'app' 和 'asyncpg' 的所有子模块
 app_submodules = collect_submodules('app')
 asyncpg_submodules = collect_submodules('asyncpg')
+gevent_submodules = collect_submodules('gevent')
 
 # 收集 'asyncpg' 的动态库
 asyncpg_binaries = collect_dynamic_libs('asyncpg')
@@ -18,7 +19,7 @@ a = Analysis(
     pathex=[project_root],
     binaries=[],
     datas=[],
-    hiddenimports=app_submodules + asyncpg_submodules + [
+    hiddenimports=app_submodules + asyncpg_submodules + gevent_submodules +  [
         'celery.fixups',
         'celery.backends',
         'celery.concurrency',

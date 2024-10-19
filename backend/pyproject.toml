@@ -67,6 +67,7 @@ unstructured = {extras = ["docx"], version = "^0.15.9"}
 openpyxl = "^3.1.5"
 langgraph = "^0.2.16"
 apscheduler = "^3.10.4"
+gevent = "^24.10.2"
 
 # custom
 # add your own custoized project dependency here
