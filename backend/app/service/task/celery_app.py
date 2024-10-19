@@ -1,7 +1,4 @@
-
-
 from app import settings
-import click
 
 class CelerySingleton:
     _instance = None
@@ -31,7 +28,7 @@ def create_celery_app():
             'app.service.task.rag.task',
 
             # custom tasks
-            'app.openapi.service.custom.apqp.opl.service',
+            # 'app.openapi.service.custom.apqp.opl.service',
 
         ],  # 确保任务模块被导入
         result_expires=settings.task.result_expires,  # 结果过期时间
