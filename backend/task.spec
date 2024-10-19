@@ -41,6 +41,7 @@ a = Analysis(
         'celery.worker.strategy',
         'celery.fixups.django',
         'celery.loaders.app',
+        'app.service.task.celery_worker',
         'app.service.task.rag',
         'app.service.task.rag.task',
         'asyncpg.pgproto.pgproto',
