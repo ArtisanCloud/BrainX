@@ -15,6 +15,7 @@ a = Analysis(
     'tkinter',
     'tiktoken_ext.openai_public',
     'tiktoken_ext',
+    'numpy', 'numpy.distutils',
     'celery.fixups',
     'celery.backends',
     'celery.concurrency',
