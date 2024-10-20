@@ -26,8 +26,8 @@ def start():
     # print(live_reload, settings.server.worker_count)
     uvicorn.run(
         "app.main:app",
-        host="0.0.0.0",
-        port=8000,
+        host=settings.server.host,
+        port=settings.server.port,
         reload=live_reload,
         workers=settings.server.worker_count,
 
