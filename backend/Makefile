@@ -16,7 +16,7 @@ app-seed:
 	python server.py --seed
 
 app-run-dev:
-	echo "Running in dev mode."
+	@echo "Running in dev mode."
 	# app.main: 使用 .来指定路径文件main
 	# main: the file main.py (the Python "module").
 	# app: the object created inside of main.py with the line app = FastAPI().
@@ -24,6 +24,6 @@ app-run-dev:
 	poetry run uvicorn app.main:app --reload
 
 app-run:
-	echo "Running in production mode."
+	@echo "Running in production mode."
 	poetry run uvicorn app.main:app
 
