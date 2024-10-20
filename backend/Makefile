@@ -25,5 +25,6 @@ app-run-dev:
 
 app-run:
 	@echo "Running in production mode."
-	poetry run uvicorn app.main:app
+	# poetry run uvicorn app.main:app
+	poetry run python server.py --start
 
