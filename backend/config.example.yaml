@@ -17,7 +17,7 @@ jwt:
 
 api:
   api_prefix: "/api"
-  openapi_prefix: "/openapi"
+  openapi_prefix: "/openapi/v1"
   request_timeout: 60
 
 openapi:
