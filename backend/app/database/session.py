@@ -10,7 +10,7 @@ echo_log = settings.database.echo_log
 
 
 def get_database_sync_url():
-    async_db_url = settings.database.async_url
+    async_db_url = settings.database.dsn
     sync_db_url = async_db_url.replace(
         "postgresql+asyncpg://", "postgresql+psycopg://"
     )
@@ -19,7 +19,7 @@ def get_database_sync_url():
 
 
 async_db_engine = create_async_engine(
-    settings.database.async_url,
+    settings.database.dsn,
     pool_pre_ping=True,
     pool_size=4,
     max_overflow=4,

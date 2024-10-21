@@ -82,10 +82,10 @@ settings = Settings(
 # 补齐设置数据库地址
 # 定时任务的存储配置
 if settings.schedule.job_stores["default"].url == "":
-    settings.schedule.job_stores["default"].url = settings.database.async_url
+    settings.schedule.job_stores["default"].url = settings.database.dsn
 # Agent向量库的存储配置
 if settings.agent.pgvector.url == "":
-    settings.agent.pgvector.url = settings.database.async_url
+    settings.agent.pgvector.url = settings.database.dsn
 # 补齐缓存地址
 if settings.task.celery_broker_url == "":
     settings.task.celery_broker_url = settings.cache.redis.url

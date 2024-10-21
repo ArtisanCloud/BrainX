@@ -9,7 +9,7 @@ from app.database.seed.tenant import seed_tenants
 from app.database.seed.user import seed_users
 
 # 配置数据库连接字符串
-SQLALCHEMY_DATABASE_URL = settings.database.async_url
+SQLALCHEMY_DATABASE_URL = settings.database.dsn
 
 # 创建异步数据库引擎
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)

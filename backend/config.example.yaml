@@ -36,7 +36,7 @@ openapi:
       secret_key: 'xxxxxxxxxxxx'
 
 database:
-  async_url: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
+  dsn: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
   db_schema: "public"
   table_name_vector_store: "embeddings"
   echo_log: False

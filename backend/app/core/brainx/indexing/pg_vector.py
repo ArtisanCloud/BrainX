@@ -67,7 +67,7 @@ def get_vector_store_singleton(table_name: str) -> Tuple[BasePydanticVectorStore
         return instance, None
 
     try:
-        url = make_url(settings.database.async_url)
+        url = make_url(settings.database.dsn)
         singleton_instances[table_name] = CustomPGVectorStore.from_params(
             host=url.host,
             port=url.port or 5432,
