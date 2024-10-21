@@ -5,6 +5,7 @@ from starlette.staticfiles import StaticFiles
 
 from app import default_local_storage_path
 from app.cache.factory import CacheFactory
+from app.database.session import get_database_sync_url
 from app.logger import logger
 
 from fastapi import FastAPI
@@ -65,9 +66,7 @@ async def lifespan(app: FastAPI):
     await check_database_connection()
     cfg = Config("alembic.ini")
     # Change DB URL to use psycopg driver for this specific check
-    db_url = settings.database.async_url.replace(
-        "postgresql+asyncpg://", "postgresql+psycopg://"
-    )
+    db_url = get_database_sync_url()
     cfg.set_main_option("sqlalchemy.url", db_url)
     engine = create_engine(db_url, echo=settings.database.echo_log)
     # print("robot_chat:", robot_chat)
@@ -147,8 +146,6 @@ app.add_middleware(
 
 app.include_router(api_router, prefix=settings.api.api_prefix)
 app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
-
-
 
 if __name__ == '__main__':
     start()

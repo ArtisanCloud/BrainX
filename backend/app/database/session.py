@@ -8,6 +8,16 @@ from pytz import timezone
 
 echo_log = settings.database.echo_log
 
+
+def get_database_sync_url():
+    async_db_url = settings.database.async_url
+    sync_db_url = async_db_url.replace(
+        "postgresql+asyncpg://", "postgresql+psycopg://"
+    )
+
+    return sync_db_url
+
+
 async_db_engine = create_async_engine(
     settings.database.async_url,
     pool_pre_ping=True,
@@ -27,7 +37,7 @@ async_session_local = async_sessionmaker(
 
 # Synchronous session maker for Celery
 sync_engine = create_engine(
-    settings.database.sync_url,  # 这里用你的实际数据库 URL
+    get_database_sync_url(),  # 这里用你的实际数据库 URL
     poolclass=NullPool,
     echo=echo_log,
 )

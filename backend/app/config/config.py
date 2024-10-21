@@ -79,8 +79,22 @@ settings = Settings(
     storage=Storage(**config['storage'])
 )
 
+# 补齐设置数据库地址
+# 定时任务的存储配置
+if settings.schedule.job_stores["default"].url == "":
+    settings.schedule.job_stores["default"].url = settings.database.async_url
+# Agent向量库的存储配置
+if settings.agent.pgvector.url == "":
+    settings.agent.pgvector.url = settings.database.async_url
+# 补齐缓存地址
+if settings.task.celery_broker_url == "":
+    settings.task.celery_broker_url = settings.cache.redis.url
+if settings.task.celery_result_backend == "":
+    settings.task.celery_result_backend = settings.cache.redis.url
+
 # Access the settings
 print(settings.server.version)
+# print(settings)
 os.environ["OPENAI_API_BASE"] = settings.openai.api_base
 os.environ["OPENAI_API_KEY"] = settings.openai.api_key
 os.environ["QIANFAN_AK"] = settings.baidu_qianfan.api_key

@@ -37,7 +37,6 @@ openapi:
 
 database:
   async_url: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
-  sync_url: "postgresql://user:pass@127.0.0.1:54321/brain_x"
   db_schema: "public"
   table_name_vector_store: "embeddings"
   echo_log: False
@@ -52,7 +51,7 @@ schedule:
   job_stores:
     default:
       type: sqlalchemy
-      url: postgresql+psycopg2://username:password@localhost/dbname
+      url:
   executors:
     default:
       type: threadpool
@@ -62,8 +61,8 @@ schedule:
     max_instances: 3
 
 task:
-  celery_broker_url: "redis://localhost:6379/0"
-  celery_result_backend: "redis://localhost:6379/0"
+  celery_broker_url:
+  celery_result_backend:
   queue:
     default:
     rag_queue: rag_queue
@@ -84,7 +83,9 @@ agent:
   framework_driver: langchain
   vdb: pgvector
   pgvector:
-    url: "postgresql://user:pass@127.0.0.1:54321/brain_x"
+    # 默认使用postgres，和database用的dsn一致，除非你需要自己定义自己另外地址的pgvector地址
+    url: ""
+    use_jsonb: True
 
 log:
   path: logs

@@ -6,15 +6,14 @@ from sqlalchemy import text
 
 from app.config.config import settings
 from app.database.deps import get_sync_db_session
+from app.database.session import get_database_sync_url
 from app.models.base import Base  # noqa
 
 
 class AlembicManager:
     def __init__(self):
         # Change DB URL to use psycopg driver for this specific check
-        self.db_url = settings.database.async_url.replace(
-            "postgresql+asyncpg://", "postgresql+psycopg://"
-        )
+        self.db_url = get_database_sync_url()
         # Set up Alembic configuration
         self.alembic_cfg = Config("alembic.ini")
         self.alembic_cfg.set_main_option("sqlalchemy.url", self.db_url)
