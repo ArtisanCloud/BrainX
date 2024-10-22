@@ -124,17 +124,17 @@ class BrainXService:
             **kwargs)
 
     def chat_completion(self,
-                        query: Dict,
+                        question: Dict,
                         temperature: float = 0.5,
                         app: App = None,
                         session_id: str = "",
                         ) -> Tuple[str | None, Exception | None]:
-        return self.agent_executor.chat_completion(query, app=app, session_id=session_id, temperature=temperature)
+        return self.agent_executor.chat_completion(question=question, app=app, session_id=session_id, temperature=temperature)
 
     def chat_stream(self,
-                    query: Dict,
+                    question: Dict,
                     temperature: float = 0.5,
                     app: App = None,
                     session_id: str = ""
                     ) -> Tuple[Iterator | None, Exception | None]:
-        return self.agent_executor.chat_stream(query, app=app, session_id=session_id, temperature=temperature)
+        return self.agent_executor.chat_stream(question=question, app=app, session_id=session_id, temperature=temperature)

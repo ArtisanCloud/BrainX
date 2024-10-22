@@ -69,7 +69,7 @@ async def chat(db: AsyncSession,
                 return None, None, Exception("Conversation " + conversation_uuid + " not belong to this app or tenant")
 
     stream_response, exception = service_brain_x.chat_stream(
-        question, temperature=0.5,
+        question={"question": question}, temperature=0.5,
         app=app, session_id=conversation_uuid
     )
     if exception:

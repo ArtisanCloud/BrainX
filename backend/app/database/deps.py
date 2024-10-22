@@ -13,7 +13,7 @@ from app.database.session import async_session_local, sync_session_local
 async def get_async_db_session() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
     async with async_session_local() as db:
-        db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
+        await db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
 
         try:
             yield db

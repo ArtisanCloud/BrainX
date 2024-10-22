@@ -20,45 +20,50 @@ router = APIRouter()
 
 
 async def event_generator(request: Request, llm: str, stream_response: Iterator):
-    for token in stream_response:
-        # print("llm:", llm, "token:", token)
-        if await request.is_disconnected():
-            break
+    try:
+        for token in stream_response:
+            # print("llm:", llm, "token:", token)
+            if await request.is_disconnected():
+                break
 
-        if token:
-            content = ''
-            if llm == LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
-                # print("token content:", repr(token.content), end='\n')
-                if isinstance(token.content, str):
-                    # print("turbo", repr(token.content), end='\n')
-                    content = token.content
+            if token:
+                content = ''
+                if llm == LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
+                    # print("token content:", repr(token.content), end='\n')
+                    if isinstance(token.content, str):
+                        # print("turbo", repr(token.content), end='\n')
+                        content = token.content
 
-            elif llm == LLMModel.KIMI_MOONSHOT_V1_8K.value:
-                if isinstance(token.content, str):
-                    content = token.content
+                elif llm == LLMModel.KIMI_MOONSHOT_V1_8K.value:
+                    if isinstance(token.content, str):
+                        content = token.content
 
-            elif llm in [
-                LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value,
-                LLMModel.BAIDU_ERNIE_3_D_5_8K.value,
-                LLMModel.BAIDU_ERNIE_4_D_0_8K.value,
-                LLMModel.BAIDU_ERNIE_Speed_128K.value,
-                LLMModel.BAIDU_ERNIE_Lite_8K.value
-            ]:
-                if isinstance(token.content, str):
-                    # 替换回车为转义的 `\n`
-                    # print(repr(token.content))
-                    content = token.content.replace("\r\n", "\\n").replace("\n", "\\n")
+                elif llm in [
+                    LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value,
+                    LLMModel.BAIDU_ERNIE_3_D_5_8K.value,
+                    LLMModel.BAIDU_ERNIE_4_D_0_8K.value,
+                    LLMModel.BAIDU_ERNIE_Speed_128K.value,
+                    LLMModel.BAIDU_ERNIE_Lite_8K.value
+                ]:
+                    print(111111,token.content)
+                    if isinstance(token.content, str):
+                        # 替换回车为转义的 `\n`
+                        # print(repr(token.content))
+                        content = token.content.replace("\r\n", "\\n").replace("\n", "\\n")
 
-            else:
-                # print("token content:", repr(token), end='\n')
-                if token != "":
-                    content = token
+                else:
+                    # print("token content:", repr(token), end='\n')
+                    if token != "":
+                        content = token
 
-            # print("content end:", content, end='\n\n')
-            # if content:
-            yield f"data: {content}\n\n"
-            await asyncio.sleep(0.1)  # 延迟一点时间
-
+                # print("content end:", content, end='\n\n')
+                # if content:
+                yield f"data: {content}\n\n"
+                await asyncio.sleep(0.1)  # 延迟一点时间
+                # await asyncio.sleep(2)  # 延迟一点时间
+    except Exception as e:
+        logger.error(f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info)
+        return
 
 @router.post("/chat")
 async def api_chat(

@@ -205,7 +205,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return None, e
 
     def chat_stream(self,
-                    query: Dict,
+                    question: Dict,
                     app: App = None,
                     temperature: float = 0.5,
                     session_id: str = "",
@@ -253,7 +253,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Stream the response
             stream_response = chain_with_trimming.stream(
-                query,
+                input=question,
                 config={"configurable": {"session_id": "test_session_id"}},
             )
 
