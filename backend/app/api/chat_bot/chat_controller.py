@@ -45,7 +45,6 @@ async def event_generator(request: Request, llm: str, stream_response: Iterator)
                     LLMModel.BAIDU_ERNIE_Speed_128K.value,
                     LLMModel.BAIDU_ERNIE_Lite_8K.value
                 ]:
-                    print(111111,token.content)
                     if isinstance(token.content, str):
                         # 替换回车为转义的 `\n`
                         # print(repr(token.content))
