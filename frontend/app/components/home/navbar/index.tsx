@@ -6,29 +6,19 @@ import {
 	Link,
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
-import {account_key, token_key} from "@/app/utils/auth";
+import { token_key} from "@/app/utils/auth";
 import { Avatar } from 'antd';
+import useSessionStore from "@/app/store/session";
 
 
 export default function HomeNavbar() {
 
-	const [loggedIn, setLoggedIn] = useState(false);
-	const [account, setAccount] = useState('');
+	const {  sessionLogout, user, isLoggedIn } = useSessionStore();
 
-	useEffect(() => {
-		// 在组件加载时检查用户是否已登录
-		const checkLoginStatus = () => {
-			const loggedIn = !!Cookies.get(token_key); // 根据自己的逻辑判断用户是否已登录
-			setLoggedIn(loggedIn);
-			setAccount(Cookies.get(account_key) || ''); // 获取用户账号
-		};
-		checkLoginStatus();
-	}, []);
 
 	const handleLogout = () => {
 		// 处理用户退出登录
-		Cookies.set(token_key, '', {expires: -1});
-		setLoggedIn(false)
+		sessionLogout()
 	};
 
 	return (
@@ -37,7 +27,7 @@ export default function HomeNavbar() {
 				<ArtisanCloudLogo/>
 			</div>
 			<div className={'h-full flex gap-3 ml-auto mr-5'}>
-				{loggedIn ? (
+				{isLoggedIn ? (
 					<div className={"mt-6"}>
 						<Dropdown placement="bottom-end">
 							<DropdownTrigger>
@@ -47,12 +37,12 @@ export default function HomeNavbar() {
 									border: '#A283D2 solid 2px',
 								}}
 												size="large" gap={4}>
-									{account}
+									{user?.account}
 								</Avatar>
 							</DropdownTrigger>
 							<DropdownMenu aria-label="Profile Actions" variant="flat">
 								<DropdownItem key="profile" className="h-14 gap-2" textValue="account">
-									<p className="font-semibold">{account}</p>
+									<p className="font-semibold">{user?.account}</p>
 								</DropdownItem>
 								<DropdownItem key="space" textValue="工作台">
 									<Link href={'space/workspace/robot-chat'}>工作台</Link>

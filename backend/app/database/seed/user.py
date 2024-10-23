@@ -18,8 +18,7 @@ async def seed_users(db) -> Exception | None:
                 uuid=init_user_uuid,
                 tenant_owner_uuid=init_tenant_uuid,
                 account='root',
-                # password=hash_plain_password("root"),
-                password=hash_password("root"),
+                password=hash_plain_password("root"),
                 name="初始用户", nick_name="default tenant",
                 status="active",
             )

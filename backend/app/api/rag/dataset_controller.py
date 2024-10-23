@@ -38,7 +38,7 @@ async def api_get_dataset_list(
 
     p = Pagination(page=page, page_size=page_size)
     try:
-        datasets, pagination, exception = await get_dataset_list(db, session_user.uuid, p)
+        datasets, pagination, exception = await get_dataset_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
             logger.error(exception)
             if isinstance(exception, SQLAlchemyError):

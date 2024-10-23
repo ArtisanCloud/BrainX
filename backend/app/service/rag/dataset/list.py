@@ -30,7 +30,7 @@ async def get_dataset_list(
         where(Dataset.deleted_at.is_(None)).
         order_by(Dataset.created_at)
     )
-    # print(str(stmt))
+    print(str(stmt), tenant_uuid)
     res, pg, exception = await paginate_query(db, stmt, Dataset, pagination, True)
     if exception:
         return None, None, exception
