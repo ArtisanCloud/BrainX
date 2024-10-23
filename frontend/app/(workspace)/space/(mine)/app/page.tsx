@@ -6,19 +6,19 @@ import CreateAppProvider from "@/app/components/space/app/provider/create-app-pr
 import Navbar from "@/app/components/space/navbar";
 
 const AppPage = () => {
-	return (
-		<div className={styles.container}>
-			<Navbar/>
-			<div className={styles.main}>
-				<FetchAppListProvider>
-				<CreateAppProvider>
-					<Toolbar/>
-					<AppList/>
-				</CreateAppProvider>
-			</FetchAppListProvider>
-			</div>
-		</div>
-	);
+  return (
+    <div className={styles.container}>
+      <Navbar/>
+      <div className={styles.main}>
+        <FetchAppListProvider>
+          <CreateAppProvider>
+            <Toolbar/>
+            <AppList/>
+          </CreateAppProvider>
+        </FetchAppListProvider>
+      </div>
+    </div>
+  );
 }
 
 export default AppPage;

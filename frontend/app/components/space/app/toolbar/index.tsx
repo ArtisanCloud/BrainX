@@ -9,6 +9,7 @@ import {ActionCreateApp, ResponseCreateApp} from "@/app/api/app";
 import {GetOssUrl} from "@/app/lib/url";
 import {FetchAppListContext} from "@/app/components/space/app/provider/fetch-app-list-provider";
 import {appPageSize} from "@/app/components/space/app/list";
+import {useNotification} from "@/app/components/notification";
 
 const {Search} = Input;
 
@@ -21,7 +22,7 @@ const ToolBar = () => {
 		name, description, avatarUrl,
 	} = useContext(CreateAppContext) as CreateAppContextType;
 
-	const [messageApi, contextHolder] = message.useMessage();
+	const {msgSuccess, msgWarn, msgError} = useNotification();
 	const [loading, setLoading] = useState(false);
 
 
@@ -45,6 +46,15 @@ const ToolBar = () => {
 			return
 		}
 
+		if (!name) {
+			msgWarn("需要输入名字")
+			return
+		}
+		if (!description) {
+			msgWarn("需要输入描述")
+			return
+		}
+
 		const res: ResponseCreateApp = await ActionCreateApp({
 			name: name!,
 			description: description!,
@@ -54,9 +64,9 @@ const ToolBar = () => {
 		setLoading(false);
 
 		if (res.error && res.error !== "") {
-			messageApi.error('生成机器人失败:' + res.error);
+			msgError('生成机器人失败:' + res.error);
 		} else {
-			messageApi.info('生成机器人成功');
+			msgSuccess('生成机器人成功');
 		}
 
 		setIsModalOpen(false);
@@ -124,7 +134,7 @@ const ToolBar = () => {
 				<Button
 					onClick={showModal}
 					type="primary">创建机器人</Button>
-				{contextHolder}
+				{/*{contextHolder}*/}
 				<Modal
 					style={{top: 120}}
 					title="创建机器人"

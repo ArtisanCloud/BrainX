@@ -55,7 +55,7 @@ export default function HomeNavbar() {
 									<p className="font-semibold">{account}</p>
 								</DropdownItem>
 								<DropdownItem key="space" textValue="工作台">
-									<Link href={'space'}>工作台</Link>
+									<Link href={'space/workspace/robot-chat'}>工作台</Link>
 								</DropdownItem>
 								<DropdownItem key="logout" onClick={handleLogout} color="danger" textValue="退出">
 									退出
