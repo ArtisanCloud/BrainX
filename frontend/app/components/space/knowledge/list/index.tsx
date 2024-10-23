@@ -45,8 +45,7 @@ const DatasetList = () => {
       setPagination(res.pagination)
     })
 
-  // }, [pagination?.page, pagination?.per_page]);
-  }, [pagination?.page, pagination?.per_page, fetchDatasetList, setDatasetList, setPagination]); // 添加缺失的依赖项
+  }, [pagination?.page, pagination?.per_page]); // 添加缺失的依赖项
 
   const onChange = (page: number, pageSize: number) => {
     // console.log("onChange", page, pageSize)

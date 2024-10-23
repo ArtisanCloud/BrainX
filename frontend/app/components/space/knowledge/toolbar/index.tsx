@@ -57,9 +57,9 @@ const ToolBar = () => {
 		setLoading(false);
 
 		if (res.error && res.error !== "") {
-			messageApi.error('生成机器人失败:' + res.error);
+			messageApi.error('生成知识库失败:' + res.error);
 		} else {
-			messageApi.info('生成机器人成功');
+			messageApi.info('生成知识库成功');
 		}
 
 		setIsModalOpen(false);
