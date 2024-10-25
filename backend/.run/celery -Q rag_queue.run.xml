@@ -14,7 +14,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="/opt/anaconda3/envs/brainx/bin/celery" />
-    <option name="PARAMETERS" value="-A app.service.task.celery_app worker -Q rag_queue --loglevel=info -P eventlet" />
+    <option name="PARAMETERS" value="-A app.service.task.celery_worker worker -Q rag_queue --loglevel=info -P gevent" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

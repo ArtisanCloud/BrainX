@@ -4,6 +4,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from app.api.task.task_controller import  run_task
 from app.logger import logger
+from app.service.task.task import TaskService
 
 
 class Scheduler:
@@ -24,8 +25,8 @@ class Scheduler:
     def init_scheduler(self):
         # 启动测试任务执行
         # self.scheduler.add_job(echo_task, IntervalTrigger(seconds=10))
-        # self.scheduler.add_job(TaskService.run_30_seconds_task, IntervalTrigger(seconds=10))
-        self.scheduler.add_job(run_task, IntervalTrigger(seconds=10))
+        self.scheduler.add_job(lambda: TaskService.run_30_seconds_task.delay())
+        # self.scheduler.add_job(run_task, IntervalTrigger(seconds=10))
 
         # 添加和配置项目任务
         return

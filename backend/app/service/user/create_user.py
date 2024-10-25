@@ -36,7 +36,7 @@ async def create_user_by_account(
     )
     user, exception = await service_user.init_user(user)
 
-    if exception is not None:
+    if exception:
         return None, exception
 
     return transform_user_to_reply(user), None

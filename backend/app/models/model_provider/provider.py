@@ -32,4 +32,7 @@ class Provider(BaseORM):
     # model_providers = relationship("ProviderModel", back_populates="provider")
 
     def __repr__(self):
-        return f"<Provider(id={self.id}, tenant_uuid={self.tenant_uuid}, provider_name='{self.provider_name}', provider_type='{self.provider_type}')>"
+        return (f"<Provider(uuid={self.uuid}, "
+                f"provider_name='{self.provider_name}', "
+                f"provider_type='{self.provider_type}"
+                f"')>")

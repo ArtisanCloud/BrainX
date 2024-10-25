@@ -1,0 +1,64 @@
+.container {
+  max-height: 532px;
+  overflow-y: scroll;
+
+  .progressWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    background: #ffffff;
+    border: 1px solid #0607091a;
+    border-radius: var(--default, 8px);
+    gap: 10px;
+    overflow: hidden;
+    padding: 8px 10px;
+
+    .content {
+      max-width: calc(100% - 100px);
+      .info {
+        display: flex;
+        align-items: center;
+        .preview {
+          display: inline-block;
+          font-style: normal;
+          line-height: 0;
+          text-align: center;
+          text-transform: none;
+          //text-rendering: optimizeLegibility;
+          fill: currentColor;
+          font-size: 16px;
+        }
+        .fileInfo{
+          padding-left: 10px;
+          max-width: 100%;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          box-sizing: border-box;
+          font-family: PingFang SC, Noto Sans SC, sans-serif;
+          .title{
+            color: #060709cc;
+            font-size: 14px;
+            line-height: 20px;
+          }
+          .fileSize{
+            color: #06070980;
+            font-size: 12px;
+            line-height: 16px;
+          }
+        }
+      }
+    }
+
+    .right {
+      color: #060709cc;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+      overflow: hidden;
+      text-align: right;
+      text-overflow: ellipsis;
+    }
+  }
+}

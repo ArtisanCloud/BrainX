@@ -25,12 +25,12 @@ async def api_register(
 
         user, exception = await create_user_by_account(db, data.account, data.password)
         if exception is not None:
-            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseRegisterUser(user=user)

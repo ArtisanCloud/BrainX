@@ -1,4 +1,4 @@
-from typing import Tuple, Optional,Union
+from typing import Tuple, Optional, Union, List
 
 from uuid import uuid4
 
@@ -8,9 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
+from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
 from app.models.base import BaseStatus
 from app.models.originaztion.user import User
-from app.models.tenant.tenant import Tenant
+from app.models.tenant.tenant import Tenant, TenantDefaultModel
 
 
 class UserDAO(BaseDAO[User]):
@@ -41,14 +42,13 @@ class UserDAO(BaseDAO[User]):
         except SQLAlchemyError as e:
             return None, e
 
-    async def init_user(self, user: User) -> Tuple[User, Optional[Exception]]:
+    async def init_user(self, user: User) -> Tuple[User | None, Optional[Exception]]:
         try:
             # create tenant
             tenant = Tenant(
                 uuid=uuid4(),
                 name=f"{user.account}的租户",
                 status=BaseStatus.ACTIVE,
-
             )
             self.db.add(tenant)
 
@@ -72,6 +72,16 @@ class UserDAO(BaseDAO[User]):
 
             # print(pivot)
             # self.db.add(pivot)
+
+            # create tenant default model
+            tenant_default_model_dao = TenantDefaultModelDAO(self.db)
+            default_models, exception = await tenant_default_model_dao.get_tenant_default_model_from_config(user)
+            if exception:
+                return None, exception
+            self.db.add_all(default_models)
+
+            # 在这里调用 flush()，以便获取 user 的 uuid
+            await self.db.flush()  # 确保所有添加的对象已经持久化到数据库
 
             await self.db.commit()
             await self.db.refresh(user)

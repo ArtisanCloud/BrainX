@@ -79,7 +79,7 @@ class Document(BaseORM):
 
     # resource info
     data_source_type = mapped_column(SmallInteger)
-    resource_uuid = mapped_column(UUID(as_uuid=True), ForeignKey(settings.database.db_schema+"." +table_name_media_resource + '.uuid'), nullable=True)
+    resource_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public." +table_name_media_resource + '.uuid'), nullable=True)
     resource_url = mapped_column(String)
 
     # Document metadata

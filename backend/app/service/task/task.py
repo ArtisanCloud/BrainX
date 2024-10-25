@@ -1,6 +1,7 @@
 import time
 from typing import Any
 
+from celery import states
 from sqlalchemy import text, update, UUID
 from sqlalchemy.orm import Session
 
@@ -61,7 +62,7 @@ class TaskService:
         for i in range(30):
             time.sleep(1)
             logger.info(f"Seconds elapsed: {i + 1}")
-            self.task.update_state(state='PROGRESS', meta={'current': i + 1, 'total': 30})
+            self.task.update_state(state=states.RECEIVED, meta={'current': i + 1, 'total': 30})
         return "Task completed"
 
     @celery_app.task(bind=True)

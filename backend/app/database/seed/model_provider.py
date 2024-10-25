@@ -7,7 +7,7 @@ from app.models.model_provider.provider import ProviderType
 from app.models.tenant.tenant import TenantDefaultModel
 
 
-async def seed_default_tenant_models(db)-> Exception | None:
+async def seed_default_tenant_models(db) -> Exception | None:
     try:
         # Check if the table is empty
         providers_count = await db.scalar(select(func.count()).select_from(Provider))
@@ -15,10 +15,10 @@ async def seed_default_tenant_models(db)-> Exception | None:
             providers = []
             models = []
 
-            for config in provider_config["providers"]:
+            for provider_name, config in provider_config.items():
 
                 provider = Provider(
-                    provider_name=config["name"],
+                    provider_name=provider_name,
                     provider_type=ProviderType.SYSTEM.value,
                     encrypted_config='',
                     is_valid=True,
@@ -27,13 +27,12 @@ async def seed_default_tenant_models(db)-> Exception | None:
                 await db.flush()
                 await db.refresh(provider)
 
-                for model_configs in config["models"]:
-
+                for model_name, model_configs in config["models"].items():
                     model = TenantDefaultModel(
                         tenant_uuid=init_tenant_uuid,
                         provider_uuid=provider.uuid,
-                        provider_name=config["name"],
-                        name=model_configs["name"],
+                        provider_name=provider_name,
+                        name=model_name,
                         type=model_configs["type"],
                     )
                     models.append(model)
@@ -51,7 +50,6 @@ async def seed_default_tenant_models(db)-> Exception | None:
 
     except Exception as e:
         return e
-
 
 # async def seed_model_providers(db) -> Exception | None:
 #     try:

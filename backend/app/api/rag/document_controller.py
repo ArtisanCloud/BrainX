@@ -175,13 +175,13 @@ async def api_add_document_content(
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
         # 创建一个任务组，针对每个文档启动一个独立的任务
-        # tasks = group(
-        #     task_process_document.s(doc.uuid, session_user.uuid)
-        #     for doc in documents
-        # )
-        # # 异步执行所有任务
-        # task_group_result = tasks.apply_async(queue=rag_queue)
-        task_group_result = []
+        tasks = group(
+            task_process_document.s(doc.uuid, session_user.uuid)
+            for doc in documents
+        )
+        # 异步执行所有任务
+        task_group_result = tasks.apply_async(queue=rag_queue)
+        # task_group_result = []
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
         return ResponseSchema(

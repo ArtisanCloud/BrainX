@@ -289,7 +289,8 @@
                     height: 30px;
                     line-height: 30px;
                   }
-                  .checkbox{
+
+                  .checkbox {
                     display: inline-flex;
                   }
                 }
@@ -309,7 +310,32 @@
       }
 
       .stepFinishContent {
+        .indexingProgressContainer {
+          width: 100%;
 
+          .progressStatusLabel {
+            align-items: center;
+            color: #060709cc;
+            display: flex;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            height: 32px;
+            line-height: 20px;
+            margin-bottom: 8px;
+          }
+
+
+        }
+
+        .navContainer {
+          display: flex;
+          float: right;
+          justify-content: flex-end;
+          line-height: 32px;
+          margin-bottom: 40px;
+          margin-top: 40px;
+        }
       }
     }
   }
