@@ -109,7 +109,7 @@ const DatasetList = () => {
       dataIndex: 'name',
       key: 'name',
       render: (_, dataset: Dataset) =>
-        <div className={'flex flex-row'}>
+        <div className={'flex flex-row  cursor-pointer'}>
           {dataset.avatar_url ? (<Image
               priority
               width={68}
@@ -126,7 +126,7 @@ const DatasetList = () => {
             </div>
 
           )}
-          <div className={'flex flex-col justify-center ml-3 border-0'}>
+          <div className={'flex flex-col justify-center ml-3 border-0 '}>
             <span className={'border-0'} style={{fontWeight: 'bold'}}>{dataset.name}</span>
             <span style={{fontSize: '12px', color: 'gray'}}>{dataset.description}</span>
           </div>

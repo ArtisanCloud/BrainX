@@ -180,7 +180,7 @@ async def api_add_document_content(
             for doc in documents
         )
         # 异步执行所有任务
-        task_group_result = tasks.apply_async(queue=rag_queue)
+        task_group_result = tasks.apply_async(queue=rag_queue, task_id=str(uuid.uuid4()))
         # task_group_result = []
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
@@ -201,13 +201,12 @@ async def api_re_task_process_document(
         session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_async_db_session)):
     try:
-        # print(data)
+        # print(data.document_uuids)
         # 获取用户的documents
         documents, pg, exception = await get_document_list_by_documents(
             db,
-            session_user.uuid, data.document_uuids,
+            session_user.tenant_owner_uuid, data.document_uuids,
             Pagination(page=PAGE, page_size=MAX_PER_PAGE))
-        # print(documents)
 
         # 如果保存dataset和documents 准备数据信息成功
         # 则开始开启后台的worker，做Extractor和Indexing的工作
@@ -217,9 +216,10 @@ async def api_re_task_process_document(
             for doc in documents
         )
         # 异步执行所有任务
-        task_group_result = tasks.apply_async(queue=rag_queue)
+        task_group_result = tasks.apply_async(queue=rag_queue, task_id=str(uuid.uuid4()))
 
     except Exception as e:
+        logger.error("API re-process-documents Failed to get error: {e}", exc_info=settings.log.exc_info)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
@@ -259,7 +259,7 @@ async def api_re_process_document(
                 raise exception
 
     except Exception as e:
-        logger.error(f"API Failed to get error: {e}", exc_info=settings.log.exc_info)
+        logger.error(f"API re-process-document Failed to get error: {e}", exc_info=settings.log.exc_info)
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,

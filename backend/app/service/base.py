@@ -1,4 +1,4 @@
-from typing import List, Any, Tuple
+from typing import List, Any, Tuple, Sequence
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +14,7 @@ async def paginate_query(
         table: Any,
         pagination: Pagination,
         sort: bool,
-) -> Tuple[List[Any] | None, ResponsePagination | None, SQLAlchemyError | None]:
+) -> Tuple[Sequence[Any] | None, ResponsePagination | None, SQLAlchemyError | None]:
     try:
         # 如果页码小于等于 0 或者为 None，默认设置为 1
         page = pagination.page or 1

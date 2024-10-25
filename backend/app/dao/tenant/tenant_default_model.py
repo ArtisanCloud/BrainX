@@ -34,7 +34,7 @@ class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
         Optional[TenantDefaultModel], Optional[SQLAlchemyError]]:
         try:
             query = self._get_default_model_by_uuid(tenant_uuid, model_type)
-            print(query, tenant_uuid, model_type)
+            # print(query, tenant_uuid, model_type)
             # 这里需要根据 db 类型执行查询操作
             result = self.db.execute(query)  # 同步查询
             default_model = result.scalars().first()

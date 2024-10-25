@@ -7,6 +7,7 @@ from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObj
 from app.schemas.media_resource.schema import MediaResourceSchema
 from app.schemas.rag.document_segment import DocumentSegmentSchema
 from app.service.rag.document_segment.list import transform_document_segments_to_reply
+from app.utils.datetime import format_datetime
 
 
 class DocumentSchema(BaseObjectSchema):
@@ -66,12 +67,12 @@ class DocumentSchema(BaseObjectSchema):
             created_user_by=str(obj.created_user_by),
             updated_user_by=str(obj.updated_user_by),
             indexing_status=obj.indexing_status,
-            process_start_at=obj.process_start_at,
-            process_end_at=obj.process_end_at,
+            process_start_at=format_datetime(obj.process_start_at),
+            process_end_at=format_datetime(obj.process_end_at),
             word_count=obj.word_count,
-            parse_start_at=obj.parse_start_at,
-            clean_start_at=obj.clean_start_at,
-            split_start_at=obj.split_start_at,
+            parse_start_at=format_datetime(obj.parse_start_at),
+            clean_start_at=format_datetime(obj.clean_start_at),
+            split_start_at=format_datetime(obj.split_start_at),
             token_count=obj.token_count,
             indexing_latency=obj.indexing_latency,
             is_paused=obj.is_paused,
@@ -147,11 +148,11 @@ class ResponseAddDocumentContent(BaseSchema):
     task_ids: List[str]
 
 
-class RequestReProcessDocuments(DocumentSchema):
+class RequestReProcessDocuments(BaseSchema):
     document_uuids: List[str]
 
 
-class RequestReProcessDocument(DocumentSchema):
+class RequestReProcessDocument(BaseSchema):
     document_uuid: str
 
 

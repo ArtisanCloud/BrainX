@@ -51,6 +51,7 @@ async def get_document_list_by_documents(
         documents_uuids: List[str],
         pagination: Pagination
 ) -> Tuple[List[DocumentSchema] | None, ResponsePagination | None, SQLAlchemyError | None]:
+
     stmt = (
         select(Document).
         where(Document.tenant_uuid == tenant_uuid).

@@ -1,3 +1,5 @@
+from celery import states
+
 from app import settings
 from app.database.deps import get_sync_db_session
 from app.logger import logger
@@ -28,14 +30,14 @@ def task_process_document(self, document_uuid: str, user_uuid: str = None, *args
 
         finally:
 
-            logger.info(f"Task: {task_id} for document UUID: {self.document.get('uuid')} completed.")
+            logger.info(f"Task: {task_id} for document UUID: {service_rag_processor.document.uuid} completed.")
             # 无论任务成功与否，最终更新任务状态
             if exception is not None:
-                self.update_state(state='FAILURE',
+                self.update_state(state=states.FAILURE,
                                   meta={'exc_type': str(type(exception)), 'exc_message': str(exception)})
                 return {"status": "failed", "error": str(exception)}
             else:
-                self.update_state(state='SUCCESS',
-                                  meta={'dataset_uuid': self.document.dataset_uuid,
-                                        'document_uuid': self.document.uuid})
-                return {"status": "success", "document_uuid": self.document.uuid}
+                self.update_state(state=states.SUCCESS,
+                                  meta={'dataset_uuid': service_rag_processor.document.dataset_uuid,
+                                        'document_uuid': service_rag_processor.document.uuid})
+                return {"status": "success", "document_uuid": service_rag_processor.document.uuid}
