@@ -1,6 +1,6 @@
 "use client";
 
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
 import {Dataset, SegmentationMode} from "@/app/api/knowledge/dataset";
 import {Document} from "@/app/api/knowledge/document";
@@ -38,14 +38,12 @@ import {ActionCreateMediaResource, bucket_name, MediaResource} from "@/app/api/m
 import {ContentType} from "@/app/utils/media";
 import {
   ActionAddContent,
-  ActionFetchDocumentList,
   RequestAddContent,
-  RequestFetchDocumentList,
   SegmentRule
 } from "@/app/api/knowledge/document";
 import {useNotification} from "@/app/components/notification";
 import DocumentProgress from "@/app/(workspace)/space/(mine)/knowledge/[uuid]/upload/components/document-progress";
-import {maxPageSize} from "@/app/config/constant";
+import {ActionRunMultiple30SecondsTasks} from "@/app/api/task";
 
 const {Dragger} = Upload;
 
@@ -55,6 +53,7 @@ const UploadLocalDocumentPage = () => {
   const [currentDataset, setCurrentDataset] = useState<Dataset>();
   const [documentFiles, setDocumentFiles] = useState<MediaResource[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [taskUuids, setTaskUuids] = useState<string[]>([]);
   const {msgSuccess, msgWarn, msgError} = useNotification();
 
   const [current, setCurrent] = useState(0);
@@ -69,6 +68,29 @@ const UploadLocalDocumentPage = () => {
     }
   });
 
+  const router = useRouter();
+
+  // const testDocuments: Document[] = [
+  //   { uuid: 'doc1', title: 'Document 1', word_count: 500 },
+  //   { uuid: 'doc2', title: 'Document 2', word_count: 300 },
+  // ];
+  //
+  // const [testTaskUuids, setTestTaskUuids] = useState<string[]>([]); // 使用 useState 管理任务 UUID
+  //
+  // useEffect(() => {
+  //   const runTasks = async () => {
+  //     const res = await ActionRunMultiple30SecondsTasks({
+  //       task_count: testDocuments.length,
+  //     });
+  //     setTestTaskUuids(res.task_ids); // 更新状态
+  //   };
+  //
+  //   runTasks(); // 调用异步函数
+  //
+  // }, []); // 依赖数组中添加 testDocuments
+
+
+
   useEffect(() => {
     // console.log(uuid)
     setCurrentDataset({
@@ -82,6 +104,10 @@ const UploadLocalDocumentPage = () => {
 
   const prev = () => {
     setCurrent(current - 1);
+  };
+
+  const done = () => {
+    router.push('/space/knowledge/' + uuid)
   };
 
   const stepItems = [
@@ -226,6 +252,8 @@ const UploadLocalDocumentPage = () => {
 
   const handleAddContent = async () => {
     // console.log(currentDataset, segmentMode, documents, segmentRule)
+    // next();
+    // return
     try {
       const res = await ActionAddContent({
         dataset_uuid: currentDataset?.uuid,
@@ -236,6 +264,7 @@ const UploadLocalDocumentPage = () => {
 
       if (res.data) {
         setDocuments(res.data)
+        setTaskUuids(res.task_ids)
         next()
       } else {
         msgError("服务器未能生成知识库文档")
@@ -362,7 +391,7 @@ const UploadLocalDocumentPage = () => {
                   ) : null}
                   <div className={styles.navContainer}>
                     <Button
-                      // disabled={documents.length === 0}
+                      disabled={documentFiles.length === 0}
                       type="primary"
                       onClick={() => next()}
                     >
@@ -458,14 +487,16 @@ const UploadLocalDocumentPage = () => {
               {current >= stepItems.length - 1 && (
                 <div className={styles.stepFinishContent}>
                   <div className={styles.indexingProgressContainer}>
-                    <div className={styles.progressStatusLabel}>
-                      服务器处理中...
-                    </div>
-                    <DocumentProgress documents={documents}/>
+                    <DocumentProgress
+                      documents={documents}
+                      taskUuids={taskUuids}
+                      // documents={testDocuments}
+                      // taskUuids={testTaskUuids}
+                    />
 
                   </div>
                   <div className={styles.navContainer}>
-                    <Button style={{margin: '0 8px'}} onClick={() => prev()}>
+                    <Button style={{margin: '0 8px'}} onClick={() => done()}>
                       完成
                     </Button>
                   </div>

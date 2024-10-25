@@ -133,7 +133,7 @@ class Document(BaseORM):
 
     # document info
     title = mapped_column(String)
-    document_type = mapped_column(String(50), nullable=True)
+    document_type = mapped_column(String, nullable=True)
     document_meta = mapped_column(JSON, nullable=True)
     document_index = mapped_column(Integer, nullable=True)
 

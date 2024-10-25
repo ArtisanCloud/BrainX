@@ -101,7 +101,7 @@ const DatasetDetailPage = () => {
 
 
 	const handleClickAction: MenuProps['onClick'] = (e) => {
-		console.log(e)
+		// console.log(e)
 		// if (e.key == 'edit') {
 		// 	handleEdit(currentDataset)
 		// } else if (e.key == 'delete') {

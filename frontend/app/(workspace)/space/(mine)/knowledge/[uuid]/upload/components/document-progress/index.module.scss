@@ -2,17 +2,35 @@
   max-height: 532px;
   overflow-y: scroll;
 
+  .progressStatusLabel {
+    align-items: center;
+    color: #060709cc;
+    display: flex;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    height: 32px;
+    line-height: 20px;
+    margin-bottom: 8px;
+  }
+
   .progressWrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
     align-self: stretch;
-    background: #ffffff;
     border: 1px solid #0607091a;
     border-radius: var(--default, 8px);
     gap: 10px;
     overflow: hidden;
     padding: 8px 10px;
+    position: relative; // 使渐变背景居中显示
+    margin-top: 6px;
+
+    /* 使用 CSS 变量来动态设置背景色 */
+    background: linear-gradient(to right, rgba(118, 232, 114, 0.32) var(--progress), #ffffff var(--progress));
+    background-size: 100% 100%;
+
 
     .content {
       max-width: calc(100% - 100px);
