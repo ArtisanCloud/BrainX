@@ -1,7 +1,7 @@
 """Add Document models
 
 Revision ID: 72000
-Revises: 71000
+Revises: 71100
 Create Date: 2024-07-15 21:29:16.538231
 
 """
@@ -19,7 +19,7 @@ from app.models.base import table_name_document, table_name_tenant, table_name_u
 
 # revision identifiers, used by Alembic.
 revision: str = '72000'
-down_revision: Union[str, None] = '71000'
+down_revision: Union[str, None] = '71100'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -15,10 +15,9 @@ interface SessionState {
 
 // 创建 store
 const useSessionStore = create<SessionState>((set) => ({
-  // 初始化时从 cookie 读取用户信息和 token
-  user: Cookies.get(account_key) ? JSON.parse(Cookies.get(account_key)!) : null,
-  token: Cookies.get(token_key) || null,
-  isLoggedIn: !!Cookies.get(account_key), // 根据 account_key 判断是否登录
+  user: null, // 初始化时用户为 null
+  token: null, // 初始化时 token 为 null
+  isLoggedIn: false, // 初始化时未登录
 
   // 登录方法
   sessionLogin: (user: User, token: Token) => {

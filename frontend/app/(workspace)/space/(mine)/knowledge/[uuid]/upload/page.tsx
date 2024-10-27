@@ -270,8 +270,8 @@ const UploadLocalDocumentPage = () => {
         msgError("服务器未能生成知识库文档")
       }
 
-    } catch (e) {
-      msgError(e)
+    } catch (e:any) {
+      msgError(e.message)
     } finally {
       console.log('Done')
     }

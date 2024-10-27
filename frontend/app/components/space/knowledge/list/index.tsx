@@ -4,7 +4,7 @@ import styles from './index.module.scss';
 import uiStyles from '@/app/styles/component.module.scss';
 import React, {useContext, useEffect, useState} from "react";
 import {Table, Space, TableProps, Switch, Dropdown, MenuProps} from "antd";
-import {MoreOutlined, BlockOutlined, DeleteOutlined} from "@ant-design/icons";
+import {MoreOutlined, DeleteOutlined} from "@ant-design/icons";
 import {
   FetchDatasetListContext,
   FetchDatasetListContextType
@@ -17,6 +17,7 @@ import {getDatasetImportTypeTranslation} from "@/app/utils/dataset"
 import {EditIcon} from "@nextui-org/shared-icons";
 import moment from "moment";
 import {useRouter} from "next/navigation";
+import IconText from "@/app/components/icon/knowledge/text";
 
 
 const DatasetList = () => {
@@ -119,10 +120,7 @@ const DatasetList = () => {
               src={GetOssUrl(dataset.avatar_url)}/>
           ) : (
             <div className={'w-16 h-16 flex'}>
-              <BlockOutlined
-                style={{fontSize: '32px', color: 'white', backgroundColor: '#5295e5'}}
-                className="place-content-center rounded-lg border-1 w-full h-full"
-              />
+              <IconText />
             </div>
 
           )}

@@ -4,8 +4,8 @@
 import {Form, Input, Button, message} from 'antd';
 import styles from './index.module.scss';
 import HomeNavbar from "@/app/components/home/navbar";
-import React from "react";
-import {ActionLogin} from "@/app/api/auth";
+import React, {useEffect} from "react";
+import {ActionLogin, Token} from "@/app/api/auth";
 import Cookies from 'js-cookie';
 import {useRouter} from "next/navigation";
 import {account_key, token_key} from "@/app/utils/auth";
@@ -18,6 +18,16 @@ export default function LoginPage() {
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const sessionLogin = useSessionStore((state) => state.sessionLogin);  // 从 store 中获取 sessionLogin 方法
+
+  // 读取 cookie 的用户信息
+  useEffect(() => {
+    const userCookie = Cookies.get(account_key);
+    const tokenCookie = Cookies.get(token_key);
+
+    if (userCookie && tokenCookie) {
+      sessionLogin(JSON.parse(userCookie), { access_token: tokenCookie, expires_in: 7 } as Token); // 假设 token 有效期为 7 天
+    }
+  }, [sessionLogin]); // 依赖 sessionLogin
 
   async function handleSubmit(values: { account: string; password: string }) {
 

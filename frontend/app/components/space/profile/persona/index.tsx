@@ -9,75 +9,82 @@ import {hintAppPersona} from "@/app/config/constant/placeholder";
 
 
 interface Props {
-	app: App;
+  app: App;
 }
 
 export type RefPersona = {
-	onHandleEdit: () => void;
+  onHandleEdit: () => void;
 };
 
 const Persona = forwardRef<RefPersona, Props & { ref?: Ref<RefPersona> }>((props, ref) => {
-	const {
-		persona,
-		setPersona,
-	} = useContext(CreateAppContext) as CreateAppContextType;
-	const [messageApi, contextHolder] = message.useMessage();
-	const [loading, setLoading] = useState(false);
-	const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    persona,
+    setPersona,
+  } = useContext(CreateAppContext) as CreateAppContextType;
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-	useImperativeHandle(ref, () => ({
-		onHandleEdit: () => {
-			handleEdit();
-		}
-	}));
+  useImperativeHandle(ref, () => ({
+    onHandleEdit: () => {
+      handleEdit();
+    }
+  }));
 
-	const handleEdit = () => {
-		// console.log("handleEdit", props.app)
-		setIsModalOpen(true);
-	}
+  const handleEdit = () => {
+    // console.log("handleEdit", props.app)
+    setIsModalOpen(true);
+  }
 
-	const handleOk = async () => {
-		// console.log(name, description, avatarUrl)
+  const handleCancel = async () => {
+    setIsModalOpen(false)
+  }
+  const handleOk = async () => {
+    // console.log(name, description, avatarUrl)
 
-		if (loading) {
-			return
-		}
-		// console.log(persona)
-		const res: ResponseCreateApp = await ActionPatchApp({
-			uuid: props.app.uuid,
-			persona: persona!,
-		})
+    if (loading) {
+      return
+    }
+    // console.log(persona)
+    const res: ResponseCreateApp = await ActionPatchApp({
+      uuid: props.app.uuid,
+      persona: persona!,
+    })
 
-		setLoading(false);
+    setLoading(false);
 
-		if (res.error && res.error !== "") {
-			messageApi.error('设置智能领域人格失败:' + res.error);
-		} else {
-			messageApi.info('设置智能领域人格成功');
-		}
+    if (res.error && res.error !== "") {
+      messageApi.error('设置智能领域人格失败:' + res.error);
+    } else {
+      setPersona(persona)
+      messageApi.info('设置智能领域人格成功');
+    }
 
-		setIsModalOpen(false);
+    setIsModalOpen(false);
 
-	};
+  };
 
-	return (
-		<div className={styles.container}>
-			<div className={styles.content} onClick={handleEdit}>
-				{props.app.persona ? props.app.persona : hintAppPersona}
-			</div>
-			{contextHolder}
-			<Modal
-				style={{top: 120}}
-				title="创建机器人"
-				open={isModalOpen}
-				onOk={handleOk}
-				onCancel={() => setIsModalOpen(false)}
-			>
-				<SetPersona app={props.app} />
-			</Modal>
-		</div>
-	);
+  return (
+    <div className={styles.container}>
+			<textarea className={styles.content}
+                onChange={(e) => {}}
+                onClick={handleEdit}
+                value={props.app.persona || hintAppPersona}
+      >
+			</textarea>
+      {contextHolder}
+      <Modal
+        style={{top: 120}}
+        title="创建机器人"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <SetPersona app={props.app}/>
+      </Modal>
+    </div>
+  );
 });
 
 

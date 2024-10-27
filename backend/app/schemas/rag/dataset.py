@@ -41,6 +41,7 @@ class DatasetSchema(BaseObjectSchema):
 
 
 class RequestGetDatasetList(BaseSchema):
+    app_uuid: Optional[str] = None
     pagination: Optional[Pagination] = None
 
 

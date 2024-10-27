@@ -38,6 +38,7 @@ const AppList = () => {
 
   }, [pagination?.page, pagination?.per_page]); // 添加缺失的依赖项
 
+
   const onChange = (page: number, pageSize: number) => {
     // console.log("onChange", page, pageSize)
     setPagination({

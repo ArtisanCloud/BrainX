@@ -1,3 +1,5 @@
+"user client";
+
 import styles from './index.module.scss';
 import {Collapse, Divider} from 'antd';
 import {
@@ -11,6 +13,7 @@ import {ItemType} from 'rc-collapse/es/interface';
 import Persona, {RefPersona} from "@/app/components/space/profile/persona";
 import {AppContextType, SelectedAppContext} from "@/app/components/space/robot-chat/provider/robot-chat-provider";
 import CreateAppProvider from "@/app/components/space/app/provider/create-app-provider";
+import TextKnowledgeList from "@/app/components/space/profile/knowledge/text";
 
 const text = `
   A dog is a type of domesticated animal.
@@ -40,6 +43,17 @@ const ChatProfile = () => {
 			}}
 		/>
 	);
+
+	const openSelectKnowledgeModal = () => (
+		<PlusOutlined
+			style={{color: '#aaa', fontSize: '10px'}}
+			onClick={(event: any) => {
+				// If you don't want click extra trigger collapse, you can prevent this:
+				event.stopPropagation();
+			}}
+		/>
+	);
+
 	const genExtra = () => (
 		<PlusOutlined
 			style={{color: '#aaa', fontSize: '10px'}}
@@ -55,7 +69,7 @@ const ChatProfile = () => {
 	}
 
 	const profileItems: ProfileItem = {
-		Context: [
+		"思考路由": [
 			{
 				key: 'persona',
 				label: '人设和路由',
@@ -68,7 +82,7 @@ const ChatProfile = () => {
 			},
 		] as ItemType[],
 
-		Skill: [
+		"技能": [
 			{
 				key: 'plugin',
 				label: '插件',
@@ -83,15 +97,15 @@ const ChatProfile = () => {
 			}
 		] as ItemType[],
 
-		Knowledge: [
+		"知识库": [
 			{
-				key: 'knowledge',
-				label: '知识库',
-				children: <div>{text}</div>,
-				extra: genExtra(),
+				key: 'text',
+				label: '文本',
+				children: <TextKnowledgeList />,
+				extra: openSelectKnowledgeModal(),
 			}
 		] as ItemType[],
-		Memory: [
+		"记忆": [
 			{
 				key: 'database',
 				label: '数据库',
@@ -111,7 +125,7 @@ const ChatProfile = () => {
 				extra: genExtra(),
 			}
 		] as ItemType[],
-		Character: [
+		"角色": [
 			{
 				key: 'voice',
 				label: '声音',
@@ -143,9 +157,21 @@ const ChatProfile = () => {
 	};
 
 	const profileItemKeys = Object.keys(profileItems);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
+	const handleKnowledgeSelect = (knowledgeId: string) => {
+		console.log(`Selected Knowledge ID: ${knowledgeId}`);
+	};
 
 	return (
 		<div className={selectedApp?.name == "纯聊天" ? styles.hide : containerClassName}>
+			{/*<SelectKnowledgeModal*/}
+			{/*	isModalOpen={isModalOpen}*/}
+			{/*	onClose={closeModal}*/}
+			{/*	onSelect={handleKnowledgeSelect}*/}
+			{/*/>*/}
 			<div className={styles.list}>
 				{profileItemKeys.map((key, index) => (
 					<div key={key} className={styles.profileItem}>

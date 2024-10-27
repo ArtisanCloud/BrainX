@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useEffect, useState} from 'react';
 import styles from './index.module.scss'; // 确保引入你的样式文件
 import {Document} from '@/app/api/knowledge/document';
@@ -37,7 +39,7 @@ const DocumentProgress = (
           if (taskStatus.state == "SUCCESS") {
             newProgressStatus[index] = 100;  // 任务完成，进度为 1
           } else if (taskStatus.state == "STARTED") {
-            newProgressStatus[index] = taskStatus.current / taskStatus.total * 100;  // 获取当前进度，默认值为 0
+            newProgressStatus[index] = taskStatus.current! / taskStatus.total! * 100;  // 获取当前进度，默认值为 0
           } else {
             newProgressStatus[index] = 0
           }

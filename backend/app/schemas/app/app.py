@@ -15,11 +15,11 @@ class AppSchema(BaseObjectSchema):
     name: Optional[str] = None
     status: Optional[int] = None
     type: Optional[int] = None
-    mode: Optional[str] = None
+    mode: Optional[int] = None
     description: Optional[str] = None
-    persona: Optional[int] = None
+    persona: Optional[str] = None
     avatar_url: Optional[str] = None
-    is_public: Optional[str] = None
+    is_public: Optional[bool] = None
 
     @classmethod
     def from_orm(cls, obj: App):
@@ -37,6 +37,7 @@ class AppSchema(BaseObjectSchema):
             type=obj.type,
             mode=obj.mode,
             description=obj.description,
+            persona=obj.persona,
             avatar_url=obj.avatar_url
         )
 

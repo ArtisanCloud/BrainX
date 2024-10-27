@@ -60,4 +60,4 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     if settings.server.project_type == ProjectType.Standalone.value:
-        op.drop_table(table_name_user, schema="public")
+        op.drop_table(table_name_user, schema="public", if_exists=True)

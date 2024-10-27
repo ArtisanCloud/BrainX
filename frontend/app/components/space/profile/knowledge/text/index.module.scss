@@ -1,0 +1,12 @@
+.container{
+  overflow: hidden;
+  opacity: 1;
+  transition-duration: 250ms;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: none;
+  padding-left: 0 !important;
+  .content{
+
+  }
+}
