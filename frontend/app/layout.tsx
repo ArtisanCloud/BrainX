@@ -1,14 +1,11 @@
 import "@/app/components/globals.scss";
-import type {Metadata} from "next";
 import {inter} from '@/app/styles/fonts';
 import {AntdRegistry} from '@ant-design/nextjs-registry';
 import {NextUIProvider} from "@nextui-org/react";
 import {NotificationProvider} from './components/notification';
+import GlobalLoader from './components/global-loading'; // 导入 GlobalLoader 组件
+import { metadata } from './meta'; // 导入 metadata
 
-export const metadata: Metadata = {
-  title: "BrainX",
-  description: "Powered by ArtisanCloud",
-};
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
   return (
@@ -17,6 +14,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
     <AntdRegistry>
       <NotificationProvider> {/* 全局 context holder */}
         <NextUIProvider>
+          <GlobalLoader /> {/* 根据 loading 状态决定是否显示 GlobalLoader */}
           {children}
         </NextUIProvider>
       </NotificationProvider>

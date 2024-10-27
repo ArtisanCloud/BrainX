@@ -1,5 +1,7 @@
 "user client";
 
+
+import SelectKnowledgeModal from "@/app/components/space/profile/knowledge/selectKnowledge";
 import styles from './index.module.scss';
 import {Collapse, Divider} from 'antd';
 import {
@@ -49,6 +51,7 @@ const ChatProfile = () => {
 			style={{color: '#aaa', fontSize: '10px'}}
 			onClick={(event: any) => {
 				// If you don't want click extra trigger collapse, you can prevent this:
+				setIsSelectKnowledgeModalOpen(true);
 				event.stopPropagation();
 			}}
 		/>
@@ -157,9 +160,9 @@ const ChatProfile = () => {
 	};
 
 	const profileItemKeys = Object.keys(profileItems);
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const closeModal = () => {
-		setIsModalOpen(false);
+	const [isSelectKnowledgeModalOpen, setIsSelectKnowledgeModalOpen] = useState(false);
+	const closeSelectKnowledgeModal = () => {
+		setIsSelectKnowledgeModalOpen(false);
 	};
 	const handleKnowledgeSelect = (knowledgeId: string) => {
 		console.log(`Selected Knowledge ID: ${knowledgeId}`);
@@ -167,11 +170,11 @@ const ChatProfile = () => {
 
 	return (
 		<div className={selectedApp?.name == "纯聊天" ? styles.hide : containerClassName}>
-			{/*<SelectKnowledgeModal*/}
-			{/*	isModalOpen={isModalOpen}*/}
-			{/*	onClose={closeModal}*/}
-			{/*	onSelect={handleKnowledgeSelect}*/}
-			{/*/>*/}
+			<SelectKnowledgeModal
+				isModalOpen={isSelectKnowledgeModalOpen}
+				onClose={closeSelectKnowledgeModal}
+				onSelect={handleKnowledgeSelect}
+			/>
 			<div className={styles.list}>
 				{profileItemKeys.map((key, index) => (
 					<div key={key} className={styles.profileItem}>

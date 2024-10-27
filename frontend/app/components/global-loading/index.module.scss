@@ -1,0 +1,12 @@
+.globalLoader {
+  position: fixed;           /* 固定在视口 */
+  top: 0;                   /* 顶部 */
+  left: 0;                  /* 左侧 */
+  right: 0;                 /* 右侧 */
+  bottom: 0;                /* 底部 */
+  background-color: rgba(255, 255, 255, 0.8); /* 背景色（白色，带透明度） */
+  display: flex;            /* 使用弹性盒布局 */
+  align-items: center;      /* 垂直居中 */
+  justify-content: center;   /* 水平居中 */
+  z-index: 9999;           /* 确保在其他元素之上 */
+}

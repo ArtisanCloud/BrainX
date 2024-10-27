@@ -16,21 +16,21 @@ const SelectKnowledgeModal: React.FC<SelectKnowledgeProps> = ({ isModalOpen, onC
   const [selectedKnowledge, setSelectedKnowledge] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (isModalOpen) {
-  //     setLoading(true);
-  //     // 模拟数据加载，实际应用中替换为 API 请求
-  //     setTimeout(() => {
-  //       const fetchedData = [
-  //         { id: '1', name: 'Knowledge 1' },
-  //         { id: '2', name: 'Knowledge 2' },
-  //         { id: '3', name: 'Knowledge 3' },
-  //       ];
-  //       setKnowledgeList(fetchedData);
-  //       setLoading(false);
-  //     }, 1000);
-  //   }
-  // }, [isModalOpen]);
+  useEffect(() => {
+    if (isModalOpen) {
+      setLoading(true);
+      // 模拟数据加载，实际应用中替换为 API 请求
+      setTimeout(() => {
+        const fetchedData = [
+          { id: '1', name: 'Knowledge 1' },
+          { id: '2', name: 'Knowledge 2' },
+          { id: '3', name: 'Knowledge 3' },
+        ];
+        setKnowledgeList(fetchedData);
+        setLoading(false);
+      }, 1000);
+    }
+  }, [isModalOpen]);
 
   const handleOk = () => {
     if (selectedKnowledge) {
@@ -51,14 +51,15 @@ const SelectKnowledgeModal: React.FC<SelectKnowledgeProps> = ({ isModalOpen, onC
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
-      footer={[
-        <Button key="back" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleOk}>
-          Confirm
-        </Button>,
-      ]}
+      footer={null}
+      // footer={[
+      //   <Button key="back" onClick={handleCancel}>
+      //     Cancel
+      //   </Button>,
+      //   <Button key="submit" type="primary" onClick={handleOk}>
+      //     Confirm
+      //   </Button>,
+      // ]}
     >
       {loading ? (
         <Spin tip="Loading...">
