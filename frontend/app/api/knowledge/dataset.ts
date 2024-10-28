@@ -4,96 +4,101 @@ import {PowerModel, RequestPagination, Response, ResponsePagination} from "@/app
 
 
 export enum DatasetImportType {
-	LOCAL_DOCUMENT = 1,
-	ONLINE_DATA = 2,
-	NOTION = 3,
-	GOOGLE_DOC = 4,
-	LARK = 5,
-	CUSTOM = 6,
+  LOCAL_DOCUMENT = 1,
+  ONLINE_DATA = 2,
+  NOTION = 3,
+  GOOGLE_DOC = 4,
+  LARK = 5,
+  CUSTOM = 6,
 }
 
 export enum SegmentationMode {
-	AUTOMATIC = 1,
-	CUSTOM = 2,
+  AUTOMATIC = 1,
+  CUSTOM = 2,
 }
 
 export interface Dataset extends PowerModel {
-	tenant_uuid?: string;
-	created_user_by?: string;
-	updated_user_by?: string;
-	name?: string;
-	description?: string;
-	avatar_url?: string;
-	is_published?: boolean;
-	import_type?: number;
-	driver_type?: number;
-	word_count?: number;
-	token_count?: number;
-	embedding_model?: string;
-	embedding_model_provider?: string;
+  tenant_uuid?: string;
+  created_user_by?: string;
+  updated_user_by?: string;
+  name?: string;
+  description?: string;
+  avatar_url?: string;
+  is_published?: boolean;
+  import_type?: number;
+  driver_type?: number;
+  word_count?: number;
+  token_count?: number;
+  embedding_model?: string;
+  embedding_model_provider?: string;
 
 }
 
+export interface ConnectedDataset extends Dataset {
+  with_app_connected: boolean
+}
+
+
 export interface ResponseFetchDatasetList {
-	data: Dataset[];
-	pagination: ResponsePagination;
+  data: Dataset[];
+  pagination: ResponsePagination;
 }
 
 
 export async function ActionFetchDatasetList(pg: RequestPagination): Promise<ResponseFetchDatasetList> {
-	noStore();
-	try {
-		const endpoint = `/api/rag/dataset/list`;
-		const queryString = Object.entries(pg).map(([key, value]) => `${key}=${value}`).join('&');
-		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
+  noStore();
+  try {
+    const endpoint = `/api/rag/dataset/list`;
+    const queryString = Object.entries(pg).map(([key, value]) => `${key}=${value}`).join('&');
+    const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
 
-		return res as ResponseFetchDatasetList;
+    return res as ResponseFetchDatasetList;
 
-	} catch (error) {
-		console.error('Fetch datasets Error:', error);
-		throw new Error('Failed to fetch the latest datasets.');
-	}
+  } catch (error) {
+    console.error('Fetch datasets Error:', error);
+    throw new Error('Failed to fetch the latest datasets.');
+  }
 }
 
 export type RequestGetDataset = Dataset
 
 export interface ResponseGetDataset extends Response {
-	dataset: Dataset
+  dataset: Dataset
 }
 
 export async function ActionGetDataset(option: RequestGetDataset): Promise<ResponseGetDataset> {
-	noStore();
-	try {
-		const endpoint = `/api/rag/dataset/${option.uuid}`;
-		const res = await backendClient.backend_get(`${endpoint}`, {cache: 'no-store'});
+  noStore();
+  try {
+    const endpoint = `/api/rag/dataset/${option.uuid}`;
+    const res = await backendClient.backend_get(`${endpoint}`, {cache: 'no-store'});
 
-		return res as ResponseGetDataset;
+    return res as ResponseGetDataset;
 
-	} catch (error) {
-		// console.error('Fetch dataset Error:', error);
-		throw new Error('Failed to fetch the latest dataset.');
-	}
+  } catch (error) {
+    // console.error('Fetch dataset Error:', error);
+    throw new Error('Failed to fetch the latest dataset.');
+  }
 }
 
 
 export interface RequestCreateDataset {
-	name: string
-	description: string
-	avatar_url: string
-	import_type: number
+  name: string
+  description: string
+  avatar_url: string
+  import_type: number
 }
 
 export interface ResponseCreateDataset extends Response {
-	dataset: Dataset
+  dataset: Dataset
 }
 
 export async function ActionCreateDataset(option: RequestCreateDataset): Promise<ResponseCreateDataset> {
 
-	const endpoint = `/api/rag/dataset/create`;
+  const endpoint = `/api/rag/dataset/create`;
 
-	const res = await backendClient.backend_post(endpoint, option);
+  const res = await backendClient.backend_post(endpoint, option);
 
-	return res as ResponseCreateDataset;
+  return res as ResponseCreateDataset;
 
 }
 
@@ -101,29 +106,96 @@ export async function ActionCreateDataset(option: RequestCreateDataset): Promise
 export type RequestPatchDataset = Dataset
 
 export interface ResponsePatchDataset extends Response {
-	dataset: Dataset
+  dataset: Dataset
 }
 
 export async function ActionPatchDataset(option: RequestPatchDataset): Promise<ResponsePatchDataset> {
 
-	const endpoint = `/api/rag/dataset/patch/${option.uuid}`;
+  const endpoint = `/api/rag/dataset/patch/${option.uuid}`;
 
-	const res = await backendClient.backend_patch(endpoint, option);
+  const res = await backendClient.backend_patch(endpoint, option);
 
-	return res as ResponseCreateDataset;
+  return res as ResponseCreateDataset;
 
 }
 
 export interface ResponseDeleteDataset {
-	result: boolean
+  result: boolean
 }
 
 export async function ActionDeleteDataset(datasetUuid: string): Promise<ResponseDeleteDataset> {
 
-	const endpoint = `/api/rag/dataset/delete/${datasetUuid}`
+  const endpoint = `/api/rag/dataset/delete/${datasetUuid}`
 
-	const res = await backendClient.backend_delete(endpoint);
+  const res = await backendClient.backend_delete(endpoint);
 
-	return res as ResponseDeleteDataset;
+  return res as ResponseDeleteDataset;
 
 }
+
+
+export interface ResponseFetchDatasetList {
+  data: Dataset[];
+  pagination: ResponsePagination;
+}
+
+
+export interface RequestDatasetListWithConnectedApp {
+  only_connected: boolean;
+  app_uuid: string;
+}
+
+export interface ResponseDatasetListWithConnectedApp {
+  data: ConnectedDataset[];
+}
+
+export async function ActionFetchDatasetListWithConnectedApp(data: RequestDatasetListWithConnectedApp): Promise<ResponseDatasetListWithConnectedApp> {
+  noStore();
+  try {
+    const endpoint = `/api/rag/dataset/list/connected-app`;
+    const res = await backendClient.backend_post(endpoint, data);
+
+    return res as ResponseDatasetListWithConnectedApp;
+
+  } catch (error) {
+    console.error('Fetch datasets Error:', error);
+    throw new Error('Failed to fetch the latest datasets.');
+  }
+}
+
+export interface RequestDatasetConnectApps {
+  app_uuid: string;
+  dataset_uuids: string[]
+}
+
+export interface ResponseDatasetConnectApps {
+  result: boolean
+}
+
+export async function ActionDatasetConnectApps(data: RequestDatasetConnectApps): Promise<ResponseDatasetConnectApps> {
+  const endpoint = `/api/rag/dataset/connect/apps`
+
+  const res = await backendClient.backend_post(endpoint, data);
+
+  return res as ResponseDatasetConnectApps;
+}
+
+
+export interface RequestDatasetDisconnectApps {
+  app_uuid: string;
+  dataset_uuids: string[]
+}
+
+export interface ResponseDatasetDisconnectApps {
+  result: boolean
+}
+
+
+export async function ActionDatasetDisconnectApps(data: RequestDatasetDisconnectApps): Promise<ResponseDatasetDisconnectApps> {
+  const endpoint = `/api/rag/dataset/disconnect/apps`
+
+  const res = await backendClient.backend_post(endpoint, data);
+
+  return res as ResponseDeleteDataset;
+}
+

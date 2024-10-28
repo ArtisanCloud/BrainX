@@ -1,17 +1,35 @@
 import styles from './index.module.scss';
-import { Dataset } from "@/app/api/knowledge/dataset";
+import {Dataset} from "@/app/api/knowledge/dataset";
+import IconText from "@/app/components/icon/knowledge/text";
+import {CopyOutlined, MinusCircleOutlined} from '@ant-design/icons';
+import {Button} from 'antd';
 
-interface TextKnowledgeListProps {
-  textKnowledge?: Dataset[];
+interface DatasetTextListProps {
+  datasetTextList?: Dataset[];
 }
 
-const TextKnowledgeList: React.FC<TextKnowledgeListProps> = ({ textKnowledge = [] }) => {
+const DatasetTextList: React.FC<DatasetTextListProps> = ({datasetTextList = []}) => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {textKnowledge.length > 0 ? (
-          textKnowledge.map((item, index) => (
-            <div key={index} className="grid grid-flow-row gap-y-[4px]">{item.name}</div>
+        {datasetTextList.length > 0 ? (
+          datasetTextList.map((item, index) => (
+            <div key={index} className={styles.item}>
+              <div className={styles.itemContent}>
+                <div className={styles.avatar}>
+                  <IconText width={36} height={36} fontSize={12}/>
+                </div>
+                <div className={styles.itemInfo}>
+                  <div className={styles.title}>{item.name}</div>
+                  <div className={styles.description}>{item.description}</div>
+                </div>
+                <div className={styles.right}>
+                  <Button className={styles.button} icon={<CopyOutlined/>}/>
+                  <Button className={styles.button} icon={<MinusCircleOutlined/>}/>
+                </div>
+              </div>
+
+            </div>
           ))
         ) : (
           <div className="text-center text-gray-500">
@@ -23,4 +41,4 @@ const TextKnowledgeList: React.FC<TextKnowledgeListProps> = ({ textKnowledge = [
   );
 }
 
-export default TextKnowledgeList;
+export default DatasetTextList;

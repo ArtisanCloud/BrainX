@@ -2,10 +2,11 @@ import http
 
 from sqlalchemy.exc import SQLAlchemyError
 
+from app import settings
 from app.database.base import PER_PAGE, PAGE
 from app.logger import logger
 
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
@@ -16,12 +17,17 @@ from app.models import User
 
 from app.schemas.base import Pagination, ResponseSchema
 from app.schemas.rag.dataset import ResponseGetDatasetList, RequestCreateDataset, make_dataset, RequestPatchDataset, \
-    ResponseCreateDataset, ResponsePatchDataset, ResponseDeleteDataset, ResponseGetDataset
+    ResponseCreateDataset, ResponsePatchDataset, ResponseDeleteDataset, ResponseGetDataset, RequestGetDatasetList, \
+    RequestGetDatasetListWithApp, ResponseGetDatasetListWithApp, RequestDatasetConnectApps, ResponseDatasetConnectApps, \
+    RequestDatasetDisconnectApps, ResponseDatasetDisconnectApps, RequestDatasetSyncApps, ResponseDatasetSyncApps
+from app.service.app.service import AppService
 from app.service.rag.dataset.create import create_dataset
 from app.service.rag.dataset.list import get_dataset_list
 from app.service.rag.dataset.get import get_dataset_by_uuid
+from app.service.rag.dataset.list_with_app import get_dataset_list_with_connected_app
 from app.service.rag.dataset.patch import patch_dataset
 from app.service.rag.dataset.delete import soft_delete_dataset
+from app.service.rag.dataset.service import DatasetService
 
 router = APIRouter()
 
@@ -147,5 +153,137 @@ async def api_delete_dataset(
     return res
 
 
+@router.post("/list/connected-app")
+async def api_get_dataset_list_with_connected_app(
+        request: RequestGetDatasetListWithApp,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_async_db_session),
+) -> ResponseGetDatasetListWithApp | ResponseSchema:
+    try:
+        if request.app_uuid == "":
+            raise Exception("app_uuid is empty")
+
+        datasets, exception = await get_dataset_list_with_connected_app(
+            db, session_user.tenant_owner_uuid,
+            request.app_uuid, request.only_connected
+        )
+        if exception is not None:
+            logger.error(exception)
+            if isinstance(exception, SQLAlchemyError):
+                raise Exception("database query: pls check log")
+            raise exception
+
+    except Exception as e:
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseGetDatasetListWithApp(data=datasets)
+
+    return res
 
 
+async def validate_app_uuid(db: AsyncSession, app_uuid: str, session_user: User):
+    if app_uuid == "":
+        raise Exception("app_uuid is empty")
+
+    # validate the app
+    app_service = AppService(db)
+    app, exception = await app_service.app_dao.async_get_by_uuid(app_uuid)
+    if exception:
+        logger.error(exception, exc_info=settings.log.exc_info)
+        if isinstance(exception, SQLAlchemyError):
+            raise Exception("database query: pls check log")
+        raise exception
+    # print(app.tenant_uuid, session_user.tenant_owner_uuid)
+    if str(app.tenant_uuid) != str(session_user.tenant_owner_uuid):
+        raise Exception("app not belong to this tenant")
+
+
+@router.post("/sync/apps")
+async def api_dataset_sync_apps(
+        request: RequestDatasetSyncApps,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_async_db_session),
+) -> ResponseDatasetSyncApps | ResponseSchema:
+    try:
+
+        # validate the app
+        await validate_app_uuid(db, request.app_uuid, session_user)
+
+        # sync app with databases
+        dataset_service = DatasetService(db)
+        datasets, exception = await dataset_service.sync_dataset_with_apps(
+            request.app_uuid,
+            request.connect_dataset_uuids, request.disconnect_dataset_uuids
+        )
+        if exception is not None:
+            logger.error(exception, exc_info=settings.log.exc_info)
+            if isinstance(exception, SQLAlchemyError):
+                raise Exception("database query: pls check log")
+            raise exception
+
+    except Exception as e:
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseDatasetSyncApps(data=datasets)
+
+    return res
+
+
+@router.post("/connect/apps")
+async def api_dataset_connect_apps(
+        request: RequestDatasetConnectApps,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_async_db_session),
+) -> ResponseDatasetConnectApps | ResponseSchema:
+    try:
+        # validate the app
+        await validate_app_uuid(db, request.app_uuid, session_user)
+
+        # sync app with databases
+        dataset_service = DatasetService(db)
+        exception = await dataset_service.connect_dataset_with_apps(
+            request.app_uuid,
+            request.dataset_uuids
+        )
+        if exception:
+            logger.error(exception, exc_info=settings.log.exc_info)
+            if isinstance(exception, SQLAlchemyError):
+                raise Exception("database query: pls check log")
+            raise exception
+
+    except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseDatasetConnectApps(result=True)
+
+    return res
+
+
+@router.post("/disconnect/apps")
+async def api_dataset_disconnect_apps(
+        request: RequestDatasetDisconnectApps,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_async_db_session),
+) -> ResponseDatasetDisconnectApps | ResponseSchema:
+    try:
+        await validate_app_uuid(db, request.app_uuid, session_user)
+
+        # sync app with databases
+        dataset_service = DatasetService(db)
+        exception = await dataset_service.disconnect_dataset_with_apps(
+            request.app_uuid,
+            request.dataset_uuids
+        )
+        if exception is not None:
+            logger.error(exception, exc_info=settings.log.exc_info)
+            if isinstance(exception, SQLAlchemyError):
+                raise Exception("database query: pls check log")
+            raise exception
+
+    except Exception as e:
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseDatasetDisconnectApps(result=True)
+
+    return res

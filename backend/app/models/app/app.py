@@ -6,7 +6,8 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app import settings
 from app.models.app.app_model_config import table_name_app_model_config
-from app.models.base import BaseORM, table_name_app, table_name_user
+from app.models.base import BaseORM, table_name_app, table_name_user, table_name_pivot_app_to_dataset
+from app.models.rag.pivot_app_to_dataset import PivotAppToDataset
 from app.models.tenant.tenant import table_name_tenant
 from app.models.workflow.workflow import table_name_workflow
 
@@ -58,6 +59,8 @@ class App(BaseORM):
 
     tenant: Mapped["Tenant"] = relationship(back_populates="apps")
     workflow: Mapped["Workflow"] = relationship(back_populates="app", foreign_keys=[workflow_uuid])
+    connected_datasets: Mapped[List[PivotAppToDataset]] = relationship("PivotAppToDataset",
+                                                                       back_populates="app")
 
     # conversations = relationship("Conversation", backref="app")
     # groups = relationship("Group", backref="app")

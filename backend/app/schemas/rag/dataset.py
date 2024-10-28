@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import Optional, List
 
-from pydantic import constr
+from pydantic import constr, Field
 
 from app.models.rag.dataset import Dataset
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
+from app.utils.datetime import datetime_format
 
 
 class DatasetSchema(BaseObjectSchema):
@@ -20,6 +21,11 @@ class DatasetSchema(BaseObjectSchema):
     token_count: Optional[int] = None
     embedding_model: Optional[str] = None
     embedding_model_provider: Optional[str] = None
+    createdAt: Optional[str] = None
+    updatedAt: Optional[str] = None
+
+    # extra info
+    with_app_connected: Optional[bool] = None
 
     @classmethod
     def from_orm(cls, obj: Dataset):
@@ -36,7 +42,9 @@ class DatasetSchema(BaseObjectSchema):
             import_type=obj.import_type,
             driver_type=obj.driver_type,
             embedding_model=obj.embedding_model,
-            embedding_model_provider=obj.embedding_model_provider
+            embedding_model_provider=obj.embedding_model_provider,
+            createdAt=str(obj.created_at.strftime(datetime_format)),
+            updatedAt=str(obj.updated_at.strftime(datetime_format)),
         )
 
 
@@ -72,6 +80,43 @@ class ResponsePatchDataset(BaseSchema):
 
 
 class ResponseDeleteDataset(BaseSchema):
+    result: bool
+
+
+class RequestGetDatasetListWithApp(BaseSchema):
+    only_connected: bool
+    app_uuid: str
+
+
+class ResponseGetDatasetListWithApp(BaseSchema):
+    data: list[DatasetSchema]
+
+
+class RequestDatasetSyncApps(BaseSchema):
+    app_uuid: str
+    connect_dataset_uuids: List[str]
+    disconnect_dataset_uuids: List[str]
+
+
+class ResponseDatasetSyncApps(BaseSchema):
+    datasets: List[Dataset]
+
+
+class RequestDatasetConnectApps(BaseSchema):
+    app_uuid: str
+    dataset_uuids: List[str]
+
+
+class ResponseDatasetConnectApps(BaseSchema):
+    result: bool
+
+
+class RequestDatasetDisconnectApps(BaseSchema):
+    app_uuid: str
+    dataset_uuids: List[str]
+
+
+class ResponseDatasetDisconnectApps(BaseSchema):
     result: bool
 
 

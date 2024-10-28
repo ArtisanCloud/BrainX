@@ -119,10 +119,9 @@ const DatasetList = () => {
               className={'rounded-lg border-1'}
               src={GetOssUrl(dataset.avatar_url)}/>
           ) : (
-            <div className={'w-16 h-16 flex'}>
-              <IconText />
+            <div className={'w-16 h-16 flex justify-center'} style={{alignItems: "center"}}>
+              <IconText width={48} height={48}/>
             </div>
-
           )}
           <div className={'flex flex-col justify-center ml-3 border-0 '}>
             <span className={'border-0'} style={{fontWeight: 'bold'}}>{dataset.name}</span>

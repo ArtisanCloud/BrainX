@@ -1,4 +1,4 @@
-.container{
+.container {
   overflow: hidden;
   opacity: 1;
   transition-duration: 250ms;
@@ -6,7 +6,88 @@
   border-bottom-right-radius: 8px;
   box-shadow: none;
   padding-left: 0 !important;
-  .content{
 
+  .content {
+    display: grid;
+    row-gap: 4px;
+    grid-auto-flow: row;
+
+    .item {
+      padding-bottom: 10px;
+      padding-top: 10px;
+      padding-left: 8px;
+      padding-right: 8px;
+      border-radius: 8px;
+      align-items: center;
+      flex-direction: row;
+      cursor: pointer;
+      width: 100%;
+      min-height: 56px;
+      display: flex;
+
+      // 鼠标移上去时的背景颜色
+      &:hover {
+        background-color: #f0f0f0; // 可以根据需要修改颜色
+      }
+
+      .itemContent {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        width: 100%;
+
+        .avatar {
+          border-radius: 5px;
+          overflow: hidden;
+          width: 36px;
+          height: 36px;
+        }
+
+        .itemInfo {
+          display: flex;
+          flex-direction: column;
+          margin-left: 8px;
+          flex: 1 1 0%;
+
+          .title {
+            color: #060709cc;
+            line-height: 20px;
+            font-weight: 500;
+            font-size: 14px;
+          }
+
+          .description {
+            color: #06070980;
+            line-height: 16px;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+
+        .right {
+          display: flex;
+          flex-direction: row;
+          gap: 18px;
+
+          .button {
+            padding: 4px;
+            width: 24px;
+            height: 24px;
+            color: #06070980;
+            border:none;
+            border-radius: 4px;
+            background-color: transparent;
+          }
+
+          :hover {
+            background-color: #b7bac2;
+          }
+        }
+      }
+    }
   }
 }
+
