@@ -2,7 +2,11 @@
 
 import DatasetTextList from "@/app/components/space/profile/knowledge/text";
 
-import {ActionFetchDatasetListWithConnectedApp, Dataset} from "@/app/api/knowledge/dataset";
+import {
+  ActionFetchDatasetListWithConnectedApp,
+  Dataset,
+  RequestDatasetListWithConnectedApp
+} from "@/app/api/knowledge/dataset";
 import SelectKnowledgeModal from "@/app/components/space/profile/knowledge/selectKnowledge";
 import styles from './index.module.scss';
 import {Collapse, Divider} from 'antd';
@@ -166,7 +170,7 @@ const ChatProfile = () => {
         const data = {
           only_connected: true,
           app_uuid: selectedApp.uuid,
-        }
+        } as RequestDatasetListWithConnectedApp
         // console.log(data)
         const res = await ActionFetchDatasetListWithConnectedApp(data);
         if (res.data) {
