@@ -3,7 +3,9 @@ from typing import Optional
 from pydantic import constr
 
 from app.models.app.app import App
+from app.schemas.app.app_model_config import AppModelConfigSchema
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
+from app.schemas.rag.dataset import DatasetSchema
 
 
 class AppSchema(BaseObjectSchema):
@@ -20,6 +22,9 @@ class AppSchema(BaseObjectSchema):
     persona: Optional[str] = None
     avatar_url: Optional[str] = None
     is_public: Optional[bool] = None
+
+    connected_datasets: Optional[list[DatasetSchema]] = None
+    current_app_model_config: Optional[AppModelConfigSchema] = None
 
     @classmethod
     def from_orm(cls, obj: App):

@@ -17,8 +17,18 @@ class AppModelConfig(BaseORM):
     persona_prompt = mapped_column(Text)
 
     app: Mapped["App"] = relationship(back_populates="app_model_configs", foreign_keys=[app_uuid])
-    current_selected_app: Mapped["App"] = relationship(back_populates="app_model_configs",
+    current_selected_app: Mapped["App"] = relationship("App",
+                                                       back_populates="app_model_configs",
                                                        foreign_keys="[App.app_model_config_uuid]",
                                                        uselist=False)
+
     model_provider: Mapped["ProviderModel"] = relationship(back_populates="app_model_config",
                                                            foreign_keys=[model_provider_uuid])
+
+    def __repr__(self):
+        return (f"<AppModelConfig("
+                f"app_uuid={self.app_uuid}, "
+                f"model_provider_uuid={self.model_provider_uuid}, "
+                f"configs={self.configs}, "
+                f"persona_prompt={self.persona_prompt[:30]}"
+                f"...)>")

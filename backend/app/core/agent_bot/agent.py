@@ -11,7 +11,7 @@ from langgraph.prebuilt import ToolInvocation
 from pydantic import BaseModel, Field
 
 from app import settings
-from app.core.brainx.llm.langchain import get_openai_llm
+from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node.factory import NodeFactory
@@ -35,7 +35,7 @@ def create_dynamic_route_query(options: list[str]) -> Type[BaseModel]:
 
 
 class AgentBot:
-    def __init__(self, app: App = None, app_model_config: AppModelConfig = None):
+    def __init__(self, app: App = None):
         # graph
         self.builder = None
         self.graph = None
@@ -43,6 +43,7 @@ class AgentBot:
         self.router = None
         self.routes_options = []
 
+        self.app = app
         # persona
         self.persona = ""
 
@@ -69,22 +70,23 @@ class AgentBot:
         self.voices: List[dict] = []
 
         try:
-            self.init_llm(app_model_config)
-            self.init_plugins(app_model_config)
-            self.init_text_datasets(app_model_config)
+            self.init_llm()
+            self.init_plugins()
+            self.init_text_datasets()
             # self.init_workflows()
-            self.init_router(app_model_config)
+            self.init_router()
 
             self.build()
 
         except Exception as e:
             raise e
 
-    def init_llm(self, app_model_config: AppModelConfig):
+    def init_llm(self):
 
         self.llm = get_openai_llm("gpt-3.5-turbo", temperature=0, streaming=False)
+        # self.llm = get_baidu_qianfan_llm(LLMModel.BAIDU_ERNIE_Lite_8K.value, temperature=0, streaming=False)
 
-    def init_plugins(self, app_model_config: AppModelConfig):
+    def init_plugins(self):
         self.plugins = [
             PluginNode({
                 "id": "web_search",
@@ -101,7 +103,7 @@ class AgentBot:
             node_id = plugin.get_id()
             self.routes_options.append(node_id)
 
-    def init_text_datasets(self, app_model_config: AppModelConfig):
+    def init_text_datasets(self):
         self.text_datasets = [
             KnowledgeNode({
                 "id": "vectorstore_retrieve",
@@ -118,18 +120,18 @@ class AgentBot:
             node_id = dataset.get_id()
             self.routes_options.append(node_id)
 
-    def init_router(self, app_model_config: AppModelConfig):
+    def init_router(self):
         # print(self.routes_options)
 
         # 动态生成 RouteQuery 类
         route_query = create_dynamic_route_query(self.routes_options)
         structured_llm_router = self.llm.with_structured_output(route_query)
 
-        self.persona = app_model_config.persona_prompt
+
         # print(self.persona)
         route_prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.persona),
+                ("system", self.app.persona),
                 ("human", "{question}"),
             ]
         )
@@ -183,12 +185,12 @@ class AgentBot:
             self.builder = StateGraph(GraphState)
             generate_node = NodeFactory.create_node(
                 {
-                    "id": NodeType.END.id,
+                    "id": NodeType.END.value,
                     "name": "Generate",
-                    "node_type": NodeType.END.type,
+                    "node_type": NodeType.END.value,
                     "llm": self.llm
                 })
-            self.builder.add_node(NodeType.END.id, generate_node.execute)
+            self.builder.add_node(NodeType.END.value, generate_node.execute)
 
             routes = {}
             # add plugin nodes
@@ -205,7 +207,7 @@ class AgentBot:
 
             # add edges
             for route_option in self.routes_options:
-                self.builder.add_edge(route_option, NodeType.END.id)
+                self.builder.add_edge(route_option, NodeType.END.value)
 
             # print(routes)
             self.builder.set_conditional_entry_point(
@@ -213,8 +215,8 @@ class AgentBot:
                 routes,
             )
 
-            self.builder.add_edge(NodeType.END.id, END)
-            self.builder.set_finish_point(NodeType.END.id)  # Make sure this ID matches a node in the graph
+            self.builder.add_edge(NodeType.END.value, END)
+            self.builder.set_finish_point(NodeType.END.value)  # Make sure this ID matches a node in the graph
 
             self.graph = self.builder.compile()
 

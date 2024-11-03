@@ -5,7 +5,7 @@ from sqlalchemy import Text, String, SmallInteger, ForeignKey, Boolean, UUID
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app import settings
-from app.models.app.app_model_config import table_name_app_model_config
+from app.models.app.app_model_config import table_name_app_model_config, AppModelConfig
 from app.models.base import BaseORM, table_name_app, table_name_user, table_name_pivot_app_to_dataset
 from app.models.rag.pivot_app_to_dataset import PivotAppToDataset
 from app.models.tenant.tenant import table_name_tenant
@@ -53,14 +53,23 @@ class App(BaseORM):
     # 定义与 AppModelConfig 的关系
     app_model_configs: Mapped[List["AppModelConfig"]] = relationship(back_populates="app",
                                                                      foreign_keys="[AppModelConfig.app_uuid]")
-    current_app_model_config: Mapped["AppModelConfig"] = relationship(back_populates="current_selected_app",
+
+    current_app_model_config: Mapped["AppModelConfig"] = relationship("AppModelConfig",
+                                                                      back_populates="current_selected_app",
                                                                       foreign_keys=[app_model_config_uuid],
                                                                       uselist=False)
 
     tenant: Mapped["Tenant"] = relationship(back_populates="apps")
     workflow: Mapped["Workflow"] = relationship(back_populates="app", foreign_keys=[workflow_uuid])
-    connected_datasets: Mapped[List[PivotAppToDataset]] = relationship("PivotAppToDataset",
-                                                                       back_populates="app")
+    connected_dataset_pivots: Mapped[List[PivotAppToDataset]] = relationship("PivotAppToDataset",
+                                                                             back_populates="app")
+
+    # connected_datasets: Mapped[List["Dataset"]] = relationship(
+    #     "Dataset",
+    #     secondary=settings.database.db_schema + '.' + table_name_pivot_app_to_dataset,  # 中间表
+    #     back_populates="connected_apps",
+    #     overlaps="connected_dataset_pivots, app"
+    # )
 
     # conversations = relationship("Conversation", backref="app")
     # groups = relationship("Group", backref="app")

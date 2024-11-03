@@ -1,11 +1,12 @@
 import http
 
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
 
+from app import settings
 from app.api.middleware.auth import get_session_user
 from app.database.base import PER_PAGE, PAGE
 from app.database.deps import get_async_db_session
@@ -39,12 +40,12 @@ async def api_get_app_list(
     try:
         apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
-            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetAppList(data=apps, pagination=pagination)
@@ -61,17 +62,18 @@ async def api_get_app_by_uuid(
     try:
         app, exception = await get_app_by_uuid(db, session_user, app_uuid)
         if exception is not None:
-            logger.error(exception)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetApp(data=app)
 
     return res
+
 
 @router.post("/create")
 async def api_create_app(

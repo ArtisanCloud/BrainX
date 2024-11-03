@@ -14,6 +14,7 @@ from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.models import User
 from app.schemas.robot_chat.chat import RequestChat
+from app.service.robot_chat.agent_chat import agent_chat
 from app.service.robot_chat.chat import chat
 
 router = APIRouter()
@@ -105,3 +106,44 @@ async def api_chat(
             status_code=http.HTTPStatus.BAD_REQUEST,
         )
 
+
+@router.post("/agent/chat")
+async def api_agent_chat(
+        request: Request,
+        data: RequestChat,
+        session_user: User = Depends(get_session_user),
+        db: AsyncSession = Depends(get_async_db_session),
+) -> StreamingResponse:
+    try:
+        question = data.messages[0].content
+        # user_uuid = data.appUUID
+        app_uuid = data.appUUID
+        conversation_uuid = data.conversationUUID
+
+        stream_response, conversation_uuid, exception = await agent_chat(
+            db=db,
+            question=question, llm=data.llm,
+            user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
+        )
+        if exception is not None:
+            if isinstance(exception, SQLAlchemyError):
+                raise Exception("database query: pls check log")
+            raise exception
+
+        # print("conversationUUID:", conversation_uuid)
+        return StreamingResponse(
+            event_generator(request, data.llm, stream_response),
+            media_type="text/event-stream",
+            headers={
+                "Content-Type": "text/event-stream",
+                "Conversation-Uuid": conversation_uuid
+            },
+        )
+
+    except Exception as e:
+        logger.error(f"Failed to robot_chat: {e}", exc_info=settings.log.exc_info)
+        return StreamingResponse(
+            [f"data: ERROR: {e}\n\n"],
+            media_type="text/event-stream",
+            status_code=http.HTTPStatus.BAD_REQUEST,
+        )

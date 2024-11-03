@@ -53,7 +53,7 @@ class DatasetDAO(BaseDAO[Dataset]):
                 .outerjoin(App, PivotAppToDataset.app_uuid == App.uuid)
                 .where(Dataset.tenant_uuid == tenant_uuid)
                 .where(Dataset.deleted_at.is_(None))
-                .options(joinedload(Dataset.connected_apps))  # 确保预加载
+                .options(joinedload(Dataset.connected_app_pivots))  # 确保预加载
             )
 
             if app_uuid is not None:

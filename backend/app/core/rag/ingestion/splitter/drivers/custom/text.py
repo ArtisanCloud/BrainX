@@ -4,6 +4,10 @@ from typing import List
 import re
 import uuid
 
+from app.core.rag.ingestion.extractor.base import Block, BlockType
+from app.models import DocumentSegment
+from app.models.rag.document_node import DocumentNode
+
 
 class TextSplitter:
     def __init__(self, max_length: int = 800, overlap: int = 50):

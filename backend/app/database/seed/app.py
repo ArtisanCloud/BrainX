@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select, func
 
 from app.dao.model_provider.provider_model import ProviderModelDAO
@@ -21,7 +23,7 @@ async def seed_apps(db) -> Exception | None:
                     "uuid": "7c189a18-ef3f-41fd-bda1-1607772020bd",
                     "tenant_uuid": init_tenant_uuid,
                     "created_user_by": init_user_uuid,
-                    "app_model_config_uuid": init_model_provider_uuid,
+                    # "app_model_config_uuid": init_model_provider_uuid+"01",
                     "name": "PowerWechat",
                     "description": "代理机器人1号",
                     "status": AppStatus.ACTIVE,
@@ -32,7 +34,7 @@ async def seed_apps(db) -> Exception | None:
                     "uuid": "af932bfd-ff82-47e3-86bd-a31de67f8701",
                     "tenant_uuid": init_tenant_uuid,
                     "created_user_by": init_user_uuid,
-                    "app_model_config_uuid": init_model_provider_uuid,
+                    # "app_model_config_uuid": init_model_provider_uuid+"02",
                     "name": "PowerX",
                     "description": "代理机器人1号",
                     "status": AppStatus.ACTIVE,
@@ -43,7 +45,7 @@ async def seed_apps(db) -> Exception | None:
                     "uuid": "a3f1dae1-5ce6-4b2d-b4be-0004914b819e",
                     "tenant_uuid": init_tenant_uuid,
                     "created_user_by": init_user_uuid,
-                    "app_model_config_uuid": init_model_provider_uuid,
+                    #                     "app_model_config_uuid": init_model_provider_uuid+"03",
                     "name": "BrainX",
                     "description": "代理机器人1号",
                     "status": AppStatus.ACTIVE,
@@ -66,25 +68,27 @@ async def seed_apps(db) -> Exception | None:
 
 async def get_apps_from_data(db, data: list[dict]) -> list[App]:
     dao = ProviderModelDAO(db)
-    # model_providers, exception = await dao.get_objects_by_conditions({
-    #     "uuid": init_model_provider_uuid
-    # })
-    # if exception:
-    #     raise exception
-    # print(model_providers)
-
-    model_provider, exception = await dao.async_get_by_uuid(init_model_provider_uuid)
-    if exception:
-        raise exception
-
-    # print(model_provider)
 
     apps = []
-    for item in data:
+    for i, item in enumerate(data):
+        try:
+            # 将字符串转换为 UUID 对象
+            app_model_config_uuid = uuid.UUID(init_model_provider_uuid + f"{i:02d}")
+            # print(11111, app_model_config_uuid)
+            # print(f"Converted UUID: {app_model_config_uuid}")
+        except ValueError as e:
+            print(f"Invalid UUID string: {e}")
+
+        model_provider, exception = await dao.async_get_by_uuid(app_model_config_uuid)
+        if exception:
+            raise exception
+
+        # print(model_provider)
+
         app = App(
             uuid=item["uuid"],
             tenant_uuid=item["tenant_uuid"],
-            app_model_config_uuid=item["app_model_config_uuid"],
+            app_model_config_uuid=app_model_config_uuid,
             name=item["name"],
             description=item["description"],
             status=item["status"],
@@ -95,6 +99,7 @@ async def get_apps_from_data(db, data: list[dict]) -> list[App]:
         # print(app)
         # 创建 AppModelConfig 对象并设置其属性
         app_model_config = AppModelConfig(
+            uuid=app_model_config_uuid,
             app_uuid=app.uuid,
             persona_prompt='',
         )

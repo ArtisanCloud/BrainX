@@ -2,6 +2,7 @@ from typing import Tuple, Iterator, Any, List, Type, Dict, Optional
 
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
+from app.core.agent_bot.agent import AgentBot
 from app.core.ai_model.drivers.langchain.factory import ModelProviderFactory
 from app.core.ai_model.model_instance import ModelInstance
 from app.config.config import settings
@@ -10,6 +11,8 @@ from app.core.rag.synthesis.factory import AgentExecutorFactory
 from app.core.rag.ingestion.factory import IndexingFactory
 from app.core.rag.retrieval.factory import RetrieverFactory
 from app.core.rag.retrieval.interface import BaseRetriever
+from app.core.workflow.state import GraphState
+from app.models import AppModelConfig
 from app.models.app.app import App
 from app.models.rag.document_node import DocumentNode
 from app.models.rag.invoke_response import InvokeResponse
@@ -20,7 +23,8 @@ class BrainXService:
                  llm: str,
                  streaming: bool = False,
                  collection_name: str = "rag_embeddings",
-                 table_name: str = "embeddings",
+                 app: App = None,
+                 app_model_config: AppModelConfig = None,
                  ):
         # 进行其他初始化操作
         # create the embedding model
@@ -36,7 +40,7 @@ class BrainXService:
         self.vector_store = self.retriever.get_vector_store()
 
         # define the Agent Bot
-        self.AgentBot = None
+        self.agent_bot = AgentBot(app)
 
         # define the agent executor
         self.agent_executor = self._create_agent_executor(llm=llm, streaming=streaming)
@@ -106,7 +110,6 @@ class BrainXService:
                template: str = '',
                output_schemas: Any = None,
                ) -> Tuple[InvokeResponse | None, Exception | None]:
-
         return self.agent_executor.invoke(
             query, temperature=temperature,
             input_variables=input_variables,
@@ -129,7 +132,8 @@ class BrainXService:
                         app: App = None,
                         session_id: str = "",
                         ) -> Tuple[str | None, Exception | None]:
-        return self.agent_executor.chat_completion(question=question, app=app, session_id=session_id, temperature=temperature)
+        return self.agent_executor.chat_completion(question=question, app=app, session_id=session_id,
+                                                   temperature=temperature)
 
     def chat_stream(self,
                     question: Dict,
@@ -137,4 +141,19 @@ class BrainXService:
                     app: App = None,
                     session_id: str = ""
                     ) -> Tuple[Iterator | None, Exception | None]:
-        return self.agent_executor.chat_stream(question=question, app=app, session_id=session_id, temperature=temperature)
+        return self.agent_executor.chat_stream(question=question, app=app, session_id=session_id,
+                                               temperature=temperature)
+
+    def agent_chat(
+            self,
+            question: str,
+            session_id: str = ""
+    ) -> Tuple[Iterator | None, Exception | None]:
+        print(self.agent_bot)
+        state = GraphState(
+            question=question,
+            messages=[""]
+        )
+        self.agent_bot.run(state)
+
+        return None, None

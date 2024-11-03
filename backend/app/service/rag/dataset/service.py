@@ -8,7 +8,7 @@ from app.dao.rag.dataset import DatasetDAO
 
 class DatasetService:
     def __init__(self, db: AsyncSession):
-        self.app_dao = DatasetDAO(db)
+        self.dataset_dao = DatasetDAO(db)
 
     async def sync_dataset_with_apps(
             self,
@@ -18,11 +18,11 @@ class DatasetService:
     ) -> Tuple[List[str] | None, SQLAlchemyError | None]:
         try:
 
-            exception = await self.app_dao.sync_app_with_datasets(app_uuid, connect_app_uuids, disconnect_app_uuids)
+            exception = await self.dataset_dao.sync_app_with_datasets(app_uuid, connect_app_uuids, disconnect_app_uuids)
             if exception:
                 raise exception
 
-            dataset_list, exception = await self.app_dao.get_connected_datasets(app_uuid)
+            dataset_list, exception = await self.dataset_dao.get_connected_datasets(app_uuid)
             return dataset_list, exception
 
         except SQLAlchemyError as e:
@@ -35,7 +35,7 @@ class DatasetService:
     ) -> SQLAlchemyError | None:
         try:
 
-            exception = await self.app_dao.connect_datasets(app_uuid, connect_app_uuids)
+            exception = await self.dataset_dao.connect_datasets(app_uuid, connect_app_uuids)
             if exception:
                 raise exception
 
@@ -49,7 +49,7 @@ class DatasetService:
     ) -> SQLAlchemyError | None:
         try:
 
-            exception = await self.app_dao.disconnect_datasets(app_uuid, dataset_uuids)
+            exception = await self.dataset_dao.disconnect_datasets(app_uuid, dataset_uuids)
             if exception:
                 raise exception
 

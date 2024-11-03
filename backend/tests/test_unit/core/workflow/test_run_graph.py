@@ -12,10 +12,10 @@ from app.logger import logger
 @pytest.fixture
 def graph_json():
     id_length = 8
-    start_node_id = NodeType.START.id
-    knowledge_node_id = NodeType.KNOWLEDGE.id + "_" + str(uuid.uuid4())[:id_length]
-    plugin_node_id = NodeType.PLUGIN.id + "_" + str(uuid.uuid4())[:id_length]
-    end_node_id = NodeType.END.id
+    start_node_id = NodeType.START.value
+    knowledge_node_id = NodeType.KNOWLEDGE.value + "_" + str(uuid.uuid4())[:id_length]
+    plugin_node_id = NodeType.PLUGIN.value + "_" + str(uuid.uuid4())[:id_length]
+    end_node_id = NodeType.END.value
 
     return {
         "nodes": [

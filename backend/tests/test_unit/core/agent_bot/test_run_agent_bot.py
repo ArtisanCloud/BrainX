@@ -4,14 +4,14 @@ from app import settings
 from app.core.agent_bot.agent import AgentBot, create_graph_from_json
 from app.core.workflow.state import GraphState
 from app.logger import logger
-from app.models import AppModelConfig
+from app.models import AppModelConfig, App
 
 
 @pytest.fixture
 def setup_agent_bot():
     """Fixture to set up the AgentBot instance."""
-    return AgentBot(None, AppModelConfig(
-        persona_prompt="""
+    return AgentBot(App(
+        persona="""
         # Character
         You are an expert at routing a user question to a vectorstore or web search.
 
@@ -21,8 +21,8 @@ def setup_agent_bot():
         2. 使用web_search来互联网上网问题 ；
         3. 使用local_tool来处理本地系统文件复制操作； 
         """,
-        app_uuid="app_uuid_111",
-        model_provider_uuid="model_provider_uuid_111",
+        uuid="app_uuid_111",
+        # model_provider_uuid="model_provider_uuid_111",
     ))
 
 

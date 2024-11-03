@@ -11,13 +11,13 @@ class NodeFactory:
         try:
             node_type = node_data.get("node_type", "")
             match node_type:
-                case NodeType.START.type:
+                case NodeType.START.value:
                     return StartNode(node_data)
-                case NodeType.END.type:
+                case NodeType.END.value:
                     return EndNode(node_data)
-                case NodeType.PLUGIN.type:
+                case NodeType.PLUGIN.value:
                     return PluginNode(node_data)
-                case NodeType.KNOWLEDGE.type:
+                case NodeType.KNOWLEDGE.value:
                     return KnowledgeNode(node_data)
                 # 添加更多类型的 Node
                 case _:

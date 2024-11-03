@@ -17,7 +17,7 @@ def transform_datasets_with_app_to_reply(datasets: [Dataset], app_uuid: str) -> 
 
 def transform_dataset_with_app_to_reply(dataset: Dataset, app_uuid: str) -> DatasetSchema:
     data = DatasetSchema.from_orm(dataset)
-    data.with_app_connected = any(str(app.app_uuid) == app_uuid for app in dataset.connected_apps)
+    data.with_app_connected = any(str(app.app_uuid) == app_uuid for app in dataset.connected_app_pivots)
     return data
 
 
@@ -34,7 +34,7 @@ async def get_dataset_list_with_connected_app(
     if only_connected:
         filter_by_app_uuid = app_uuid
 
-    dataset_list, exception = await dataset_service.app_dao.get_dataset_list_with_connected_app(
+    dataset_list, exception = await dataset_service.dataset_dao.get_dataset_list_with_connected_app(
         tenant_uuid=tenant_uuid,
         app_uuid=filter_by_app_uuid,
     )

@@ -169,7 +169,7 @@ const ChatProfile = () => {
       if (needRefreshTextDataset && selectedApp) {
         const data = {
           only_connected: true,
-          app_uuid: selectedApp.uuid,
+          app_uuid: selectedApp?.uuid,
         } as RequestDatasetListWithConnectedApp
         // console.log(data)
         const res = await ActionFetchDatasetListWithConnectedApp(data);
@@ -180,8 +180,12 @@ const ChatProfile = () => {
       }
     };
 
-    // 调用该异步函数
-    fetchData();
+    if (selectedApp && selectedApp.uuid) {
+      // 调用该异步函数
+      fetchData();
+
+    }
+
   }, [selectedApp, needRefreshTextDataset]);
 
   const onChange = (key: string | string[]) => {
