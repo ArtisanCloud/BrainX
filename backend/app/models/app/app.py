@@ -61,15 +61,20 @@ class App(BaseORM):
 
     tenant: Mapped["Tenant"] = relationship(back_populates="apps")
     workflow: Mapped["Workflow"] = relationship(back_populates="app", foreign_keys=[workflow_uuid])
-    connected_dataset_pivots: Mapped[List[PivotAppToDataset]] = relationship("PivotAppToDataset",
-                                                                             back_populates="app")
+    connected_dataset_pivots: Mapped[List[PivotAppToDataset]] = relationship(
+        "PivotAppToDataset",
+        back_populates="app",
+    )
 
-    # connected_datasets: Mapped[List["Dataset"]] = relationship(
-    #     "Dataset",
-    #     secondary=settings.database.db_schema + '.' + table_name_pivot_app_to_dataset,  # 中间表
-    #     back_populates="connected_apps",
-    #     overlaps="connected_dataset_pivots, app"
-    # )
+    connected_datasets: Mapped[List["Dataset"]] = relationship(
+        "Dataset",
+        secondary=settings.database.db_schema + '.' + table_name_pivot_app_to_dataset,  # 中间表
+        back_populates="connected_apps",
+        # overlaps参数用于告知SQLAlchemy，某些关系之间有共享的数据，避免ORM在处理这些关系时产生不必要的冲突或重复查询。
+        overlaps="app,dataset,connected_dataset_pivots,connected_app_pivots",
+        # 通常情况下，您可以先测试overlaps是否足够解决加载冲突问题。如果仍然遇到多对多关系重复的问题，可以考虑使用viewonly = True，这样只读视图避免了ORM在提交时处理关联。
+        # viewonly=True
+    )
 
     # conversations = relationship("Conversation", backref="app")
     # groups = relationship("Group", backref="app")

@@ -40,7 +40,8 @@ class BrainXService:
         self.vector_store = self.retriever.get_vector_store()
 
         # define the Agent Bot
-        self.agent_bot = AgentBot(app)
+        if app:
+            self.agent_bot = AgentBot(app)
 
         # define the agent executor
         self.agent_executor = self._create_agent_executor(llm=llm, streaming=streaming)
@@ -154,6 +155,7 @@ class BrainXService:
             question=question,
             messages=[""]
         )
+        print(state)
         self.agent_bot.run(state)
 
         return None, None

@@ -86,19 +86,33 @@ class AgentBot:
         self.llm = get_openai_llm("gpt-3.5-turbo", temperature=0, streaming=False)
         # self.llm = get_baidu_qianfan_llm(LLMModel.BAIDU_ERNIE_Lite_8K.value, temperature=0, streaming=False)
 
+    def init_text_dataset(self) -> List[PluginNode]:
+        plugin_nodes = []
+        for dataset_pivot in self.app.connected_dataset_pivots:
+            plugin_nodes = plugin_nodes.append(
+                PluginNode({
+                    "id": dataset_pivot,
+                    "name": "web search",
+                    "llm": self.llm
+                }),
+            )
+        return []
+
     def init_plugins(self):
-        self.plugins = [
-            PluginNode({
-                "id": "web_search",
-                "name": "web search",
-                "llm": self.llm
-            }),
-            PluginNode({
-                "id": "local_tool",
-                "name": "local tool",
-                "llm": self.llm,
-            }),
-        ]
+        self.plugins = self.init_text_dataset()
+
+        # self.plugins = [
+        #     PluginNode({
+        #         "id": "web_search",
+        #         "name": "web search",
+        #         "llm": self.llm
+        #     }),
+        #     PluginNode({
+        #         "id": "local_tool",
+        #         "name": "local tool",
+        #         "llm": self.llm,
+        #     }),
+        # ]
         for plugin in self.plugins:
             node_id = plugin.get_id()
             self.routes_options.append(node_id)
@@ -127,11 +141,11 @@ class AgentBot:
         route_query = create_dynamic_route_query(self.routes_options)
         structured_llm_router = self.llm.with_structured_output(route_query)
 
-
-        # print(self.persona)
+        persona = self.app.persona if self.app.persona else "You are a helpful assistant. Answer all questions to the best of your ability."
+        # print(11111, persona)
         route_prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.app.persona),
+                ("system", persona),
                 ("human", "{question}"),
             ]
         )

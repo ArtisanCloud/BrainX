@@ -14,6 +14,7 @@ async def paginate_query(
         table: Any,
         pagination: Pagination,
         sort: bool,
+        need_unique: bool = False,
 ) -> Tuple[Sequence[Any] | None, ResponsePagination | None, SQLAlchemyError | None]:
     try:
         # 如果页码小于等于 0 或者为 None，默认设置为 1
@@ -31,6 +32,8 @@ async def paginate_query(
 
         # 执行查询并获取结果
         result = await db.execute(query)
+        if need_unique:
+            result = result.unique()
         items = result.scalars().all()
 
         # 获取总行数

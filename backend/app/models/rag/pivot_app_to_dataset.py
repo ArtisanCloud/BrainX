@@ -26,7 +26,6 @@ class PivotAppToDataset(BasePivotModel):
     app: Mapped["App"] = relationship("App", back_populates="connected_dataset_pivots")
     dataset: Mapped["Dataset"] = relationship("Dataset", back_populates="connected_app_pivots")
 
-
     def __repr__(self):
         return (
             f"<PivotAppToDataset("

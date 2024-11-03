@@ -41,15 +41,18 @@ class Dataset(BaseORM):
                                                               # uselist=False,
                                                               # lazy="select"
                                                               )
-    connected_app_pivots: Mapped[List["PivotAppToDataset"]] = relationship("PivotAppToDataset",
-                                                                           back_populates="dataset")
+    connected_app_pivots: Mapped[List["PivotAppToDataset"]] = relationship(
+        "PivotAppToDataset",
+        back_populates="dataset",
+    )
 
-    # connected_apps: Mapped[List["App"]] = relationship(
-    #     "App",
-    #     secondary=settings.database.db_schema + '.' + table_name_pivot_app_to_dataset,  # 中间表
-    #     back_populates="connected_datasets",
-    #     overlaps="connected_app_pivots, dataset"
-    # )
+    connected_apps: Mapped[List["App"]] = relationship(
+        "App",
+        secondary=settings.database.db_schema + '.' + table_name_pivot_app_to_dataset,  # 中间表
+        back_populates="connected_datasets",
+        overlaps="app,connected_dataset_pivots,dataset,connected_app_pivots"
+        # viewonly=True
+    )
 
     def __repr__(self):
         description = self.description[:10] + '...' if self.description is not None else 'No description'

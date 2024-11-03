@@ -37,7 +37,8 @@ const ChatBox = () => {
   const [showHint, setShowHint] = useState<boolean>(false);
   // const [conversation, setConversation] = useState<Conversation>(welcomeConversation);
 
-  const streamUrl = GetChatBotSSEActionUrl('chat');
+  // const streamUrl = GetChatBotSSEActionUrl('chat');
+  const streamUrl = GetChatBotSSEActionUrl('agent/chat');
   const sse = useSSE();
 
   const scrollToBottom = () => {

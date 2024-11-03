@@ -65,7 +65,7 @@ def format_docs(docs):
 
 
 def get_chat_prompt_template(app: App) -> ChatPromptTemplate:
-    persona = app.persona_prompt if app.persona_prompt else "You are a helpful assistant. Answer all questions to the best of your ability."
+    persona = app.persona if app.persona else "You are a helpful assistant. Answer all questions to the best of your ability."
 
     prompt = ChatPromptTemplate.from_messages(
         [

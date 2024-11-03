@@ -27,7 +27,7 @@ async def chat(db: AsyncSession,
     service_brain_x = BrainXService(
         llm,
         streaming=True,
-        table_name=settings.database.table_name_vector_store,
+        # table_name=settings.database.table_name_vector_store,
     )
 
     # print(

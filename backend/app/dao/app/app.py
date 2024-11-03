@@ -20,10 +20,10 @@ class AppDAO(BaseDAO[App]):
                 select(App)
                 .where(App.uuid == app_uuid)
                 .options(
-                    # 使用 selectinload 预加载多对多关系的 connected_datasets
-                    # selectinload(App.connected_datasets),
                     # 使用 joinedload 预加载一对一关系的 current_app_model_config
-                    joinedload(App.current_app_model_config)
+                    joinedload(App.current_app_model_config),
+                    # 使用 selectinload 预加载多对多关系的 connected_datasets
+                    joinedload(App.connected_datasets),
                 )
             )
 

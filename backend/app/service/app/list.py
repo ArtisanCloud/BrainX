@@ -3,7 +3,7 @@ from typing import Tuple, List
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.schemas.base import Pagination, ResponsePagination
 from app.schemas.app.app import AppSchema
@@ -31,14 +31,14 @@ async def get_app_list(
         where(App.deleted_at.is_(None)).
         options(
             # 使用 selectinload 预加载多对多关系的 connected_datasets
-            # selectinload(App.connected_datasets),
+            joinedload(App.connected_datasets),
             # 使用 joinedload 预加载一对一关系的 current_app_model_config
             joinedload(App.current_app_model_config)
         ).
         order_by(App.created_at)
     )
     # print(stmt)
-    res, pg, exception = await paginate_query(db, stmt, App, pagination, True)
+    res, pg, exception = await paginate_query(db, stmt, App, pagination, True, need_unique=True)
     if exception:
         return None, None, exception
 

@@ -40,6 +40,7 @@ async def api_get_app_list(
     try:
         apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
+            logger.error(exception, exc_info=settings.log.exc_info)
             if isinstance(exception, SQLAlchemyError):
                 raise Exception("database query: pls check log")
             raise exception
