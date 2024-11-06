@@ -54,9 +54,8 @@ class BaseNode(ABC, BaseModel):
     height: float = 480.0
     next_nodes: List[str] = Field([])
 
-    # dataset info
-    dataset: Any = None
-    llm: Any = None
+    # agent executor info
+    executor: Any = None
 
     """
     This class represents the state for each node in the graph.
@@ -68,10 +67,9 @@ class BaseNode(ABC, BaseModel):
 
     def __init__(self, node_data: dict):
         super().__init__(**node_data)  # Ensure that the parent's __init__ method is called
-        # self.id = node_data.get("id", "")
-        # self.name = node_data.get("name", "")
-        # self.llm = node_data.get("llm", None)
-        # self.dataset = node_data.get("dataset", None)
+        self.id = node_data.get("id", "")
+        self.name = node_data.get("name", "")
+        # self.executor = node_data.get("executor", None)
         self._init_inputs(self.id, node_data.get("inputs", []))
 
     def _init_inputs(self, node_id, input_data):

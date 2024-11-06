@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
+from app import settings
 from app.api.middleware.auth import get_session_user
 from app.database.base import PER_PAGE, PAGE
 from app.logger import logger
@@ -34,11 +35,12 @@ async def api_get_media_resource_list(
     try:
         media_resources, pagination, exception = await get_media_resource_list(db, p)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetMediaResourceList(data=media_resources, pagination=pagination)
@@ -56,11 +58,12 @@ async def create_media_resource(
 
         media_resource, exception = await create_media_resource_by_file(db, resource)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     media_resource.sort_index = sort_index
@@ -86,12 +89,12 @@ async def create_media_resource(
             data.mediaName, data.sortIndex,
         )
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     # media_resource.sort_index = sort_index
@@ -109,11 +112,12 @@ async def api_get_media_resource_by_uuid(
     try:
         media_resource, exception = await get_media_resource_by_uuid(db, session_user, media_resource_uuid)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetMediaResource(data=media_resource)

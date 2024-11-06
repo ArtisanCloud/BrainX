@@ -47,4 +47,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_app_model_config, schema=settings.database.db_schema)
+    op.drop_table(table_name_app_model_config, schema=settings.database.db_schema, if_exists=True)

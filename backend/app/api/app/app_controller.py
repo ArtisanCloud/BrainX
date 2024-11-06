@@ -40,13 +40,12 @@ async def api_get_app_list(
     try:
         apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
-            logger.error(exception, exc_info=settings.log.exc_info)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetAppList(data=apps, pagination=pagination)
@@ -63,12 +62,12 @@ async def api_get_app_by_uuid(
     try:
         app, exception = await get_app_by_uuid(db, session_user, app_uuid)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetApp(data=app)
@@ -89,12 +88,12 @@ async def api_create_app(
         # print(app)
         app, exception = await create_app(db, app)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseCreateApp(app=app)
@@ -110,16 +109,16 @@ async def api_patch_app(
     try:
 
         update_data = data.dict(exclude_unset=True)
-        # print(app_uuid, update_data)
+        print(app_uuid, update_data)
 
         app, exception = await patch_app(db, app_uuid, update_data)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponsePatchApp(app=app)
@@ -135,12 +134,12 @@ async def api_delete_app(
         user_id = 1
         result, exception = await soft_delete_app(db, user_id, app_uuid)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDeleteApp(result=result)

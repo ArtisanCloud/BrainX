@@ -21,7 +21,6 @@ async def agent_chat(
         app, exception = await service_app.app_dao.get_app_by_uuid_with_preloads(app_uuid)
         if exception:
             return None, None, exception
-
         # stream_response = chat_by_llm(question, llm, app, 0.5)
         service_brain_x = BrainXService(
             llm,

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette.requests import Request
 
+from app import settings
 from app.database.base import PER_PAGE, PAGE
 from app.database.deps import get_async_db_session
 from app.database.seed.user import init_user_uuid
@@ -39,11 +40,12 @@ async def api_get_conversation_list(
     try:
         conversations, pagination, exception = await get_conversation_list(db, p, app_uuid)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetConversationList(data=conversations, pagination=pagination)
@@ -70,11 +72,12 @@ async def api_create_conversation(
 
         conversation, exception = await create_conversation(db, conversation)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseCreateConversation(conversation=conversation)
@@ -94,11 +97,12 @@ async def api_patch_conversation(
 
         conversation, exception = await patch_conversation(db, conversation_uuid, update_data)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponsePatchConversation(conversation=conversation)
@@ -114,11 +118,12 @@ async def api_delete_conversation(
         user_id = 1
         result, exception = await soft_delete_conversation(db, user_id, conversation_uuid)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDeleteConversation(result=result)

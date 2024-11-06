@@ -46,12 +46,12 @@ async def api_get_dataset_list(
     try:
         datasets, pagination, exception = await get_dataset_list(db, session_user.tenant_owner_uuid, p)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetDatasetList(data=datasets, pagination=pagination)
@@ -68,12 +68,12 @@ async def api_get_dataset_by_uuid(
     try:
         dataset, exception = await get_dataset_by_uuid(db, session_user, dataset_uuid)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetDataset(data=dataset)
@@ -94,12 +94,12 @@ async def api_create_dataset(
         # print(dataset)
         dataset, exception = await create_dataset(db, dataset)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseCreateDataset(dataset=dataset)
@@ -119,12 +119,12 @@ async def api_patch_dataset(
 
         dataset, exception = await patch_dataset(db, dataset_uuid, update_data)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponsePatchDataset(dataset=dataset)
@@ -140,12 +140,12 @@ async def api_delete_dataset(
         user_id = 1
         result, exception = await soft_delete_dataset(db, user_id, dataset_uuid)
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDeleteDataset(result=result)
@@ -168,12 +168,12 @@ async def api_get_dataset_list_with_connected_app(
             request.app_uuid, request.only_connected
         )
         if exception is not None:
-            logger.error(exception)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetDatasetListWithApp(data=datasets)
@@ -216,12 +216,12 @@ async def api_dataset_sync_apps(
             request.connect_dataset_uuids, request.disconnect_dataset_uuids
         )
         if exception is not None:
-            logger.error(exception, exc_info=settings.log.exc_info)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDatasetSyncApps(data=datasets)
@@ -246,13 +246,12 @@ async def api_dataset_connect_apps(
             request.dataset_uuids
         )
         if exception:
-            logger.error(exception, exc_info=settings.log.exc_info)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDatasetConnectApps(result=True)
@@ -276,12 +275,12 @@ async def api_dataset_disconnect_apps(
             request.dataset_uuids
         )
         if exception is not None:
-            logger.error(exception, exc_info=settings.log.exc_info)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDatasetDisconnectApps(result=True)

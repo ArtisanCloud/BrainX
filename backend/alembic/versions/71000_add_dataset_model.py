@@ -85,5 +85,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_dataset_segment_rule, schema=settings.database.db_schema)
-    op.drop_table(table_name_dataset, schema=settings.database.db_schema)
+    op.drop_table(table_name_dataset_segment_rule, schema=settings.database.db_schema, if_exists=True)
+    op.drop_table(table_name_dataset, schema=settings.database.db_schema, if_exists=True)

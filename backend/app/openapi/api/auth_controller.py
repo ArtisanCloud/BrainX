@@ -25,12 +25,12 @@ async def api_auth(
         # token, exception = await service_platform.auth_by_platform(db, data.account, data.password)
         token, exception = auth_openapi_access_key(data)
         if exception is not None:
-            logger.error(exception, exc_info=settings.log.exc_info)
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseAuthPlatform(

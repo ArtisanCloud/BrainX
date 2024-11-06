@@ -54,4 +54,4 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     if settings.server.project_type == ProjectType.Standalone.value:
-        op.drop_table(table_name_media_resource, schema='public')
+        op.drop_table(table_name_media_resource, schema='public', if_exists=True)

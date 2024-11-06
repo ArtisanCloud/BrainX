@@ -40,15 +40,11 @@ def transform_app_to_reply(app: App) -> [AppSchema | None]:
 
     app_schema = AppSchema.from_orm(app)
 
-    if app.connected_datasets:
+    if hasattr(app, "connected_datasets") and app.connected_datasets:
         app_schema.connected_datasets = transform_connect_datasets_to_reply(app.connected_datasets)
 
-    try:
-        app_model_config = app.current_app_model_config
-        if isinstance(app_model_config, AppModelConfig):
-            app_schema.current_app_model_config = transform_app_model_config_to_reply(app_model_config)
-    except Exception as e:
-        logger.warn(e, exc_info=settings.log.exc_info)
+    if hasattr(app, "current_app_model_config") and app.current_app_model_config:
+        app_schema.current_app_model_config = transform_app_model_config_to_reply(app.current_app_model_config)
 
     return app_schema
 

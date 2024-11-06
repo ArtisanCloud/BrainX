@@ -54,14 +54,14 @@ async def api_get_document_list(
     try:
         if dataset_uuid == "":
             raise Exception("lack of dataset_uuid")
-        print(1223344)
+
         documents, pagination, exception = await get_document_list(db, session_user.uuid, dataset_uuid, p)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetDocumentList(data=documents, pagination=pagination)
@@ -78,11 +78,12 @@ async def api_get_document_by_uuid(
     try:
         document, exception = await get_document_by_uuid(db, session_user, document_uuid)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetDocument(data=document)
@@ -103,11 +104,12 @@ async def api_create_document(
         # print(document)
         document, exception = await create_document(db, document)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseCreateDocument(document=document)
@@ -127,11 +129,12 @@ async def api_patch_document(
 
         document, exception = await patch_document(db, document_uuid, update_data)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponsePatchDocument(document=document)
@@ -147,11 +150,12 @@ async def api_delete_document(
         user_id = 1
         result, exception = await soft_delete_document(db, user_id, document_uuid)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseDeleteDocument(result=result)
@@ -168,8 +172,6 @@ async def api_add_document_content(
         # print(data)
         documents, exception = await add_document_content(db, session_user, data)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
         # 如果保存dataset和documents 准备数据信息成功
@@ -184,6 +186,8 @@ async def api_add_document_content(
         # task_group_result = []
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
@@ -244,8 +248,6 @@ async def api_re_process_document(
                                      document_dao.
                                      async_get_by_uuid(data.document_uuid))
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
         # print(document)
@@ -254,12 +256,12 @@ async def api_re_process_document(
             service_rag_processor = RagProcessorTaskService(sync_db, document.uuid, session_user.uuid)
             exception = service_rag_processor.process_document()
             if exception is not None:
-                if isinstance(exception, SQLAlchemyError):
-                    raise Exception("database query: pls check log")
                 raise exception
 
     except Exception as e:
         logger.error(f"API re-process-document Failed to get error: {e}", exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,
@@ -285,8 +287,6 @@ async def api_reset_document(
                                      document_dao.
                                      async_get_by_uuid(data.document_uuid))
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
         # print(document)
@@ -299,6 +299,8 @@ async def api_reset_document(
 
     except Exception as e:
         logger.error(f"API Failed to get error: {e}", exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(
             error=str(e),
             status_code=http.HTTPStatus.BAD_REQUEST,

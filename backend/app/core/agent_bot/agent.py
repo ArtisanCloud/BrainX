@@ -12,10 +12,11 @@ from pydantic import BaseModel, Field
 
 from app import settings
 from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm
+from app.core.rag.retrieval.interface import BaseRetriever
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node.factory import NodeFactory
-from app.core.workflow.node.knowledge.node import KnowledgeNode
+from app.core.workflow.node.knowledge.node import KnowledgeNode, KnowledgeNodeDatasetConfig
 from app.core.workflow.node.plugin.node import PluginNode
 from app.core.workflow.state import GraphState
 from app.logger import logger
@@ -35,7 +36,7 @@ def create_dynamic_route_query(options: list[str]) -> Type[BaseModel]:
 
 
 class AgentBot:
-    def __init__(self, app: App = None):
+    def __init__(self, app: App = None, retriever: BaseRetriever = None):
         # graph
         self.builder = None
         self.graph = None
@@ -44,8 +45,6 @@ class AgentBot:
         self.routes_options = []
 
         self.app = app
-        # persona
-        self.persona = ""
 
         # Skills
         self.plugins: List[PluginNode] = []
@@ -53,6 +52,7 @@ class AgentBot:
         self.Triggers: List[ToolInvocation] = []
 
         # Knowledge
+        self.retriever = retriever
         self.text_datasets: List[KnowledgeNode] = []
         self.table_datasets: List[KnowledgeNode] = []
         self.image_datasets: List[KnowledgeNode] = []
@@ -86,53 +86,40 @@ class AgentBot:
         self.llm = get_openai_llm("gpt-3.5-turbo", temperature=0, streaming=False)
         # self.llm = get_baidu_qianfan_llm(LLMModel.BAIDU_ERNIE_Lite_8K.value, temperature=0, streaming=False)
 
-    def init_text_dataset(self) -> List[PluginNode]:
-        plugin_nodes = []
-        for dataset_pivot in self.app.connected_dataset_pivots:
-            plugin_nodes = plugin_nodes.append(
-                PluginNode({
-                    "id": dataset_pivot,
-                    "name": "web search",
-                    "llm": self.llm
-                }),
-            )
-        return []
-
     def init_plugins(self):
-        self.plugins = self.init_text_dataset()
-
-        # self.plugins = [
-        #     PluginNode({
-        #         "id": "web_search",
-        #         "name": "web search",
-        #         "llm": self.llm
-        #     }),
-        #     PluginNode({
-        #         "id": "local_tool",
-        #         "name": "local tool",
-        #         "llm": self.llm,
-        #     }),
-        # ]
+        self.plugins = [
+            PluginNode({
+                "id": "web_search",
+                "name": "web search",
+                "llm": self.llm
+            }),
+            PluginNode({
+                "id": "local_tool",
+                "name": "local tool",
+                "llm": self.llm,
+            }),
+        ]
         for plugin in self.plugins:
             node_id = plugin.get_id()
             self.routes_options.append(node_id)
 
-    def init_text_datasets(self):
-        self.text_datasets = [
-            KnowledgeNode({
-                "id": "vectorstore_retrieve",
-                "name": "vectorstore retrieve",
-                "llm": self.llm,
-            }),
-            KnowledgeNode({
-                "id": "table_retrieve",
-                "name": "table retrieve",
-                "llm": self.llm,
-            }),
-        ]
-        for dataset in self.text_datasets:
-            node_id = dataset.get_id()
-            self.routes_options.append(node_id)
+    def init_text_datasets(self) -> List[KnowledgeNode]:
+        if hasattr(self.app, "connected_datasets") and self.app.connected_datasets:
+            for dataset in self.app.connected_datasets:
+                # use the dataset name as route id
+                node_id = dataset.name
+                # create the knowledge node
+                knowledge = KnowledgeNode({
+                    "id": node_id,
+                    "name": dataset.name,
+                    "retriever": self.retriever,
+                    "datasets": [dataset],
+                    "config": KnowledgeNodeDatasetConfig(),
+                })
+                self.text_datasets.append(knowledge)
+
+                # setup route options for route label
+                self.routes_options.append(node_id)
 
     def init_router(self):
         # print(self.routes_options)
@@ -142,7 +129,6 @@ class AgentBot:
         structured_llm_router = self.llm.with_structured_output(route_query)
 
         persona = self.app.persona if self.app.persona else "You are a helpful assistant. Answer all questions to the best of your ability."
-        # print(11111, persona)
         route_prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", persona),
@@ -176,9 +162,12 @@ class AgentBot:
             print("---ROUTE QUESTION TO RAG---")
             return "local_tool"
 
-        elif route_to == "vectorstore_retrieve":
-            print("---ROUTE QUESTION TO RAG---")
-            return "vectorstore_retrieve"
+        # 如果 route_to 在 self.text_datasets 的节点列表中，则动态执行对应的 KnowledgeNode
+        text_dataset_ids = {dataset.get_id() for dataset in self.text_datasets}
+        if route_to in text_dataset_ids:
+            print(f"---ROUTE QUESTION TO KNOWLEDGE NODE: {route_to} ---")
+            return route_to
+
         elif route_to == "table_retrieve":
             print("---ROUTE QUESTION TO RAG---")
             return "table_retrieve"

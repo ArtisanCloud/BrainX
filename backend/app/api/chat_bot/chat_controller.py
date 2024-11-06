@@ -84,8 +84,6 @@ async def api_chat(
             user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
         )
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
         # print("conversationUUID:", conversation_uuid)
@@ -100,6 +98,8 @@ async def api_chat(
 
     except Exception as e:
         logger.error(f"Failed to robot_chat: {e}", exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return StreamingResponse(
             [f"data: ERROR: {e}\n\n"],
             media_type="text/event-stream",
@@ -126,8 +126,9 @@ async def api_agent_chat(
             user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
         )
         if exception is not None:
+            logger.error(exception, exc_info=settings.log.exc_info)
             if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
+                e = Exception("database query: pls check log")
             raise exception
 
         # print("conversationUUID:", conversation_uuid)

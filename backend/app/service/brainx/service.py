@@ -41,7 +41,7 @@ class BrainXService:
 
         # define the Agent Bot
         if app:
-            self.agent_bot = AgentBot(app)
+            self.agent_bot = AgentBot(app=app, retriever=self.retriever)
 
         # define the agent executor
         self.agent_executor = self._create_agent_executor(llm=llm, streaming=streaming)

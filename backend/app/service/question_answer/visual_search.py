@@ -74,6 +74,4 @@ async def visual_search(
         return res
 
     except Exception as exception:
-        logger.error(f"Error in visual_search: {exception}", exc_info=True)
-        if isinstance(exception, SQLAlchemyError):
-            raise Exception("database query: pls check log")
+        raise exception

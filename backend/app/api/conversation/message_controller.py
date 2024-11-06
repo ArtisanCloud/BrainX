@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
+from app import settings
 from app.database.base import PER_PAGE, PAGE
 from app.database.deps import get_async_db_session
 from app.logger import logger
@@ -30,11 +31,12 @@ async def api_get_message_list(
     try:
         messages, pagination, exception = await get_cached_message_list(db, conversation_uuid, p)
         if exception is not None:
-            if isinstance(exception, SQLAlchemyError):
-                raise Exception("database query: pls check log")
             raise exception
 
     except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
 
     res = ResponseGetMessageList(data=messages, pagination=pagination)

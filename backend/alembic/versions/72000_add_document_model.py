@@ -109,4 +109,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table(table_name_document, schema=settings.database.db_schema)
+    op.drop_table(table_name_document, schema=settings.database.db_schema, if_exists=True)

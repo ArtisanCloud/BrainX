@@ -19,6 +19,7 @@ def hash_plain_password(plain_password: str) -> str:
 
 
 def check_password(customer_password: str, req_password: str):
+    print(req_password, customer_password)
     if not bcrypt.checkpw(req_password.encode('utf-8'), customer_password.encode('utf-8')):
         raise Exception("密码不正确")
     return True
