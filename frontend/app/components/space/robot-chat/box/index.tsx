@@ -38,7 +38,7 @@ const ChatBox = () => {
   // const [conversation, setConversation] = useState<Conversation>(welcomeConversation);
 
   // const streamUrl = GetChatBotSSEActionUrl('chat');
-  const streamUrl = GetChatBotSSEActionUrl('agent/chat');
+  let streamUrl = GetChatBotSSEActionUrl('agent/chat');
   const sse = useSSE();
 
   const scrollToBottom = () => {
@@ -92,6 +92,11 @@ const ChatBox = () => {
   const actionSend = () => {
 
     refInput.current!.blur(); // 手动失去焦点
+
+    // 如果是随意聊天模式
+    if (!selectedApp?.uuid) {
+      streamUrl = GetChatBotSSEActionUrl('chat');
+    }
 
     // 执行发送消息的操作
     setLoading(true);

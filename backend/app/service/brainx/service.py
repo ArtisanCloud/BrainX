@@ -1,5 +1,7 @@
 from typing import Tuple, Iterator, Any, List, Type, Dict, Optional
 
+from langchain_core.messages import HumanMessage
+
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
 from app.core.agent_bot.agent import AgentBot
@@ -39,12 +41,15 @@ class BrainXService:
         # get the vector store
         self.vector_store = self.retriever.get_vector_store()
 
-        # define the Agent Bot
-        if app:
-            self.agent_bot = AgentBot(app=app, retriever=self.retriever)
-
         # define the agent executor
         self.agent_executor = self._create_agent_executor(llm=llm, streaming=streaming)
+
+        # define the Agent Bot
+        if app:
+            self.agent_bot = AgentBot(
+                app=app,
+                retriever=self.retriever
+            )
 
     @staticmethod
     def _create_embedding_model():
@@ -150,12 +155,13 @@ class BrainXService:
             question: str,
             session_id: str = ""
     ) -> Tuple[Iterator | None, Exception | None]:
-        print(self.agent_bot)
+        # print(self.agent_bot)
         state = GraphState(
             question=question,
-            messages=[""]
+            messages=[HumanMessage(content="")]
         )
-        print(state)
-        self.agent_bot.run(state)
+        # print(state)
 
-        return None, None
+        stream_response = self.agent_bot.run(state)
+
+        return stream_response, None

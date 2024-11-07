@@ -46,7 +46,7 @@ class BaseNode(ABC, BaseModel):
     id: str
     name: str
     description: str = ""
-    node_type: str = "start"  # Assume NodeType has a string representation
+    node_type: str = NodeType.START.value  # Assume NodeType has a string representation
 
     position_x: float = 0.0
     position_y: float = 0.0
@@ -54,8 +54,8 @@ class BaseNode(ABC, BaseModel):
     height: float = 480.0
     next_nodes: List[str] = Field([])
 
-    # agent executor info
-    executor: Any = None
+    # agent info
+    llm: Any = None
 
     """
     This class represents the state for each node in the graph.
@@ -69,7 +69,8 @@ class BaseNode(ABC, BaseModel):
         super().__init__(**node_data)  # Ensure that the parent's __init__ method is called
         self.id = node_data.get("id", "")
         self.name = node_data.get("name", "")
-        # self.executor = node_data.get("executor", None)
+        self.llm = node_data.get("llm", None)
+
         self._init_inputs(self.id, node_data.get("inputs", []))
 
     def _init_inputs(self, node_id, input_data):
@@ -91,7 +92,7 @@ class BaseNode(ABC, BaseModel):
 
     @abstractmethod
     def execute(self, state: GraphState):
-        print(f"~~~ "
+        print(f"BaseNode: ~~~ "
               f"{self.name}: "
               # f"message: {state.messages}, "
               # f"context nodes length: {len(self.context_manager.get_node_list())}"

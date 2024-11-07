@@ -2,13 +2,14 @@ from dataclasses import field, dataclass
 from enum import Enum
 from typing import List, Any
 
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from pydantic import BaseModel, Field, conint, confloat
 
 from app.core.rag.retrieval.interface import BaseRetriever
 from app.core.workflow.node.base import BaseNode
 from app.core.workflow.state import GraphState
 from app.models import Dataset
+from app.models.rag.document_node import DocumentNode
 
 
 class SearchStrategyType(Enum):
@@ -28,6 +29,16 @@ class KnowledgeNodeDatasetConfig(BaseModel):
                                                                 description="The minimum matching degree, default is 0.5, range is 0.01 to 0.99.")
 
 
+def transform_messages(retrieved_messages: List[DocumentNode]) -> List[BaseMessage]:
+    """
+    将 retrieve 函数返回的消息列表转换为 langchain 的 BaseMessage 对象列表。
+
+    :param retrieved_messages: 从 retrieve 返回的消息，通常是一个字典列表，包含 message 类型和内容。
+    :return: 转换后的 BaseMessage 对象列表。
+    """
+    return [AIMessage(content=msg.page_content) for msg in retrieved_messages]
+
+
 class KnowledgeNode(BaseNode):
     datasets: List[Dataset] = field(default_factory=list)
     config: KnowledgeNodeDatasetConfig = field(default_factory=object)
@@ -44,19 +55,21 @@ class KnowledgeNode(BaseNode):
 
         # node_list = self.context_manager.get_node_list()
         print(f"---"
-              f"dataset: {self.datasets}, "
+              # f"dataset: {self.datasets}, "
               f"inputs: {self.input_vars}"
               f"---")
 
-        messages = self.retriever.retrieve(
-            state.question,
+        messages, exception = self.retriever.retrieve(
+            state["question"],
             top_k=self.config.top_k,
             score_threshold=self.config.minimum_matching_degree)
-        state.messages.append(HumanMessage(content="~~~finish knowledge node here "))
+        if exception:
+            raise exception
+        transformed_messages = transform_messages(messages)
+        print("~~~finish knowledge node here ")
 
-        state.messages.append(messages)
-
-        return state
+        return {"messages": transformed_messages}
+        # return state
 
     def set_datasets(self, datasets: List[Dataset]):
         self.datasets = datasets

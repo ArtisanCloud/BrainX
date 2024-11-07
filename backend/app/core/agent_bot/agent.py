@@ -1,18 +1,20 @@
 import io
 import logging
-from typing import List, Dict, Literal, Type
+from typing import List, Dict, Literal, Type, Any
 
 from PIL import Image as PILImage
 from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.constants import END
 from langgraph.graph import StateGraph
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolInvocation
 from pydantic import BaseModel, Field
 
 from app import settings
 from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm
 from app.core.rag.retrieval.interface import BaseRetriever
+from app.core.rag.synthesis.interface import BaseAgentExecutor
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node.factory import NodeFactory
@@ -36,15 +38,19 @@ def create_dynamic_route_query(options: list[str]) -> Type[BaseModel]:
 
 
 class AgentBot:
-    def __init__(self, app: App = None, retriever: BaseRetriever = None):
+    def __init__(self,
+                 app: App = None,
+                 retriever: BaseRetriever = None
+                 ):
         # graph
         self.builder = None
-        self.graph = None
+        self.graph: CompiledStateGraph | None = None
         self.llm = None
         self.router = None
         self.routes_options = []
 
         self.app = app
+        self.retriever = retriever
 
         # Skills
         self.plugins: List[PluginNode] = []
@@ -52,7 +58,6 @@ class AgentBot:
         self.Triggers: List[ToolInvocation] = []
 
         # Knowledge
-        self.retriever = retriever
         self.text_datasets: List[KnowledgeNode] = []
         self.table_datasets: List[KnowledgeNode] = []
         self.image_datasets: List[KnowledgeNode] = []
@@ -71,7 +76,7 @@ class AgentBot:
 
         try:
             self.init_llm()
-            self.init_plugins()
+            # self.init_plugins()
             self.init_text_datasets()
             # self.init_workflows()
             self.init_router()
@@ -103,15 +108,16 @@ class AgentBot:
             node_id = plugin.get_id()
             self.routes_options.append(node_id)
 
-    def init_text_datasets(self) -> List[KnowledgeNode]:
+    def init_text_datasets(self):
         if hasattr(self.app, "connected_datasets") and self.app.connected_datasets:
             for dataset in self.app.connected_datasets:
                 # use the dataset name as route id
                 node_id = dataset.name
                 # create the knowledge node
-                knowledge = KnowledgeNode({
+                knowledge = NodeFactory.create_node({
                     "id": node_id,
                     "name": dataset.name,
+                    "node_type": NodeType.KNOWLEDGE.value,
                     "retriever": self.retriever,
                     "datasets": [dataset],
                     "config": KnowledgeNodeDatasetConfig(),
@@ -145,9 +151,9 @@ class AgentBot:
         # print(self.router.invoke({"question": "What are the types of agent memory?"}))
 
     def agent_route(self, state: GraphState):
-        print(f"---ROUTE QUESTION---: {state.question}")
+        print(f"---ROUTE QUESTION---: {state['question']}")
 
-        source = self.router.invoke({"question": state.question})
+        source = self.router.invoke({"question": state['question']})
 
         # Check the type of `source`
         if isinstance(source, dict):
@@ -176,7 +182,7 @@ class AgentBot:
             return None
 
     def call_agent(self, state: GraphState):
-        messages = state.messages
+        messages = state["messages"]
         print(f"Calling agent with messages: {messages}")
         # self.llm = self.llm.bind_tools(self.tools)
         response = self.llm.invoke(messages)
@@ -245,8 +251,11 @@ class AgentBot:
             print(f"Failed to render graph: {e}")
 
     def run(self, initial_state: GraphState):
-        # self.save_graph_image()
-        self.graph.invoke(initial_state)
+        self.save_graph_image()
+        stream_response = self.graph.stream(initial_state)
+        # stream_response = self.graph.invoke(initial_state)
+        # print(1111, stream_response)
+        return stream_response
 
 
 def create_graph_from_json(graph_data: dict) -> Graph:
