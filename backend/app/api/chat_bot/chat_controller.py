@@ -29,14 +29,15 @@ async def event_generator(request: Request, llm: str, stream_response: Iterator)
 
             if token:
                 content = ''
-                if llm == LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
+                if llm in [
+                    LLMModel.OPENAI_GPT_3_D_5_TURBO.value,
+                    LLMModel.KIMI_MOONSHOT_V1_8K.value
+                ]:
                     # print("token content:", repr(token.content), end='\n')
-                    if isinstance(token.content, str):
+                    if isinstance(token, str):
+                        content = token
+                    elif isinstance(token.content, str):
                         # print("turbo", repr(token.content), end='\n')
-                        content = token.content
-
-                elif llm == LLMModel.KIMI_MOONSHOT_V1_8K.value:
-                    if isinstance(token.content, str):
                         content = token.content
 
                 elif llm in [
@@ -44,9 +45,15 @@ async def event_generator(request: Request, llm: str, stream_response: Iterator)
                     LLMModel.BAIDU_ERNIE_3_D_5_8K.value,
                     LLMModel.BAIDU_ERNIE_4_D_0_8K.value,
                     LLMModel.BAIDU_ERNIE_Speed_128K.value,
-                    LLMModel.BAIDU_ERNIE_Lite_8K.value
+                    LLMModel.BAIDU_ERNIE_Lite_8K.value,
+                    LLMModel.OLLAMA_GEMMA_2B.value,
+                    LLMModel.OLLAMA_GEMMA_7B.value,
+                    LLMModel.OLLAMA_13B_ALPACA_16K.value,
+                    LLMModel.OLLAMA_LLAMA3_2.value
                 ]:
-                    if isinstance(token.content, str):
+                    if isinstance(token, str):
+                        content = token
+                    elif isinstance(token.content, str):
                         # 替换回车为转义的 `\n`
                         # print(repr(token.content))
                         content = token.content.replace("\r\n", "\\n").replace("\n", "\\n")
@@ -126,9 +133,6 @@ async def api_agent_chat(
             user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
         )
         if exception is not None:
-            logger.error(exception, exc_info=settings.log.exc_info)
-            if isinstance(exception, SQLAlchemyError):
-                e = Exception("database query: pls check log")
             raise exception
 
         # print("conversationUUID:", conversation_uuid)
@@ -137,14 +141,22 @@ async def api_agent_chat(
             media_type="text/event-stream",
             headers={
                 "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
                 "Conversation-Uuid": conversation_uuid
             },
         )
 
     except Exception as e:
-        logger.error(f"Failed to robot_chat: {e}", exc_info=settings.log.exc_info)
+        logger.error(f"Failed to agent robot_chat: {e}", exc_info=settings.log.exc_info)
         return StreamingResponse(
-            [f"data: ERROR: {e}\n\n"],
+            [f"data: ERROR: system inner error. \n\n"],
             media_type="text/event-stream",
             status_code=http.HTTPStatus.BAD_REQUEST,
+            headers={
+                "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                # "Conversation-Uuid": conversation_uuid
+            },
         )

@@ -41,11 +41,17 @@ const useSSE = () => {
       headers['Authorization'] = `Bearer ${token}`
     }
 
+    // 创建一个 AbortController 实例用于控制连接
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const requestOptions: FetchEventSourceInit = {
       method: 'GET',
       headers,
+      signal,
       // signal: ctrl.signal,
       async onopen(response) {
+        console.log('inner onopen', response);
         try {
           if (
             response.ok &&
@@ -54,7 +60,7 @@ const useSSE = () => {
             options.onopen(response);
           } else if (
             response.status >= 400 &&
-            response.status < 500 &&
+            response.status <= 500 &&
             response.status !== 429
           ) {
             throw new FatalError();
@@ -66,6 +72,7 @@ const useSSE = () => {
         }
       },
       onmessage(msg) {
+        console.log('inner onmessage', msg);
         try {
           if (msg.event === 'FatalError') {
             throw new FatalError(msg.data);
@@ -77,9 +84,14 @@ const useSSE = () => {
         }
       },
       onclose() {
+        console.log('inner onclose');
         options.onclose();
       },
       onerror(err) {
+        console.log('inner onerror', err);
+        options.onerror(err)
+        throw err;
+
         if (err instanceof FatalError) {
           throw err;
         } else {
@@ -96,6 +108,9 @@ const useSSE = () => {
     // console.log(requestOptions);
 
     fetchEventSource(url, requestOptions);
+
+    // 返回中止控制器，以便在外部调用
+    return controller;
   }
 
   return {

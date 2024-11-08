@@ -24,10 +24,6 @@ class BaseAgentExecutor(ABC):
     completion, streaming, chat-based interactions, and other agent-related operations.
     """
 
-    @abstractmethod
-    def get_llm(self, temperature: float = 0.5, streaming: bool = False) -> Tuple[Any, Exception | None]:
-        raise NotImplementedError
-
 
     @abstractmethod
     def stream(self, query: Any,

@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from app.core.workflow.context.manager import ContextManager
 from app.core.workflow.node_variable.base import BaseNodeVariable
 from app.core.workflow.state import GraphState
+from app.models import App
 
 
 class NodeInfo(BaseModel):
@@ -56,6 +57,7 @@ class BaseNode(ABC, BaseModel):
 
     # agent info
     llm: Any = None
+    app: App = None
 
     """
     This class represents the state for each node in the graph.

@@ -17,7 +17,7 @@ class LLMModel(Enum):
     OLLAMA_13B_ALPACA_16K = '13B-alpaca-16k:latest'
     OLLAMA_GEMMA_2B = 'gemma:2b'
     OLLAMA_GEMMA_7B = 'gemma:7b'
-
+    OLLAMA_LLAMA3_2 = 'llama3.2'
 
 class VisualQueryModelSingleton:
     _instance_processor = None

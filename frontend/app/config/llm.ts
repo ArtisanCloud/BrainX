@@ -25,3 +25,6 @@ export const ollama_13b_alpaca_16k = '13B-alpaca-16k:latest'
 
 export const label_ollama_gemma_2b = 'Gemma 2b'
 export const ollama_gemma_2b = 'gemma:2b'
+
+export const label_ollama_llama3_2 = 'Llama3.2'
+export const ollama_llama3_2 = 'llama3.2'

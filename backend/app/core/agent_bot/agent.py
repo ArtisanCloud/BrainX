@@ -3,6 +3,7 @@ import logging
 from typing import List, Dict, Literal, Type, Any
 
 from PIL import Image as PILImage
+from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.constants import END
@@ -12,7 +13,8 @@ from langgraph.prebuilt import ToolInvocation
 from pydantic import BaseModel, Field
 
 from app import settings
-from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm
+from app.core.brainx.base import LLMModel
+from app.core.brainx.llm.langchain import get_llm
 from app.core.rag.retrieval.interface import BaseRetriever
 from app.core.rag.synthesis.interface import BaseAgentExecutor
 from app.core.workflow.graph import Graph
@@ -39,13 +41,16 @@ def create_dynamic_route_query(options: list[str]) -> Type[BaseModel]:
 
 class AgentBot:
     def __init__(self,
+                 default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value,
                  app: App = None,
                  retriever: BaseRetriever = None
                  ):
         # graph
         self.builder = None
         self.graph: CompiledStateGraph | None = None
-        self.llm = None
+        self.default_llm = None
+        self.router_llm = None
+        self.generate_llm = None
         self.router = None
         self.routes_options = []
 
@@ -75,7 +80,7 @@ class AgentBot:
         self.voices: List[dict] = []
 
         try:
-            self.init_llm()
+            self.init_llm(default_llm)
             # self.init_plugins()
             self.init_text_datasets()
             # self.init_workflows()
@@ -86,22 +91,31 @@ class AgentBot:
         except Exception as e:
             raise e
 
-    def init_llm(self):
+    def init_llm(self, default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value):
+        # match self.app.current_app_model_config.model_provider:
+        self.default_llm, exception = get_llm(default_llm, temperature=0, streaming=False)
+        if exception:
+            raise exception
 
-        self.llm = get_openai_llm("gpt-3.5-turbo", temperature=0, streaming=False)
-        # self.llm = get_baidu_qianfan_llm(LLMModel.BAIDU_ERNIE_Lite_8K.value, temperature=0, streaming=False)
+        self.router_llm, exception = get_llm(LLMModel.OLLAMA_LLAMA3_2.value, temperature=0, streaming=False)
+        if exception:
+            raise exception
+
+        self.generate_llm, exception = get_llm(default_llm, temperature=0, streaming=True)
+        if exception:
+            raise exception
 
     def init_plugins(self):
         self.plugins = [
             PluginNode({
                 "id": "web_search",
                 "name": "web search",
-                "llm": self.llm
+                "llm": self.default_llm
             }),
             PluginNode({
                 "id": "local_tool",
                 "name": "local tool",
-                "llm": self.llm,
+                "llm": self.default_llm,
             }),
         ]
         for plugin in self.plugins:
@@ -132,7 +146,7 @@ class AgentBot:
 
         # 动态生成 RouteQuery 类
         route_query = create_dynamic_route_query(self.routes_options)
-        structured_llm_router = self.llm.with_structured_output(route_query)
+        structured_llm_router = self.router_llm.with_structured_output(route_query)
 
         persona = self.app.persona if self.app.persona else "You are a helpful assistant. Answer all questions to the best of your ability."
         route_prompt = ChatPromptTemplate.from_messages(
@@ -153,8 +167,9 @@ class AgentBot:
     def agent_route(self, state: GraphState):
         print(f"---ROUTE QUESTION---: {state['question']}")
 
-        source = self.router.invoke({"question": state['question']})
-
+        # source = self.router.invoke({"question": state['question']})
+        source = self.router.invoke(state['question'])
+        print(f"---ROUTE TO---: {source}")
         # Check the type of `source`
         if isinstance(source, dict):
             route_to = source.get("route_to")
@@ -184,8 +199,8 @@ class AgentBot:
     def call_agent(self, state: GraphState):
         messages = state["messages"]
         print(f"Calling agent with messages: {messages}")
-        # self.llm = self.llm.bind_tools(self.tools)
-        response = self.llm.invoke(messages)
+        # self.default_llm = self.default_llm.bind_tools(self.tools)
+        response = self.default_llm.invoke(messages)
 
         return {"messages": [response]}
 
@@ -197,7 +212,8 @@ class AgentBot:
                     "id": NodeType.END.value,
                     "name": "Generate",
                     "node_type": NodeType.END.value,
-                    "llm": self.llm
+                    "llm": self.generate_llm,
+                    "app": self.app,
                 })
             self.builder.add_node(NodeType.END.value, generate_node.execute)
 
@@ -251,10 +267,10 @@ class AgentBot:
             print(f"Failed to render graph: {e}")
 
     def run(self, initial_state: GraphState):
-        self.save_graph_image()
-        stream_response = self.graph.stream(initial_state)
-        # stream_response = self.graph.invoke(initial_state)
-        # print(1111, stream_response)
+        # self.save_graph_image()
+        # stream_response = self.graph.stream(initial_state)
+        response = self.graph.invoke(initial_state)
+        stream_response = response["result"]
         return stream_response
 
 

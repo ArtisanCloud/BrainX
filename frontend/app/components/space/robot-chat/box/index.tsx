@@ -40,6 +40,8 @@ const ChatBox = () => {
   // const streamUrl = GetChatBotSSEActionUrl('chat');
   let streamUrl = GetChatBotSSEActionUrl('agent/chat');
   const sse = useSSE();
+  let controller = null;
+
 
   const scrollToBottom = () => {
     refMessageContainer!.current!.scrollTo({
@@ -86,10 +88,12 @@ const ChatBox = () => {
 
     // // 清空 textarea
     // refInput.current!.value = '';
-
+    controller.abort();
   }
 
   const actionSend = () => {
+
+    if (loading) return;
 
     refInput.current!.blur(); // 手动失去焦点
 
@@ -144,13 +148,14 @@ const ChatBox = () => {
       ],
     }
     // console.log('actionSend requestBody:', requestBody);
-    sse.connectEventSource({
+   controller = sse.connectEventSource({
       url: streamUrl,
       method: 'POST',
       body: requestBody,
       onopen(response: Response) {
         // 滑向下方
         // scrollToBottom()
+        console.log('onopen', response);
 
         // Handle successful connection
         if (response.status === 200) {
@@ -160,7 +165,7 @@ const ChatBox = () => {
       },
       onmessage(msg: any) {
         // Handle incoming messages
-        // console.log('msg', msg);
+        console.log('msg', msg);
         const objMsg = FormatSSEMessageReply(msg.data)
         try {
           // const objMsg = JSON.parse(msg.data);
@@ -187,6 +192,7 @@ const ChatBox = () => {
         // Handle connection closed
         // console.log('sse close');
         handleChatClosed();
+
       },
       onerror(err: any) {
         // Handle errors

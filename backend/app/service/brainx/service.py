@@ -47,6 +47,7 @@ class BrainXService:
         # define the Agent Bot
         if app:
             self.agent_bot = AgentBot(
+                default_llm=llm,
                 app=app,
                 retriever=self.retriever
             )
@@ -156,6 +157,7 @@ class BrainXService:
             session_id: str = ""
     ) -> Tuple[Iterator | None, Exception | None]:
         # print(self.agent_bot)
+
         state = GraphState(
             question=question,
             messages=[HumanMessage(content="")]

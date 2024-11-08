@@ -10,7 +10,7 @@ from langchain_core.runnables.utils import Input
 from app import settings
 from app.core.brainx.base import LLMModel
 from app.core.brainx.chat.app import get_chat_prompt_template
-from app.core.brainx.llm.langchain import get_openai_llm, get_kimi_llm, get_baidu_qianfan_llm, get_ollama_llm
+from app.core.brainx.llm.langchain import get_openai_llm, get_kimi_llm, get_baidu_qianfan_llm, get_ollama_llm, get_llm
 from app.core.libs.json import sanitize_json
 from app.core.rag.ingestion.drivers.langchain.helper import convert_document_to_response
 from app.core.rag.synthesis.interface import BaseAgentExecutor
@@ -26,42 +26,12 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                  **kwargs):
         super().__init__(llm=llm, temperature=temperature, streaming=streaming, **kwargs)
 
-    def get_llm(self, temperature: float = 0.5, streaming: bool = False) -> Tuple[BaseChatModel, Exception | None]:
-        match self.llm:
-            case LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
-                mdl_llm = get_openai_llm(self.llm, temperature=temperature, streaming=streaming)
-
-            case LLMModel.KIMI_MOONSHOT_V1_8K.value:
-                mdl_llm = get_kimi_llm(self.llm, temperature=temperature, streaming=streaming)
-
-            case (
-            LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value |
-            LLMModel.BAIDU_ERNIE_3_D_5_8K.value |
-            LLMModel.BAIDU_ERNIE_4_D_0_8K.value |
-            LLMModel.BAIDU_ERNIE_Speed_128K.value |
-            LLMModel.BAIDU_ERNIE_Lite_8K.value
-            ):
-                mdl_llm = get_baidu_qianfan_llm(self.llm, temperature=temperature, streaming=streaming)
-
-            case (
-            LLMModel.OLLAMA_13B_ALPACA_16K.value |
-            LLMModel.OLLAMA_GEMMA_2B.value |
-            LLMModel.OLLAMA_GEMMA_7B.value
-            ):
-                mdl_llm = get_ollama_llm(self.llm, temperature=temperature, streaming=streaming)
-            case _:
-                return None, Exception(f"Unsupported LLM model: {self.llm}")
-
-        # print("query llm:", mdl_llm)
-
-        return mdl_llm, None
-
     def stream(self, query: Dict,
                temperature: float = 0.5,
                input_variables=list[str], template: str = '',
                **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
         try:
-            llm, exception = self.get_llm(temperature=temperature, streaming=True)
+            llm, exception = get_llm(llm=self.llm, temperature=temperature, streaming=True)
             if exception:
                 raise exception
 
@@ -90,7 +60,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                **kwargs: Any) -> Tuple[Any | None, Exception | None]:
         try:
 
-            llm, exception = self.get_llm(temperature=temperature, streaming=False)
+            llm, exception = get_llm(llm=self.llm,temperature=temperature, streaming=False)
             if exception:
                 raise exception
             print("invoke llm:", llm)
@@ -156,7 +126,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                         session_id: str = "",
                         **kwargs: Any) -> Tuple[str | None, Exception | None]:
         try:
-            chat_llm, exception = self.get_llm(temperature=temperature, streaming=False)
+            chat_llm, exception = get_llm(llm=self.llm,temperature=temperature, streaming=False)
             if exception:
                 raise exception
 
@@ -212,7 +182,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                     **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
 
         try:
-            chat_llm, exception = self.get_llm(temperature=temperature, streaming=True)
+            chat_llm, exception = get_llm(llm=self.llm,temperature=temperature, streaming=True)
             if exception is not None:
                 raise exception
 

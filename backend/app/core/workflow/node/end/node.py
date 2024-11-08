@@ -22,7 +22,9 @@ class EndNode(BaseNode):
 
         from langchain.prompts import PromptTemplate
 
-        template = """你是一个用于回答问题任务的助手。使用以下检索到的内容来回答问题。如果你不知道答案，只需说明不知道。回答最多使用三句话，并保持简洁。
+        default_persona = "你是一个用于回答问题任务的助手。使用以下检索到的内容来回答问题。如果你不知道答案，只需说明不知道。回答最多使用三句话，并保持简洁。"
+        persona = self.app.persona if self.app.persona else default_persona
+        template_structure = """
 
         问题：{question}
 
@@ -30,6 +32,7 @@ class EndNode(BaseNode):
 
         回答：
         """
+        template = persona + template_structure
 
         prompt = PromptTemplate(
             input_variables=["question", "context"],
@@ -38,6 +41,10 @@ class EndNode(BaseNode):
 
         rag_chain = prompt | self.llm | StrOutputParser()
 
-        response = rag_chain.invoke({"context": state["messages"], "question": state["question"]})
-        print(22222, response)
-        return {"messages": [response]}
+        print(state["messages"])
+        response = rag_chain.stream({"context": state["messages"], "question": state["question"]})
+        # print(22222, response)
+        return {
+            "result": response,
+            # "messages": [response]
+        }

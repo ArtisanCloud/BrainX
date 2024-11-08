@@ -1,5 +1,5 @@
 
-from typing import Annotated, Sequence, TypedDict, List
+from typing import Annotated, Sequence, TypedDict, List, Iterator
 
 from langchain_core.messages import BaseMessage
 from langgraph.graph import add_messages
@@ -10,4 +10,5 @@ from typing_extensions import TypedDict
 # How to use Pydantic model as state
 class GraphState(TypedDict):
     question: str
+    result: Iterator
     messages: Annotated[Sequence[BaseMessage], add_messages]
