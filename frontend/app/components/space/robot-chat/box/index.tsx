@@ -57,15 +57,15 @@ const ChatBox = () => {
 // This is a [link](https://github.com/remarkjs/react-markdown)
 // `;
 
-  const markdownText = `
-# React Markdown Example
-
-~~~js
-const aJsVariable = "Test";
-
-console.log(aJsVariable);
-~~~
-`;
+//   const markdownText = `
+// # React Markdown Example
+//
+// ~~~js
+// const aJsVariable = "Test";
+//
+// console.log(aJsVariable);
+// ~~~
+// `;
 
 
   const scrollToBottom = () => {
@@ -291,8 +291,8 @@ console.log(aJsVariable);
                   // 显示答案或 markdown 内容
                   <section className={styles.markdownContent}>
                     <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
-                      {/*{item.answer}*/}
-                      {markdownText}
+                      {item.answer}
+                      {/*{markdownText}*/}
                     </ReactMarkdown>
                   </section>
                 )}
