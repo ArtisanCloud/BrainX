@@ -27,10 +27,23 @@ class CustomPGVectorStore(PGVectorStore):
         self._async_session = app_async_session_local
 
     async def close(self) -> None:
-        self._session.close_all()
-        self._engine.dispose()
+        # try:
+        #     if self._session:
+        #         await self._session.close()  # 逐一关闭会话
+        # except Exception as e:
+        #     print(f"Error closing session: {e}")
+        #
+        # try:
+        #     if self._engine:
+        #         self._engine.dispose()  # 关闭同步引擎
+        # except Exception as e:
+        #     print(f"Error disposing engine: {e}")
 
-        await self._async_engine.dispose()
+        try:
+            if self._async_engine:
+                await self._async_engine.dispose()  # 关闭异步引擎
+        except Exception as e:
+            print(f"Error disposing async engine: {e}")
 
     def _create_tables_if_not_exists(self) -> None:
         pass

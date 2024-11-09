@@ -51,7 +51,7 @@ const useSSE = () => {
       signal,
       // signal: ctrl.signal,
       async onopen(response) {
-        console.log('inner onopen', response);
+        // console.log('inner onopen', response);
         try {
           if (
             response.ok &&
@@ -72,7 +72,7 @@ const useSSE = () => {
         }
       },
       onmessage(msg) {
-        console.log('inner onmessage', msg);
+        // console.log('inner onmessage', msg);
         try {
           if (msg.event === 'FatalError') {
             throw new FatalError(msg.data);

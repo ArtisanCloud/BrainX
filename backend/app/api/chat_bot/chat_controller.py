@@ -1,6 +1,4 @@
-import asyncio
 import http
-from typing import Iterator
 
 from fastapi import Request, APIRouter, Depends
 from fastapi.responses import StreamingResponse
@@ -9,68 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
 from app.api.middleware.auth import get_session_user
-from app.core.brainx.base import LLMModel
 from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.models import User
 from app.schemas.robot_chat.chat import RequestChat
-from app.service.robot_chat.agent_chat import agent_chat
-from app.service.robot_chat.chat import chat
+from app.service.robot_chat.agent_chat import agent_chat_event_generator
+from app.service.robot_chat.chat import chat_event_generator
 
 router = APIRouter()
 
-
-async def event_generator(request: Request, llm: str, stream_response: Iterator):
-    try:
-        for token in stream_response:
-            # print("llm:", llm, "token:", token)
-            if await request.is_disconnected():
-                break
-
-            if token:
-                content = ''
-                if llm in [
-                    LLMModel.OPENAI_GPT_3_D_5_TURBO.value,
-                    LLMModel.KIMI_MOONSHOT_V1_8K.value
-                ]:
-                    # print("token content:", repr(token.content), end='\n')
-                    if isinstance(token, str):
-                        content = token
-                    elif isinstance(token.content, str):
-                        # print("turbo", repr(token.content), end='\n')
-                        content = token.content
-
-                elif llm in [
-                    LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value,
-                    LLMModel.BAIDU_ERNIE_3_D_5_8K.value,
-                    LLMModel.BAIDU_ERNIE_4_D_0_8K.value,
-                    LLMModel.BAIDU_ERNIE_Speed_128K.value,
-                    LLMModel.BAIDU_ERNIE_Lite_8K.value,
-                    LLMModel.OLLAMA_GEMMA_2B.value,
-                    LLMModel.OLLAMA_GEMMA_7B.value,
-                    LLMModel.OLLAMA_13B_ALPACA_16K.value,
-                    LLMModel.OLLAMA_LLAMA3_2.value
-                ]:
-                    if isinstance(token, str):
-                        content = token
-                    elif isinstance(token.content, str):
-                        # 替换回车为转义的 `\n`
-                        # print(repr(token.content))
-                        content = token.content.replace("\r\n", "\\n").replace("\n", "\\n")
-
-                else:
-                    # print("token content:", repr(token), end='\n')
-                    if token != "":
-                        content = token
-
-                # print("content end:", content, end='\n\n')
-                # if content:
-                yield f"data: {content}\n\n"
-                await asyncio.sleep(0.1)  # 延迟一点时间
-                # await asyncio.sleep(2)  # 延迟一点时间
-    except Exception as e:
-        logger.error(f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info)
-        return
 
 @router.post("/chat")
 async def api_chat(
@@ -80,26 +25,18 @@ async def api_chat(
         db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
-        question = data.messages[0].content
-        # user_uuid = data.appUUID
-        app_uuid = data.appUUID
-        conversation_uuid = data.conversationUUID
-
-        stream_response, conversation_uuid, exception = await chat(
-            db=db,
-            question=question, llm=data.llm,
-            user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
-        )
-        if exception is not None:
-            raise exception
-
         # print("conversationUUID:", conversation_uuid)
         return StreamingResponse(
-            event_generator(request, data.llm, stream_response),
+            chat_event_generator(
+                request=request, data=data,
+                user_uuid=str(session_user.uuid), db=db
+            ),
             media_type="text/event-stream",
             headers={
                 "Content-Type": "text/event-stream",
-                "Conversation-Uuid": conversation_uuid
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Conversation-Uuid": data.conversationUUID
             },
         )
 
@@ -122,28 +59,17 @@ async def api_agent_chat(
         db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
-        question = data.messages[0].content
-        # user_uuid = data.appUUID
-        app_uuid = data.appUUID
-        conversation_uuid = data.conversationUUID
-
-        stream_response, conversation_uuid, exception = await agent_chat(
-            db=db,
-            question=question, llm=data.llm,
-            user_uuid=str(session_user.uuid), app_uuid=app_uuid, conversation_uuid=conversation_uuid
-        )
-        if exception is not None:
-            raise exception
-
-        # print("conversationUUID:", conversation_uuid)
         return StreamingResponse(
-            event_generator(request, data.llm, stream_response),
+            agent_chat_event_generator(
+                request=request, data=data,
+                user_uuid=str(session_user.uuid), db=db
+            ),
             media_type="text/event-stream",
             headers={
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
-                "Conversation-Uuid": conversation_uuid
+                "Conversation-Uuid": data.conversationUUID
             },
         )
 
@@ -156,7 +82,6 @@ async def api_agent_chat(
             headers={
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
                 # "Conversation-Uuid": conversation_uuid
             },
         )

@@ -98,7 +98,8 @@ async def lifespan(app: FastAPI):
     yield
 
     # This section is run on app shutdown
-    await vector_store.close()
+    if vector_store:
+        await vector_store.close()
 
     # release cache resource
     await CacheFactory.get_cache().async_disconnect()

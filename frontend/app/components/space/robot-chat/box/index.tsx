@@ -23,7 +23,7 @@ import {SelectLLMContext, SelectLLMContextType} from "@/app/components/space/pro
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import {FormatSSEMessageReply} from "@/app/lib/sse/format";
+import {FormatSSEMessageReply, SSEMessage} from "@/app/lib/sse/format";
 import {v4 as uuidv4} from 'uuid';
 
 
@@ -33,7 +33,9 @@ const ChatBox = () => {
 
   const refInput = useRef<HTMLTextAreaElement>(null);
   const refMessageContainer = useRef<HTMLDivElement>(null);
+  const [aiProcessing, setAIProcessing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
   const [showHint, setShowHint] = useState<boolean>(false);
   // const [conversation, setConversation] = useState<Conversation>(welcomeConversation);
 
@@ -41,6 +43,29 @@ const ChatBox = () => {
   let streamUrl = GetChatBotSSEActionUrl('agent/chat');
   const sse = useSSE();
   let controller = null;
+
+//   const markdownText = `
+// # React Markdown Example
+//
+// - Some text
+// - Some other text
+//
+// ## Subtitle
+//
+// ### Additional info
+//
+// This is a [link](https://github.com/remarkjs/react-markdown)
+// `;
+
+  const markdownText = `
+# React Markdown Example
+
+~~~js
+const aJsVariable = "Test";
+
+console.log(aJsVariable);
+~~~
+`;
 
 
   const scrollToBottom = () => {
@@ -148,61 +173,89 @@ const ChatBox = () => {
       ],
     }
     // console.log('actionSend requestBody:', requestBody);
-   controller = sse.connectEventSource({
-      url: streamUrl,
-      method: 'POST',
-      body: requestBody,
-      onopen(response: Response) {
-        // 滑向下方
-        // scrollToBottom()
-        console.log('onopen', response);
+    controller = sse.connectEventSource({
+        url: streamUrl,
+        method: 'POST',
+        body: requestBody,
+        onopen(response: Response) {
+          // 滑向下方
+          // scrollToBottom()
+          // console.log('onopen', response);
 
-        // Handle successful connection
-        if (response.status === 200) {
-          // console.log('sse response', response.statusText);
+          // Handle successful connection
+          if (response.status === 200) {
+            // console.log('sse response', response.statusText);
+          }
+
+        },
+        onmessage(msg: any) {
+          // Handle incoming messages
+          // console.log('msg', msg);
+          try {
+            let objMsg = ""
+            let errorMessage = ""
+            const parsedMsg: SSEMessage = JSON.parse(msg.data);
+            if (parsedMsg.status == "processing") {
+              setAIProcessing(true)
+              return
+
+            } else {
+              setAIProcessing(false)
+
+              if (parsedMsg.status == "data") {
+                objMsg = FormatSSEMessageReply(parsedMsg.content)
+              } else if (parsedMsg.status == "error") {
+                errorMessage = parsedMsg.message
+
+              } else if (parsedMsg.status == "finished") {
+                handleChatClosed();
+                return
+              }
+            }
+
+            // const objMsg = JSON.parse(msg.data);
+
+            // <--- Add this check
+            setCurrentConversation((prevConversation) => {
+              const lastItem = prevConversation.items[prevConversation.items.length - 1];
+              return {
+                ...prevConversation,
+                items: prevConversation.items.map((item, index) =>
+                  index === prevConversation.items.length - 1
+                    ? {
+                      ...item,
+                      answer: item.answer + objMsg,
+                      errorMessage: errorMessage,
+                    }
+                    : item
+                ),
+              };
+            });
+
+          } catch (error) {
+            console.error('Error parsing JSON data:', error);
+            handleChatClosed()
+          } finally {
+          }
+
+        },
+        onclose() {
+          // Handle connection closed
+          // console.log('sse close');
+          handleChatClosed();
+
         }
-
-      },
-      onmessage(msg: any) {
-        // Handle incoming messages
-        console.log('msg', msg);
-        const objMsg = FormatSSEMessageReply(msg.data)
-        try {
-          // const objMsg = JSON.parse(msg.data);
-
-          // <--- Add this check
-          setCurrentConversation((prevConversation) => {
-            const lastItem = prevConversation.items[prevConversation.items.length - 1];
-            return {
-              ...prevConversation,
-              items: prevConversation.items.map((item, index) =>
-                index === prevConversation.items.length - 1
-                  ? {...item, answer: item.answer + objMsg}
-                  : item
-              ),
-            };
-          });
-
-        } catch (error) {
-          console.error('Error parsing JSON data:', error);
-        }
-
-      },
-      onclose() {
-        // Handle connection closed
-        // console.log('sse close');
-        handleChatClosed();
-
-      },
-      onerror(err: any) {
-        // Handle errors
-        console.error('err', err);
-        if (err) {
-          handleChatClosed()
-        }
-      },
-    });
-
+        ,
+        onerror(err: any
+        ) {
+          // Handle errors
+          console.error('err', err);
+          if (err) {
+            handleChatClosed()
+          }
+        },
+      }
+    );
   }
 
 
@@ -229,15 +282,19 @@ const ChatBox = () => {
                 <Image width={42} height={42} src={GetPublicUrl(selectedApp?.avatar_url!)} alt="AI Avatar"/>
               </div>
               <div className={styles.message}>
-                {loading && item.answer === '' ? (
+                {loading && aiProcessing && item.answer === '' ? (
                   <span>...</span>
+                ) : item.errorMessage ? (
+                  // 显示错误信息
+                  <div className={styles.error}>{item.errorMessage}</div>
                 ) : (
-                  // <div dangerouslySetInnerHTML={{ __html: item.answer.replace(/\n/g, '<br>') }} />
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm, remarkBreaks]}
-                  >
-                    {item.answer}
-                  </ReactMarkdown>
+                  // 显示答案或 markdown 内容
+                  <section className={styles.markdownContent}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                      {/*{item.answer}*/}
+                      {markdownText}
+                    </ReactMarkdown>
+                  </section>
                 )}
               </div>
             </div>

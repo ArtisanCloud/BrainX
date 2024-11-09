@@ -3,7 +3,6 @@ import logging
 from typing import List, Dict, Literal, Type, Any
 
 from PIL import Image as PILImage
-from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 from langgraph.constants import END
@@ -16,7 +15,6 @@ from app import settings
 from app.core.brainx.base import LLMModel
 from app.core.brainx.llm.langchain import get_llm
 from app.core.rag.retrieval.interface import BaseRetriever
-from app.core.rag.synthesis.interface import BaseAgentExecutor
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node.factory import NodeFactory
@@ -24,7 +22,7 @@ from app.core.workflow.node.knowledge.node import KnowledgeNode, KnowledgeNodeDa
 from app.core.workflow.node.plugin.node import PluginNode
 from app.core.workflow.state import GraphState
 from app.logger import logger
-from app.models import AppModelConfig, App
+from app.models import App
 
 
 def create_dynamic_route_query(options: list[str]) -> Type[BaseModel]:
@@ -52,7 +50,7 @@ class AgentBot:
         self.router_llm = None
         self.generate_llm = None
         self.router = None
-        self.routes_options = []
+        self.routes_options = [NodeType.END.value]
 
         self.app = app
         self.retriever = retriever
@@ -97,7 +95,8 @@ class AgentBot:
         if exception:
             raise exception
 
-        self.router_llm, exception = get_llm(LLMModel.OLLAMA_LLAMA3_2.value, temperature=0, streaming=False)
+        # self.router_llm, exception = get_llm(LLMModel.OLLAMA_LLAMA3_2.value, temperature=0, streaming=False)
+        self.router_llm, exception = get_llm(LLMModel.OPENAI_GPT_3_D_5_TURBO.value, temperature=0, streaming=False)
         if exception:
             raise exception
 
@@ -142,7 +141,7 @@ class AgentBot:
                 self.routes_options.append(node_id)
 
     def init_router(self):
-        # print(self.routes_options)
+        print("------route options:", self.routes_options)
 
         # 动态生成 RouteQuery 类
         route_query = create_dynamic_route_query(self.routes_options)
@@ -168,8 +167,13 @@ class AgentBot:
         print(f"---ROUTE QUESTION---: {state['question']}")
 
         # source = self.router.invoke({"question": state['question']})
-        source = self.router.invoke(state['question'])
-        print(f"---ROUTE TO---: {source}")
+        source = ""
+        try:
+            source = self.router.invoke({"question": state['question']})
+        except Exception as e:
+            logger.error(f"invoke route:{e}", exc_info=False)
+
+        print(f"---SOURCE ROUTE TO---: {source}")
         # Check the type of `source`
         if isinstance(source, dict):
             route_to = source.get("route_to")
@@ -193,8 +197,8 @@ class AgentBot:
             print("---ROUTE QUESTION TO RAG---")
             return "table_retrieve"
         else:
-            print("---ROUTE QUESTION UNKNOWN---")
-            return None
+            print("---ROUTE QUESTION UNKNOWN redirect to generate ---")
+            return NodeType.END.value
 
     def call_agent(self, state: GraphState):
         messages = state["messages"]
@@ -216,12 +220,13 @@ class AgentBot:
                     "app": self.app,
                 })
             self.builder.add_node(NodeType.END.value, generate_node.execute)
+            # default generate node
+            routes = {NodeType.END.value: NodeType.END.value}
 
-            routes = {}
             # add plugin nodes
             for plugin in self.plugins:
                 node_id = plugin.get_id()
-                self.builder.add_node(plugin.get_id(), lambda state: plugin.execute(state))
+                self.builder.add_node(node_id, lambda state: plugin.execute(state))
                 routes[node_id] = node_id
 
             # add dataset nodes
@@ -232,6 +237,8 @@ class AgentBot:
 
             # add edges
             for route_option in self.routes_options:
+                if route_option == NodeType.END.value:
+                    continue
                 self.builder.add_edge(route_option, NodeType.END.value)
 
             # print(routes)

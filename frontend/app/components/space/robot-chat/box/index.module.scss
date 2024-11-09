@@ -22,7 +22,7 @@
     --message-font-size: 12px;
     --message-border-radius: 6px;
     --message-min-width: 20px;
-    --message-max-width: 80%;
+    --message-max-width: 100%;
 
     display: flex;
     flex-direction: column;
@@ -100,6 +100,31 @@
         word-wrap: break-word; /* Allow content to wrap automatically */
         overflow-wrap: break-word; /* For older browsers */
         line-height: 2.0;
+        .markdownContent {
+          max-width: 100%; /* 确保宽度不超出容器 */
+          word-wrap: break-word; /* 自动换行 */
+          overflow-wrap: break-word; /* 兼容性换行 */
+          line-height: 1.6;
+        }
+
+        /* 限制 ReactMarkdown 内容元素 */
+        .markdownContent p,
+        .markdownContent h1,
+        .markdownContent h2,
+        .markdownContent h3,
+        .markdownContent h4,
+        .markdownContent h5,
+        .markdownContent h6,
+        .markdownContent li,
+        .markdownContent blockquote,
+        .markdownContent pre {
+          max-width: 100%; /* 保证每个段落或块级元素都不超过容器宽度 */
+          white-space: pre-wrap; /* 允许预格式化文本换行 */
+          word-wrap: break-word; /* 长单词或长行会自动换行 */
+        }
+        .error{
+          color: darkred;
+        }
       }
     }
   }

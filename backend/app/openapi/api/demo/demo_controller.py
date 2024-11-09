@@ -7,13 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import StreamingResponse
 
 from app import settings
-from app.api.chat_bot.chat_controller import event_generator
 from app.database.deps import get_async_db_session
 from app.database.seed import init_user_uuid
 from app.logger import logger
 from app.openapi.schemas.demo import ResponseHelloWorld, RequestHelloWorld, RequestEchoLongTime, ResponseEchoLongTime
 from app.schemas.question_answer.query import RequestQuery
-from app.service.robot_chat.chat import chat
+from app.service.robot_chat.chat import chat, event_api_generator
 
 router = APIRouter()
 
@@ -87,10 +86,9 @@ async def api_chat(
         )
         if exception is not None:
             raise exception
-            raise exception
 
         return StreamingResponse(
-            event_generator(request, data.llm, stream_response),
+            event_api_generator(request, data.llm, stream_response),
             media_type="text/event-stream",
             headers={"Content-Type": "text/event-stream"},
         )

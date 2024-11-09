@@ -109,7 +109,7 @@ async def api_patch_app(
     try:
 
         update_data = data.dict(exclude_unset=True)
-        print(app_uuid, update_data)
+        # print(app_uuid, update_data)
 
         app, exception = await patch_app(db, app_uuid, update_data)
         if exception is not None:

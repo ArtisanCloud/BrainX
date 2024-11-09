@@ -54,10 +54,13 @@ class App(BaseORM):
     app_model_configs: Mapped[List["AppModelConfig"]] = relationship(back_populates="app",
                                                                      foreign_keys="[AppModelConfig.app_uuid]")
 
-    current_app_model_config: Mapped["AppModelConfig"] = relationship("AppModelConfig",
-                                                                      back_populates="current_selected_app",
-                                                                      foreign_keys=[app_model_config_uuid],
-                                                                      uselist=False)
+    current_app_model_config: Mapped["AppModelConfig"] = relationship(
+        "AppModelConfig",
+        back_populates="current_selected_app",
+        foreign_keys=[app_model_config_uuid],
+        uselist=False,
+        lazy='selectin'
+    )
 
     tenant: Mapped["Tenant"] = relationship(back_populates="apps")
     workflow: Mapped["Workflow"] = relationship(back_populates="app", foreign_keys=[workflow_uuid])
@@ -74,6 +77,7 @@ class App(BaseORM):
         overlaps="app,dataset,connected_dataset_pivots,connected_app_pivots",
         # 通常情况下，您可以先测试overlaps是否足够解决加载冲突问题。如果仍然遇到多对多关系重复的问题，可以考虑使用viewonly = True，这样只读视图避免了ORM在提交时处理关联。
         # viewonly=True
+        lazy='selectin'
     )
 
     # conversations = relationship("Conversation", backref="app")

@@ -24,6 +24,7 @@ export interface Conversation extends PowerModel {
 export interface ConversationItem {
 	question: string;
 	answer: string;
+	errorMessage: string
 }
 
 export interface RequestFetchConversationList extends RequestPagination {

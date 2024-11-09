@@ -30,6 +30,8 @@ class EndNode(BaseNode):
 
         上下文：{context}
 
+        要求: 如果有阐述回答内容，尽量有条有理的回答，分析和总结部分 
+        
         回答：
         """
         template = persona + template_structure
@@ -41,7 +43,7 @@ class EndNode(BaseNode):
 
         rag_chain = prompt | self.llm | StrOutputParser()
 
-        print(state["messages"])
+        # print(1111111, state["messages"])
         response = rag_chain.stream({"context": state["messages"], "question": state["question"]})
         # print(22222, response)
         return {
