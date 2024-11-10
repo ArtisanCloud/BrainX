@@ -20,11 +20,10 @@ import {GetPublicUrl} from "@/app/lib/url";
 import {GetChatBotSSEActionUrl, RequestSendChat} from "@/app/api/robot-chat";
 import Image from "next/image";
 import {SelectLLMContext, SelectLLMContextType} from "@/app/components/space/provider/llm";
-import ReactMarkdown from 'react-markdown';
-import remarkBreaks from 'remark-breaks';
-import remarkGfm from 'remark-gfm';
+
 import {FormatSSEMessageReply, SSEMessage} from "@/app/lib/sse/format";
 import {v4 as uuidv4} from 'uuid';
+import MarkdownPreview from "@/app/components/space/robot-chat/markdown/markdown";
 
 
 const ChatBox = () => {
@@ -43,30 +42,6 @@ const ChatBox = () => {
   let streamUrl = GetChatBotSSEActionUrl('agent/chat');
   const sse = useSSE();
   let controller = null;
-
-//   const markdownText = `
-// # React Markdown Example
-//
-// - Some text
-// - Some other text
-//
-// ## Subtitle
-//
-// ### Additional info
-//
-// This is a [link](https://github.com/remarkjs/react-markdown)
-// `;
-
-//   const markdownText = `
-// # React Markdown Example
-//
-// ~~~js
-// const aJsVariable = "Test";
-//
-// console.log(aJsVariable);
-// ~~~
-// `;
-
 
   const scrollToBottom = () => {
     refMessageContainer!.current!.scrollTo({
@@ -272,7 +247,7 @@ const ChatBox = () => {
                 </div>
                 <div className={styles.message}>
                   {/*{item.question}*/}
-                  <ReactMarkdown>{item.question}</ReactMarkdown>
+                  <MarkdownPreview markdownText={item.question} />
                 </div>
               </div>
             )}
@@ -290,10 +265,7 @@ const ChatBox = () => {
                 ) : (
                   // 显示答案或 markdown 内容
                   <section className={styles.markdownContent}>
-                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
-                      {item.answer}
-                      {/*{markdownText}*/}
-                    </ReactMarkdown>
+                    <MarkdownPreview markdownText={item.answer} />
                   </section>
                 )}
               </div>
