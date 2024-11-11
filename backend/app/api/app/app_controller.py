@@ -13,8 +13,16 @@ from app.database.deps import get_async_db_session
 from app.logger import logger
 from app.models import User
 
-from app.schemas.app.app import ResponseGetAppList, RequestCreateApp, make_app, ResponseCreateApp, \
-    RequestPatchApp, ResponsePatchApp, ResponseDeleteApp, ResponseGetApp
+from app.schemas.app.app import (
+    ResponseGetAppList,
+    RequestCreateApp,
+    make_app,
+    ResponseCreateApp,
+    RequestPatchApp,
+    ResponsePatchApp,
+    ResponseDeleteApp,
+    ResponseGetApp,
+)
 from app.schemas.base import Pagination, ResponseSchema
 from app.service.app.create import create_app
 from app.service.app.delete import soft_delete_app
@@ -27,9 +35,9 @@ router = APIRouter()
 
 @router.get("/list")
 async def api_get_app_list(
-        request: Request,
-        session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_async_db_session),
+    request: Request,
+    session_user: User = Depends(get_session_user),
+    db: AsyncSession = Depends(get_async_db_session),
 ) -> ResponseGetAppList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -38,7 +46,9 @@ async def api_get_app_list(
     p = Pagination(page=page, page_size=page_size)
 
     try:
-        apps, pagination, exception = await get_app_list(db, session_user.tenant_owner_uuid, p)
+        apps, pagination, exception = await get_app_list(
+            db, session_user.tenant_owner_uuid, p
+        )
         if exception is not None:
             raise exception
 
@@ -55,9 +65,9 @@ async def api_get_app_list(
 
 @router.get("/{app_uuid}")
 async def api_get_app_by_uuid(
-        app_uuid: str,
-        session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_async_db_session)
+    app_uuid: str,
+    session_user: User = Depends(get_session_user),
+    db: AsyncSession = Depends(get_async_db_session),
 ):
     try:
         app, exception = await get_app_by_uuid(db, session_user, app_uuid)
@@ -77,9 +87,10 @@ async def api_get_app_by_uuid(
 
 @router.post("/create")
 async def api_create_app(
-        data: RequestCreateApp,
-        session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_async_db_session)):
+    data: RequestCreateApp,
+    session_user: User = Depends(get_session_user),
+    db: AsyncSession = Depends(get_async_db_session),
+):
     try:
 
         app = make_app(data)
@@ -103,9 +114,10 @@ async def api_create_app(
 
 @router.patch("/patch/{app_uuid}")
 async def api_patch_app(
-        app_uuid: str,  # 接收路径参数 app_uuid
-        data: RequestPatchApp,
-        db: AsyncSession = Depends(get_async_db_session)):
+    app_uuid: str,  # 接收路径参数 app_uuid
+    data: RequestPatchApp,
+    db: AsyncSession = Depends(get_async_db_session),
+):
     try:
 
         update_data = data.dict(exclude_unset=True)
@@ -128,8 +140,9 @@ async def api_patch_app(
 
 @router.delete("/delete/{app_uuid}")
 async def api_delete_app(
-        app_uuid: str,  # 接收路径参数 app_uuid
-        db: AsyncSession = Depends(get_async_db_session)):
+    app_uuid: str,  # 接收路径参数 app_uuid
+    db: AsyncSession = Depends(get_async_db_session),
+):
     try:
         user_id = 1
         result, exception = await soft_delete_app(db, user_id, app_uuid)

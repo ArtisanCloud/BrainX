@@ -18,7 +18,10 @@ docker-data
 
 !backend/storage/
 backend/storage/public/static/*
+backend/.vscode/
 
+
+frontend/.vscode/
 frontend/.env.*
 !frontend/.env.example
 

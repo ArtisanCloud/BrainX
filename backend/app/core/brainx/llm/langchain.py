@@ -52,7 +52,9 @@ def get_ollama_llm(llm: str, temperature: float, streaming: bool):
     )
 
 
-def get_llm(llm: str, temperature: float = 0.5, streaming: bool = False) -> Tuple[BaseChatModel, Exception | None]:
+def get_llm(
+    llm: str, temperature: float = 0.5, streaming: bool = False
+) -> Tuple[BaseChatModel, Exception | None]:
     match llm:
         case LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
             mdl_llm = get_openai_llm(llm, temperature=temperature, streaming=streaming)
@@ -61,19 +63,21 @@ def get_llm(llm: str, temperature: float = 0.5, streaming: bool = False) -> Tupl
             mdl_llm = get_kimi_llm(llm, temperature=temperature, streaming=streaming)
 
         case (
-        LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value |
-        LLMModel.BAIDU_ERNIE_3_D_5_8K.value |
-        LLMModel.BAIDU_ERNIE_4_D_0_8K.value |
-        LLMModel.BAIDU_ERNIE_Speed_128K.value |
-        LLMModel.BAIDU_ERNIE_Lite_8K.value
+            LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value
+            | LLMModel.BAIDU_ERNIE_3_D_5_8K.value
+            | LLMModel.BAIDU_ERNIE_4_D_0_8K.value
+            | LLMModel.BAIDU_ERNIE_Speed_128K.value
+            | LLMModel.BAIDU_ERNIE_Lite_8K.value
         ):
-            mdl_llm = get_baidu_qianfan_llm(llm, temperature=temperature, streaming=streaming)
+            mdl_llm = get_baidu_qianfan_llm(
+                llm, temperature=temperature, streaming=streaming
+            )
 
         case (
-        LLMModel.OLLAMA_13B_ALPACA_16K.value |
-        LLMModel.OLLAMA_GEMMA_2B.value |
-        LLMModel.OLLAMA_GEMMA_7B.value |
-        LLMModel.OLLAMA_LLAMA3_2.value
+            LLMModel.OLLAMA_13B_ALPACA_16K.value
+            | LLMModel.OLLAMA_GEMMA_2B.value
+            | LLMModel.OLLAMA_GEMMA_7B.value
+            | LLMModel.OLLAMA_LLAMA3_2.value
         ):
             mdl_llm = get_ollama_llm(llm, temperature=temperature, streaming=streaming)
         case _:

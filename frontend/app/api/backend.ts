@@ -43,6 +43,10 @@ class BackendClient {
 		return this.post(backendUrl, endpoint, body)
 	}
 
+	public async backend_post_form(endpoint: string, formData: FormData) {
+		return this.postForm(backendUrl, endpoint, formData);
+	}
+
 	public async backend_patch(endpoint: string, body?: any) {
 		return this.patch(backendUrl, endpoint, body)
 	}
@@ -78,6 +82,20 @@ class BackendClient {
 		});
 
 		return this.processResponse(res)
+	}
+
+	public async postForm(host: string, endpoint: string, formData: FormData): Promise<any> {
+		const url = host + endpoint;
+		const headers = this.get_header();
+		delete headers['Content-Type']; // 让浏览器自动设置 multipart/form-data
+	
+		const res = await fetch(url, {
+			method: "POST",
+			headers: headers,
+			body: formData,
+		});
+	
+		return this.processResponse(res);
 	}
 
 	public async patch(host: string, endpoint: string, body?: any): Promise<any> {

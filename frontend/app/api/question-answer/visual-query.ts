@@ -20,3 +20,23 @@ export const ActionVisualQuery = async (
 
 	return res as ResponseVisualQuery;
 }
+
+
+export const ActionVisualQueryByFile = async (
+    params: RequestVisualQuery,
+    file: File
+): Promise<ResponseVisualQuery> => {
+    const formData = new FormData();
+    
+    // 添加文件
+    formData.append('file', file);
+    
+    // 添加其他参数
+    formData.append('question', params.question);
+    formData.append('llm', params.llm);
+    
+    const endpoint = `/api/question-answer/visual-query-by-file`;
+    const res = await backendClient.backend_post_form(endpoint, formData);
+
+    return res as ResponseVisualQuery;
+}

@@ -73,6 +73,7 @@ gevent = "^24.10.2"
 
 # custom
 # add your own custoized project dependency here
+ollama = "^0.3.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"

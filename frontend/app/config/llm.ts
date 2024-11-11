@@ -1,4 +1,4 @@
-export const label_openai_gpt_3_d_5_turbo = 'OpenAPI-3.5'
+export const label_openai_gpt_3_d_5_turbo = 'OpenAI 3.5 turbo'
 export const openai_gpt_3_d_5_turbo = 'gpt-3.5-turbo'
 
 

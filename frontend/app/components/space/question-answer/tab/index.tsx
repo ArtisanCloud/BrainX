@@ -1,9 +1,10 @@
 import {Tabs} from 'antd';
 import {EyeOutlined, QuestionCircleOutlined, SearchOutlined} from '@ant-design/icons';
 import QuestionAnswer from "@/app/components/space/question-answer/qa";
-import VisualQuestionAnswer from "../v-qa";
 import styles from './index.module.scss';
 import VisualSearch from "@/app/components/space/question-answer/v-search";
+import VisualQuestionAnswer from "../v-qa";
+import VisualQuestionAnswerByFile from '../v-qa/query-by-file';
 
 const QuestionAnswerTab = () => {
 
@@ -24,7 +25,8 @@ const QuestionAnswerTab = () => {
 			key: 'vqa',
 			icon: <EyeOutlined/>,
 			name: "Visual QA",
-			children: <VisualQuestionAnswer/>
+			// children: <VisualQuestionAnswer/>
+			children: <VisualQuestionAnswerByFile/>
 		},
 	]
 

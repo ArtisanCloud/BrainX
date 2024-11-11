@@ -27,7 +27,7 @@ const QuestionAnswerPage = () => {
 								<QANav/>
 								<div className={styles.qaBody}>
 									<QuestionAnswerTab/>
-									<Profile/>
+									{/* <Profile/> */}
 								</div>
 							</div>
 						</SelectLLMProvider>
