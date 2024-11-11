@@ -1,6 +1,7 @@
 import base64
 import io
 from enum import Enum
+from typing import List
 
 from PIL import Image
 import numpy as np
@@ -70,6 +71,8 @@ def image_base64_to_embed(image_string: str, clip_model: SentenceTransformer):
         raise e
     return image_embedding_list
 
+def remove_base64_images_prefix(base64_data: List[str]) -> str:
+    return [remove_base64_prefix(data) for data in base64_data]
 
 def remove_base64_prefix(base64_data: str) -> str:
     # Split the string by the comma separator

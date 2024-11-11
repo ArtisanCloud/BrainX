@@ -25,7 +25,7 @@ async def api_chat(
         db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
-        # print("conversationUUID:", conversation_uuid)
+        # print("conversationUUID:", data)
         return StreamingResponse(
             chat_event_generator(
                 request=request, data=data,

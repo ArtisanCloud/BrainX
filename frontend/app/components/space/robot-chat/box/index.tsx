@@ -1,6 +1,6 @@
 import styles from "./index.module.scss";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Button } from "antd";
+import { Button, Image } from "antd";
 import {
   ControlOutlined,
   ExpandAltOutlined,
@@ -8,6 +8,7 @@ import {
   MacCommandOutlined,
   EnterOutlined,
   AppstoreOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import useSSE from "@/app/lib/sse/EventSourceHelper";
 import { ConversationItem } from "@/app/api/robot-chat/conversation";
@@ -18,7 +19,6 @@ import {
 } from "@/app/components/space/robot-chat/provider/robot-chat-provider";
 import { GetPublicUrl } from "@/app/lib/url";
 import { GetChatBotSSEActionUrl, RequestSendChat } from "@/app/api/robot-chat";
-import Image from "next/image";
 import {
   SelectLLMContext,
   SelectLLMContextType,
@@ -27,6 +27,7 @@ import {
 import { FormatSSEMessageReply, SSEMessage } from "@/app/lib/sse/format";
 import { v4 as uuidv4 } from "uuid";
 import MarkdownPreview from "@/app/components/space/robot-chat/markdown/markdown";
+import { useNotification } from "@/app/components/notification";
 
 const ChatBox = () => {
   const { selectedApp, currentConversation, setCurrentConversation } =
@@ -34,6 +35,10 @@ const ChatBox = () => {
   const { selectedLlm } = useContext(SelectLLMContext) as SelectLLMContextType;
 
   const refInput = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const { msgSuccess, msgWarn, msgError } = useNotification();
+
   const refMessageContainer = useRef<HTMLDivElement>(null);
   const [aiProcessing, setAIProcessing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,7 +49,7 @@ const ChatBox = () => {
   // const streamUrl = GetChatBotSSEActionUrl('chat');
   let streamUrl = GetChatBotSSEActionUrl("agent/chat");
   const sse = useSSE();
-  let controller:any = null;
+  let controller: any = null;
 
   const scrollToBottom = () => {
     refMessageContainer!.current!.scrollTo({
@@ -65,8 +70,40 @@ const ChatBox = () => {
     console.log("select model");
   };
 
+  // 添加处理文件选择的函数
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // 检查文件类型
+      if (!file.type.startsWith("image/")) {
+        msgError("请选择图片文件");
+        return;
+      }
+
+      // 检查文件大小（例如限制为 5MB）
+      if (file.size > 5 * 1024 * 1024) {
+        msgError("图片大小不能超过 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
+      };
+    }
+  };
+
+  const handleImagesClear = () => {
+    setSelectedImage("");
+    // 重置 Upload 组件的状态
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleUploadImage = () => {
-    console.log("upload image");
+    fileInputRef.current?.click();
   };
 
   const handleClickSend = () => {
@@ -88,6 +125,7 @@ const ChatBox = () => {
     // console.log('chat closed');
     setLoading(false);
     setShowHint(false);
+    handleImagesClear()
 
     // // 清空 textarea
     // refInput.current!.value = '';
@@ -141,6 +179,7 @@ const ChatBox = () => {
       conversationUUID: sessionID,
       appUUID: selectedApp?.uuid ?? "",
       llm: selectedLlm ?? "",
+      images: selectedImage ? [selectedImage] : [], // 如果有图片则添加到请求中
       messages: [
         {
           type: "user",
@@ -257,6 +296,7 @@ const ChatBox = () => {
                   height={42}
                   src={GetPublicUrl(selectedApp?.avatar_url!)}
                   alt="AI Avatar"
+                  style={{ maxWidth: "42px", objectFit: "cover" }}
                 />
               </div>
               <div className={styles.message}>
@@ -277,6 +317,34 @@ const ChatBox = () => {
         ))}
       </div>
       <div className={styles.inputContainer}>
+        {/* 添加隐藏的文件输入 */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          accept="image/*"
+          onChange={handleFileSelect}
+        />
+        {/* 添加图片预览区域 */}
+        {selectedImage && (
+          <div className={styles.imagePreview}>
+            <div className={styles.previewContent}>
+              <Image
+                src={selectedImage}
+                alt="Preview"
+                width={60}
+                height={60}
+                style={{ objectFit: "cover" }}
+              />
+              <Button
+                type="text"
+                size="small"
+                onClick={handleImagesClear}
+                icon={<CloseOutlined />}
+              />
+            </div>
+          </div>
+        )}
         <div className={styles.inputTool}>
           <div className={styles.left}>
             <Button

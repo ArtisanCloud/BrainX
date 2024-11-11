@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from app.schemas.robot_chat.conversation import MessageSchema
 from app.schemas.base import BaseSchema
@@ -9,6 +9,7 @@ class RequestChat(BaseSchema):
     conversationUUID: Optional[str] | None
     appUUID: Optional[str] | None
     messages: list[MessageSchema]
+    images: Optional[List[str]] = None
 
 
 class ResponseChatStream:

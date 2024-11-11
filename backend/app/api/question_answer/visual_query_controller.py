@@ -11,6 +11,7 @@ from app.schemas.question_answer.visual_query import (
 )
 from app.service.question_answer.visual_query import visual_query
 from app.config.config import settings
+from app.utils.media import remove_base64_prefix
 
 router = APIRouter()
 
@@ -24,17 +25,33 @@ async def api_visual_query(
     """
 
     try:
-        base64Image = query.question_image
-        if base64Image.startswith("data:") and "base64," in base64Image:
-            # Remove the prefix
-            base64Image = base64Image.split("base64,")[1]
+        base64Image = remove_base64_prefix(query.question_image) 
+        
 
-        res, exception = await visual_query(base64Image, query.question)
-        # print(res, exception)
-        if exception:
-            logger.error(exception)
-            raise Exception("database query: pls check log")
-        return res
+        # res, exception = await visual_query(base64Image, query.question)
+        # # print(res, exception)
+        # if exception:
+        #     logger.error(exception)
+        #     raise Exception("database query: pls check log")
+        # return res
+        try:
+            response = ollama.chat(
+                model="llama3.2-vision",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": query.question,
+                        "images": [base64Image],
+                    }
+                ],
+            )
+
+            # 从响应中提取实际的回答文本
+            answer = response.get('message', {}).get('content', '')
+            return  ResponseVisualQuery(answer=answer)
+
+        except ollama._types.ResponseError as e:
+            raise Exception(f"Ollama API Error: {str(e)}")
 
     except Exception as e:
         # 在这里处理异常，您可以记录日志、返回特定的错误响应等

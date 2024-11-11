@@ -7,6 +7,7 @@ export interface RequestSendChat{
 	conversationUUID: string,
 	appUUID?: string,
 	llm?: string,
+	images?: string[]
 	messages: Message[],
 }
 

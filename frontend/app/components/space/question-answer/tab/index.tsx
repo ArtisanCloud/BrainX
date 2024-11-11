@@ -25,8 +25,8 @@ const QuestionAnswerTab = () => {
 			key: 'vqa',
 			icon: <EyeOutlined/>,
 			name: "Visual QA",
-			// children: <VisualQuestionAnswer/>
-			children: <VisualQuestionAnswerByFile/>
+			children: <VisualQuestionAnswer/>
+			// children: <VisualQuestionAnswerByFile/>
 		},
 	]
 

@@ -1,6 +1,7 @@
 from typing import Tuple, Iterator, Any, List, Type, Dict, Optional
 
 from langchain_core.messages import HumanMessage
+import ollama
 
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
@@ -8,6 +9,7 @@ from app.core.agent_bot.agent import AgentBot
 from app.core.ai_model.drivers.langchain.factory import ModelProviderFactory
 from app.core.ai_model.model_instance import ModelInstance
 from app.config.config import settings
+from app.core.brainx.base import LLMModel
 from app.core.rag import FrameworkDriverType
 from app.core.rag.synthesis.factory import AgentExecutorFactory
 from app.core.rag.ingestion.factory import IndexingFactory
@@ -21,13 +23,14 @@ from app.models.rag.invoke_response import InvokeResponse
 
 
 class BrainXService:
-    def __init__(self,
-                 llm: str,
-                 streaming: bool = False,
-                 collection_name: str = "rag_embeddings",
-                 app: App = None,
-                 app_model_config: AppModelConfig = None,
-                 ):
+    def __init__(
+        self,
+        llm: str,
+        streaming: bool = False,
+        collection_name: str = "rag_embeddings",
+        app: App = None,
+        app_model_config: AppModelConfig = None,
+    ):
         # 进行其他初始化操作
         # create the embedding model
         embedding_model_instance = self._create_embedding_model()
@@ -36,7 +39,9 @@ class BrainXService:
         self.indexer = self._create_indexer(embedding_model_instance)
 
         # define the retriever
-        self.retriever = self._create_retriever(collection_name, embedding_model_instance)
+        self.retriever = self._create_retriever(
+            collection_name, embedding_model_instance
+        )
 
         # get the vector store
         self.vector_store = self.retriever.get_vector_store()
@@ -47,45 +52,49 @@ class BrainXService:
         # define the Agent Bot
         if app:
             self.agent_bot = AgentBot(
-                default_llm=llm,
-                app=app,
-                retriever=self.retriever
+                default_llm=llm, app=app, retriever=self.retriever
             )
 
     @staticmethod
     def _create_embedding_model():
-        text_embedding_model = ModelProviderFactory.create_text_embedding_provider(ProviderID.HUGGINGFACE_HUB,
-                                                                                   HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value)
-        embedding_model_instance = ModelInstance(
-            model=text_embedding_model
+        text_embedding_model = ModelProviderFactory.create_text_embedding_provider(
+            ProviderID.HUGGINGFACE_HUB,
+            HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value,
         )
+        embedding_model_instance = ModelInstance(model=text_embedding_model)
         return embedding_model_instance
 
     @staticmethod
     def _create_indexer(embedding_model_instance: ModelInstance = None):
         return IndexingFactory.get_indexer(
             FrameworkDriverType(settings.agent.framework_driver),
-            None, embedding_model_instance,
-            None, None,
+            None,
+            embedding_model_instance,
+            None,
+            None,
         )
 
     @staticmethod
-    def _create_retriever(collection_name: str, embedding_model_instance: ModelInstance = None) -> BaseRetriever:
+    def _create_retriever(
+        collection_name: str, embedding_model_instance: ModelInstance = None
+    ) -> BaseRetriever:
         return RetrieverFactory.get_retriever(
             FrameworkDriverType(settings.agent.framework_driver),
             collection_name=collection_name,
-            embedding_model_instance=embedding_model_instance
+            embedding_model_instance=embedding_model_instance,
         )
 
     @staticmethod
     def _create_agent_executor(
-            llm: str,
-            temperature: float = 0.5,
-            streaming: bool = False,
+        llm: str,
+        temperature: float = 0.5,
+        streaming: bool = False,
     ):
         return AgentExecutorFactory.get_agent_executor(
             FrameworkDriverType(settings.agent.framework_driver),
-            llm, temperature=temperature, streaming=streaming
+            llm,
+            temperature=temperature,
+            streaming=streaming,
         )
 
     def bind_llm(self, llm: str):
@@ -96,72 +105,89 @@ class BrainXService:
         self.streaming = streaming
         return self
 
-    async def retrieve(self, content: str, top_k: int, score_threshold: float, filters: dict = None) -> Tuple[
-        List[DocumentNode] | None, Exception | None]:
+    async def retrieve(
+        self, content: str, top_k: int, score_threshold: float, filters: dict = None
+    ) -> Tuple[List[DocumentNode] | None, Exception | None]:
         return self.retriever.retrieve(content, top_k, score_threshold, filters)
 
     def stream(
-            self,
-            query: Dict,
-            temperature: float = 0.5,
-            input_variables=list[str],
-            template: str = ''
+        self,
+        query: Dict,
+        temperature: float = 0.5,
+        input_variables=list[str],
+        template: str = "",
     ) -> Tuple[Iterator | None, Exception | None]:
-        return self.agent_executor.stream(query, temperature=temperature, input_variables=input_variables,
-                                          template=template)
+        return self.agent_executor.stream(
+            query,
+            temperature=temperature,
+            input_variables=input_variables,
+            template=template,
+        )
 
-    def invoke(self,
-               query: Dict,
-               temperature: float = 0.5,
-               input_variables=list[str],
-               template: str = '',
-               output_schemas: Any = None,
-               ) -> Tuple[InvokeResponse | None, Exception | None]:
+    def invoke(
+        self,
+        query: Dict,
+        temperature: float = 0.5,
+        input_variables=list[str],
+        template: str = "",
+        output_schemas: Any = None,
+    ) -> Tuple[InvokeResponse | None, Exception | None]:
         return self.agent_executor.invoke(
-            query, temperature=temperature,
+            query,
+            temperature=temperature,
             input_variables=input_variables,
             template=template,
             output_schemas=output_schemas,
         )
 
-    def completion(self, query: str,
-                   temperature: float = 0.5, config: Optional[Any] = None,
-                   output_schemas: Any = None,
-                   **kwargs: Any) -> Tuple[Any, Exception | None]:
+    def completion(
+        self,
+        query: str,
+        temperature: float = 0.5,
+        config: Optional[Any] = None,
+        output_schemas: Any = None,
+        **kwargs: Any
+    ) -> Tuple[Any, Exception | None]:
         return self.agent_executor.invoke(
-            query=query, temperature=temperature, config=config,
+            query=query,
+            temperature=temperature,
+            config=config,
             output_schemas=output_schemas,
-            **kwargs)
+            **kwargs
+        )
 
-    def chat_completion(self,
-                        question: Dict,
-                        temperature: float = 0.5,
-                        app: App = None,
-                        session_id: str = "",
-                        ) -> Tuple[str | None, Exception | None]:
-        return self.agent_executor.chat_completion(question=question, app=app, session_id=session_id,
-                                                   temperature=temperature)
+    def chat_completion(
+        self,
+        question: Dict,
+        temperature: float = 0.5,
+        app: App = None,
+        session_id: str = "",
+    ) -> Tuple[str | None, Exception | None]:
+        return self.agent_executor.chat_completion(
+            question=question, app=app, session_id=session_id, temperature=temperature
+        )
 
-    def chat_stream(self,
-                    question: Dict,
-                    temperature: float = 0.5,
-                    app: App = None,
-                    session_id: str = ""
-                    ) -> Tuple[Iterator | None, Exception | None]:
-        return self.agent_executor.chat_stream(question=question, app=app, session_id=session_id,
-                                               temperature=temperature)
+    def chat_stream(
+        self,
+        question: Dict,
+        temperature: float = 0.5,
+        app: App = None,
+        session_id: str = "",
+    ) -> Tuple[Iterator | None, Exception | None]:
+
+        return self.agent_executor.chat_stream(
+            question=question,
+            app=app,
+            session_id=session_id,
+            temperature=temperature,
+        )
 
     def agent_chat(
-            self,
-            question: str,
-            session_id: str = ""
+        self, question: str, session_id: str = ""
     ) -> Tuple[Iterator | None, Exception | None]:
         # print(self.agent_bot)
 
-        state = GraphState(
-            question=question,
-            messages=[HumanMessage(content="")]
-        )
+        state = GraphState(question=question, messages=[HumanMessage(content="")])
         # print(state)
 
         stream_response = self.agent_bot.run(state)

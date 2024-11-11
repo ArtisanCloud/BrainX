@@ -18,6 +18,7 @@ class LLMModel(Enum):
     OLLAMA_GEMMA_2B = 'gemma:2b'
     OLLAMA_GEMMA_7B = 'gemma:7b'
     OLLAMA_LLAMA3_2 = 'llama3.2'
+    OLLAMA_LLAMA3_2_VISION = 'llama3.2-vision'
 
 class VisualQueryModelSingleton:
     _instance_processor = None

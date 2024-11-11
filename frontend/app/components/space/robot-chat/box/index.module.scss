@@ -11,7 +11,6 @@
   min-width: 480px;
   height: 768px;
 
-
   .messageContainer {
     //border: #4f65d2 1px solid;
 
@@ -69,7 +68,7 @@
         max-width: var(--message-max-width); /* Set a fixed width */
         word-wrap: break-word; /* Allow content to wrap automatically */
         overflow-wrap: break-word; /* For older browsers */
-        line-height: 2.0;
+        line-height: 2;
       }
     }
 
@@ -99,7 +98,7 @@
         max-width: var(--message-max-width); /* Set a fixed width */
         word-wrap: break-word; /* Allow content to wrap automatically */
         overflow-wrap: break-word; /* For older browsers */
-        line-height: 2.0;
+        line-height: 2;
         .markdownContent {
           max-width: 100%; /* 不超出容器 */
           word-wrap: break-word; /* 自动换行 */
@@ -131,12 +130,24 @@
           margin: 1.2em 0 0.8em;
         }
 
-        .markdownContent h1 { font-size: 2em; }
-        .markdownContent h2 { font-size: 1.75em; }
-        .markdownContent h3 { font-size: 1.5em; }
-        .markdownContent h4 { font-size: 1.25em; }
-        .markdownContent h5 { font-size: 1.1em; }
-        .markdownContent h6 { font-size: 1em; }
+        .markdownContent h1 {
+          font-size: 2em;
+        }
+        .markdownContent h2 {
+          font-size: 1.75em;
+        }
+        .markdownContent h3 {
+          font-size: 1.5em;
+        }
+        .markdownContent h4 {
+          font-size: 1.25em;
+        }
+        .markdownContent h5 {
+          font-size: 1.1em;
+        }
+        .markdownContent h6 {
+          font-size: 1em;
+        }
 
         /* 列表样式 */
         .markdownContent ul,
@@ -217,7 +228,7 @@
           border-radius: 4px;
           margin: 1em 0;
         }
-        .error{
+        .error {
           color: darkred;
         }
       }
@@ -237,25 +248,46 @@
     //flex:1;
 
     border-top: var(--bgSoft) 1px solid;
+    .imagePreview {
+      padding: 8px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      margin-bottom: 8px;
+
+      .previewContent {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        img {
+          border-radius: 4px;
+        }
+
+        button {
+          padding: 4px;
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+          }
+        }
+      }
+    }
 
     .inputTool {
       border: #eee 1px solid;
       border-radius: 6px;
-      margin:0 4px;
+      margin: 0 4px;
       height: 40px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
 
-      .left{
-
+      .left {
       }
       .buttonTool {
-        margin:6px;
+        margin: 6px;
       }
     }
-    .right{
-
+    .right {
     }
 
     .inputMessage {
@@ -274,7 +306,6 @@
       .error {
         border: #ff006a 1px solid; // 错误时的边框颜色
       }
-
     }
 
     .inputCommand {

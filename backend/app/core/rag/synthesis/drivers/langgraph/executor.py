@@ -14,6 +14,7 @@ class LanggraphAgentExecutor(LangchainAgentExecutor):
 
     def chat_stream(self,
                     question: Dict,
+                    images: list[str] | None = None,
                     app: App = None,
                     temperature: float = 0.5,
                     session_id: str = "",

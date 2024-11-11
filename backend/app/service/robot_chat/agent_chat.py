@@ -1,8 +1,10 @@
 import asyncio
 import json
 
+import ollama
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import settings
+from app.core.brainx.base import LLMModel
 from app.core.brainx.chat.app import generate_session_id
 from fastapi import Request
 
@@ -12,6 +14,7 @@ from app.schemas.robot_chat.chat import RequestChat
 from app.service.app.service import AppService
 from app.service.brainx.service import BrainXService
 from app.service.conversation.service import ConversationService
+from app.utils.media import remove_base64_images_prefix, remove_base64_prefix
 
 
 async def agent_chat_event_generator(
@@ -25,11 +28,13 @@ async def agent_chat_event_generator(
         question = data.messages[0].content
         app_uuid = data.appUUID
         conversation_uuid = data.conversationUUID
+        base64_images = remove_base64_images_prefix(data.images) 
         # print("conversationUUID:", conversation_uuid)
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await agent_chat(
             db=db,
-            question=question, llm=data.llm,
+            question=question, images=base64_images,
+            llm=data.llm,
             user_uuid=user_uuid, app_uuid=app_uuid, conversation_uuid=conversation_uuid
         )
 
@@ -59,7 +64,8 @@ async def agent_chat(
         db: AsyncSession,
         app_uuid: str, user_uuid: str,
         question: str, llm: str,
-        conversation_uuid: str = ''
+        conversation_uuid: str = '',
+        images: list[str] | None = None
 ):
     try:
         # 获取app
@@ -106,10 +112,25 @@ async def agent_chat(
                 if str(conversation.user_uuid) != user_uuid or str(conversation.app_uuid) != app_uuid:
                     return None, None, Exception(
                         "Conversation " + conversation_uuid + " not belong to this app or tenant")
-
-        stream_response, exception = service_brain_x.agent_chat(
-            question=question, session_id=conversation_uuid
-        )
+        
+        if images is None or len(images) == 0:
+            stream_response, exception = service_brain_x.agent_chat(
+                question=question, session_id=conversation_uuid
+            )
+        else:
+            stream_response = ollama.chat(
+                model=LLMModel.OLLAMA_LLAMA3_2_VISION.value,
+                stream=True,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": question,
+                        "images": images,
+                    }
+                ],
+            )
+        
+        
         if exception:
             return None, None, exception
 
