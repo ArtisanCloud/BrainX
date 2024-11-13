@@ -70,10 +70,10 @@ unstructured = {extras = ["docx"], version = "^0.15.9"}
 openpyxl = "^3.1.5"
 apscheduler = "^3.10.4"
 gevent = "^24.10.2"
+ollama = "^0.3.3"
 
 # custom
 # add your own custoized project dependency here
-ollama = "^0.3.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"

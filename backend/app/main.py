@@ -26,6 +26,7 @@ from contextlib import asynccontextmanager
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
 from app.schedule.scheduler import Scheduler
+from app.utils.route import print_routes
 from server import start
 
 
@@ -147,6 +148,8 @@ app.add_middleware(
 
 app.include_router(api_router, prefix=settings.api.api_prefix)
 app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
+
+print_routes(app)
 
 if __name__ == '__main__':
     start()
