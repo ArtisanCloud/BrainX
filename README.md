@@ -10,6 +10,8 @@ TBD...
 
 <image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/home.png">
 
+<image src="https://pic4.zhimg.com/v2-6e2a6613242535c11d7b63432deb8725_1440w.jpg">
+
 <image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/code-chat.jpg">
 
 <image src="https://raw.githubusercontent.com/wiki/ArtisanCloud/BrainX/images/chat.png">
