@@ -10,7 +10,7 @@ from app.core.rag.ingestion.extractor.base import BaseDataExtractor, Block, Bloc
 
 
 class DocDataExtractor(BaseDataExtractor):
-    def __init__(self, file_input: Union[str, BytesIO], mode: str = "paged"):
+    def __init__(self, file_input: Union[str, BytesIO], mode: str = "elements"):
         self.file_input = file_input
         self.loader = None
         self.doc = None
