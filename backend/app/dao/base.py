@@ -31,7 +31,7 @@ class BaseDAO(Generic[ModelType]):
             except SQLAlchemyError as e:
                 return None, e
         else:
-            raise TypeError("a_create method requires an AsyncSession")
+            return None, Exception("a_create method requires an AsyncSession")
 
     def sync_create(self, obj: ModelType) -> Tuple[
         Optional[ModelType], Optional[SQLAlchemyError]]:
@@ -49,7 +49,7 @@ class BaseDAO(Generic[ModelType]):
             except SQLAlchemyError as e:
                 return None, e
         else:
-            raise TypeError("sync_create method requires an Session")
+            return None, Exception("sync_create method requires an Session")
 
     async def async_create_many(self, objs: List[ModelType]) -> Tuple[
         Optional[List[ModelType]], Optional[SQLAlchemyError]]:
@@ -66,7 +66,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return None, e
         else:
-            raise TypeError("async_create_many method requires an AsyncSession")
+            return None, Exception("async_create_many method requires an AsyncSession")
 
     def sync_create_many(self, objs: List[ModelType]) -> Tuple[
         Optional[List[ModelType]], Optional[SQLAlchemyError]]:
@@ -83,7 +83,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return None, e
         else:
-            raise Exception("sync_create_many method requires an Session")
+            return None, Exception("sync_create_many method requires an Session")
 
     async def async_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[SQLAlchemyError]]:
         """
@@ -96,7 +96,7 @@ class BaseDAO(Generic[ModelType]):
             except SQLAlchemyError as e:
                 return None, e
         else:
-            raise Exception("async_get_by_uuid method requires an AsyncSession")
+            return None, Exception("async_get_by_uuid method requires an AsyncSession")
 
     async def sync_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[SQLAlchemyError]]:
         """
@@ -109,7 +109,7 @@ class BaseDAO(Generic[ModelType]):
             except SQLAlchemyError as e:
                 return None, e
         else:
-            raise Exception("sync_get_by_uuid method requires an Session")
+            return None, Exception("sync_get_by_uuid method requires an Session")
 
     async def async_get_objects_by_conditions(self, conditions: Dict[str, Any]) -> Tuple[
         Optional[Sequence[ModelType]], Optional[SQLAlchemyError]]:
@@ -183,7 +183,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return None, e
         else:
-            raise TypeError("async_update method requires an AsyncSession")
+            return None, Exception("async_update method requires an AsyncSession")
 
     async def sync_update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[SQLAlchemyError]]:
@@ -206,7 +206,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return None, e
         else:
-            raise TypeError("sync_update method requires an Session")
+            return None, Exception("sync_update method requires an Session")
 
     async def async_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[SQLAlchemyError]]:
@@ -235,7 +235,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return None, e
         else:
-            raise Exception("async_patch method requires an AsyncSession")
+            return None, Exception("async_patch method requires an AsyncSession")
 
     async def sync_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[SQLAlchemyError]]:
@@ -264,7 +264,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return None, e
         else:
-            raise Exception("sync_patch method requires an Session")
+            return None, Exception("sync_patch method requires an Session")
 
     async def async_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
         bool, Optional[SQLAlchemyError]]:
@@ -281,7 +281,7 @@ class BaseDAO(Generic[ModelType]):
                     exist_obj = result.scalars().first()
 
                     if exist_obj is None:
-                        raise Exception(f"{model_cls.__name__} not found")
+                        return False, Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now()
@@ -293,7 +293,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return False, e
         else:
-            raise Exception("async_soft_delete method requires an AsyncSession")
+            return False, Exception("async_soft_delete method requires an AsyncSession")
 
     def sync_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
         bool, Optional[SQLAlchemyError]]:
@@ -310,7 +310,7 @@ class BaseDAO(Generic[ModelType]):
                     exist_obj = result.scalars().first()
 
                     if exist_obj is None:
-                        raise Exception(f"{model_cls.__name__} not found")
+                        return None, Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now()
@@ -322,7 +322,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return False, e
         else:
-            raise TypeError("sync_soft_delete method requires an Session")
+            return False, Exception("sync_soft_delete method requires an Session")
 
     async def async_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[SQLAlchemyError]]:
         """
@@ -343,7 +343,7 @@ class BaseDAO(Generic[ModelType]):
 
                 return False, e
         else:
-            raise TypeError("async_delete method requires an AsyncSession")
+            return None, Exception("async_delete method requires an AsyncSession")
 
     def sync_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[SQLAlchemyError]]:
         """
@@ -364,4 +364,4 @@ class BaseDAO(Generic[ModelType]):
 
                 return False, e
         else:
-            raise TypeError("sync_delete method requires an Session")
+            return None, Exception("sync_delete method requires an Session")
