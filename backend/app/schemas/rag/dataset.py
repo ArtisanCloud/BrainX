@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Annotated, Optional, List
 
 from pydantic import constr, Field
 
@@ -63,7 +63,8 @@ class ResponseGetDataset(BaseSchema):
 
 
 class RequestCreateDataset(DatasetSchema):
-    name: constr(min_length=1)
+    name: Annotated[str, Field(min_length=1)]
+    # name: constr(min_length=1)
     # description: constr(min_length=1)
 
 
