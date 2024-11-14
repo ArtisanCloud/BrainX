@@ -28,6 +28,8 @@ class BaseStatus(IntEnum):
 class PlatformSourceType(Enum):
     WEB = 'web'
     MOBILE = 'mobile'
+    SYSTEM = 'system'
+    
 
 
 Base = declarative_base()

@@ -96,7 +96,7 @@ def upgrade() -> None:
 
         # Document info
         sa.Column('title', sa.String(), nullable=True),
-        sa.Column('document_type', sa.String(50), nullable=True),
+        sa.Column('document_type', sa.String(), nullable=True),
         sa.Column('document_meta', sa.JSON(), nullable=True),
         sa.Column('document_index', sa.Integer(), nullable=True),
 
