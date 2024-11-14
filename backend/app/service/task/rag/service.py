@@ -1,5 +1,7 @@
 from datetime import datetime
 from io import BytesIO
+import mimetypes
+import os
 from typing import Any, List, Tuple, Optional
 
 import requests
@@ -174,18 +176,32 @@ class RagProcessorTaskService:
         logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid}, "
                     f"loading resource UUID: {self.document.resource_uuid}, URL: {self.document.resource_url}")
         try:
+            file_data = None
             # save document ingestion status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.PARSING)
 
             # logger.info(f"Loading resource UUID: {resource_uuid}, URL: {resource_url}")
-            response = requests.get(get_storage_complete_url(self.document.resource_url))
-            response.raise_for_status()  # 抛出请求异常
+            complete_url, is_url = get_storage_complete_url(self.document.resource_url)
+            if is_url:
+                response = requests.get(complete_url)
+                response.raise_for_status()  # 抛出请求异常
 
-            content_type = response.headers.get('Content-Type')
-            if content_type is None:
-                raise Exception(f"Content-Type not found for document UUID: {str(self.document.uuid)}")
-
-            file_data = BytesIO(response.content)
+                content_type = response.headers.get('Content-Type')
+                if content_type is None:
+                    raise Exception(f"Content-Type not found for document UUID: {str(self.document.uuid)}")
+                file_data = BytesIO(response.content)
+            else:
+                print(complete_url)
+                if os.path.exists(complete_url):
+                    with open(complete_url, 'rb') as f:
+                        content = f.read()
+                        # 根据文件扩展名判断content type
+                        content_type, _ = mimetypes.guess_type(complete_url)
+                        file_data = BytesIO(content)
+                else:
+                    raise Exception(f"File not found: {complete_url}")
+                
+            
             # logger.info(f"File length: {file_data.getbuffer().nbytes} bytes")
 
         except RequestException as e:
@@ -199,7 +215,7 @@ class RagProcessorTaskService:
         try:
             # save document ingestion status
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.EXTRACTING)
-
+            
             data_extractor = DataExtractorFactory.get_extractor(content_type, file_data)
             # logger.info(f"Initialized {extractor.__class__.__name__} for document UUID: {resource_uuid}")
 

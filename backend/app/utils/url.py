@@ -1,17 +1,80 @@
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
+from pathlib import Path
+from typing import Tuple
+import platform
+import os
 from app.config.config import settings
 
 
-def get_storage_complete_url(resource_url: str) -> str:
-    # 解析 URL
+def get_project_root() -> str:
+    """获取项目根目录的绝对路径"""
+    current_file = Path(__file__).resolve()  # 获取当前文件的绝对路径
+    # 假设 utils 目录在项目根目录的 app/utils 下
+    project_root = current_file.parent.parent.parent
+    return str(project_root)
+
+
+def get_storage_complete_url(resource_url: str) -> Tuple[str, bool]:
+    """
+    获取完整的存储URL或文件路径
+
+    Args:
+        resource_url: 资源URL或路径
+
+    Returns:
+        Tuple[str, str]: (完整URL或文件路径, 类型['url'|'file'])
+    """
+    # 解析 URL 并处理编码
+    resource_url = unquote(resource_url)
     parsed_url = urlparse(resource_url)
 
-    # 检查 URL 是否包含网络协议 (例如 'http', 'https')
-    if not parsed_url.scheme:
-        # 如果没有协议，说明可能是相对路径，需要补充完整的 endpoint
-        complete_url = f"{settings.storage.host}/{resource_url.lstrip('/')}"
-    else:
-        # 如果已经是完整的 URL，直接返回
-        complete_url = resource_url
+    # 检查是否已经是完整的网络URL
+    if parsed_url.scheme in ("http", "https"):
+        return resource_url, True
 
-    return complete_url
+    # 如果是 file:// 协议，直接获取路径部分
+    if parsed_url.scheme == "file":
+        path = parsed_url.path
+        # Windows 路径需要去掉开头的额外斜杠
+        if platform.system() == "Windows" and path.startswith("/"):
+            path = path[1:]
+        return path, False
+
+    # 检查是否是绝对路径
+    if os.path.isabs(resource_url):
+        return resource_url, False
+
+    # 处理相对路径
+    if not parsed_url.scheme:
+        # 将相对路径转换为绝对路径（相对于项目根目录）
+        project_root = get_project_root()
+        abs_path = os.path.normpath(os.path.join(project_root, resource_url))
+        return abs_path, False
+
+    # 默认返回原始路径
+    return resource_url, False
+
+
+def is_file_exists(file_path: str) -> bool:
+    """检查文件是否存在"""
+    try:
+        return os.path.exists(file_path) and os.path.isfile(file_path)
+    except Exception:
+        return False
+
+
+# 使用示例：
+"""
+url, is_url = get_storage_complete_url("http://example.com/file.pdf")
+# 返回: ("http://example.com/file.pdf", True)
+
+url, is_url = get_storage_complete_url("/absolute/path/file.pdf")
+# Unix返回: ("file:///absolute/path/file.pdf", False)
+# Windows返回: ("file:///C:/absolute/path/file.pdf", False)
+
+url, is_url = get_storage_complete_url("relative/path/file.pdf")
+# 返回相对于项目根目录的完整file://路径
+
+url, is_url = get_storage_complete_url("storage/uploads/file.pdf")
+# 返回: ("http://storage-host/storage/uploads/file.pdf", True)
+"""
