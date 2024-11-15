@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Optional
+import uuid
 
 from app.core.rag.vector_store.interface import BaseVectorStore
 from app.models import DocumentSegment, User, Document
@@ -29,6 +30,7 @@ class BaseIndexing(ABC):
         segments = []
         for idx, node in enumerate(nodes):
             segment = DocumentSegment(
+                uuid=node.metadata.get("node_id", str(uuid.uuid4())),
                 tenant_uuid=self.document.tenant_uuid,
                 document_uuid=self.document.uuid,
                 dataset_uuid=self.document.dataset_uuid,
