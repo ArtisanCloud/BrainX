@@ -36,7 +36,7 @@ class LlamaIndexRetriever(BaseRetriever):
         # For example, return a new instance of LlamaIndex
         pass
 
-    def retrieve(self, query: str, top_k: int, filters: Dict = None) -> Tuple[
+    def retrieve(self, query: str, top_k: int=3, score_threshold: float=0.5, filters: Dict = None) -> Tuple[
         List[DocumentNode] | None, Exception | None]:
         try:
 

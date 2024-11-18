@@ -69,7 +69,7 @@ class LangchainRetriever(BaseRetriever):
             logger.info(f"Error in invoking documents: {e}", exc_info=settings.log.exc_info)
             return None, e
 
-    def retrieve(self, query: str, top_k: int, score_threshold: float = None, filters: Dict = None, **kwargs: Any) -> \
+    def retrieve(self, query: str, top_k: int=3, score_threshold: float=0.5, filters: Dict = None) -> \
     Tuple[
         List[DocumentNode] | None, Exception | None]:
 

@@ -22,6 +22,6 @@ class BaseRetriever(ABC):
     def get_vector_store(self) -> any:
         return self.vector_store
 
-    def retrieve(self, query: str, top_k: int, score_threshold: float, filters: Dict = None) -> Tuple[
+    def retrieve(self, query: str, top_k: int=3, score_threshold: float=0.5, filters: Dict = None) -> Tuple[
         List[DocumentNode] | None, Exception | None]:
         pass
