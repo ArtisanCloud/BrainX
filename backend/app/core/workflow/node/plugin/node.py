@@ -14,5 +14,5 @@ class PluginNode(BaseNode):
     def execute(self, state: GraphState):
         super().execute(state)
 
-        state.messages.append("~~~finish plugin node here ")
+        state["messages"].append("~~~finish plugin node here ")
         return state

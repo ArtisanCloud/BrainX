@@ -6,13 +6,13 @@ from .interface import BaseRetriever
 from .. import FrameworkDriverType
 from ..vector_store.interface import  VectorStoreDriver
 from ...ai_model.model_instance import ModelInstance
-
+from app.config.config import settings
 
 class RetrieverFactory:
     @staticmethod
     def get_retriever(framework_type: FrameworkDriverType,
                       vector_store_driver: VectorStoreDriver = None,
-                      collection_name: str = "embeddings",
+                      collection_name: str = settings.agent.vector_store_collection,
                       embedding_model_instance: Optional[ModelInstance] = None,
                       ) -> BaseRetriever:
 

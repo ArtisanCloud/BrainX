@@ -9,5 +9,5 @@ class StartNode(BaseNode):
     def execute(self, state: GraphState):
         super().execute(state)
 
-        state.messages.append("~~~finish start node here ")
+        state["messages"].append("~~~finish start node here ")
         return state

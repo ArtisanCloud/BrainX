@@ -70,7 +70,7 @@ def generate_storage_context(vector_store) -> StorageContext:
 
 
 async def generate_query_engine(llm):
-    query_embedding_table = settings.database.table_name_vector_store
+    query_embedding_table = settings.agent.vector_store_table_name
     vector_store, _ = get_vector_store_singleton(query_embedding_table)
     storage_context = generate_storage_context(vector_store)
 

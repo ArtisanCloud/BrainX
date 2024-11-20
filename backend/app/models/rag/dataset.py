@@ -1,4 +1,6 @@
+from datetime import datetime, timezone
 from typing import List
+import uuid
 
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Integer, Text
 from sqlalchemy.orm import relationship, mapped_column, Mapped
@@ -53,6 +55,42 @@ class Dataset(BaseORM):
         overlaps="app,connected_dataset_pivots,dataset,connected_app_pivots"
         # viewonly=True
     )
+
+    def create_dataset(
+        name: str = "Test Dataset",
+        tenant_uuid: uuid.UUID = None,
+        created_user_by: uuid.UUID = None,
+        **kwargs
+    ) -> "Dataset":
+        """Create a Dataset instance for testing purposes with minimum required fields"""
+        if tenant_uuid is None:
+            tenant_uuid = uuid.uuid4()
+        if created_user_by is None:
+            created_user_by = uuid.uuid4()
+
+        default_values = {
+            "uuid": uuid.uuid4(),
+            "tenant_uuid": tenant_uuid,
+            "created_user_by": created_user_by,
+            "name": name,
+            "description": "Test dataset description",
+            "avatar_url": "https://example.com/avatar.png",
+            "is_published": True,
+            "dataset_format": 1,
+            "import_type": 1,
+            "driver_type": 1,
+            "word_count": 1000,
+            "token_count": 1500,
+            "embedding_model": "text-embedding-ada-002",
+            "embedding_model_provider": "openai",
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        # Override defaults with any provided kwargs
+        default_values.update(kwargs)
+        
+        return Dataset(**default_values)
 
     def __repr__(self):
         description = self.description[:10] + '...' if self.description is not None else 'No description'
