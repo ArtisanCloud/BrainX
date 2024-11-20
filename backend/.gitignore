@@ -5,6 +5,8 @@ config.yaml
 logs
 test.db
 alembic.ini
+graph.png
+graph_test.png
 
 docker_dependency_supplement/*
 !docker_dependency_supplement/
