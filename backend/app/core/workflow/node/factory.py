@@ -1,6 +1,7 @@
 from app.core.workflow.node.base import BaseNode, NodeType
 from app.core.workflow.node.end.node import EndNode
 from app.core.workflow.node.knowledge.node import KnowledgeNode
+from app.core.workflow.node.llm.node import LLMNode
 from app.core.workflow.node.plugin.node import PluginNode
 from app.core.workflow.node.start.node import StartNode
 
@@ -19,6 +20,8 @@ class NodeFactory:
                     return PluginNode(node_data)
                 case NodeType.KNOWLEDGE.value:
                     return KnowledgeNode(node_data)
+                case NodeType.LLM.value:
+                    return LLMNode(node_data)
                 # 添加更多类型的 Node
                 case _:
                     raise Exception(f"Unknown node type: {node_type}")

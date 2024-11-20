@@ -137,7 +137,8 @@ class Graph:
     def run(self, initial_state: GraphState):
         self.save_graph_image()
 
-        self.graph.invoke(initial_state)
+        result = self.graph.invoke(initial_state)
+        return result
 
 
 def create_graph_from_json(graph_data: dict) -> Graph:

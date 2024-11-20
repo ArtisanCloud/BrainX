@@ -71,15 +71,21 @@ class BaseNode(ABC, BaseModel):
         super().__init__(**node_data)  # Ensure that the parent's __init__ method is called
         self.id = node_data.get("id", "")
         self.name = node_data.get("name", "")
+        self.description = node_data.get("description", "")
+        self.node_type = node_data.get("node_type", None)
         self.llm = node_data.get("llm", None)
 
         self._init_inputs(self.id, node_data.get("inputs", []))
+        self._init_output(self.id, node_data.get("output", []))
 
     def _init_inputs(self, node_id, input_data):
         if input_data:
             for var in input_data:
                 self.set_input(node_id, var)
-
+    def _init_output(self, node_id, output_data):
+        if output_data:
+            for var in output_data:
+                self.set_output(node_id, var)
     def set_context_manager(self, context_manager: ContextManager):
         self.context_manager = context_manager
 
@@ -94,11 +100,13 @@ class BaseNode(ABC, BaseModel):
 
     @abstractmethod
     def execute(self, state: GraphState):
-        print(f"BaseNode: ~~~ "
-              f"{self.name}: "
+        print(f"BaseNode Execute: ~~~ "
+              f"{self.name}:"
+              f"\n input vars: {self.input_vars}"
+              f"\n output vars: {self.output_vars}"
               # f"message: {state.messages}, "
               # f"context nodes length: {len(self.context_manager.get_node_list())}"
-              f"~~~")
+              f"\n~~~")
 
     def get_id(self):
         return self.id

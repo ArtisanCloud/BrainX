@@ -10,11 +10,12 @@ class VariableType(Enum):
     BOOLEAN = ("Boolean", bool)
     NUMBER = ("Number", Union[int, float])
     STRING = ("String", str)
-    OBJECT = ("Object", dict)
+    OBJECT = ("Object", Dict[str, Any])
     ARRAY_STRING = ("Array<String>", List[str])
     ARRAY_BOOLEAN = ("Array<Boolean>", List[bool])
     ARRAY_INTEGER = ("Array<Integer>", List[int])
     ARRAY_NUMBER = ("Array<Number>", List[Union[int, float]])
+    ARRAY_OBJECT = ("Array<Object>", List[Dict[str, Any]])
 
     # ARRAY_OBJECT = ("Array<Object>", List[Dict])
 
