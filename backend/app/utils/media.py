@@ -13,25 +13,25 @@ from app.logger import logger
 
 
 class ContentType(Enum):
-    PNG = 'image/png'
-    JPEG = 'image/jpeg'
-    GIF = 'image/gif'
-    PDF = 'application/pdf'
-    DOC = 'application/msword'
-    DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    XLS = 'application/vnd.ms-excel'  # Excel xls 文件格式
-    XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'  # Excel xlsx 文件格式
-    MARKDOWN = 'text/markdown'  # Markdown 文件格式
+    PNG = "image/png"
+    JPEG = "image/jpeg"
+    GIF = "image/gif"
+    PDF = "application/pdf"
+    DOC = "application/msword"
+    DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    XLS = "application/vnd.ms-excel"  # Excel xls 文件格式
+    XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  # Excel xlsx 文件格式
+    MARKDOWN = "text/markdown"  # Markdown 文件格式
 
 
 # 常见文件类型的魔术字节
 MAGIC_NUMBERS = {
-    ContentType.PNG: ['89504E47'],
-    ContentType.JPEG: ['FFD8FF'],
-    ContentType.GIF: ['47494638'],
-    ContentType.PDF: ['25504446'],
-    ContentType.DOC: ['D0CF11E0A1B11AE1'],  # DOC 文件
-    ContentType.DOCX: ['504B0304'],  # DOCX 文件
+    ContentType.PNG: ["89504E47"],
+    ContentType.JPEG: ["FFD8FF"],
+    ContentType.GIF: ["47494638"],
+    ContentType.PDF: ["25504446"],
+    ContentType.DOC: ["D0CF11E0A1B11AE1"],  # DOC 文件
+    ContentType.DOCX: ["504B0304"],  # DOCX 文件
 }
 
 
@@ -71,12 +71,16 @@ def image_base64_to_embed(image_string: str, clip_model: SentenceTransformer):
         raise e
     return image_embedding_list
 
-def remove_base64_images_prefix(base64_data: List[str]) -> str:
+
+def remove_base64_images_prefix(base64_data: List[str]) -> str | None:
+    if base64_data is None:
+        return None
     return [remove_base64_prefix(data) for data in base64_data]
+
 
 def remove_base64_prefix(base64_data: str) -> str:
     # Split the string by the comma separator
-    parts = base64_data.split(',', 1)
+    parts = base64_data.split(",", 1)
     if len(parts) > 1:
         # Return the part after the comma
         return parts[1]
@@ -87,7 +91,7 @@ def remove_base64_prefix(base64_data: str) -> str:
 
 # 获取内容类型通过 Base64 前缀
 def get_content_type_from_base64(base64_data: str) -> str:
-    match = re.match(r'^data:(.*?);base64,', base64_data)
+    match = re.match(r"^data:(.*?);base64,", base64_data)
     return match.group(1) if match else None
 
 
