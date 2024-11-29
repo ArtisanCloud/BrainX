@@ -16,6 +16,8 @@ from app.schemas.robot_chat.chat import RequestChat
 from app.service.robot_chat.agent_chat import agent_chat_event_generator
 from app.service.robot_chat.chat import chat_event_generator
 
+from app.database.seed.user import init_user_uuid
+
 router = APIRouter()
 
 
@@ -23,10 +25,11 @@ router = APIRouter()
 async def api_chat(
         request: Request,
         data: RequestChat,
-        session_user: User = Depends(get_session_user),
+        # session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
+        session_user = User(uuid=init_user_uuid)
         # print("conversationUUID:", data)
         return StreamingResponse(
             chat_event_generator(
@@ -57,10 +60,11 @@ async def api_chat(
 async def api_agent_chat(
         request: Request,
         data: RequestChat,
-        session_user: User = Depends(get_session_user),
+        # session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
+        session_user = User(uuid=init_user_uuid)
         return StreamingResponse(
             agent_chat_event_generator(
                 request=request, data=data,
@@ -93,10 +97,11 @@ async def api_agent_chat(
 async def api_agent_chat(
         request: Request,
         data: RequestOpenAIChat,
-        session_user: User = Depends(get_session_user),
+        # session_user: User = Depends(get_session_user),
         db: AsyncSession = Depends(get_async_db_session),
 ) -> StreamingResponse:
     try:
+        session_user = User(uuid=init_user_uuid)
         return StreamingResponse(
             agent_openai_chat_event_generator(
                 request=request, data=data,

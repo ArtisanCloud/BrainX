@@ -21,8 +21,8 @@ async def get_session_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    user_uuid = request.session[auth_user_uuid_key]
-    # print("get session user:", user_uuid)
+    user_uuid = request.session.get(auth_user_uuid_key)
+    raise session_exception
     if user_uuid is None:
         raise session_exception
 
