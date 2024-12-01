@@ -22,7 +22,6 @@ async def get_session_user(
     )
 
     user_uuid = request.session.get(auth_user_uuid_key)
-    raise session_exception
     if user_uuid is None:
         raise session_exception
 

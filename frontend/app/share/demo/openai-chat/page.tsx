@@ -84,7 +84,8 @@ const DemoOpenAIChatPage = () => {
         temperature: values.temperature,
       } as RequestSendOpenAIChat,
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc",
+        // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc",
+		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeF9EbkFWVzJlNnZkZElQT1BJIiwibmFtZSI6InBvd2VyeCIsImV4cCI6MTczNTQ0MTA2Mn0.eJSseA5hNEMaMY9cKwQWy6zoqTKGxlb7PVyYhUZ88xo",
       onopen(response: any) {
         // 滑向下方
         // scrollToBottom()
