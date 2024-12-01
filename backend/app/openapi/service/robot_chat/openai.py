@@ -63,7 +63,7 @@ async def agent_openai_chat_event_generator(
             )
             # print(res.model_dump())
             # yield f"{json.dumps(res.model_dump())}\n\n"
-            yield f"data:{json.dumps(res.model_dump())}\n\n"
+            yield f"data: {json.dumps(res.model_dump())}\n\n"
             await asyncio.sleep(0.1)  # 控制消息发送频率
 
     except Exception as e:
