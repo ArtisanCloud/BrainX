@@ -21,7 +21,7 @@ export interface Usage {
 
 export interface SSEOpenAIChoice {
     index: number;
-    message: {
+    delta: {
         role: string;
         content: string;
     };

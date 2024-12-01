@@ -84,8 +84,8 @@ const DemoOpenAIChatPage = () => {
         temperature: values.temperature,
       } as RequestSendOpenAIChat,
       token:
-        // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc",
-		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeF9EbkFWVzJlNnZkZElQT1BJIiwibmFtZSI6InBvd2VyeCIsImV4cCI6MTczNTQ0MTA2Mn0.eJSseA5hNEMaMY9cKwQWy6zoqTKGxlb7PVyYhUZ88xo",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc",
+		// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeF9EbkFWVzJlNnZkZElQT1BJIiwibmFtZSI6InBvd2VyeCIsImV4cCI6MTczNTQ0MTA2Mn0.eJSseA5hNEMaMY9cKwQWy6zoqTKGxlb7PVyYhUZ88xo",
       onopen(response: any) {
         // 滑向下方
         // scrollToBottom()
@@ -101,19 +101,19 @@ const DemoOpenAIChatPage = () => {
         try {
           let objMsg = "";
           let errorMessage = "";
-		  console.log(msg)
+		//   console.log(msg)
           const parsedMsg: SSEOpenAIMessage = JSON.parse(msg.data);
 		//   console.log("parsedMsg", parsedMsg);
           if (parsedMsg.status == "processing") {
             return;
           } else {
             if (parsedMsg.status == "error") {
-              errorMessage = parsedMsg.choices[0].message.content;
+              errorMessage = parsedMsg.choices[0].delta.content;
             } else if (parsedMsg.status == "finished") {
               handleChatClosed();
               return;
             }else{
-				objMsg = FormatSSEMessageReply(parsedMsg.choices[0].message.content);
+				objMsg = FormatSSEMessageReply(parsedMsg.choices[0].delta.content);
 				setAnswer((prevAnswer) => prevAnswer + objMsg);
 			}
           }

@@ -30,7 +30,7 @@ class ChatResponseMessage(BaseModel):
 
 class Choice(BaseModel):
     index: int
-    message: ChatResponseMessage
+    delta: ChatResponseMessage
     logprobs: Optional[None] = None
     finish_reason: Optional[str] = None
 

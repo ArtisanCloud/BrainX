@@ -55,7 +55,7 @@ async def agent_openai_chat_event_generator(
                 choices=[
                     Choice(
                         index=0,
-                        message=ChatResponseMessage(role="assistant", content=content),
+                        delta=ChatResponseMessage(role="assistant", content=content),
                         finish_reason="stop"
                     )
                 ],
