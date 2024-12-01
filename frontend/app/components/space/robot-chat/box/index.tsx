@@ -183,7 +183,7 @@ const ChatBox = () => {
       messages: [
         {
           type: "user",
-          // role: 'user',
+          role: 'user',
           content: currentConversation.currentPrompt,
         },
       ],

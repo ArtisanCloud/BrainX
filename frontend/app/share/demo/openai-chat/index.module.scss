@@ -1,0 +1,40 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  //border: #ff006a 1px solid;
+  width: 100%;
+  padding: 20px 12px 6px 6px;
+
+  .form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    //border: #cbad0d 1px solid;
+
+    input,
+    textarea,
+    button{
+      padding: 30px;
+      //background-color: var(--bg);
+      //color: var(--text);
+      //border: 2px solid #2e374a;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
+
+    .input {
+      width: 45%;
+    }
+  }
+  .separate{
+    font-size: 12px;
+  }
+
+  .result{
+    padding: 20px;
+  }
+  .hide {
+    display: none;
+  }
+}

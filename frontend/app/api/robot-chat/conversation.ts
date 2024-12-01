@@ -3,7 +3,7 @@ import {PowerModel, RequestPagination, Response, ResponsePagination} from "@/app
 import {unstable_noStore as noStore} from "next/dist/server/web/spec-extension/unstable-no-store";
 
 export interface Message extends PowerModel {
-	role?: string
+	role: string
 	content: string
 	type: string
 }

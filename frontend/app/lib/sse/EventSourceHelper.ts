@@ -23,6 +23,7 @@ interface EventSourceOptions {
   onmessage: OnMessageCallback;
   onclose: OnCloseCallback;
   onerror: OnErrorCallback;
+  token?: string;
 }
 
 const useSSE = () => {
@@ -30,12 +31,21 @@ const useSSE = () => {
     onerror(err);
   }
 
+  function getSSEAccessToken() {
+    const token = Cookies.get(token_key)
+    return token
+  }
+
   function connectEventSource(options: EventSourceOptions) {
     const { method, url, body } = options;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    const token = Cookies.get(token_key)
+    
+    let token = getSSEAccessToken()
+    if (options.token !=""){
+      token = options.token
+    }
     // console.log("connect:",token)
     if (token) {
       headers['Authorization'] = `Bearer ${token}`

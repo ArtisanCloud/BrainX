@@ -16,7 +16,7 @@ const DemoChatPage = () => {
 
 	const [loading, setLoading] = useState<boolean>(false);
 
-	const streamUrl = GetDemoChatSSEActionUrl('chat');
+	const streamUrl = GetDemoChatSSEActionUrl('agent/openai/chat');
 	const sse = useSSE();
 
 	const formRef = useRef<any>(null); // 使用useRef保存Form的引用

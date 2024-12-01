@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
 	const isHomePage = request.nextUrl.pathname === '/';
 
 	const currentUserToken = request.cookies.get(token_key)?.value
-	// console.log( currentUserToken)
+	// console.log("currentUserToken", currentUserToken)
 
 	if (!currentUserToken && !isAuthPath && !isHomePage) {
 		return Response.redirect(new URL('/user/login', request.url))
