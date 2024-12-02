@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {dracula} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 
 const markdownTextTest = `
@@ -27,7 +27,7 @@ console.log(aJsVariable);
 
 `;
 
-function MarkdownPreview({markdownText}) {
+function MarkdownPreview({ markdownText }: { markdownText: string }) {
   return (
     <section>
       <ReactMarkdown
@@ -35,14 +35,15 @@ function MarkdownPreview({markdownText}) {
         components={{
           code({ className, children, ...rest }) {
             const match = /language-(\w+)/.exec(className || "");
+            const content = String(children).replace(/\n$/, '');
+
             return match ? (
               <SyntaxHighlighter
                 PreTag="div"
                 language={match[1]}
                 style={dracula}
-                {...rest}
               >
-                {children}
+                {content}
               </SyntaxHighlighter>
             ) : (
               <code {...rest} className={className}>

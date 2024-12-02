@@ -22,14 +22,20 @@ const DemoOpenAIChatPage = () => {
 
   const formRef = useRef<any>(null); // 使用useRef保存Form的引用
 
-  const onFinish: FormProps<RequestChat>["onFinish"] = async (
-    values: RequestChat
+  const onFinish: FormProps<RequestSendOpenAIChat>["onFinish"] = async (
+    values: RequestSendOpenAIChat
   ) => {
     // console.log(loading)
     if (!loading) {
-      values.question = formRef.current.question;
-      values.llm = formRef.current.llm;
-      values.temperature = formRef.current.temperature;
+      values.messages = [
+        {
+          type: "user",
+          role: "user",
+          content: formRef.current.question,
+        },
+      ];
+      values.model = formRef.current.llm;
+      // values.temperature = formRef.current.temperature;
       // values.llm = selectedLlm!
       console.log("onFinish value:", values);
       actionSend(values);
@@ -38,7 +44,7 @@ const DemoOpenAIChatPage = () => {
     // console.log('Success:', values.question);
   };
 
-  const onFinishFailed: FormProps<RequestChat>["onFinishFailed"] = (
+  const onFinishFailed: FormProps<RequestSendOpenAIChat>["onFinishFailed"] = (
     errorInfo: any
   ) => {
     console.log("Failed:", errorInfo);
@@ -52,10 +58,10 @@ const DemoOpenAIChatPage = () => {
     // refInput.current!.value = '';
   };
 
-  const actionSend = (values: RequestChat) => {
+  const actionSend = (values: RequestSendOpenAIChat) => {
     // 执行发送消息的操作
     setLoading(true);
-    const message = values.question;
+    const message = values.messages[0].content;
     if (message.trim() === "") {
       setLoading(false);
       return;
@@ -72,16 +78,16 @@ const DemoOpenAIChatPage = () => {
       body: {
         conversation_uuid: "",
         app_uuid: "7c189a18-ef3f-41fd-bda1-1607772020bd",
-        model: values.llm,
+        model: values.model,
         images: [],
         messages: [
           {
             type: "user",
             role: "user",
-            content: values.question,
+            content: values.messages[0].content,
           },
         ],
-        temperature: values.temperature,
+        // temperature: values.temperature,
       } as RequestSendOpenAIChat,
       token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoX2FjY2Vzc19rZXkiOiJrZXlfcG93ZXJfeCIsIm5hbWUiOiJwb3dlcngiLCJleHAiOjE3MzU0NDExNjB9.GEyJaXs9Ul4MCwjSKckCsKZAh_BMWapMzONAX1_ZDnc",

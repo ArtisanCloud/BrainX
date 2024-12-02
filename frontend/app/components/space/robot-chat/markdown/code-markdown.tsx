@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {dark} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const markdownText = `
 # React Markdown Example
@@ -19,14 +19,16 @@ function MarkdownComponent() {
         components={{
           code({ className, children, ...rest }) {
             const match = /language-(\w+)/.exec(className || "");
+            const content = String(children).replace(/\n$/, '');
+
             return match ? (
               <SyntaxHighlighter
                 PreTag="div"
                 language={match[1]}
                 style={dark}
-                {...rest}
+                // {...rest}
               >
-                {children}
+                {content}
               </SyntaxHighlighter>
             ) : (
               <code {...rest} className={className}>

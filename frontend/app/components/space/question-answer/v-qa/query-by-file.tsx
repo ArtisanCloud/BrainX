@@ -117,11 +117,8 @@ const VisualQuestionAnswerByFile = () => {
 								 className={`${styles.separate} ${answer != '' ? "" : styles.hide}`}>结果如下</Divider>
 				<div className={`${styles.result} ${answer != "" ? "" : styles.hide}`}>
 					<Typography>
-						{answer?.split('\n').map((line, index) => (
-							<Fragment key={index}>
-								{line}
-								{index !== answer.split('\n').length - 1 && <br/>}
-							</Fragment>
+						{answer.split('\n').map((line, index) => (
+							<div key={index}>{line}</div>
 						))}
 					</Typography>
 				</div>

@@ -43,10 +43,11 @@ const useSSE = () => {
     };
     
     let token = getSSEAccessToken()
-    if (options.token !=""){
+    // console.log('getSSEAccessToken', token);
+    if (options.token !="" && options.token != undefined){
       token = options.token
     }
-    // console.log("connect:",token)
+    // console.log("options.token:",token)
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
     }
