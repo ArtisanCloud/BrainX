@@ -73,7 +73,7 @@ async def add_document_content(
         documents = []
 
         for index, media_source in enumerate(data.media_resources):
-            if media_source.is_local_storage:
+            if media_source.is_local_stored:
                 resource_url, _ = get_storage_complete_url(media_source)
             else:
                 resource_url = MediaResourceService.get_oss_resource_url(media_source)
