@@ -79,7 +79,7 @@ class DocumentSchema(BaseObjectSchema):
             paused_by=str(obj.paused_by) if obj.paused_by else None,
             paused_at=obj.paused_at,
             error_message=obj.error_message,
-            error_at=obj.error_at,
+            error_at=format_datetime(obj.error_at),
             is_archived=obj.is_archived,
             archived_reason=obj.archived_reason,
             archived_by=str(obj.archived_by) if obj.archived_by else None,

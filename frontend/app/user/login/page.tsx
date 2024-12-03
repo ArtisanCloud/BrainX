@@ -17,17 +17,18 @@ export default function LoginPage() {
 
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
-  const sessionLogin = useSessionStore((state) => state.sessionLogin);  // 从 store 中获取 sessionLogin 方法
+  const {sessionLogin, sessionLogout } = useSessionStore();  // 从 store 中获取 sessionLogin 方法
 
   // 读取 cookie 的用户信息
   useEffect(() => {
     const userCookie = Cookies.get(account_key);
     const tokenCookie = Cookies.get(token_key);
-
-    if (userCookie && tokenCookie) {
-      sessionLogin(JSON.parse(userCookie), { access_token: tokenCookie, expires_in: 7 } as Token); // 假设 token 有效期为 7 天
+    // console.log("userCookie", userCookie)
+    // console.log("tokenCookie", tokenCookie)
+    if (userCookie || tokenCookie) {
+      sessionLogout()
     }
-  }, [sessionLogin]); // 依赖 sessionLogin
+  }, [sessionLogout]); // 依赖 sessionLogin
 
   async function handleSubmit(values: { account: string; password: string }) {
 
