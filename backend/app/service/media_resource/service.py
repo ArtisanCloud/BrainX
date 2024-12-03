@@ -65,6 +65,10 @@ class MediaResourceService:
     def get_oss_resource_uri(bucket: str, key: str) -> str:
         endpoint = settings.storage.minio.endpoint
         return urljoin(endpoint, f"{bucket}/{key}")
+    
+    def get_oss_resource_url(resource: MediaResource) -> str:
+        endpoint = settings.storage.host
+        return urljoin(endpoint, f"{resource.url}")
 
     async def make_oss_resource(self, bucket: str, file: UploadFile) -> Tuple[
         MediaResource | None, SQLAlchemyError | None]:

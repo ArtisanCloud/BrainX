@@ -6,18 +6,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import User, DatasetSegmentRule
 from app.models.base import PlatformSourceType
 from app.schemas.rag.document import DocumentSchema, RequestAddDocumentContent
+from app.service.media_resource.service import MediaResourceService
 from app.service.rag.document.list import transform_documents_to_reply
 from app.service.rag.dataset.service import DatasetService
 from app.service.rag.document.service import DocumentService
 
-from app.models.rag.document import Document, DocumentStatus, DocumentType, DataSourceType, ContentType, \
-    DocumentIndexingStatus
+from app.models.rag.document import (
+    Document,
+    DocumentStatus,
+    DocumentType,
+    DataSourceType,
+    ContentType,
+    DocumentIndexingStatus,
+)
+from app.utils.url import get_storage_complete_url
 
 
 async def add_document_content(
-        db: AsyncSession,
-        user: User,
-        data: RequestAddDocumentContent,
+    db: AsyncSession,
+    user: User,
+    data: RequestAddDocumentContent,
 ) -> Tuple[List[DocumentSchema] | None, Exception | None]:
     try:
         # 获取资源文件
@@ -26,7 +34,9 @@ async def add_document_content(
 
         # 先获取dataset对象，确认用户拥有这个dataset
         service_dataset = DatasetService(db)
-        dataset, exception = await service_dataset.dataset_dao.async_get_by_uuid(data.dataset_uuid)
+        dataset, exception = await service_dataset.dataset_dao.async_get_by_uuid(
+            data.dataset_uuid
+        )
         if exception is not None:
             return None, exception
         if dataset is None:
@@ -35,7 +45,9 @@ async def add_document_content(
             return None, Exception("user not authorized to access this dataset")
 
         # 加载dataset的segment_rule
-        dataset, exception = await service_dataset.dataset_dao.load_segment_rule(dataset)
+        dataset, exception = await service_dataset.dataset_dao.load_segment_rule(
+            dataset
+        )
 
         if exception is not None:
             return None, exception
@@ -61,27 +73,35 @@ async def add_document_content(
         documents = []
 
         for index, media_source in enumerate(data.media_resources):
-            documents.append(Document(
-                tenant_uuid=user.tenant_owner_uuid,
-                dataset_uuid=dataset.uuid,
-                data_source_type=DataSourceType.Upload_FILE.value,
-                resource_uuid=media_source.uuid,
-                resource_url=media_source.url,
-                status=DocumentStatus.DRAFT,
-                type=DocumentType.TEXT,
-                content_type=ContentType.LOCAL_DOCUMENT.value,
-                dataset_process_rule_uuid=segment_rule.uuid,
-                created_source=PlatformSourceType.WEB.value,
-                created_user_by=user.uuid,
-                indexing_status=DocumentIndexingStatus.PENDING.value,
-                title=media_source.filename,
-                document_type=media_source.content_type,
-                # document_meta="",
-                document_index=index,
-            ))
+            if media_source.is_local_storage:
+                resource_url, _ = get_storage_complete_url(media_source)
+            else:
+                resource_url = MediaResourceService.get_oss_resource_url(media_source)
+            documents.append(
+                Document(
+                    tenant_uuid=user.tenant_owner_uuid,
+                    dataset_uuid=dataset.uuid,
+                    data_source_type=DataSourceType.Upload_FILE.value,
+                    resource_uuid=media_source.uuid,
+                    resource_url=resource_url,
+                    status=DocumentStatus.DRAFT,
+                    type=DocumentType.TEXT,
+                    content_type=ContentType.LOCAL_DOCUMENT.value,
+                    dataset_process_rule_uuid=segment_rule.uuid,
+                    created_source=PlatformSourceType.WEB.value,
+                    created_user_by=user.uuid,
+                    indexing_status=DocumentIndexingStatus.PENDING.value,
+                    title=media_source.filename,
+                    document_type=media_source.content_type,
+                    # document_meta="",
+                    document_index=index,
+                )
+            )
 
         service_document = DocumentService(db)
-        segment_rule, documents, exception = await service_document.add_content(segment_rule, documents)
+        segment_rule, documents, exception = await service_document.add_content(
+            segment_rule, documents
+        )
         if exception is not None:
             raise exception
 
