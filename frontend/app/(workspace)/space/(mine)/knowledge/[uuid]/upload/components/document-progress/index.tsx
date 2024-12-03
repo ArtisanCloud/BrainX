@@ -49,9 +49,9 @@ const DocumentProgress = (
 
 
         // 检查所有任务的当前进度是否为总进度（完成状态）
-        const allCompleted = newProgressStatus.every(status => status === 1);
+        const allCompleted = newProgressStatus.every(status => status === 100);
 
-
+        console.log("allCompleted", allCompleted)
         if (allCompleted) {
           setAllCompleted(true)
           clearInterval(intervalId); // 停止轮询

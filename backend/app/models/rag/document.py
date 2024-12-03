@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import IntEnum, auto
 
 from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Text, Integer, TIMESTAMP, Float, JSON
 from sqlalchemy.orm import relationship, mapped_column, Mapped
@@ -40,16 +40,17 @@ class DocumentStatus(IntEnum):
 
 
 class DocumentIndexingStatus(IntEnum):
-    PENDING = 1  # 文档已提交，等待开始处理
-    PARSING = 2  # 正在解析加载文档内容
-    EXTRACTING = 3  # 正在提取文档的关键部分或内容（如提取文本片段）
-    CLEANING = 4  # 正在清理或预处理提取的内容（如去邮件，url，或者记录清理等）
-    SPLITTING = 5  # 正在进行主要处理分段步骤（如splitter）
-    INDEXING = 6  # 正在进行拆分内容向量化处理
-    COMPLETED = 7  # 文档处理完成，所有步骤成功
-    ARCHIVED = 8  # 文档已归档，可能不再进行处理
-    PAUSE = 9  # 处理过程中暂停了
-    ERROR = 10  # 处理过程中出现错误
+    PENDING = auto()      #  文档已提交，等待开始处理
+    PARSING = auto()      #  正在解析加载文档内容
+    EXTRACTING = auto()   #  正在提取文档的关键部分或内容（如提取文本片段）
+    CLEANING = auto()     #  正在清理或预处理提取的内容（如去邮件，url，或者记录清理等）
+    SPLITTING = auto()    #  正在进行主要处理分段步骤（如splitter）
+    INDEXING = auto()     #  正在进行拆分内容向量化处理
+    STORING = auto()      #  正在进行向量数据持久化保存处理
+    COMPLETED = auto()    #  文档处理完成，所有步骤成功
+    ARCHIVED = auto()     #  文档已归档，可能不再进行处理
+    PAUSE = auto()        #  处理过程中暂停了
+    ERROR = auto()        #  处理过程中出现错误
 
     @classmethod
     def processing_statuses(cls):
@@ -59,7 +60,8 @@ class DocumentIndexingStatus(IntEnum):
             cls.EXTRACTING.value,
             cls.CLEANING.value,
             cls.SPLITTING.value,
-            cls.INDEXING.value
+            cls.INDEXING.value,
+            cls.STORING.value
         ]
 
     @classmethod

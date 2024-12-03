@@ -80,8 +80,8 @@ class LangchainIndexer(BaseIndexing):
             word_count = 0
             token = 0
             result_list = vector_store.add_documents(nodes)
-            # for node, vector in zip(nodes, result_list):
-            #     word_count += len(node.page_content.split())
+            for node, vector in zip(nodes, result_list):
+                word_count += len(node.page_content.split())
 
             # 如果一切顺利，返回None表示没有异常
             return word_count, token, None
