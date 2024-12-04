@@ -108,3 +108,12 @@ class DocumentDAO(BaseDAO[Document]):
         except SQLAlchemyError as e:
             print("error: ", e)
             return None, e
+
+    def set_word_count(self, document: Document, word_count: int) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
+        try:
+            document.word_count = word_count
+            self.db.flush()
+            self.db.refresh(document)
+            return document, None
+        except SQLAlchemyError as e:
+            return None, e

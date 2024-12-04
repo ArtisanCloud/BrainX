@@ -285,7 +285,7 @@ class RagProcessorTaskService:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.COMPLETED)
 
             # save word count and used token
-            # self.document_dao.set_word_count(self.document, word_count)
+            self.document_dao.set_word_count(self.document, word_count)
 
 
         except Exception as e:
