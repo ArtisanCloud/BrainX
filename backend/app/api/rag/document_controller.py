@@ -249,7 +249,9 @@ async def api_re_process_document(
                                      async_get_by_uuid(data.document_uuid))
         if exception is not None:
             raise exception
-
+        if document is None:
+            raise Exception("document not found")
+        
         # print(document)
         task_id = str(uuid.uuid4())
         with get_sync_db_session() as sync_db:

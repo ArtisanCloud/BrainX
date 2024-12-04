@@ -92,11 +92,7 @@ class BaseDAO(Generic[ModelType]):
         if isinstance(self.db, AsyncSession):
             try:
                 result = await self.db.execute(select(self.model).filter(self.model.uuid == uuid))
-                item = result.scalar_one_or_none()
-                if item is None:
-                    # 当查询结果为空时，抛出 NoResultFound 异常
-                    return None, Exception(f"No {self.model.__name__} found for uuid: {uuid}")
-                return item, None
+                return result.scalar_one_or_none(), None
             except SQLAlchemyError as e:
                 return None, e
         else:
@@ -109,11 +105,7 @@ class BaseDAO(Generic[ModelType]):
         if isinstance(self.db, Session):
             try:
                 result = self.db.execute(select(self.model).filter(self.model.uuid == uuid))
-                item = result.scalar_one_or_none()
-                if item is None:
-                    # 当查询结果为空时，抛出 NoResultFound 异常
-                    return None, Exception(f"No {self.model.__name__} found for uuid: {uuid}")
-                return item, None
+                return result.scalar_one_or_none(), None
             except SQLAlchemyError as e:
                 return None, e
         else:
