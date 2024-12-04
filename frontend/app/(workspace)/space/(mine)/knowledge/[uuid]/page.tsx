@@ -85,7 +85,7 @@ const DatasetDetailPage = () => {
 		...(documents?.length > 0
 			? documents.map(doc => ({
 				label: doc.title,
-				value: doc.id
+				value: doc.id || doc.uuid || `doc-${doc.title}`
 			}))
 			: [])
 	];

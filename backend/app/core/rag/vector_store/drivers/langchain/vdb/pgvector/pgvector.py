@@ -28,7 +28,7 @@ class PGVectorStore(BaseVectorStore):
         self.vector_store = PGVector(
             embeddings=embedding_model,
             connection=self.connection_string,
-            collection_name=collection_name,
+            # collection_name=collection_name,
             use_jsonb=config.use_jsonb,
             # embedding_length=768,
         )
