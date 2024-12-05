@@ -10,4 +10,5 @@ class Agent(BaseModel):
     vdb: str = VectorStoreType.PGVECTOR.value
     vector_store_table_name: str = "langchain_pg_embedding"
     vector_store_collection: str = "rag_embeddings"
+    router_llm: str
     pgvector: PGVector

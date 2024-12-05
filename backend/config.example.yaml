@@ -83,6 +83,7 @@ agent:
   vdb: pgvector
   vector_store_table_name: "langchain_pg_embedding"
   vector_store_collection: "rag_embeddings"
+  router_llm: gpt-3.5-turbo
   pgvector:
     # 默认使用postgres，和database用的dsn一致，除非你需要自己定义自己另外地址的pgvector地址
     url: ""

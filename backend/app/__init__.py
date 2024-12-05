@@ -3,8 +3,6 @@ import os
 from app.config.config import settings
 from app.core.libs.storage.storage import Storage
 
-from app.schedule.scheduler import Scheduler
-
 # 全局变量，用于存储 Storage 实例
 client_storage: Storage | None = None
 default_local_storage_path = './storage/public/static/'
