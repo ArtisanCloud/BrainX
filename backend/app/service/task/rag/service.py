@@ -224,6 +224,10 @@ class RagProcessorTaskService:
             # convert blocks into a whole text block
             document_content = BaseTextSplitter.merge_blocks_into_text(blocks)
 
+            # print("document content:",document_content)
+            if document_content is None or document_content == "":
+                raise Exception("parsed document content is empty")
+
         except Exception as e:
             self.document_dao.set_indexing_status(self.document, DocumentIndexingStatus.ERROR, error=str(e))
             logger.error(f"Task Failed to extract document segments for document UUID: {str(self.document.uuid)} - {e}")

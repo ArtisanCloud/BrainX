@@ -20,6 +20,52 @@ class LLMModel(Enum):
     OLLAMA_LLAMA3_2 = 'llama3.2'
     OLLAMA_LLAMA3_2_VISION = 'llama3.2-vision'
 
+    @classmethod
+    def is_baidu_model(cls, llm: str) -> bool:
+        """判断是否为百度模型"""
+        return any(
+            llm == model.value for model in cls 
+            if model.name.startswith('BAIDU_')
+        )
+
+    @classmethod
+    def is_openai_model(cls, llm: str) -> bool:
+        """判断是否为OpenAI模型"""
+        return any(
+            llm == model.value for model in cls 
+            if model.name.startswith('OPENAI_')
+        )
+
+    @classmethod
+    def is_kimi_model(cls, llm: str) -> bool:
+        """判断是否为Kimi模型"""
+        return any(
+            llm == model.value for model in cls 
+            if model.name.startswith('KIMI_')
+        )
+    
+    @classmethod
+    def is_ollama_model(cls, llm: str) -> bool:
+        """判断是否为Ollama模型"""
+        return any(
+            llm == model.value for model in cls 
+            if model.name.startswith('OLLAMA_')
+        )
+
+    @classmethod
+    def get_model_brand(cls, llm: str) -> str:
+        """获取模型的品牌"""
+        for model in cls:
+            if model.value == llm:
+                brand = model.name.split('_')[0]
+                return brand
+        return "UNKNOWN"
+
+    @classmethod
+    def is_same_brand(cls, llm1: str, llm2: str) -> bool:
+        """判断两个模型是否属于同一品牌"""
+        return cls.get_model_brand(llm1) == cls.get_model_brand(llm2)
+    
 class VisualQueryModelSingleton:
     _instance_processor = None
     _instance_model = None

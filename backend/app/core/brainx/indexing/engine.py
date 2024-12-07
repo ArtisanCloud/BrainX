@@ -24,20 +24,12 @@ def bind_llm(llm: str, temperature=0.5):
         api_base=settings.openai.api_base
     )
     match llm:
-        case (
-        LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value
-        | LLMModel.BAIDU_ERNIE_3_D_5_8K.value
-        | LLMModel.BAIDU_ERNIE_4_D_0_8K.value
-        | LLMModel.BAIDU_ERNIE_Speed_128K.value
-        | LLMModel.BAIDU_ERNIE_Lite_8K.value
-        ):
+        case _ if LLMModel.is_baidu_model(llm):
             mdl_llm = get_ollama_llm(llm, temperature, streaming=False)
-        case LLMModel.OLLAMA_13B_ALPACA_16K.value:
+        case _ if LLMModel.is_ollama_model(llm):
             # print("match:", llm, LLMModel.OLLAMA_13B_ALPACA_16K)
             mdl_llm = get_ollama_llm(llm, temperature, streaming=False)
-        case LLMModel.OLLAMA_GEMMA_2B.value:
             # print("match:", llm, LLMModel.OLLAMA_GEMMA_2B)
-            mdl_llm = get_ollama_llm(llm, temperature, streaming=False)
 
     print("llm", mdl_llm)
     # return mdl_llm

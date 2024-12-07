@@ -28,28 +28,14 @@ async def event_api_generator(request: Request, llm: str, stream_response: Itera
 
             if token:
                 content = ""
-                if llm in [
-                    LLMModel.OPENAI_GPT_3_D_5_TURBO.value,
-                    LLMModel.KIMI_MOONSHOT_V1_8K.value,
-                ]:
-                    # print("token content:", repr(token.content), end='\n')
+                if LLMModel.is_openai_model(llm) or LLMModel.is_kimi_model(llm):
                     if isinstance(token, str):
                         content = token
                     elif isinstance(token.content, str):
                         # print("turbo", repr(token.content), end='\n')
                         content = token.content
 
-                elif llm in [
-                    LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value,
-                    LLMModel.BAIDU_ERNIE_3_D_5_8K.value,
-                    LLMModel.BAIDU_ERNIE_4_D_0_8K.value,
-                    LLMModel.BAIDU_ERNIE_Speed_128K.value,
-                    LLMModel.BAIDU_ERNIE_Lite_8K.value,
-                    LLMModel.OLLAMA_GEMMA_2B.value,
-                    LLMModel.OLLAMA_GEMMA_7B.value,
-                    LLMModel.OLLAMA_13B_ALPACA_16K.value,
-                    LLMModel.OLLAMA_LLAMA3_2.value,
-                ]:
+                elif LLMModel.is_baidu_model(llm) or LLMModel.is_ollama_model(llm):
                     if isinstance(token, str):
                         content = token
                     elif isinstance(token.content, str):

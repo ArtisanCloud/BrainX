@@ -83,19 +83,13 @@ def get_chat_prompt_template(app: App) -> ChatPromptTemplate:
 def chat_by_llm(input_data: Dict, llm: str, app: App = None, temperature: float = 0.5, stream_handler=None):
     # 初始化一个大模型
     # OpenAI的模型
-    if llm == LLMModel.OPENAI_GPT_3_D_5_TURBO.value:
+    if LLMModel.is_openai_model(llm):
         chat_llm = get_openai_llm(llm, temperature, True)
     # Kimi的模型
-    elif llm == LLMModel.KIMI_MOONSHOT_V1_8K.value:
+    elif LLMModel.is_kimi_model(llm):
         chat_llm = get_kimi_llm(llm, temperature, True)
     # 千帆的模型
-    elif llm == (
-            LLMModel.BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED.value
-            | LLMModel.BAIDU_ERNIE_3_D_5_8K.value
-            | LLMModel.BAIDU_ERNIE_4_D_0_8K.value
-            | LLMModel.BAIDU_ERNIE_Speed_128K.value
-            | LLMModel.BAIDU_ERNIE_Lite_8K.value
-    ):
+    elif LLMModel.is_baidu_model(llm):
         chat_llm = get_baidu_qianfan_llm(llm, temperature, True)
     # Ollama的模型
     else:
