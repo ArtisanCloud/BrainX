@@ -108,6 +108,12 @@ openai:
   api_key: "YOUR_API_KEY"
   request_timeout: 30
 
+kimi:
+  llm_name: "moonshot-v1-8k"
+  api_base: "https://api.moonshot.cn/v1"
+  api_key: "sk-reAhVwEXS8KkfazfbgAqDYbOrI9jQtFhCsDtQJA3Gq0Exxxx"
+  request_timeout: 30
+  
 baidu_qianfan:
   api_key: "YOUR_API_KEY"
   secret_key: "YOUR_SECRET_KEY"

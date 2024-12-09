@@ -12,6 +12,7 @@ from app.config.database import Database
 from app.config.log import Log
 from app.config.ollama import OLLAMA
 from app.config.openai import OpenAI
+from app.config.kimi import Kimi
 from app.config.openapi import OpenAPI
 from app.config.qa_model import Models
 from app.config.schedule import Schedule
@@ -46,6 +47,7 @@ class Settings(BaseModel):
     models: Models
     agent: Agent
     openai: OpenAI
+    kimi: Kimi
     baidu_qianfan: BaiduQianfan
     ollama: OLLAMA
     polygon: Polygon
@@ -72,6 +74,7 @@ settings = Settings(
     log=Log(**config['log']),
     test=Test(**config['test']),
     openai=OpenAI(**config['openai']),
+    kimi=Kimi(**config['kimi']),
     baidu_qianfan=BaiduQianfan(**config['baidu_qianfan']),
     ollama=OLLAMA(**config['ollama']),
     polygon=Polygon(**config['polygon']),

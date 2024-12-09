@@ -1,6 +1,7 @@
 from typing import Tuple
 
 from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint
+from langchain_community.llms.moonshot import Moonshot
 from langchain_core.language_models import BaseChatModel
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
@@ -18,7 +19,7 @@ def get_openai_llm(llm: str, temperature: float, streaming: bool):
 
 
 def get_kimi_llm(llm: str, temperature: float, streaming: bool):
-    return ChatOpenAI(
+    return Moonshot(
         model=llm,
         temperature=temperature,
         streaming=streaming,

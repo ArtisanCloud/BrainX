@@ -14,6 +14,8 @@ class LLMModel(Enum):
     BAIDU_ERNIE_Lite_8K = 'ERNIE-Lite-8K'
     BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED = 'Qianfan-BLOOMZ-7B-compressed'
     KIMI_MOONSHOT_V1_8K = 'moonshot-v1-8k'
+    KIMI_MOONSHOT_V1_32K = 'moonshot-v1-32k'
+    KIMI_MOONSHOT_V1_128K = 'moonshot-v1-128k'
     OLLAMA_13B_ALPACA_16K = '13B-alpaca-16k:latest'
     OLLAMA_GEMMA_2B = 'gemma:2b'
     OLLAMA_GEMMA_7B = 'gemma:7b'
