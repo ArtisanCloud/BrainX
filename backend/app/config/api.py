@@ -10,3 +10,4 @@ class Api(BaseModel):
     api_prefix: str
     openapi_prefix: str
     request_timeout: int
+    show_routes_list: bool = False

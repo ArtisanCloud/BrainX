@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 from app.api.auth import auth_controller
 from app.api.cache import cache_controller
 from app.api.conversation import conversation_controller, message_controller
+from app.api.event import event_controller
 from app.api.middleware.auth import auth_user_token, get_session_user
 from app.api.rag import dataset_controller, document_controller, document_segment_controller
 from app.api.system import status_controller, test_controller
@@ -97,6 +98,10 @@ api_router.include_router(document_segment_controller.router, prefix="/rag/datas
 api_router.include_router(task_controller.router, prefix="/task",
                           dependencies=[Depends(auth_user_token)],
                           tags=["task"])
+
+api_router.include_router(event_controller.router, prefix="/event",
+                          dependencies=[Depends(auth_user_token)],
+                          tags=["event"])
 
 # workflow
 api_router.include_router(node_info_controller.router, prefix="/workflow/node",

@@ -1,11 +1,13 @@
 import os
 from typing import cast
 
+import asyncio
 from starlette.staticfiles import StaticFiles
 
 from app import default_local_storage_path
 from app.cache.factory import CacheFactory
 from app.database.session import get_database_sync_url
+from app.events.manager import startup_events, shutdown_events
 from app.logger import logger
 
 from fastapi import FastAPI
@@ -26,7 +28,6 @@ from contextlib import asynccontextmanager
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
 from app.schedule.scheduler import Scheduler
-from app.utils.route import print_routes
 from server import start
 
 
@@ -95,8 +96,18 @@ async def lifespan(app: FastAPI):
     if settings.schedule.enable:
         scheduler.init_scheduler()
         scheduler.start()
-
+    
+    # create the event manager
+    if settings.event.enable:
+        try:
+            asyncio.create_task(startup_events())
+        except Exception as e:
+            raise e
+    
     yield
+
+    if settings.event.enable:
+        await shutdown_events()
 
     # This section is run on app shutdown
     if vector_store:
@@ -149,7 +160,7 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.api.api_prefix)
 app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
 
-print_routes(app)
+# print_routes(app)
 
 if __name__ == '__main__':
     start()

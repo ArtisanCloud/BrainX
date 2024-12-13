@@ -1,7 +1,7 @@
 .idea/
 .DS_Store
+.continue
 
-config.yaml
 logs
 test.db
 alembic.ini

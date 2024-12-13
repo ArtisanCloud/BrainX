@@ -73,6 +73,18 @@ task:
   result_expires: 3600
   broker_connection_retry_on_startup: True
 
+event:
+  enable: False # 默认关闭，如果需要用得到订阅通知事件，可以开启
+  driver: rabbitMQ #驱动默认是RabbitMQ
+  host: localhost
+  port: 5672 # RabbitMQ默认端口
+  user: guest
+  password: guest
+  default_event_queue: queue_brainx #事件队列名称
+  queues:
+    - name: queue_name #事件名
+      event_name: event_name
+
 models:
   qa_embedding_model_name: "shibing624/text2vec-base-chinese"
   visual_search_model_name: "clip-ViT-L-14"

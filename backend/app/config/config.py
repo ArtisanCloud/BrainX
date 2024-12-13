@@ -9,6 +9,7 @@ from app.config.baidu import BaiduQianfan
 from app.config.cache import Cache
 from app.config.celery import CeleryConfig
 from app.config.database import Database
+from app.config.event import Event
 from app.config.log import Log
 from app.config.ollama import OLLAMA
 from app.config.openai import OpenAI
@@ -44,6 +45,7 @@ class Settings(BaseModel):
     cache: Cache
     schedule: Schedule
     task: CeleryConfig
+    event: Event
     models: Models
     agent: Agent
     openai: OpenAI
@@ -69,6 +71,7 @@ settings = Settings(
     cache=Cache(**config['cache']),
     schedule=Schedule(**config['schedule']),
     task=CeleryConfig(**config['task']),
+    event=Event(**config['event']),
     models=Models(**config['models']),
     agent=Agent(**config['agent']),
     log=Log(**config['log']),
@@ -96,7 +99,8 @@ if settings.task.celery_result_backend == "":
     settings.task.celery_result_backend = settings.cache.redis.url
 
 # Access the settings
-print(settings.server.version)
+print(f"load config file finished, current version is '{settings.server.version}'")
+
 # print(settings)
 os.environ["OPENAI_API_BASE"] = settings.openai.api_base
 os.environ["OPENAI_API_KEY"] = settings.openai.api_key
