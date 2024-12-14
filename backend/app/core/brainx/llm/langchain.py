@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint
 from langchain_community.llms.moonshot import Moonshot
@@ -28,7 +28,9 @@ def get_kimi_llm(llm: str, temperature: float, streaming: bool):
     )
 
 
-def get_baidu_qianfan_llm(llm: str, temperature: float, streaming: bool, request_timeout:int = 300):
+def get_baidu_qianfan_llm(
+    llm: str, temperature: float, streaming: bool, request_timeout: int = 300
+):
     if temperature <= 0:
         temperature = 0.1
     if temperature > 1:
@@ -56,7 +58,11 @@ def get_ollama_llm(llm: str, temperature: float, streaming: bool, format: str = 
 
 
 def get_llm(
-    llm: str, temperature: float = 0.5, streaming: bool = False
+    llm: str,
+    temperature: float = 0.5,
+    streaming: bool = False,
+    format: str = "",
+    request_timeout: int = 300,
 ) -> Tuple[BaseChatModel, Exception | None]:
     match llm:
         case _ if LLMModel.is_openai_model(llm):
@@ -67,11 +73,16 @@ def get_llm(
 
         case _ if LLMModel.is_baidu_model(llm):
             mdl_llm = get_baidu_qianfan_llm(
-                llm, temperature=temperature, streaming=streaming
+                llm,
+                temperature=temperature,
+                streaming=streaming,
+                request_timeout=request_timeout,
             )
 
         case _ if LLMModel.is_ollama_model(llm):
-            mdl_llm = get_ollama_llm(llm, temperature=temperature, streaming=streaming)
+            mdl_llm = get_ollama_llm(
+                llm, temperature=temperature, streaming=streaming, format=format
+            )
         case _:
             return None, Exception(f"Unsupported LLM model: {llm}")
 
