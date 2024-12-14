@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint
 from langchain_community.llms.moonshot import Moonshot
@@ -28,7 +28,7 @@ def get_kimi_llm(llm: str, temperature: float, streaming: bool):
     )
 
 
-def get_baidu_qianfan_llm(llm: str, temperature: float, streaming: bool):
+def get_baidu_qianfan_llm(llm: str, temperature: float, streaming: bool, request_timeout:int = 300):
     if temperature <= 0:
         temperature = 0.1
     if temperature > 1:
@@ -38,10 +38,11 @@ def get_baidu_qianfan_llm(llm: str, temperature: float, streaming: bool):
         model=llm,
         temperature=temperature,
         streaming=streaming,
+        request_timeout=request_timeout,
     )
 
 
-def get_ollama_llm(llm: str, temperature: float, streaming: bool):
+def get_ollama_llm(llm: str, temperature: float, streaming: bool, format: str = ""):
     # print(settings.ollama.url)
 
     return ChatOllama(
@@ -50,6 +51,7 @@ def get_ollama_llm(llm: str, temperature: float, streaming: bool):
         keep_alive=-1,
         temperature=temperature,
         streaming=streaming,
+        format=format,
     )
 
 

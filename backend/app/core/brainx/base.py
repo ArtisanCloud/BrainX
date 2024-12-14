@@ -21,6 +21,8 @@ class LLMModel(Enum):
     OLLAMA_GEMMA_7B = 'gemma:7b'
     OLLAMA_LLAMA3_2 = 'llama3.2'
     OLLAMA_LLAMA3_2_VISION = 'llama3.2-vision'
+    OLLAMA_QWEN_2_5 = 'qwen2.5'
+    OLLAMA_QWEN_CODER_2_5 = 'qwen2.5-coder'
 
     @classmethod
     def is_baidu_model(cls, llm: str) -> bool:
