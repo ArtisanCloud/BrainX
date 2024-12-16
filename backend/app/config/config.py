@@ -12,6 +12,7 @@ from app.config.database import Database
 from app.config.event import Event
 from app.config.log import Log
 from app.config.ollama import OLLAMA
+from app.config.coze import Coze
 from app.config.openai import OpenAI
 from app.config.kimi import Kimi
 from app.config.openapi import OpenAPI
@@ -19,6 +20,7 @@ from app.config.qa_model import Models
 from app.config.schedule import Schedule
 from app.config.server import Server
 from app.config.storage import Storage
+from app.config.tencent import TencentHunYuan
 from app.config.test import Test
 from app.config.agent.agent import Agent
 
@@ -51,7 +53,9 @@ class Settings(BaseModel):
     openai: OpenAI
     kimi: Kimi
     baidu_qianfan: BaiduQianfan
+    tencent_hunyuan: TencentHunYuan
     ollama: OLLAMA
+    coze: Coze
     polygon: Polygon
     sentry: Sentry
     storage: Storage
@@ -79,7 +83,9 @@ settings = Settings(
     openai=OpenAI(**config['openai']),
     kimi=Kimi(**config['kimi']),
     baidu_qianfan=BaiduQianfan(**config['baidu_qianfan']),
+    tencent_hunyuan=TencentHunYuan(**config['tencent_hunyuan']),
     ollama=OLLAMA(**config['ollama']),
+    coze=Coze(**config['coze']),
     polygon=Polygon(**config['polygon']),
     sentry=Sentry(**config['sentry']),
     storage=Storage(**config['storage'])

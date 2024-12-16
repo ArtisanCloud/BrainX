@@ -131,6 +131,11 @@ baidu_qianfan:
   secret_key: "YOUR_SECRET_KEY"
   request_timeout: 30
 
+tencent_hunyuan:
+  api_base: "https://api.hunyuan.cloud.tencent.com/v1"
+  api_key: sk-ADKNWJj4VLqaazEgPDRaIwWHWkY05XFnmdw91rxxxxxx
+  request_timeout: 30
+
 ollama:
   url: "http://localhost:11434"
 

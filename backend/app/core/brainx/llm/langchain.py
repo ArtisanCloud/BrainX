@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint
+from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint, ChatCoze
 from langchain_community.llms.moonshot import Moonshot
 from langchain_core.language_models import BaseChatModel
 from langchain_ollama import ChatOllama
@@ -44,6 +44,24 @@ def get_baidu_qianfan_llm(
     )
 
 
+def get_tencent_huyuan_llm(
+    llm: str, temperature: float, streaming: bool, request_timeout: int = 300
+):
+    if temperature <= 0:
+        temperature = 0.1
+    if temperature > 1:
+        temperature = 1
+
+    return ChatOpenAI(
+        api_key=settings.tencent_hunyuan.api_key,
+        api_base=settings.tencent_hunyuan.api_base,
+        model=llm,
+        temperature=temperature,
+        streaming=streaming,
+        request_timeout=request_timeout,
+    )
+
+
 def get_ollama_llm(llm: str, temperature: float, streaming: bool, format: str = ""):
     # print(settings.ollama.url)
 
@@ -54,6 +72,24 @@ def get_ollama_llm(llm: str, temperature: float, streaming: bool, format: str = 
         temperature=temperature,
         streaming=streaming,
         format=format,
+    )
+
+
+def get_chat_coze(
+    bot_id: str,
+    user_id: str,
+    conversation_id: str,
+    streaming: bool = False,
+):
+    # print(settings.ollama.url)
+
+    return ChatCoze(
+        coze_api_base=,
+        coze_api_key="YOUR_API_KEY",
+        bot_id=bot_id,
+        user=user_id,
+        conversation_id=conversation_id,
+        streaming=streaming,
     )
 
 
@@ -78,12 +114,22 @@ def get_llm(
                 streaming=streaming,
                 request_timeout=request_timeout,
             )
+        case _ if LLMModel.is_tencent_model(llm):
+            mdl_llm = get_tencent_huyuan_llm(
+                llm,
+                temperature=temperature,
+                streaming=streaming,
+                request_timeout=request_timeout,
+            )
 
         case _ if LLMModel.is_ollama_model(llm):
             mdl_llm = get_ollama_llm(
                 llm, temperature=temperature, streaming=streaming, format=format
             )
+
         case _:
             return None, Exception(f"Unsupported LLM model: {llm}")
 
     return mdl_llm, None
+
+
