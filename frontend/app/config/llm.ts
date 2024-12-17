@@ -1,6 +1,9 @@
+
+// OpenAI Models
 export const label_openai_gpt_3_d_5_turbo = 'OpenAI 3.5 turbo'
 export const openai_gpt_3_d_5_turbo = 'gpt-3.5-turbo'
 
+// Baidu Models
 
 export const label_baidu_qianfan_ernie_4_d_0_8k = '百度千帆-ERNIE-4.0-8K'
 export const baidu_qianfan_ernie_4_d_0_8k = 'ERNIE-4.0-8K'
@@ -17,14 +20,26 @@ export const baidu_ernie_speed_128k = 'ERNIE-Speed-128K'
 export const label_baidu_ernie_lite_8k = '百度-ERNIE-Lite-8K'
 export const baidu_ernie_lite_8k = 'ERNIE-Lite-8K'
 
+// Tencent Models
+export const label_tencent_hunyuan_lite = '腾讯-混元-lite'
+export const tencent_hunyuan_lite = 'hunyuan-lite'
 
+// Ollama Models
 
 export const label_ollama_13b_alpaca_16k = 'LLama2-中文-13B'
 export const ollama_13b_alpaca_16k = '13B-alpaca-16k:latest'
-
 
 export const label_ollama_gemma_2b = 'Gemma 2b'
 export const ollama_gemma_2b = 'gemma:2b'
 
 export const label_ollama_llama3_2 = 'Llama3.2'
 export const ollama_llama3_2 = 'llama3.2'
+
+export const label_ollama_llama3_2_72b = 'Llama3.3'
+export const ollama_llama3_2_72b = 'Llama3.3'
+
+export const label_ollama_qwen_2_5 = 'qwen2.5'
+export const ollama_qwen_2_5 = 'qwen2.5'
+
+export const label_ollama_qwen_2_5_72b = 'qwen2.5:72b'
+export const ollama_qwen_2_5_72b = 'qwen2.5:72b'

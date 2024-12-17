@@ -7,21 +7,31 @@ from enum import Enum
 
 class LLMModel(Enum):
     OPENAI_GPT_3_D_5_TURBO = 'gpt-3.5-turbo'
+    
     BAIDU_ERNIE_BOT_TURBO = 'ERNIE-Bot-turbo'
     BAIDU_ERNIE_4_D_0_8K = 'ERNIE-4.0-8K'
     BAIDU_ERNIE_3_D_5_8K = 'ERNIE-3.5-8K'
     BAIDU_ERNIE_Speed_128K = 'ERNIE-Speed-128K'
     BAIDU_ERNIE_Lite_8K = 'ERNIE-Lite-8K'
     BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED = 'Qianfan-BLOOMZ-7B-compressed'
+    
+    TENCENT_HUNYUAN_LITE = 'hunyuan-lite'
+    TENCENT_HUNYUAN_STANDARD = 'hunyuan-standard'
+    TENCENT_HUNYUAN_STANDARD_256K = 'hunyuan-standard-256K'
+    TENCENT_HUNYUAN_PRO = 'hunyuan-pro'
+    TENCENT_HUNYUAN_CODE = 'hunyuan-code'
+
     KIMI_MOONSHOT_V1_8K = 'moonshot-v1-8k'
     KIMI_MOONSHOT_V1_32K = 'moonshot-v1-32k'
     KIMI_MOONSHOT_V1_128K = 'moonshot-v1-128k'
+    
     OLLAMA_13B_ALPACA_16K = '13B-alpaca-16k:latest'
     OLLAMA_GEMMA_2B = 'gemma:2b'
     OLLAMA_GEMMA_7B = 'gemma:7b'
     OLLAMA_LLAMA3_2 = 'llama3.2'
     OLLAMA_LLAMA3_2_VISION = 'llama3.2-vision'
     OLLAMA_QWEN_2_5 = 'qwen2.5'
+    OLLAMA_QWEN_2_5_72b = 'qwen2.5:72b'
     OLLAMA_QWEN_CODER_2_5 = 'qwen2.5-coder'
 
     @classmethod
@@ -30,6 +40,14 @@ class LLMModel(Enum):
         return any(
             llm == model.value for model in cls 
             if model.name.startswith('BAIDU_')
+        )
+
+    @classmethod
+    def is_tencent_hunyuan_model(cls, llm: str) -> bool:
+        """判断是否为腾讯模型"""
+        return any(
+            llm == model.value for model in cls 
+            if model.name.startswith('TENCENT_')
         )
 
     @classmethod

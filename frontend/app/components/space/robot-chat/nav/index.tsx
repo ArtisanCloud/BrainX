@@ -23,10 +23,16 @@ import {
   label_baidu_qianfan_ernie_4_d_0_8k,
   label_ollama_13b_alpaca_16k,
   label_ollama_gemma_2b, label_ollama_llama3_2,
+  label_ollama_qwen_2_5,
+  label_ollama_qwen_2_5_72b,
   label_openai_gpt_3_d_5_turbo,
+  label_tencent_hunyuan_lite,
   ollama_13b_alpaca_16k,
   ollama_gemma_2b, ollama_llama3_2,
-  openai_gpt_3_d_5_turbo
+  ollama_qwen_2_5,
+  ollama_qwen_2_5_72b,
+  openai_gpt_3_d_5_turbo,
+  tencent_hunyuan_lite
 } from "@/app/config/llm";
 
 const ChatNav = () => {
@@ -94,8 +100,21 @@ const ChatNav = () => {
                     value: baidu_ernie_lite_8k,
                   },
                   {
+                    label: label_tencent_hunyuan_lite,
+                    value: tencent_hunyuan_lite,
+                  },
+                  {
                     label: label_ollama_llama3_2,
                     value: ollama_llama3_2,
+                  },
+
+                  {
+                    label: label_ollama_qwen_2_5,
+                    value: ollama_qwen_2_5,
+                  },
+                  {
+                    label: label_ollama_qwen_2_5_72b,
+                    value: ollama_qwen_2_5_72b,
                   },
                   {
                     label: label_ollama_gemma_2b,

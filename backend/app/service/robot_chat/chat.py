@@ -28,7 +28,11 @@ async def event_api_generator(request: Request, llm: str, stream_response: Itera
 
             if token:
                 content = ""
-                if LLMModel.is_openai_model(llm) or LLMModel.is_kimi_model(llm):
+                if (
+                    LLMModel.is_openai_model(llm)
+                    or LLMModel.is_kimi_model(llm)
+                    or LLMModel.is_tencent_hunyuan_model(llm)
+                ):
                     if isinstance(token, str):
                         content = token
                     elif isinstance(token.content, str):
@@ -71,7 +75,7 @@ async def chat_event_generator(
     try:
         question = data.messages[0].content
         conversation_uuid = data.conversationUUID
-        base64_images = remove_base64_images_prefix(data.images) 
+        base64_images = remove_base64_images_prefix(data.images)
 
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await chat(
@@ -91,18 +95,18 @@ async def chat_event_generator(
             if await request.is_disconnected():
                 break  # 前端断开连接，停止生成
 
-            content = ''
+            content = ""
             if isinstance(token, str):
                 content = token
-            elif hasattr(token, 'content'):
+            elif hasattr(token, "content"):
                 content = token.content
             elif isinstance(token, dict):
-                content = token.get('message', {}).get('content', '')
-            
+                content = token.get("message", {}).get("content", "")
+
             if content:  # Only process if we have content
                 content = content.replace("\r\n", "\\n").replace("\n", "\\n")
                 yield f"data: {json.dumps({'status': 'data', 'content': content})}\n\n"
-                await asyncio.sleep(0.1) 
+                await asyncio.sleep(0.1)
 
     except Exception as e:
         error_msg = "inner error"
@@ -151,7 +155,8 @@ async def chat(
             return None, None, exception
 
         # 如果对话历史记录不存在，则创建新的对话历史记录
-        question = question[:15] if len(question) > 15 else question
+        max_question_token = 8000
+        question = question[:max_question_token] if len(question) > max_question_token else question
         if conversation is None:
             new_conversation, exception = (
                 await service_conversation.conversation_dao.async_create(
@@ -188,7 +193,7 @@ async def chat(
             session_id=conversation_uuid,
         )
     else:
-    
+
         stream_response = ollama.chat(
             model=LLMModel.OLLAMA_LLAMA3_2_VISION.value,
             stream=True,

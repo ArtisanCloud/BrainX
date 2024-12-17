@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from langchain_community.chat_models import ChatOpenAI, QianfanChatEndpoint, ChatCoze
+from langchain_community.chat_models import QianfanChatEndpoint, ChatCoze
 from langchain_community.llms.moonshot import Moonshot
 from langchain_core.language_models import BaseChatModel
 from langchain_ollama import ChatOllama
@@ -53,8 +53,8 @@ def get_tencent_huyuan_llm(
         temperature = 1
 
     return ChatOpenAI(
-        api_key=settings.tencent_hunyuan.api_key,
-        api_base=settings.tencent_hunyuan.api_base,
+        openai_api_key=settings.tencent_hunyuan.api_key,
+        openai_api_base=settings.tencent_hunyuan.api_base,
         model=llm,
         temperature=temperature,
         streaming=streaming,
@@ -84,8 +84,8 @@ def get_chat_coze(
     # print(settings.ollama.url)
 
     return ChatCoze(
-        coze_api_base=,
-        coze_api_key="YOUR_API_KEY",
+        coze_api_base=settings.coze.api_base,
+        coze_api_key=settings.coze.api_key,
         bot_id=bot_id,
         user=user_id,
         conversation_id=conversation_id,
@@ -114,7 +114,7 @@ def get_llm(
                 streaming=streaming,
                 request_timeout=request_timeout,
             )
-        case _ if LLMModel.is_tencent_model(llm):
+        case _ if LLMModel.is_tencent_hunyuan_model(llm):
             mdl_llm = get_tencent_huyuan_llm(
                 llm,
                 temperature=temperature,

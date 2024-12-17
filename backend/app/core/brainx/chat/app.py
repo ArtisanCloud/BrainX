@@ -13,7 +13,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from langchain_core.chat_history import BaseChatMessageHistory
 
-from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm
+from app.core.brainx.llm.langchain import get_openai_llm, get_baidu_qianfan_llm, get_ollama_llm, get_kimi_llm, get_tencent_huyuan_llm
 from app.models.app.app import App
 
 from langchain_core.runnables import (
@@ -82,15 +82,18 @@ def get_chat_prompt_template(app: App) -> ChatPromptTemplate:
 
 def chat_by_llm(input_data: Dict, llm: str, app: App = None, temperature: float = 0.5, stream_handler=None):
     # 初始化一个大模型
-    # OpenAI的模型
+    # OpenAI的GPT模型
     if LLMModel.is_openai_model(llm):
         chat_llm = get_openai_llm(llm, temperature, True)
     # Kimi的模型
     elif LLMModel.is_kimi_model(llm):
         chat_llm = get_kimi_llm(llm, temperature, True)
-    # 千帆的模型
+    # 百度的千帆模型
     elif LLMModel.is_baidu_model(llm):
         chat_llm = get_baidu_qianfan_llm(llm, temperature, True)
+    # 腾讯的混元模型
+    elif LLMModel.is_tencent_hunyuan_model(llm):
+        chat_llm = get_tencent_huyuan_llm(llm, temperature, True)
     # Ollama的模型
     else:
         chat_llm = get_ollama_llm(llm, temperature, True)
