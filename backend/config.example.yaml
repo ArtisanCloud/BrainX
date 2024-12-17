@@ -139,6 +139,10 @@ tencent_hunyuan:
 ollama:
   url: "http://localhost:11434"
 
+coze:
+  api_base: https://api.coze.cn/v1
+  api_key: "YOUR_API_KEY"
+  
 polygon:
   api_key: "YOUR_API_KEY"
 
