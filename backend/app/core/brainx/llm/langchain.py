@@ -29,10 +29,13 @@ def get_kimi_llm(llm: str, temperature: float, streaming: bool):
 
 
 def get_baidu_qianfan_llm(
-    llm: str, temperature: float, streaming: bool, request_timeout: int = 300
+    llm: str,
+    temperature: float = 0,
+    streaming: bool = False,
+    request_timeout: int = 300,
 ):
     if temperature <= 0:
-        temperature = 0.1
+        temperature = 0.01
     if temperature > 1:
         temperature = 1
 
@@ -45,10 +48,13 @@ def get_baidu_qianfan_llm(
 
 
 def get_tencent_huyuan_llm(
-    llm: str, temperature: float, streaming: bool, request_timeout: int = 300
+    llm: str,
+    temperature: float = 0,
+    streaming: bool = False,
+    request_timeout: int = 300,
 ):
     if temperature <= 0:
-        temperature = 0.1
+        temperature = 0.01
     if temperature > 1:
         temperature = 1
 
@@ -131,5 +137,3 @@ def get_llm(
             return None, Exception(f"Unsupported LLM model: {llm}")
 
     return mdl_llm, None
-
-

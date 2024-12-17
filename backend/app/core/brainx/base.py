@@ -19,6 +19,8 @@ class LLMModel(Enum):
     TENCENT_HUNYUAN_STANDARD = 'hunyuan-standard'
     TENCENT_HUNYUAN_STANDARD_256K = 'hunyuan-standard-256K'
     TENCENT_HUNYUAN_PRO = 'hunyuan-pro'
+    TENCENT_HUNYUAN_TURBO = 'hunyuan-turbo'
+    TENCENT_HUNYUAN_TURBO_LATEST = 'hunyuan-turbo-latest'
     TENCENT_HUNYUAN_CODE = 'hunyuan-code'
 
     KIMI_MOONSHOT_V1_8K = 'moonshot-v1-8k'

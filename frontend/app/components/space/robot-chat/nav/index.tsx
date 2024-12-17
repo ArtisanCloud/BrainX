@@ -27,12 +27,16 @@ import {
   label_ollama_qwen_2_5_72b,
   label_openai_gpt_3_d_5_turbo,
   label_tencent_hunyuan_lite,
+  label_tencent_hunyuan_standard,
+  label_tencent_hunyuan_turbo,
   ollama_13b_alpaca_16k,
   ollama_gemma_2b, ollama_llama3_2,
   ollama_qwen_2_5,
   ollama_qwen_2_5_72b,
   openai_gpt_3_d_5_turbo,
-  tencent_hunyuan_lite
+  tencent_hunyuan_lite,
+  tencent_hunyuan_standard,
+  tencent_hunyuan_turbo
 } from "@/app/config/llm";
 
 const ChatNav = () => {
@@ -79,14 +83,14 @@ const ChatNav = () => {
                     label: label_openai_gpt_3_d_5_turbo,
                     value: openai_gpt_3_d_5_turbo,
                   },
-                  // {
-                  // 	label: label_baidu_qianfan_ernie_4_d_0_8k,
-                  // 	value: baidu_qianfan_ernie_4_d_0_8k
-                  // },
-                  // {
-                  // 	label: label_baidu_qianfan_ernie_3_d_5_8k,
-                  // 	value: baidu_qianfan_ernie_3_d_5_8k
-                  // },
+                  {
+                  	label: label_baidu_qianfan_ernie_4_d_0_8k,
+                  	value: baidu_qianfan_ernie_4_d_0_8k
+                  },
+                  {
+                  	label: label_baidu_qianfan_ernie_3_d_5_8k,
+                  	value: baidu_qianfan_ernie_3_d_5_8k
+                  },
                   // {
                   // 	label: label_baidu_qianfan_bloomz_7b_compressed,
                   // 	value: baidu_qianfan_bloomz_7b_compressed,
@@ -98,6 +102,14 @@ const ChatNav = () => {
                   {
                     label: label_baidu_ernie_lite_8k,
                     value: baidu_ernie_lite_8k,
+                  },
+                  {
+                    label: label_tencent_hunyuan_turbo,
+                    value: tencent_hunyuan_turbo,
+                  },
+                  {
+                    label: label_tencent_hunyuan_standard,
+                    value: tencent_hunyuan_standard,
                   },
                   {
                     label: label_tencent_hunyuan_lite,

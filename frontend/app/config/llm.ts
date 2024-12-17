@@ -21,6 +21,12 @@ export const label_baidu_ernie_lite_8k = '百度-ERNIE-Lite-8K'
 export const baidu_ernie_lite_8k = 'ERNIE-Lite-8K'
 
 // Tencent Models
+export const label_tencent_hunyuan_turbo = '腾讯-混元-turbo'
+export const tencent_hunyuan_turbo = 'hunyuan-turbo'
+
+export const label_tencent_hunyuan_standard = '腾讯-混元-standard'
+export const tencent_hunyuan_standard = 'hunyuan-standard'
+
 export const label_tencent_hunyuan_lite = '腾讯-混元-lite'
 export const tencent_hunyuan_lite = 'hunyuan-lite'
 
