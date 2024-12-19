@@ -12,6 +12,7 @@ class Event(BaseModel):
     enable: bool = False
     driver: str = "rabbitMQ"
 
+    # url: str = "amqp://guest:guest@localhost:5672/"
     host: str = None
     port: int = None
     user: str = "guest"

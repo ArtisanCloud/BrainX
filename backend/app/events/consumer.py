@@ -15,16 +15,19 @@ class EventConsumer:
         queue: str = settings.event.default_event_queue,
         retry_attempts: int = 5,
         retry_delay: int = 5,
+        heartbeat: int = 60,  # 增加心跳时间（单位：秒）
     ):
         self.queue = queue
         self.retry_attempts = retry_attempts
         self.retry_delay = retry_delay  # 重试间隔，单位为秒
+        self.heartbeat = heartbeat  # 心跳时间间隔
 
     def get_event_channel(self) -> Tuple[Channel | None, Any]:
         """建立与 RabbitMQ 的连接和频道，支持重试"""
         attempt = 0
         while attempt < self.retry_attempts:
             try:
+                # 添加 heartbeat 参数来增强心跳机制
                 connection = pika.BlockingConnection(
                     pika.ConnectionParameters(
                         host=settings.event.host,
@@ -33,6 +36,7 @@ class EventConsumer:
                             username=settings.event.user,
                             password=settings.event.password,
                         ),
+                        heartbeat=self.heartbeat,  # 配置心跳
                     )
                 )
                 channel = connection.channel()
@@ -56,14 +60,6 @@ class EventConsumer:
         body: str | bytes,
     ):
         """处理接收到的消息"""
-        # logger.info(f"Received message: {body}")
-        # logger.info(f"channel is : {ch}")
-        # logger.info(f"method is: {method}")
-        # logger.info(f"properties are: {properties}")
-        # logger.info(f"Received message: {body}")
-
-        # 模拟处理任务，根据消息中的点号数量休眠相应的时间
-        # time.sleep(body.count(b"."))
         body.decode("utf-8")
         logger.info(
             f"Received channel number: {ch.channel_number} decoded message: {body}"
@@ -90,7 +86,6 @@ class EventConsumer:
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def start_consuming(self, callback: Any | None = None):
-        # print("callback:", callback)
         """开始消费消息"""
         connection = None
         channel = None
@@ -107,13 +102,28 @@ class EventConsumer:
                 f"Waiting for queue '{self.queue}' events. To exit press CTRL+C"
             )
             channel.start_consuming()
-        except AMQPConnectionError as e:
-            logger.error(f"连接到RabbitMQ时发生致命错误：{e}")
+        except (AMQPConnectionError, ConnectionClosed) as e:
+            logger.error(f"连接到RabbitMQ时发生错误：{e}")
+            self.reconnect()  # 尝试重连
         except Exception as e:
             logger.error(f"消费消息时发生意外错误：{e}")
         finally:
             # 清理资源
             self.close_connection(channel, connection)
+
+    def reconnect(self):
+        """自动重连"""
+        logger.info("正在尝试重新连接到 RabbitMQ...")
+        while True:
+            try:
+                # 获取新的连接和频道
+                channel, connection = self.get_event_channel()
+                if channel:
+                    logger.info("成功重新连接到 RabbitMQ！")
+                    return channel, connection
+            except Exception as e:
+                logger.warning(f"重连失败: {e}, 等待重试...")
+                time.sleep(self.retry_delay)
 
     @classmethod
     def close_connection(cls, channel, connection):

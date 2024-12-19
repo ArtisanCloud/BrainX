@@ -32,7 +32,7 @@ def callback(
             end_time = time.time()
 
             # 处理事件逻辑
-            logger.info(f"Demo Received event: {event}")
+            # logger.info(f"Demo Received event: {event}")
             logger.info(f"Demo Time taken to process: {end_time - start_time:.2f} seconds")
 
             # 确认消息已处理

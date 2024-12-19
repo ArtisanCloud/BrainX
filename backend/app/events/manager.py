@@ -1,7 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
-import time
-
-import pika
 import asyncio
 from typing import Any
 

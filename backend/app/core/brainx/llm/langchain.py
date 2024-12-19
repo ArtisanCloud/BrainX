@@ -31,6 +31,7 @@ def get_kimi_llm(llm: str, temperature: float, streaming: bool):
 def get_baidu_qianfan_llm(
     llm: str,
     temperature: float = 0,
+    top_p: float = 0.8,
     streaming: bool = False,
     request_timeout: int = 300,
 ):
@@ -42,6 +43,7 @@ def get_baidu_qianfan_llm(
     return QianfanChatEndpoint(
         model=llm,
         temperature=temperature,
+        top_p=top_p,
         streaming=streaming,
         request_timeout=request_timeout,
     )
@@ -102,6 +104,7 @@ def get_chat_coze(
 def get_llm(
     llm: str,
     temperature: float = 0.5,
+    top_p: float = 0.8,
     streaming: bool = False,
     format: str = "",
     request_timeout: int = 300,
@@ -117,6 +120,7 @@ def get_llm(
             mdl_llm = get_baidu_qianfan_llm(
                 llm,
                 temperature=temperature,
+                top_p=top_p,
                 streaming=streaming,
                 request_timeout=request_timeout,
             )

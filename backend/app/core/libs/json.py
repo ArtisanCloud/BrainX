@@ -21,11 +21,18 @@ def sanitize_json(content, encode='utf-8'):
     # 去除前导和尾随空白字符
     content = content.strip()
 
-    # 移除以 ```json 开头和 ``` 结尾的代码块标记
-    code_block_pattern = re.compile(r'^```json\s*([\s\S]*?)\s*```$', re.MULTILINE)
-    match = code_block_pattern.match(content)
+    # # 移除以 ```json 开头和 ``` 结尾的代码块标记
+    # code_block_pattern = re.compile(r'^```json\s*([\s\S]*?)\s*```$', re.MULTILINE)
+    # match = code_block_pattern.match(content)
+
+    # 移除JSON前的非JSON内容
+    json_block_pattern = re.compile(r'```json\s*([\s\S]*?)\s*```', re.DOTALL)
+    match = json_block_pattern.search(content)
     if match:
         content = match.group(1).strip()
+    else:
+        # 如果找不到 JSON 块，抛出异常
+        raise ValueError(f"无法找到 JSON 格式的内容: {content}")
 
     # 尝试直接解析合法的JSON
     try:
@@ -53,4 +60,4 @@ def sanitize_json(content, encode='utf-8'):
             return json_bytes.decode('utf-8')
 
         except json.JSONDecodeError as e:
-            raise ValueError(f"无法修复并解析此JSON: {e}")
+            raise ValueError(f"无法修复并解析此JSON: {e}, content: {content}")
