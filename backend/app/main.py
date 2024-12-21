@@ -95,9 +95,8 @@ async def lifespan(app: FastAPI):
     if settings.schedule.enable:
         try:
             scheduler = Scheduler()
-            if settings.schedule.enable:
-                scheduler.init_scheduler()
-                scheduler.start()
+            scheduler.init_scheduler()
+            scheduler.start()
         except Exception as e:
             raise e
     
