@@ -60,6 +60,7 @@ schedule:
     max_instances: 3
 
 task:
+  enable: False
   celery_broker_url: "redis://localhost:6379/0"
   celery_result_backend: "redis://localhost:6379/0"
   queue:

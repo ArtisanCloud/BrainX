@@ -92,10 +92,14 @@ async def lifespan(app: FastAPI):
     await CacheFactory.get_cache().async_connect()
 
     # start the scheduler for jobs
-    scheduler = Scheduler()
     if settings.schedule.enable:
-        scheduler.init_scheduler()
-        scheduler.start()
+        try:
+            scheduler = Scheduler()
+            if settings.schedule.enable:
+                scheduler.init_scheduler()
+                scheduler.start()
+        except Exception as e:
+            raise e
     
     # create the event manager
     if settings.event.enable:
