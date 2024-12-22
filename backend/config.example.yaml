@@ -46,6 +46,7 @@ cache:
     use_jsonb: True
 
 schedule:
+  enable: True
   driver: apscheduler
   job_stores:
     default:
