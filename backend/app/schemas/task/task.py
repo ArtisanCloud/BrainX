@@ -6,7 +6,7 @@ from app.schemas.base import BaseSchema
 
 
 class RequestRunMultiple30SecondsStatus(BaseSchema):
-    task_count: conint(ge=1, le=4) = 2
+    task_count: conint(ge=1, le=6) = 2
 
 class RequestQueryDocumentProcessStatus(BaseSchema):
     task_uuids: List[str]

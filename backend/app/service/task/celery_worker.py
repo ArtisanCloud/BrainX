@@ -3,6 +3,7 @@ import click
 from celery import Celery
 
 monkey.patch_all()
+# monkey.patch_all(ssl=False, aiohttp=False)
 
 from app import settings
 
@@ -30,6 +31,12 @@ def create_celery_worker():
         worker_concurrency=settings.task.worker_concurrency,  # 并发 worker 数量
         # worker_prefetch_multiplier=settings.task.worker_prefetch_multiplier,  # 每个 worker 同时处理的任务数量
         task_acks_on_failure_or_timeout=settings.task.task_acks_on_failure_or_timeout,  # 失败或超时任务是否确认
+        broker_connection_timeout=settings.task.broker_connection_timeout,  # 设置 RabbitMQ 连接超时 (秒)
+        broker_heartbeat=settings.task.broker_heartbeat,  # 设置 RabbitMQ 心跳间隔 (秒)
+        result_backend_transport_options={
+            'socket_connect_timeout': settings.task.socket_connect_timeout,  # 连接 Redis 时的超时时间 (秒)
+            'socket_timeout': settings.task.socket_timeout,          # 数据传输超时 (秒)
+        }
     )
 
     if settings.task.broker_use_ssl:

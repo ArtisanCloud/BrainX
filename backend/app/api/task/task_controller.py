@@ -1,3 +1,4 @@
+import time
 from typing import Dict, Any
 
 from celery import states
@@ -95,13 +96,16 @@ async def api_run_connect_db():
 
 
 @router.get("/echo_task")
-async def echo_task():
+def echo_task():
+    
     task = "Task executed"
+    
     logger.info(task)
+
     return {task: task}
 
 
 @router.get("/run_task")
-async def run_task():
+def run_task():
     task = TaskService.run_task.apply_async()
     return {"task_id": task.id}

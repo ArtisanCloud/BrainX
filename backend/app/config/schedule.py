@@ -1,11 +1,16 @@
 from typing import Optional, Dict
 
-from pydantic import BaseModel, AnyUrl
+from pydantic import BaseModel
 
 
 class JobStoreConfig(BaseModel):
     type: str
-    url: Optional[AnyUrl]  # Use `AnyUrl` to validate the URL format
+    url: Optional[str]
+    host: Optional[str]
+    port: Optional[int]
+    db: Optional[int]
+    username: Optional[str]
+    password: Optional[str]
 
 
 class ExecutorsConfig(BaseModel):

@@ -1,7 +1,7 @@
 import time
 from typing import Any
 
-from celery import states
+from celery import Task, states
 from sqlalchemy import text, update, UUID
 from sqlalchemy.orm import Session
 
@@ -41,7 +41,7 @@ def run_manual_connect_db():
 
 class TaskService:
 
-    def __init__(self, task: Any):
+    def __init__(self, task: Task):
         # 初始化任务服务
         self.task = task
         pass
@@ -61,7 +61,7 @@ class TaskService:
         # print("run _30_seconds_task", self, self.task)
         for i in range(30):
             time.sleep(1)
-            logger.info(f"Seconds elapsed: {i + 1}")
+            logger.info(f"Task {self.task.request.id} Seconds elapsed: {i + 1}")
             self.task.update_state(state=states.STARTED, meta={'current': i + 1, 'total': 30})
         return "Task completed"
 

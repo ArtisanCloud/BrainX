@@ -9,6 +9,7 @@ class CeleryConfig(BaseModel):
     queue: Dict = {
         "default": "",
         "rag_queue": "rag_queue",
+        "task_queue": "task_queue",
     }
     broker_use_ssl: bool = False
     ssl_cert_reqs: str = None
@@ -17,6 +18,10 @@ class CeleryConfig(BaseModel):
     ssl_keyfile: str = None
     result_expires: int = 3600
     broker_connection_retry_on_startup: bool = True
+    broker_connection_timeout: int = 30
+    broker_heartbeat: int = 30
+    socket_connect_timeout: int = 30
+    socket_timeout: int = 30
     task_time_limit: int = 3600  # 任务最大执行时间
     task_soft_time_limit: int = 3000  # 软时间限制
     worker_concurrency: int = 4  # 并发 worker 数量
