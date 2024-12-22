@@ -67,6 +67,8 @@ schedule:
 
 task:
   enable: False
+  # celery_broker_url: 'amqp://guest:guest@localhost:5672//'
+  # celery_result_backend: 'db+postgresql://username:password@127.0.0.1:5432/broadcast'
   celery_broker_url: "redis://localhost:6379/0"
   celery_result_backend: "redis://localhost:6379/0"
   queue:
