@@ -67,11 +67,11 @@ class Scheduler:
 
     def init_scheduler(self):
         # 启动测试任务执行
-        self.start_job(
-            job_id = "echo_task_job",
-            task_func = echo_task,
-            interval_seconds=10
-        )
+        # self.start_job(
+        #     job_id = "echo_task_job",
+        #     task_func = echo_task,
+        #     interval_seconds=10
+        # )
         # self.scheduler.add_job(lambda: TaskService.run_30_seconds_task.delay())
         # self.scheduler.add_job(run_task, IntervalTrigger(seconds=10))
 
