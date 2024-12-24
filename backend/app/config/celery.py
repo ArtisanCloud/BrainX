@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class CeleryConfig(BaseModel):
+    enable: bool = False
     celery_broker_url: str = "redis://localhost:6379/0"
     celery_result_backend: str = "redis://localhost:6379/0"
     queue: Dict = {
