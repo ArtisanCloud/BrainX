@@ -5,6 +5,8 @@ from .ai_model import AIModel
 
 
 class TextEmbeddingModel(AIModel):
+    _embeddings_cache = None
+    
     @abstractmethod
     def verify_credentials(self, model: str, credentials: Mapping) -> None:
         raise NotImplementedError

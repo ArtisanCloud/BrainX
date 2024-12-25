@@ -1,5 +1,5 @@
 server:
-  version: "0.0.1"
+  version: "0.0.7"
   project_name: "brainx"
   project_type: "standalone"
   host: "0.0.0.0"

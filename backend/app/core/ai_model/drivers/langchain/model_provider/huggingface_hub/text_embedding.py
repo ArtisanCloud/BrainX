@@ -15,10 +15,21 @@ class HuggingFaceHubTextEmbeddingModel(TextEmbeddingModel):
         pass
 
     def get_provider_model(self) -> any:
-        embeddings = HuggingFaceEmbeddings(model_name=settings.models.qa_embedding_model_name)
-        # embeddings = HuggingFaceEmbeddings(model_name=self.model_id)
+        # 检查类变量中是否已有实例
+        # print(f"Cache object address: {id(HuggingFaceHubTextEmbeddingModel._embeddings_cache)}")
+        # print(f"Cache object: {HuggingFaceHubTextEmbeddingModel._embeddings_cache}")
+        if HuggingFaceHubTextEmbeddingModel._embeddings_cache is None:
+            print("Loading HuggingFace Embeddings...")
+            # 只有在没有缓存实例时才创建新的实例
+            embeddings_instance = HuggingFaceEmbeddings(model_name=settings.models.qa_embedding_model_name)
+            HuggingFaceHubTextEmbeddingModel._embeddings_cache = embeddings_instance  # 将实例缓存到类变量中
 
-        return embeddings
+        embeddings_instance = HuggingFaceHubTextEmbeddingModel._embeddings_cache  # 获取缓存的实例
+
+        # 打印缓存对象的内存地址
+        # print(f"Cache object address: {id(embeddings_instance)}")
+
+        return embeddings_instance
 
     def run_text_embedding(self, input_text: str) -> any:
         embeddings = self.get_provider_model()
