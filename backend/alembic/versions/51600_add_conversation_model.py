@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 from app import settings
 from app.models import AppModelConfig, App, User
-from app.models.base import table_name_user, table_name_app, table_name_app_model_config
+from app.models.base import table_name_user, table_name_app, table_name_app_model_config, time_now
 from app.models.robot_chat.conversation import table_name_conversation
 from sqlalchemy import UUID
 
@@ -37,8 +37,8 @@ def upgrade() -> None:
         sa.Column('status', sa.SmallInteger(), nullable=True),
         sa.Column('context', sa.Text(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid'),
 

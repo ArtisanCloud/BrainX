@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy import UUID
 
 from app import settings
-from app.models.base import table_name_message, table_name_conversation
+from app.models.base import table_name_message, table_name_conversation, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '51700'
@@ -35,8 +35,8 @@ def upgrade() -> None:
         sa.Column('role', sa.SmallInteger(), nullable=True),
         sa.Column('type', sa.SmallInteger(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid'),
 

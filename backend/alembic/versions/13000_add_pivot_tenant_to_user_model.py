@@ -14,7 +14,7 @@ from sqlalchemy import UUID
 
 from app import settings
 from app.config.server import ProjectType
-from app.models.base import table_name_pivot_tenant_to_user
+from app.models.base import table_name_pivot_tenant_to_user, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '13000'
@@ -34,7 +34,7 @@ def upgrade() -> None:
             # 可选: 添加主键约束，可以根据需要决定是否使用组合键作为主键
             sa.PrimaryKeyConstraint('tenant_uuid', 'user_uuid', name='pivot_tenant_to_user_pkey'),
 
-            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
             schema="public"
         )
 

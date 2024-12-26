@@ -14,6 +14,7 @@ from sqlalchemy import UUID
 
 from app import settings
 from app.models.app.app_model_config import table_name_app_model_config
+from app.models.base import time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '51500'
@@ -33,8 +34,8 @@ def upgrade() -> None:
         sa.Column('configs', sa.Text(), nullable=True),
         sa.Column('persona_prompt', sa.Text(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid'),
 

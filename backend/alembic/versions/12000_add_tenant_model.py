@@ -14,6 +14,7 @@ import sqlalchemy as sa
 
 from app import settings
 from app.config.server import ProjectType
+from app.models.base import time_now
 from app.models.tenant.tenant import table_name_tenant
 
 # revision identifiers, used by Alembic.
@@ -36,8 +37,8 @@ def upgrade() -> None:
             sa.Column('encrypted_public_key', sa.Text()),
             sa.Column('config', sa.Text()),
 
-            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-            sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+            sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
             sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
             sa.PrimaryKeyConstraint('uuid'),
             schema="public"

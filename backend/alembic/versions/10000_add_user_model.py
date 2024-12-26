@@ -12,6 +12,7 @@ import sqlalchemy as sa
 
 from app import settings
 from app.config.server import ProjectType
+from app.models.base import time_now
 from app.models.originaztion.user import table_name_user
 
 from sqlalchemy.dialects.postgresql import UUID
@@ -50,8 +51,8 @@ def upgrade() -> None:
             sa.Column('is_activated', sa.Boolean(), nullable=True),
             sa.Column('we_work_user_id', sa.String(), nullable=True),
 
-            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-            sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+            sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
             sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
             sa.PrimaryKeyConstraint('uuid'),
             schema="public"

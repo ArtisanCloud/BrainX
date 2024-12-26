@@ -14,7 +14,7 @@ from sqlalchemy import UUID
 
 from app import settings
 from app.models import Dataset, User, Tenant
-from app.models.base import table_name_dataset, table_name_tenant, table_name_user, table_name_dataset_segment_rule
+from app.models.base import table_name_dataset, table_name_tenant, table_name_user, table_name_dataset_segment_rule, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '71000'
@@ -45,8 +45,8 @@ def create_dataset_table() -> None:
         sa.Column('embedding_model', sa.String(255), nullable=True),
         sa.Column('embedding_model_provider', sa.String(255), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),
@@ -68,8 +68,8 @@ def create_dataset_segment_rule_table() -> None:
         sa.Column('mode', sa.SmallInteger(), nullable=True),
         sa.Column('rules', sa.Text(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['dataset_uuid'], [Dataset.__table__.fullname + '.uuid'], ),

@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy import UUID
 
 from app import settings
-from app.models.base import table_name_provider
+from app.models.base import table_name_provider, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '51200'
@@ -38,8 +38,8 @@ def upgrade() -> None:
         sa.Column('quota_limit', sa.BigInteger, nullable=True),
         sa.Column('quota_used', sa.BigInteger, default=0, nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid'),
         schema=settings.database.db_schema

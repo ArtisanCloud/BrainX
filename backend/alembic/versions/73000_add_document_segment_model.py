@@ -15,7 +15,7 @@ from sqlalchemy import UUID
 from app import settings
 from app.models import Tenant, Dataset, Document, User
 from app.models.base import table_name_document_segment, table_name_tenant, table_name_document, table_name_user, \
-    table_name_dataset
+    table_name_dataset, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '73000'
@@ -49,8 +49,8 @@ def upgrade() -> None:
         sa.Column('index_node_hash', sa.String(), nullable=True, index=True),
         sa.Column('error_message', sa.Text(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),

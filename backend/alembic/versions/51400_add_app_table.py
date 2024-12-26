@@ -14,6 +14,7 @@ import sqlalchemy as sa
 
 from app import settings
 from app.models.app.app import table_name_app
+from app.models.base import time_now
 from app.models.originaztion.user import table_name_user, User
 from app.models.tenant.tenant import table_name_tenant, Tenant
 from app.models.workflow.workflow import table_name_workflow, Workflow
@@ -45,8 +46,8 @@ def upgrade() -> None:
         sa.Column('avatar_url', sa.String(), nullable=True),
         sa.Column('is_public', sa.Boolean(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
 
         sa.ForeignKeyConstraint(['tenant_uuid'], [Tenant.__table__.fullname + '.uuid'], ),

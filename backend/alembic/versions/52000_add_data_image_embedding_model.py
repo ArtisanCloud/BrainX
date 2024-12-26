@@ -14,7 +14,7 @@ from pgvector.sqlalchemy import Vector
 from sqlalchemy import Text
 
 from app import settings
-from app.models.base import table_name_data_image_embedding
+from app.models.base import table_name_data_image_embedding, time_now
 from sqlalchemy.dialects.postgresql import UUID, BYTEA, VARCHAR
 
 # revision identifiers, used by Alembic.
@@ -44,8 +44,8 @@ def upgrade() -> None:
 
         sa.Column('c_metadata', Text, comment='metadata'),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid'),
         schema=settings.database.db_schema

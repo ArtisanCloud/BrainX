@@ -13,6 +13,7 @@ import sqlalchemy as sa
 
 from app import settings
 from app.config.server import ProjectType
+from app.models.base import time_now
 from app.models.media_resource.model import table_name_media_resource
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -44,8 +45,8 @@ def upgrade() -> None:
             sa.Column('resource_type', sa.String(), comment='媒体类型'),
             sa.Column('sort_index', sa.Integer(), comment='排序索引'),
 
-            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-            sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+            sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+            sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
             sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
             sa.PrimaryKeyConstraint('uuid'),
             schema='public'

@@ -15,7 +15,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from app import settings
 from app.models import Dataset, Tenant, MediaResource, User, DatasetSegmentRule
 from app.models.base import table_name_document, table_name_tenant, table_name_user, table_name_dataset, \
-    table_name_media_resource, table_name_dataset_segment_rule
+    table_name_media_resource, table_name_dataset_segment_rule, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '72000'
@@ -100,8 +100,8 @@ def upgrade() -> None:
         sa.Column('document_meta', sa.JSON(), nullable=True),
         sa.Column('document_index', sa.Integer(), nullable=True),
 
-        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
-        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=datetime.UTC, nullable=False),
+        sa.Column('created_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
+        sa.Column('updated_at', sa.TIMESTAMP(timezone=True), default=time_now(), nullable=False),
         sa.Column('deleted_at', sa.TIMESTAMP(timezone=True), default=None, nullable=True),
         sa.PrimaryKeyConstraint('uuid'),
         schema=settings.database.db_schema
