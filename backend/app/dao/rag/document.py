@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
+from app.config.config import UTC
 
 from app.dao.base import BaseDAO
 from app.models import User
@@ -31,7 +32,7 @@ class DocumentDAO(BaseDAO[Document]):
                 document.updated_user_by = user.uuid
 
             # 获取带有 UTC 时区信息的当前时间
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(UTC)
             document.updated_at = current_time
 
             # 根据状态更新不同的时间字段

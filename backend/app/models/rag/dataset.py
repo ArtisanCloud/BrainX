@@ -6,6 +6,7 @@ from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Integer,
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app import settings
+from app.config.config import UTC
 from app.models.base import BaseORM, table_name_dataset, table_name_tenant, table_name_user, \
     table_name_dataset_segment_rule, table_name_pivot_app_to_dataset
 from enum import IntEnum, Enum
@@ -83,8 +84,8 @@ class Dataset(BaseORM):
             "token_count": 1500,
             "embedding_model": "text-embedding-ada-002",
             "embedding_model_provider": "openai",
-            "created_at": datetime.now(timezone.utc),
-            "updated_at": datetime.now(timezone.utc)
+            "created_at": datetime.now(UTC),
+            "updated_at": datetime.now(UTC)
         }
         
         # Override defaults with any provided kwargs

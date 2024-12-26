@@ -9,10 +9,9 @@ from datetime import datetime
 import uuid as uuid
 
 from sqlalchemy.orm import declarative_base, mapped_column
+from app.config.config import UTC
 
 from app.database.deps import get_async_db_session
-
-UTC = timezone('UTC')
 
 
 def time_now():

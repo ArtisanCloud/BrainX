@@ -6,6 +6,8 @@ from sqlalchemy.orm import DeclarativeMeta, Session
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Union, Sequence
 
+from app.config.config import UTC
+
 # 定义 ModelType 类型变量，限定为 SQLAlchemy 的 DeclarativeMeta
 ModelType = TypeVar('ModelType', bound=DeclarativeMeta)
 
@@ -224,7 +226,7 @@ class BaseDAO(Generic[ModelType]):
 
                 for field, value in patch_data.items():
                     setattr(obj, field, value)
-                setattr(obj, "updated_at", datetime.now())
+                setattr(obj, "updated_at", datetime.now(UTC))
 
                 await self.db.flush()
                 await self.db.refresh(obj)
@@ -253,7 +255,7 @@ class BaseDAO(Generic[ModelType]):
 
                 for field, value in patch_data.items():
                     setattr(obj, field, value)
-                setattr(obj, "updated_at", datetime.now())
+                setattr(obj, "updated_at", datetime.now(UTC))
 
                 self.db.flush()
                 self.db.refresh(obj)
@@ -284,7 +286,7 @@ class BaseDAO(Generic[ModelType]):
                         return False, Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
-                    exist_obj.deleted_at = datetime.now()
+                    exist_obj.deleted_at = datetime.now(UTC)
                     await self.db.flush()
 
                     return True, None
@@ -313,7 +315,7 @@ class BaseDAO(Generic[ModelType]):
                         return None, Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
-                    exist_obj.deleted_at = datetime.now()
+                    exist_obj.deleted_at = datetime.now(UTC)
                     self.db.flush()
 
                     return True, None

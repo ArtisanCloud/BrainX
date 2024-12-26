@@ -19,3 +19,4 @@ class Server(BaseModel):
     worker_count: int
     environment: str
     server_render: bool
+    timezone: str = "Asia/Shanghai"  # New field added here

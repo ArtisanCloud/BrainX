@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+from app.config.config import UTC
 
 from app.openapi.models.platform import Platform
 from app.schemas.auth import AccessTokenSchema, ALGORITHM, auth_user_uuid_key, auth_tenant_uuid_key
@@ -7,7 +8,7 @@ from jose import jwt
 
 def sign_token(platform: Platform, secret_key, expires_in) -> AccessTokenSchema:
     print("current sign token key:", secret_key)
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     access_token_payload = {
         "auth_access_key": str(platform.access_key),
         'name': platform.name,

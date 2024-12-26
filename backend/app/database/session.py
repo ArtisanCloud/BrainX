@@ -49,4 +49,3 @@ sync_session_local = sessionmaker(
     class_=Session
 )
 
-UTC = timezone('UTC')

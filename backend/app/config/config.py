@@ -1,4 +1,5 @@
 import os
+from pytz import timezone
 
 import yaml
 
@@ -90,6 +91,12 @@ settings = Settings(
     sentry=Sentry(**config['sentry']),
     storage=Storage(**config['storage'])
 )
+
+
+UTC = timezone(settings.server.timezone)
+
+print(f"current timezone: {UTC}")
+
 
 # 补齐设置数据库地址
 # 定时任务的存储配置

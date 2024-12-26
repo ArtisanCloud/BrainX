@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import client_storage
-from app.config.config import settings
+from app.config.config import UTC, settings
 from app.core.libs.storage.storage import Storage
 from app.models import User
 from app.models.media_resource.model import MediaResource
@@ -139,7 +139,7 @@ class MediaResourceService:
                 return None, Exception(f"Bucket '{bucket}' does not exist")
 
             if media_name is None or media_name == '':
-                object_name = f"object_{datetime.now().timestamp()}"
+                object_name = f"object_{datetime.now(UTC).timestamp()}"
             else:
                 object_name = media_name
 

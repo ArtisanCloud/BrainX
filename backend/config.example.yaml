@@ -10,6 +10,7 @@ server:
   worker_count: 5
   environment: "local"
   server_render: False
+  timezone: "Asia/Shanghai"
 
 jwt:
   jwt_secret: "dev"

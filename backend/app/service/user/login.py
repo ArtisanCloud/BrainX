@@ -3,6 +3,7 @@ from datetime import datetime, timezone, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
+from app.config.config import UTC
 from app.core.libs.security import check_password
 from app.models.originaztion.user import User
 from app.schemas.auth import  AccessTokenSchema, ALGORITHM, auth_user_uuid_key, auth_tenant_uuid_key
@@ -11,7 +12,7 @@ from jose import  jwt
 
 
 def sign_token(user: User, secret_key, expires_in) -> AccessTokenSchema:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     access_token_payload = {
         auth_tenant_uuid_key: str(user.tenant_owner_uuid),
         auth_user_uuid_key: str(user.uuid),
