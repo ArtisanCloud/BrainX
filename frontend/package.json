@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:docker": "env-cmd -f .env.production.docker next build",
-    "start": "next start",
+    "start": "next start -H $HOST -p $PORT",
     "seed": "node -r dotenv/config app/scripts/seed.js",
     "lint": "next lint"
   },
