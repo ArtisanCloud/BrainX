@@ -7,6 +7,7 @@
     "build": "next build",
     "build:docker": "env-cmd -f .env.production.docker next build",
     "start": "next start -H $HOST -p $PORT",
+    "start-win": "set HOST=0.0.0.0 && set PORT=3000 && next start -H %HOST% -p %PORT%",
     "seed": "node -r dotenv/config app/scripts/seed.js",
     "lint": "next lint"
   },
