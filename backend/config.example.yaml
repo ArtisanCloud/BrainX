@@ -37,9 +37,15 @@ openapi:
       secret_key: 'xxxxxxxxxxxx'
 
 database:
-  dsn: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x"
-  db_schema: "public"
-  echo_log: False
+  dsn: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x" # 数据库连接字符串
+  db_schema: "public" # 默认的数据库 schema
+  pool_size: 4 # 最大连接数
+  max_overflow: 4 # 超过池大小的最大连接数
+  pool_timeout: 120 # 连接池获取连接的超时时间（秒）
+  pool_recycle: 3600 # 连接最大生命周期（秒）
+  pool_pre_ping: true # 连接池健康检查
+  poolclass:  # "sqlalchemy.pool.NullPool"
+  echo: False
 
 cache:
   driver: redis

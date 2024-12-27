@@ -70,7 +70,7 @@ async def lifespan(app: FastAPI):
     # Change DB URL to use psycopg driver for this specific check
     db_url = get_database_sync_url()
     cfg.set_main_option("sqlalchemy.url", db_url)
-    engine = create_engine(db_url, echo=settings.database.echo_log)
+    engine = create_engine(db_url, echo=settings.database.echo)
     # print("robot_chat:", robot_chat)
     if not check_current_head(cfg, engine):
         raise Exception(
