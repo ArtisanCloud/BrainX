@@ -133,10 +133,19 @@ log:
   split:
     - error
   level: info
-  keep_days: 30
-  console: True
-  stat: False
-  exc_info: False
+  interval: 1 # 间隔1天（与 "midnight" 配合使用时，interval 设为 1）
+  keep_days: 30 # 保留最近n天的日志文件
+  console: true # 是否输出到控制台
+  stat: false
+  exc_info: true
+  extra:
+    elasticsearch:
+      enable: false # 是否使用Elasticsearch
+      hosts: 
+        - "http://localhost:9200"
+      username: "kibana_user"
+      password: "your_password"
+      index_name: "brain_x_log" # Elasticsearch索引名称
 
 test:
   db_url: 'postgresql+psycopg2://username:password@localhost/test_db'

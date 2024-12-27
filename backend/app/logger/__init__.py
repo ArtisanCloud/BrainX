@@ -1,4 +1,5 @@
-from app.logger.log_concurrent import get_logger
+import os
+from app.logger.log import get_logger
 
 
 logger = get_logger(__name__)
