@@ -34,7 +34,10 @@ async_db_engine = create_async_engine(
 )
 
 async_session_local = async_sessionmaker(
-    bind=async_db_engine, autocommit=False, autoflush=False, class_=AsyncSession
+    bind=async_db_engine,
+    autocommit=False,
+    autoflush=False,
+    class_=AsyncSession
 )
 
 # Synchronous session maker for Celery
@@ -45,9 +48,8 @@ sync_engine = create_engine(
 )
 
 sync_session_local = sessionmaker(
-    pool_size=settings.database.pool_size,
-    max_overflow=settings.database.max_overflow,
-    pool_timeout=settings.database.pool_timeout,  # 连接池获取连接的超时时间（秒）
-    echo=settings.database.echo,  # 输出 SQL 日志
-    bind=sync_engine, autocommit=False, autoflush=False, class_=Session
+    bind=sync_engine, 
+    autocommit=False, 
+    autoflush=False, 
+    class_=Session
 )
