@@ -17,15 +17,15 @@ def get_database_sync_url():
 COMMON_CONFIG = {
     "pool_recycle": settings.database.pool_recycle,  # 连接最大生命周期（秒）
     "pool_pre_ping": settings.database.pool_pre_ping,
-}
-
-async_db_engine = create_async_engine(
-    settings.database.dsn,
-    connect_args={
+    "connect_args":{
         "server_settings": {
             "application_name": "brainx"  # Correct way to add application_name for asyncpg
         }
-    },    
+    },
+}
+
+async_db_engine = create_async_engine(
+    settings.database.dsn,    
     pool_size=settings.database.pool_size,
     max_overflow=settings.database.max_overflow,
     pool_timeout=settings.database.pool_timeout,  # 连接池获取连接的超时时间（秒）
