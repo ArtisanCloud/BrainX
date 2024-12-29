@@ -105,8 +105,8 @@ def get_chat_coze(params: Dict[str, Union[float, bool, int, str]]):
     user_id = params.get("user_id", settings.coze.user_id)
     conversation_id = params.get("conversation_id", settings.coze.conversation_id)
     streaming = bool(params.get("streaming", False))
-    print(f"Bot ID: {bot_id}, User ID: {user_id}, Conversation ID: {conversation_id}")
-    print(f"Streaming: {streaming}")
+    # print(f"Bot ID: {bot_id}, User ID: {user_id}, Conversation ID: {conversation_id}")
+    # print(f"Streaming: {streaming}")
 
     # 返回 ChatCoze 实例
     return ChatCoze(

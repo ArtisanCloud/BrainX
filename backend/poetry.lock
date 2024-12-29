@@ -496,6 +496,20 @@ tests = ["cloudpickle", "hypothesis", "mypy (>=1.11.1)", "pympler", "pytest (>=4
 tests-mypy = ["mypy (>=1.11.1)", "pytest-mypy-plugins"]
 
 [[package]]
+name = "authlib"
+version = "1.4.0"
+description = "The ultimate Python library in building OAuth and OpenID Connect servers and clients."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "Authlib-1.4.0-py2.py3-none-any.whl", hash = "sha256:4bb20b978c8b636222b549317c1815e1fe62234fc1c5efe8855d84aebf3a74e3"},
+    {file = "authlib-1.4.0.tar.gz", hash = "sha256:1c1e6608b5ed3624aeeee136ca7f8c120d6f51f731aa152b153d54741840e1f2"},
+]
+
+[package.dependencies]
+cryptography = "*"
+
+[[package]]
 name = "azure-core"
 version = "1.31.0"
 description = "Microsoft Azure Core Library for Python"
@@ -1026,6 +1040,24 @@ files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
+
+[[package]]
+name = "cozepy"
+version = "0.9.1"
+description = "OpenAPI SDK for Coze(coze.com/coze.cn)"
+optional = false
+python-versions = "<4.0,>=3.7"
+files = [
+    {file = "cozepy-0.9.1-py3-none-any.whl", hash = "sha256:cacd52ea2e5792e0d3f143e421956aaf28ba8d820148fcdd77dd2f5eb37997fd"},
+    {file = "cozepy-0.9.1.tar.gz", hash = "sha256:503e533dcbdc7bd631460aa0b72452b3827664a073d70821551b1c7cb84abcb1"},
+]
+
+[package.dependencies]
+authlib = ">=1.2.0,<2.0.0"
+distro = ">=1.9.0,<2.0.0"
+httpx = {version = ">=0.27.0,<0.28.0", markers = "python_version >= \"3.8\" and python_version < \"4.0\""}
+pydantic = ">=2.5.0,<3.0.0"
+typing-extensions = ">=4.3.0,<5.0.0"
 
 [[package]]
 name = "crcmod"
@@ -7226,4 +7258,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "07fae4ac2b8a0b5b1b848df373d157d1e6cad139af24a854a4ed2d9dad3f0cee"
+content-hash = "6abff9cc42f545f358eea795f275bc369b26742af9444ad4361746678cadff14"
