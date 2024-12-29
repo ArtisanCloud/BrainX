@@ -2,7 +2,6 @@ import http
 
 from fastapi import APIRouter, Form, UploadFile, File
 
-from app.core.brainx.llm.langchain import get_llm, get_ollama_llm
 from app.logger import logger
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.visual_query import (

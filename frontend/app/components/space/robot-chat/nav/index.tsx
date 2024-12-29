@@ -16,11 +16,13 @@ import {
   baidu_ernie_speed_128k,
   baidu_qianfan_bloomz_7b_compressed,
   baidu_qianfan_ernie_3_d_5_8k,
-  baidu_qianfan_ernie_4_d_0_8k, label_baidu_ernie_lite_8k,
+  baidu_qianfan_ernie_4_d_0_8k, doubao_lite_32k, kimi_moonshot_v1_8k, label_baidu_ernie_lite_8k,
   label_baidu_ernie_speed_128k,
   label_baidu_qianfan_bloomz_7b_compressed,
   label_baidu_qianfan_ernie_3_d_5_8k,
   label_baidu_qianfan_ernie_4_d_0_8k,
+  label_doubao_lite_32k,
+  label_kimi_moonshot_v1_8k,
   label_ollama_13b_alpaca_16k,
   label_ollama_gemma_2b, label_ollama_llama3_2,
   label_ollama_qwen_2_5,
@@ -132,6 +134,14 @@ const ChatNav = () => {
                     label: label_ollama_gemma_2b,
                     value: ollama_gemma_2b,
                   },
+                  {
+                    label:label_kimi_moonshot_v1_8k,
+                    value:kimi_moonshot_v1_8k
+                  },
+                  {
+                    label:label_doubao_lite_32k,
+                    value:doubao_lite_32k
+                  }
                 ]}
               />
             </div>

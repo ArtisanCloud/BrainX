@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage
 from langgraph.constants import END
 from langgraph.graph import StateGraph
 from langgraph.graph.state import CompiledStateGraph
-from langgraph.prebuilt import  ToolExecutor
+from langgraph.prebuilt import ToolExecutor
 
 from app import settings
 from app.core.brainx.base import LLMModel
@@ -32,29 +32,47 @@ class Graph:
         self.router = None
         self.routes_options = [NodeType.END.value]
         self.tools = []
-        try: 
+        try:
             self.init_llm()
             # self._build_static_nodes()
             self.tool_executor = ToolExecutor(self.tools)
             self.build(graph_data)
         except Exception as e:
             raise e
-        
+
     def init_llm(self, default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value):
         # match self.app.current_app_model_config.model_provider:
-        self.default_llm, exception = get_llm(default_llm, temperature=0, streaming=False)
+        self.default_llm, exception = get_llm(
+            default_llm,
+            params={
+                "temperature": 0,
+                "streaming": False,
+            },
+        )
         if exception:
             raise exception
 
         # self.router_llm, exception = get_llm(LLMModel.OLLAMA_LLAMA3_2.value, temperature=0, streaming=False)
-        self.router_llm, exception = get_llm(LLMModel.OPENAI_GPT_3_D_5_TURBO.value, temperature=0, streaming=False)
+        self.router_llm, exception = get_llm(
+            LLMModel.OPENAI_GPT_3_D_5_TURBO.value,
+            params={
+                "temperature": 0,
+                "streaming": False,
+            },
+        )
         if exception:
             raise exception
 
-        self.generate_llm, exception = get_llm(default_llm, temperature=0, streaming=True)
+        self.generate_llm, exception = get_llm(
+            default_llm,
+            params={
+                "temperature": 0,
+                "streaming": True,
+            },
+        )
         if exception:
             raise exception
-        
+
     def call_agent(self, state: GraphState):
         messages = state["messages"]
         print(f"Calling agent with messages: {messages}")
@@ -68,11 +86,19 @@ class Graph:
         self.builder = StateGraph(GraphState)
 
         # Static nodes based on graph_json
-        self.builder.add_node(NodeType.START.value, lambda state: None)  # You can define a specific method or logic here
+        self.builder.add_node(
+            NodeType.START.value, lambda state: None
+        )  # You can define a specific method or logic here
         self.builder.add_node(NodeType.AGENT.value, self.call_agent)
-        self.builder.add_node(NodeType.KNOWLEDGE.value, lambda state: None)  # Define specific methods as needed
-        self.builder.add_node(NodeType.PLUGIN.value, lambda state: None)  # Define specific methods as needed
-        self.builder.add_node(NodeType.END.value, lambda state: None)  # Define specific methods as needed
+        self.builder.add_node(
+            NodeType.KNOWLEDGE.value, lambda state: None
+        )  # Define specific methods as needed
+        self.builder.add_node(
+            NodeType.PLUGIN.value, lambda state: None
+        )  # Define specific methods as needed
+        self.builder.add_node(
+            NodeType.END.value, lambda state: None
+        )  # Define specific methods as needed
 
         # Define edges between nodes directly
         self.builder.add_edge(NodeType.START.value, NodeType.AGENT.value)
@@ -81,8 +107,12 @@ class Graph:
         self.builder.add_edge(NodeType.PLUGIN.value, NodeType.END.value)
 
         # Set entry point and finish point
-        self.builder.set_entry_point(NodeType.START.value)  # Make sure this ID matches a node in the graph
-        self.builder.set_finish_point(NodeType.END.value)  # Make sure this ID matches a node in the graph
+        self.builder.set_entry_point(
+            NodeType.START.value
+        )  # Make sure this ID matches a node in the graph
+        self.builder.set_finish_point(
+            NodeType.END.value
+        )  # Make sure this ID matches a node in the graph
 
         self.graph = self.builder.compile()
 
@@ -94,11 +124,13 @@ class Graph:
             self.builder.add_node(NodeType.AGENT.value, self.call_agent)
             # print("llm:", self.llm)
             for node_data in graph_data["nodes"]:
-                node = NodeFactory.create_node({
-                    **node_data,
-                    "llm": self.default_llm,
-                    "context_manager": self.context_manager,
-                })
+                node = NodeFactory.create_node(
+                    {
+                        **node_data,
+                        "llm": self.default_llm,
+                        "context_manager": self.context_manager,
+                    }
+                )
                 self.context_manager.set_node(node)
                 self.builder.add_node(node.get_id(), node.execute)
 
@@ -108,8 +140,12 @@ class Graph:
             self.builder.add_edge(NodeType.AGENT.value, NodeType.START.value)
             self.builder.add_edge(NodeType.END.value, END)
 
-            self.builder.set_entry_point(NodeType.AGENT.value)  # Make sure this ID matches a node in the graph
-            self.builder.set_finish_point(NodeType.END.value)  # Make sure this ID matches a node in the graph
+            self.builder.set_entry_point(
+                NodeType.AGENT.value
+            )  # Make sure this ID matches a node in the graph
+            self.builder.set_finish_point(
+                NodeType.END.value
+            )  # Make sure this ID matches a node in the graph
 
             self.graph = self.builder.compile()
 
@@ -127,7 +163,7 @@ class Graph:
 
             # 使用 PIL 保存图像
             with PILImage.open(image_stream) as img:
-                img.save('graph_test.png')  # 保存为 graph.png
+                img.save("graph_test.png")  # 保存为 graph.png
 
             print("Graph image saved as 'graph_test.png'.")
 

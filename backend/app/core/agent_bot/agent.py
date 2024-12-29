@@ -95,7 +95,10 @@ class AgentBot:
     def init_llm(self, default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value):
         # match self.app.current_app_model_config.model_provider:
         self.default_llm, exception = get_llm(
-            default_llm, temperature=0, streaming=False
+            default_llm, params={
+                "temperature":0, 
+                "streaming":False
+            }
         )
         if exception:
             raise exception
@@ -109,13 +112,21 @@ class AgentBot:
             default_router_llm = settings.agent.router_llm
 
         self.router_llm, exception = get_llm(
-            default_router_llm, temperature=0, streaming=False
+            default_router_llm, 
+            params={
+                "temperature":0, 
+                "streaming":False
+            }
         )
         if exception:
             raise exception
 
         self.generate_llm, exception = get_llm(
-            default_llm, temperature=0, streaming=True
+            default_llm, 
+            params={
+                "temperature":0, 
+                "streaming":False
+            }
         )
         if exception:
             raise exception

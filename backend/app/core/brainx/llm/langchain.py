@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Dict, Tuple, Union
 
 from langchain_community.chat_models import QianfanChatEndpoint, ChatCoze
 from langchain_community.llms.moonshot import Moonshot
@@ -10,7 +10,12 @@ from app.config.config import settings
 from app.core.brainx.base import LLMModel
 
 
-def get_openai_llm(llm: str, temperature: float, streaming: bool):
+def get_openai_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 提取参数
+    temperature = float(params.get("temperature", 0.5))  # 默认值 0.5
+    streaming = bool(params.get("streaming", False))    # 默认值 False
+
+    # 初始化并返回模型
     return ChatOpenAI(
         model=llm,
         temperature=temperature,
@@ -18,7 +23,12 @@ def get_openai_llm(llm: str, temperature: float, streaming: bool):
     )
 
 
-def get_kimi_llm(llm: str, temperature: float, streaming: bool):
+def get_kimi_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 提取参数
+    temperature = float(params.get("temperature", 0.5))  # 默认值 0.5
+    streaming = bool(params.get("streaming", False))    # 默认值 False
+
+    # 初始化并返回模型
     return Moonshot(
         model=llm,
         temperature=temperature,
@@ -28,18 +38,19 @@ def get_kimi_llm(llm: str, temperature: float, streaming: bool):
     )
 
 
-def get_baidu_qianfan_llm(
-    llm: str,
-    temperature: float = 0,
-    top_p: float = 0.8,
-    streaming: bool = False,
-    request_timeout: int = 300,
-):
+def get_baidu_qianfan_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 中获取并进行处理
+    temperature = float(params.get("temperature", 0))  # 默认值 0
     if temperature <= 0:
         temperature = 0.01
     if temperature > 1:
         temperature = 1
 
+    top_p = float(params.get("top_p", 0.8))  # 默认值 0.8
+    streaming = bool(params.get("streaming", False))  # 默认值 False
+    request_timeout = int(params.get("request_timeout", 300))  # 默认值 300
+
+    # 返回 QianfanChatEndpoint 实例
     return QianfanChatEndpoint(
         model=llm,
         temperature=temperature,
@@ -49,17 +60,18 @@ def get_baidu_qianfan_llm(
     )
 
 
-def get_tencent_huyuan_llm(
-    llm: str,
-    temperature: float = 0,
-    streaming: bool = False,
-    request_timeout: int = 300,
-):
+def get_tencent_huyuan_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 中获取并进行处理
+    temperature = float(params.get("temperature", 0))  # 默认值 0
     if temperature <= 0:
         temperature = 0.01
     if temperature > 1:
         temperature = 1
 
+    streaming = bool(params.get("streaming", False))  # 默认值 False
+    request_timeout = int(params.get("request_timeout", 300))  # 默认值 300
+
+    # 返回 ChatOpenAI 实例
     return ChatOpenAI(
         openai_api_key=settings.tencent_hunyuan.api_key,
         openai_api_base=settings.tencent_hunyuan.api_base,
@@ -70,9 +82,13 @@ def get_tencent_huyuan_llm(
     )
 
 
-def get_ollama_llm(llm: str, temperature: float, streaming: bool, format: str = ""):
-    # print(settings.ollama.url)
+def get_ollama_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 中获取并进行处理
+    temperature = float(params.get("temperature", 0))  # 默认值 0
+    streaming = bool(params.get("streaming", False))  # 默认值 False
+    format = str(params.get("format", ""))  # 默认值 ""
 
+    # 返回 ChatOllama 实例
     return ChatOllama(
         model=llm,
         base_url=settings.ollama.url,
@@ -83,14 +99,16 @@ def get_ollama_llm(llm: str, temperature: float, streaming: bool, format: str = 
     )
 
 
-def get_chat_coze(
-    bot_id: str,
-    user_id: str,
-    conversation_id: str,
-    streaming: bool = False,
-):
-    # print(settings.ollama.url)
+def get_chat_coze(params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 获取参数
+    bot_id = params.get("bot_id", settings.coze.bot_id)
+    user_id = params.get("user_id", settings.coze.user_id)
+    conversation_id = params.get("conversation_id", settings.coze.conversation_id)
+    streaming = bool(params.get("streaming", False))
+    print(f"Bot ID: {bot_id}, User ID: {user_id}, Conversation ID: {conversation_id}")
+    print(f"Streaming: {streaming}")
 
+    # 返回 ChatCoze 实例
     return ChatCoze(
         coze_api_base=settings.coze.api_base,
         coze_api_key=settings.coze.api_key,
@@ -103,41 +121,33 @@ def get_chat_coze(
 
 def get_llm(
     llm: str,
-    temperature: float = 0.5,
-    top_p: float = 0.8,
-    streaming: bool = False,
-    format: str = "",
-    request_timeout: int = 300,
+    params: Dict[str, Union[float, bool, int, str]],
 ) -> Tuple[BaseChatModel, Exception | None]:
-    match llm:
-        case _ if LLMModel.is_openai_model(llm):
-            mdl_llm = get_openai_llm(llm, temperature=temperature, streaming=streaming)
+    try:
+        # 根据模型类型动态加载实例
+        match llm:
+            case _ if LLMModel.is_openai_model(llm):
+                mdl_llm = get_openai_llm(llm, params)
 
-        case _ if LLMModel.is_kimi_model(llm):
-            mdl_llm = get_kimi_llm(llm, temperature=temperature, streaming=streaming)
+            case _ if LLMModel.is_coze_model(llm):
+                mdl_llm = get_chat_coze(params)
 
-        case _ if LLMModel.is_baidu_model(llm):
-            mdl_llm = get_baidu_qianfan_llm(
-                llm,
-                temperature=temperature,
-                top_p=top_p,
-                streaming=streaming,
-                request_timeout=request_timeout,
-            )
-        case _ if LLMModel.is_tencent_hunyuan_model(llm):
-            mdl_llm = get_tencent_huyuan_llm(
-                llm,
-                temperature=temperature,
-                streaming=streaming,
-                request_timeout=request_timeout,
-            )
+            case _ if LLMModel.is_kimi_model(llm):
+                mdl_llm = get_kimi_llm(llm, params)
 
-        case _ if LLMModel.is_ollama_model(llm):
-            mdl_llm = get_ollama_llm(
-                llm, temperature=temperature, streaming=streaming, format=format
-            )
+            case _ if LLMModel.is_baidu_model(llm):
+                mdl_llm = get_baidu_qianfan_llm(llm, params)
 
-        case _:
-            return None, Exception(f"Unsupported LLM model: {llm}")
+            case _ if LLMModel.is_tencent_hunyuan_model(llm):
+                mdl_llm = get_tencent_huyuan_llm(llm, params)
 
-    return mdl_llm, None
+            case _ if LLMModel.is_ollama_model(llm):
+                mdl_llm = get_ollama_llm(llm, params)
+
+            case _:
+                return None, Exception(f"Unsupported LLM model: {llm}")
+
+        return mdl_llm, None
+
+    except Exception as e:
+        return None, e

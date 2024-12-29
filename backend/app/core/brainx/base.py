@@ -15,6 +15,10 @@ class LLMModel(Enum):
     BAIDU_ERNIE_Lite_8K = 'ERNIE-Lite-8K'
     BAIDU_QIANFAN_QIANFAN_BLOOMZ_7B_COMPRESSED = 'Qianfan-BLOOMZ-7B-compressed'
     
+    DOUBAO_PRO_32K = 'Doubao-pro-32k'
+    DOUBAO_LITE_32K = 'Doubao-lite-32k'
+    DOUBAO_VISION_PRO_32K = 'Doubao-vision-pro-32k'
+
     TENCENT_HUNYUAN_LITE = 'hunyuan-lite'
     TENCENT_HUNYUAN_STANDARD = 'hunyuan-standard'
     TENCENT_HUNYUAN_STANDARD_256K = 'hunyuan-standard-256K'
@@ -59,6 +63,14 @@ class LLMModel(Enum):
         return any(
             llm == model.value for model in cls 
             if model.name.startswith('OPENAI_')
+        )
+    
+    @classmethod
+    def is_coze_model(cls, llm: str) -> bool:
+        """判断是否为Coze模型"""
+        return any(
+            llm == model.value for model in cls 
+            if model.name.startswith('DOUBAO_')
         )
 
     @classmethod

@@ -178,6 +178,9 @@ ollama:
 coze:
   api_base: https://api.coze.cn/v1
   api_key: "YOUR_API_KEY"
+  bot_id: "bot_id"
+  user_id: "brainx"
+  conversation_id: ""
   
 polygon:
   api_key: "YOUR_API_KEY"

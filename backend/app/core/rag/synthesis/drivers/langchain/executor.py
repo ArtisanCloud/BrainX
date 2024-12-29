@@ -1,5 +1,8 @@
 from typing import Any, Iterator, Tuple, Type, Dict
-from langchain_community.chat_message_histories import ChatMessageHistory, RedisChatMessageHistory
+from langchain_community.chat_message_histories import (
+    ChatMessageHistory,
+    RedisChatMessageHistory,
+)
 from langchain_core.output_parsers import JsonOutputParser
 
 from langchain_core.prompts import PromptTemplate
@@ -17,25 +20,31 @@ from app.models import App
 
 
 class LangchainAgentExecutor(BaseAgentExecutor):
-    def __init__(self,
-                 llm: str,
-                 temperature: float = 0.5,
-                 streaming: bool = False,
-                 **kwargs):
-        super().__init__(llm=llm, temperature=temperature, streaming=streaming, **kwargs)
+    def __init__(
+        self, llm: str, temperature: float = 0.5, streaming: bool = False, **kwargs
+    ):
+        super().__init__(
+            llm=llm, temperature=temperature, streaming=streaming, **kwargs
+        )
 
-    def stream(self, query: Dict,
-               temperature: float = 0.5,
-               input_variables=list[str], template: str = '',
-               **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
+    def stream(
+        self,
+        query: Dict,
+        temperature: float = 0.5,
+        input_variables=list[str],
+        template: str = "",
+        **kwargs: Any,
+    ) -> Tuple[Iterator | None, Exception | None]:
         try:
-            llm, exception = get_llm(llm=self.llm, temperature=temperature, streaming=True)
+            llm, exception = get_llm(
+                llm=self.llm,
+                params={"temperature": temperature, "streaming": True},
+            )
             if exception:
                 raise exception
 
             prompt_template = PromptTemplate(
-                input_variables=input_variables,
-                template=template
+                input_variables=input_variables, template=template
             )
             # print(prompt_template.format(query=question))
 
@@ -50,15 +59,21 @@ class LangchainAgentExecutor(BaseAgentExecutor):
         except Exception as e:
             return None, e
 
-    def invoke(self, query: Any,
-               temperature: float = 0.5,
-               input_variables=list[str],
-               template: str = '',
-               output_schemas: Any = None,
-               **kwargs: Any) -> Tuple[Any | None, Exception | None]:
+    def invoke(
+        self,
+        query: Any,
+        temperature: float = 0.5,
+        input_variables=list[str],
+        template: str = "",
+        output_schemas: Any = None,
+        **kwargs: Any,
+    ) -> Tuple[Any | None, Exception | None]:
         try:
 
-            llm, exception = get_llm(llm=self.llm,temperature=temperature, streaming=False)
+            llm, exception = get_llm(
+                llm=self.llm,
+                params={"temperature": temperature, "streaming": False},
+            )
             if exception:
                 raise exception
             print("invoke llm:", llm)
@@ -70,7 +85,9 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             if output_schemas:
                 parser = JsonOutputParser(pydantic_object=output_schemas)
 
-                partial_variables["format_instructions"] = parser.get_format_instructions()
+                partial_variables["format_instructions"] = (
+                    parser.get_format_instructions()
+                )
                 # print(partial_variables)
 
             # 是否要支持模版
@@ -114,17 +131,24 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return response, None
 
         except Exception as e:
-            logger.info(f"Error in langchain completion: {e}", exc_info=settings.log.exc_info)
+            logger.info(
+                f"Error in langchain completion: {e}", exc_info=settings.log.exc_info
+            )
             return None, e
 
-    def chat_completion(self,
-                        query: Dict,
-                        temperature: float = 0.5,
-                        app: App = None,
-                        session_id: str = "",
-                        **kwargs: Any) -> Tuple[str | None, Exception | None]:
+    def chat_completion(
+        self,
+        query: Dict,
+        temperature: float = 0.5,
+        app: App = None,
+        session_id: str = "",
+        **kwargs: Any,
+    ) -> Tuple[str | None, Exception | None]:
         try:
-            chat_llm, exception = get_llm(llm=self.llm,temperature=temperature, streaming=False)
+            chat_llm, exception = get_llm(
+                llm=self.llm, 
+                params={"temperature": temperature, "streaming": False},
+            )
             if exception:
                 raise exception
 
@@ -158,8 +182,9 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Add message trimming to the chain
             chain_with_trimming = (
-                    RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                    | chain_with_message_history)
+                RunnablePassthrough.assign(messages_trimmed=trim_messages)
+                | chain_with_message_history
+            )
 
             # Stream the response
             completion_response = chain_with_trimming.invoke(
@@ -172,15 +197,20 @@ class LangchainAgentExecutor(BaseAgentExecutor):
         except Exception as e:
             return None, e
 
-    def chat_stream(self,
-                    question: Dict,
-                    app: App = None,
-                    temperature: float = 0.5,
-                    session_id: str = "",
-                    **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
+    def chat_stream(
+        self,
+        question: Dict,
+        app: App = None,
+        temperature: float = 0.5,
+        session_id: str = "",
+        **kwargs: Any,
+    ) -> Tuple[Iterator | None, Exception | None]:
 
         try:
-            chat_llm, exception = get_llm(llm=self.llm,temperature=temperature, streaming=True)
+            chat_llm, exception = get_llm(
+                llm=self.llm, 
+                params={"temperature": temperature, "streaming": True},
+            )
             if exception is not None:
                 raise exception
 
@@ -216,8 +246,9 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Add message trimming to the chain
             chain_with_trimming = (
-                    RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                    | chain_with_message_history)
+                RunnablePassthrough.assign(messages_trimmed=trim_messages)
+                | chain_with_message_history
+            )
 
             # Stream the response
             stream_response = chain_with_trimming.stream(
@@ -231,7 +262,9 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return None, e
 
     def get_chat_history(self, session_id: str) -> ChatMessageHistory:
-        chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory  # ChatMessageHistory 动态驱动
+        chat_history_cls: Type[ChatMessageHistory] = (
+            RedisChatMessageHistory  # ChatMessageHistory 动态驱动
+        )
         chat_history_kwargs: dict = {
             "url": settings.cache.redis.url,
         }  # 传递给 ChatMessageHistory 的其他参数

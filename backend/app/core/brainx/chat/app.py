@@ -80,69 +80,69 @@ def get_chat_prompt_template(app: App) -> ChatPromptTemplate:
     return prompt
 
 
-def chat_by_llm(input_data: Dict, llm: str, app: App = None, temperature: float = 0.5, stream_handler=None):
-    # 初始化一个大模型
-    # OpenAI的GPT模型
-    if LLMModel.is_openai_model(llm):
-        chat_llm = get_openai_llm(llm, temperature, True)
-    # Kimi的模型
-    elif LLMModel.is_kimi_model(llm):
-        chat_llm = get_kimi_llm(llm, temperature, True)
-    # 百度的千帆模型
-    elif LLMModel.is_baidu_model(llm):
-        chat_llm = get_baidu_qianfan_llm(llm, temperature, True)
-    # 腾讯的混元模型
-    elif LLMModel.is_tencent_hunyuan_model(llm):
-        chat_llm = get_tencent_huyuan_llm(llm, temperature, True)
-    # Ollama的模型
-    else:
-        chat_llm = get_ollama_llm(llm, temperature, True)
+# def chat_by_llm(input_data: Dict, llm: str, app: App = None, temperature: float = 0.5, stream_handler=None):
+#     # 初始化一个大模型
+#     # OpenAI的GPT模型
+#     if LLMModel.is_openai_model(llm):
+#         chat_llm = get_openai_llm(llm, temperature, True)
+#     # Kimi的模型
+#     elif LLMModel.is_kimi_model(llm):
+#         chat_llm = get_kimi_llm(llm, temperature, True)
+#     # 百度的千帆模型
+#     elif LLMModel.is_baidu_model(llm):
+#         chat_llm = get_baidu_qianfan_llm(llm, temperature, True)
+#     # 腾讯的混元模型
+#     elif LLMModel.is_tencent_hunyuan_model(llm):
+#         chat_llm = get_tencent_huyuan_llm(llm, temperature, True)
+#     # Ollama的模型
+#     else:
+#         chat_llm = get_ollama_llm(llm, temperature, True)
 
-    # 设置一个提词模版
-    prompt = get_chat_prompt_template(app)
+#     # 设置一个提词模版
+#     prompt = get_chat_prompt_template(app)
 
-    # 设置一个对话链
-    # context = itemgetter("question") | fake_retriever | format_docs
-    # first_step = RunnablePassthrough.assign(context=context)
-    # chain = first_step | prompt | ChatLLM
+#     # 设置一个对话链
+#     # context = itemgetter("question") | fake_retriever | format_docs
+#     # first_step = RunnablePassthrough.assign(context=context)
+#     # chain = first_step | prompt | ChatLLM
 
-    # Set up a chat history
-    chat_history = RedisChatMessageHistory(session_id='test_session_id')
+#     # Set up a chat history
+#     chat_history = RedisChatMessageHistory(session_id='test_session_id')
 
-    # Define the chat chain
-    chain = prompt | chat_llm
+#     # Define the chat chain
+#     chain = prompt | chat_llm
 
-    # Add message history to the chain
-    chain_with_message_history = RunnableWithMessageHistory(
-        chain,
-        lambda session_id: chat_history,
-        input_messages_key="question",
-        history_messages_key="history",
-    )
+#     # Add message history to the chain
+#     chain_with_message_history = RunnableWithMessageHistory(
+#         chain,
+#         lambda session_id: chat_history,
+#         input_messages_key="question",
+#         history_messages_key="history",
+#     )
 
-    # Define a function to trim messages
-    def trim_messages(chain_input):
-        stored_messages = chat_history.messages
-        if len(stored_messages) <= 2:
-            return False
+#     # Define a function to trim messages
+#     def trim_messages(chain_input):
+#         stored_messages = chat_history.messages
+#         if len(stored_messages) <= 2:
+#             return False
 
-        chat_history.clear()
+#         chat_history.clear()
 
-        for message in stored_messages[-2:]:
-            chat_history.add_message(message)
+#         for message in stored_messages[-2:]:
+#             chat_history.add_message(message)
 
-        return True
+#         return True
 
-    # Add message trimming to the chain
-    chain_with_trimming = (
-            RunnablePassthrough.assign(messages_trimmed=trim_messages)
-            | chain_with_message_history)
+#     # Add message trimming to the chain
+#     chain_with_trimming = (
+#             RunnablePassthrough.assign(messages_trimmed=trim_messages)
+#             | chain_with_message_history)
 
-    # Stream the response
-    stream_response = chain_with_trimming.stream(
-        input=input_data,
-        config={"configurable": {"session_id": "test_session_id"}},
-    )
+#     # Stream the response
+#     stream_response = chain_with_trimming.stream(
+#         input=input_data,
+#         config={"configurable": {"session_id": "test_session_id"}},
+#     )
 
-    # print(stream_response)
-    return stream_response
+#     # print(stream_response)
+#     return stream_response
