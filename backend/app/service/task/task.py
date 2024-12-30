@@ -87,7 +87,7 @@ class TaskService:
         if not lock_acquired:
             # 如果锁获取失败，记录日志并重试
             # logger.info(f"Task {self.request.id} has locked, retrying...")
-            raise self.retry(
+            raise task.retry(
                 exc=Exception("Task rejected due to lock"),
                 countdown=settings.task.task_default_retry_delay,
                 max_retries=settings.task.task_retry_count,
@@ -105,7 +105,8 @@ class TaskService:
                 f"Error while running task {task.request.id}: {e}",
                 exc_info=settings.log.exc_info,
             )
-            return {"status": "FAILURE", "message": str(e)}
+            return f"Task failed: {str(e)}"
+            
 
     def _run_30_seconds_task_with_locker(self) -> str:
         """实际的任务执行逻辑"""
