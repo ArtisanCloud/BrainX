@@ -89,8 +89,6 @@ async def lifespan(app: FastAPI):
         redis_url=settings.cache.redis.url
     )
 
-    await CacheFactory.get_cache().async_connect()
-
     # start the scheduler for jobs
     if settings.schedule.enable:
         try:

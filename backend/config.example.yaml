@@ -33,8 +33,8 @@ openapi:
     # 访问PowerX OpenAPI的restful 配置
     power_x:
       base_url: "http://127.0.0.1:8888/openapi/v1"
-      access_key: 'xxxxxxxxxxxx'
-      secret_key: 'xxxxxxxxxxxx'
+      access_key: "xxxxxxxxxxxx"
+      secret_key: "xxxxxxxxxxxx"
 
 database:
   dsn: "postgresql+asyncpg://user:pass@127.0.0.1:54321/brain_x" # 数据库连接字符串
@@ -44,7 +44,7 @@ database:
   pool_timeout: 120 # 连接池获取连接的超时时间（秒）
   pool_recycle: 3600 # 连接最大生命周期（秒）
   pool_pre_ping: true # 连接池健康检查
-  poolclass:  # "sqlalchemy.pool.NullPool"
+  poolclass: # "sqlalchemy.pool.NullPool"
   echo: False
 
 cache:
@@ -79,27 +79,40 @@ task:
   # celery_result_backend: 'db+postgresql://username:password@127.0.0.1:5432/brainx'
   celery_broker_url: "redis://localhost:6379/0"
   celery_result_backend: "redis://localhost:6379/0"
+  # 队列的配置
   queue:
     default:
     rag_queue: rag_queue
     task_queue: task_queue
+  task_acks_on_failure_or_timeout: True
+  task_time_limit: 3600 # 任务最大执行时间
+  task_soft_time_limit: 3000 # 软时间限制
+  task_acks_late: True # 任务完成后才确认
+  task_reject_on_worker_lost: True # worker 丢失时重新入队
+  task_default_rate_limit: "1/s" # 限制任务执行速率
+  task_default_retry_delay: 5 # 重试延迟
+
+  # worker 配置
+  worker_concurrency: 4 # 并发 worker 数量
+  worker_prefetch_multiplier: 1 # 限制 worker 预取任务数
+
+  # broker 配置
   broker_use_ssl: False
-  ssl_cert_reqs: ''
-  ssl_ca_certs: ''
-  ssl_cert_file: ''
-  ssl_keyfile: ''
-  result_expires: 3600
+  ssl_cert_reqs: ""
+  ssl_ca_certs: ""
+  ssl_cert_file: ""
+  ssl_keyfile: ""
   broker_connection_retry_on_startup: True
   broker_connection_timeout: 30
   broker_heartbeat: 30
+
+  # 结果过期时间
+  result_expires: 3600
+  # result_backend_transport_options Socket 配置
   socket_connect_timeout: 30
   socket_timeout: 30
-  task_time_limit: 3600
-  task_soft_time_limit: 3000
-  worker_concurrency: 2
-  worker_prefetch_multiplier: 1
-  task_acks_on_failure_or_timeout: True
 
+  
 event:
   enable: False # 默认关闭，如果需要用得到订阅通知事件，可以开启
   driver: rabbitMQ #驱动默认是RabbitMQ
@@ -108,7 +121,8 @@ event:
   user: guest
   password: guest
   default_event_queue: queue_brainx #事件队列名称
-  queues: []
+  queues:
+    []
     # - name: queue_name #事件名
     #   event_name: event_name
 
@@ -141,14 +155,14 @@ log:
   extra:
     elasticsearch:
       enable: false # 是否使用Elasticsearch
-      hosts: 
+      hosts:
         - "http://localhost:9200"
       username: "kibana_user"
       password: "your_password"
       index_name: "brain_x_log" # Elasticsearch索引名称
 
 test:
-  db_url: 'postgresql+psycopg2://username:password@localhost/test_db'
+  db_url: "postgresql+psycopg2://username:password@localhost/test_db"
 
 openai:
   llm_name: "gpt-3.5-turbo"
@@ -161,7 +175,7 @@ kimi:
   api_base: "https://api.moonshot.cn/v1"
   api_key: "sk-reAhVwEXS8KkfazfbgAqDYbOrI9jQtFhCsDtQJA3Gq0Exxxx"
   request_timeout: 30
-  
+
 baidu_qianfan:
   api_key: "YOUR_API_KEY"
   secret_key: "YOUR_SECRET_KEY"
@@ -181,7 +195,7 @@ coze:
   bot_id: "bot_id"
   user_id: "brainx"
   conversation_id: ""
-  
+
 polygon:
   api_key: "YOUR_API_KEY"
 
@@ -200,21 +214,21 @@ storage:
     access_key: "YOUR_ACCESS_KEY"
     secret_key: "YOUR_SECRET_KEY"
     use_ssl: True
-    region: 'AsiaShanghai'
+    region: "AsiaShanghai"
   aliyun:
     endpoint: "oss-cn-beijing.aliyuncs.com"
     access_key: "YOUR_ACCESS_KEY"
     secret_key: "YOUR_SECRET_KEY"
     bucket_name: "BUCKET_NAME"
   azure:
-    account_name: 'ACCOUNT_NAME'
-    account_key: 'ACCOUNT_KEY'
-    container_name: 'CONTAINER_NAME'
-    bucket_name: 'BUCKET_NAME'
+    account_name: "ACCOUNT_NAME"
+    account_key: "ACCOUNT_KEY"
+    container_name: "CONTAINER_NAME"
+    bucket_name: "BUCKET_NAME"
   google:
-    bucket_name: 'BUCKET_NAME'
+    bucket_name: "BUCKET_NAME"
   s3:
-    endpoint: 'ENDPOINT'
-    access_key: 'ACCESS_KEY'
-    secret_key: 'SECRET_KEY'
-    bucket_name: 'BUCKET_NAME'
+    endpoint: "ENDPOINT"
+    access_key: "ACCESS_KEY"
+    secret_key: "SECRET_KEY"
+    bucket_name: "BUCKET_NAME"

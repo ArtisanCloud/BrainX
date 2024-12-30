@@ -63,33 +63,33 @@ class Settings(BaseModel):
 
 
 # Load the YAML file into a Python object
-with open('config.yaml', 'r', encoding='utf-8') as f:
+with open("config.yaml", "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
 # Create a Settings object from the YAML data
 settings = Settings(
-    server=Server(**config['server']),
-    jwt=JWT(**config['jwt']),
-    api=Api(**config['api']),
-    openapi=OpenAPI(**config['openapi']),
-    database=Database(**config['database']),
-    cache=Cache(**config['cache']),
-    schedule=Schedule(**config['schedule']),
-    task=CeleryConfig(**config['task']),
-    event=Event(**config['event']),
-    models=Models(**config['models']),
-    agent=Agent(**config['agent']),
-    log=Log(**config['log']),
-    test=Test(**config['test']),
-    openai=OpenAI(**config['openai']),
-    kimi=Kimi(**config['kimi']),
-    baidu_qianfan=BaiduQianfan(**config['baidu_qianfan']),
-    tencent_hunyuan=TencentHunYuan(**config['tencent_hunyuan']),
-    ollama=OLLAMA(**config['ollama']),
-    coze=Coze(**config['coze']),
-    polygon=Polygon(**config['polygon']),
-    sentry=Sentry(**config['sentry']),
-    storage=Storage(**config['storage'])
+    server=Server(**config["server"]),
+    jwt=JWT(**config["jwt"]),
+    api=Api(**config["api"]),
+    openapi=OpenAPI(**config["openapi"]),
+    database=Database(**config["database"]),
+    cache=Cache(**config["cache"]),
+    schedule=Schedule(**config["schedule"]),
+    task=CeleryConfig(**config["task"]),
+    event=Event(**config["event"]),
+    models=Models(**config["models"]),
+    agent=Agent(**config["agent"]),
+    log=Log(**config["log"]),
+    test=Test(**config["test"]),
+    openai=OpenAI(**config["openai"]),
+    kimi=Kimi(**config["kimi"]),
+    baidu_qianfan=BaiduQianfan(**config["baidu_qianfan"]),
+    tencent_hunyuan=TencentHunYuan(**config["tencent_hunyuan"]),
+    ollama=OLLAMA(**config["ollama"]),
+    coze=Coze(**config["coze"]),
+    polygon=Polygon(**config["polygon"]),
+    sentry=Sentry(**config["sentry"]),
+    storage=Storage(**config["storage"]),
 )
 
 

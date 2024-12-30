@@ -21,10 +21,19 @@ class CacheFactory:
     @classmethod
     def get_cache(cls) -> CacheInterface:
         if cls._instance is None:
-            raise RuntimeError("Cache instance not initialized. Call 'initialize_cache' first.")
+            try:
+                CacheFactory.initialize_cache(
+                    cache_type=settings.cache.driver,
+                    redis_url=settings.cache.redis.url
+                )
+                
+            except Exception as e:
+                raise RuntimeError(f"Cache instance initialization failed: {e}")
+            
         return cls._instance
 
     @classmethod
     def initialize_cache(cls, cache_type: str, **kwargs):
         if cls._instance is None:
             cls._instance = cls.create_cache(cache_type, **kwargs)
+            cls._instance.connect()

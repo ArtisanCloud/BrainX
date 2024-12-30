@@ -12,12 +12,14 @@ from app.cache.interface import CacheInterface
 
 class RedisCache(CacheInterface):
     def __init__(self, redis_url: str, **kwargs):
+        # print(f"Initializing RedisCache with URL: {redis_url}")
         self.redis_url = redis_url
         self.a_redis: Optional[Redis] = None
         self.redis: Optional[StrictRedis] = None
 
     def connect(self):
         if self.redis is None:
+            # print(f"connect RedisCache with URL: {self.redis_url}")
             self.redis = StrictRedis.from_url(self.redis_url)
 
     def disconnect(self):
@@ -69,14 +71,22 @@ class RedisCache(CacheInterface):
         return 0
 
     def acquire_lock(self, lock_key: str, timeout: int = 10) -> bool:
-        """尝试获取一个分布式锁"""
+        """尝试获取一个分布式锁，设置过期时间防止死锁"""
+        # print("self redis", self.redis)
         if self.redis:
-            return self.redis.setnx(lock_key, "True")
+            # 设置锁，并设置超时过期时间（防止死锁）
+            # timeout 是锁的超时时间，单位是秒
+            return self.redis.setnx(lock_key, "True") and self.redis.expire(lock_key, timeout)
+        else: 
+            raise Exception("Redis 连接未初始化")
 
     def is_locked(self, lock_key: str) -> bool:
+        """检查锁是否已被占用"""
         if self.redis:
-            return self.get(lock_key)
-        return False
+            # 获取锁的值，如果存在且值为 "True"，则表示锁已被占用
+            return self.get(lock_key) == "True"
+        else: 
+            raise Exception("Redis 连接未初始化")
 
     def release_lock(self, lock_key: str):
         """释放分布式锁"""

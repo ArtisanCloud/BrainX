@@ -24,19 +24,32 @@ def create_celery_worker():
             # 'app.openapi.service.custom.apqp.opl.service',
 
         ],  # 确保任务模块被导入
-        result_expires=settings.task.result_expires,  # 结果过期时间
-        broker_connection_retry_on_startup=settings.task.broker_connection_retry_on_startup,  # 启动时重试
-        # task_time_limit=settings.task.task_time_limit,  # 任务时间限制
-        # task_soft_time_limit=settings.task.task_soft_time_limit,  # 软时间限制
-        worker_concurrency=settings.task.worker_concurrency,  # 并发 worker 数量
-        # worker_prefetch_multiplier=settings.task.worker_prefetch_multiplier,  # 每个 worker 同时处理的任务数量
+       
+        # 设置任务的队列
         task_acks_on_failure_or_timeout=settings.task.task_acks_on_failure_or_timeout,  # 失败或超时任务是否确认
-        broker_connection_timeout=settings.task.broker_connection_timeout,  # 设置 RabbitMQ 连接超时 (秒)
-        broker_heartbeat=settings.task.broker_heartbeat,  # 设置 RabbitMQ 心跳间隔 (秒)
+        task_time_limit=settings.task.task_time_limit,  # 任务时间限制
+        task_acks_late=settings.task.task_acks_late,  # 任务完成后才确认
+        task_soft_time_limit=settings.task.task_soft_time_limit,  # 软时间限制
+        task_reject_on_worker_lost=settings.task.task_reject_on_worker_lost,  # worker 丢失时重新入队
+        task_default_rate_limit=settings.task.task_default_rate_limit,  # 限制任务执行速率
+        task_default_retry_delay=settings.task.task_default_retry_delay,  # 重试延迟
+
+        # 设置 worker 配置
+        worker_concurrency=settings.task.worker_concurrency,  # 并发 worker 数量
+        worker_prefetch_multiplier=settings.task.worker_prefetch_multiplier,  # 每个 worker 同时处理的任务数量
+        
+        # 设置 Broker 配置
+        broker_connection_retry_on_startup=settings.task.broker_connection_retry_on_startup,  # 启动时重试
+        broker_connection_timeout=settings.task.broker_connection_timeout,  # 设置连接超时 (秒)
+        broker_heartbeat=settings.task.broker_heartbeat,  # 设置心跳间隔 (秒)
+
+        # 设置结果后端
+        result_expires=settings.task.result_expires,  # 结果过期时间
         result_backend_transport_options={
             'socket_connect_timeout': settings.task.socket_connect_timeout,  # 连接 Redis 时的超时时间 (秒)
             'socket_timeout': settings.task.socket_timeout,          # 数据传输超时 (秒)
-        }
+        },
+
     )
 
     if settings.task.broker_use_ssl:

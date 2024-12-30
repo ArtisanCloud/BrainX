@@ -39,6 +39,25 @@ async def run_multiple_tasks(data: RequestRunMultiple30SecondsStatus):
     return {"task_ids": task_ids}  # result.ids 包含所有任务的 ID
 
 
+@router.post("/run-multiple-30s-tasks-with-locker")
+async def run_multiple_tasks_with_locker(data: RequestRunMultiple30SecondsStatus):
+    if settings.server.environment == 'production':
+        return
+
+    # 使用 Redis 的分布式锁
+    # 如果有6个任务，开了2个worker，通过使用分布锁，保证2个worker只有一个worker在执行任务，其他5个任务全部都在队列中等待
+    # 就算第二个worker接收到了任务，也需要reject 掉，返回给celery，让任务继续在队列里等待
+
+    # 使用 Celery 的 group 启动多个任务
+    task_group = group(TaskService.run_30_seconds_task_with_locker.s() for _ in range(data.task_count))
+    task_group_result = task_group.apply_async()  # 异步执行任务组
+
+    task_ids = [result.id for result in task_group_result]
+    # 返回任务 ID 列表
+    return {"task_ids": task_ids}  # result.ids 包含所有任务的 ID
+
+
+
 @router.get("/status/{task_id}")
 async def get_task_status(task_id: str):
     if settings.server.environment == 'production':
