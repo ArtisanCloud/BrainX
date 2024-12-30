@@ -37,3 +37,4 @@ class CeleryConfig(BaseModel):
     task_reject_on_worker_lost: bool = True  # worker 丢失时重新入队
     task_default_rate_limit: str = "1/s"  # 限制任务执行速率
     task_default_retry_delay: int = 5  # 重试延迟
+    task_retry_count: int = 5  # 任务最大重试次数

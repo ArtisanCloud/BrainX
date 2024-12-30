@@ -77,13 +77,12 @@ class TaskService:
         cache = CacheFactory.get_cache()
 
         # 先尝试获取锁，设置锁的超时时间，防止死锁
-        timeout = 30 * 60 # 锁的超时时间，设置为30分钟
+        timeout = 30 * 60  # 锁的超时时间，设置为30分钟
         lock_acquired = cache.acquire_lock(
             TASK_30S_SYNC_LOCK_KEY, timeout=timeout
         )  # 自动过期时间
         logger.info(f"Task {task.request.id} has locked: {lock_acquired}")
 
-        
         # 如果锁获取成功，继续执行任务
         if not lock_acquired:
             # 如果锁获取失败，记录日志并重试
@@ -91,20 +90,22 @@ class TaskService:
             raise self.retry(
                 exc=Exception("Task rejected due to lock"),
                 countdown=settings.task.task_default_retry_delay,
-                max_retries=5
-                ) 
+                max_retries=settings.task.task_retry_count,
+            )
 
         try:
-            
+
             # 成功获取锁后，继续执行任务
             instance = TaskService(self)
             return instance._run_30_seconds_task_with_locker()
 
         except Exception as e:
             # 如果执行过程中发生错误，记录日志并重试
-            logger.error(f"Error while running task {task.request.id}: {e}", exc_info=settings.log.exc_info)
+            logger.error(
+                f"Error while running task {task.request.id}: {e}",
+                exc_info=settings.log.exc_info,
+            )
             return {"status": "FAILURE", "message": str(e)}
-
 
     def _run_30_seconds_task_with_locker(self) -> str:
         """实际的任务执行逻辑"""
@@ -133,7 +134,7 @@ class TaskService:
         finally:
             # 确保任务结束后释放锁
             cache.release_lock(TASK_30S_SYNC_LOCK_KEY)
-            
+
             # 确保任务结束后释放锁
             logger.info(f"Task: {self.task} finished.")
 

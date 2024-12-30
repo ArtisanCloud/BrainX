@@ -90,7 +90,7 @@ task:
   task_acks_late: True # 任务完成后才确认
   task_reject_on_worker_lost: True # worker 丢失时重新入队
   task_default_rate_limit: "1/s" # 限制任务执行速率
-  task_default_retry_delay: 5 # 重试延迟
+  task_default_retry_delay: 5 # 任务最大重试次数
 
   # worker 配置
   worker_concurrency: 4 # 并发 worker 数量
