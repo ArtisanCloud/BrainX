@@ -215,6 +215,7 @@ storage:
     secret_key: "YOUR_SECRET_KEY"
     use_ssl: True
     region: "AsiaShanghai"
+    bucket_name: 'bucket.brainx'
   aliyun:
     endpoint: "oss-cn-beijing.aliyuncs.com"
     access_key: "YOUR_ACCESS_KEY"

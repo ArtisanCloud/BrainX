@@ -37,3 +37,5 @@ class CacheFactory:
         if cls._instance is None:
             cls._instance = cls.create_cache(cache_type, **kwargs)
             cls._instance.connect()
+
+        return cls._instance
