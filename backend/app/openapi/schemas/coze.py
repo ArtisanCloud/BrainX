@@ -17,6 +17,6 @@ class RequestChat(BaseModel):
 
 
 class ResponseChat(BaseModel):
-    ChatPoll
+    content:str
 
 

@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 from app.config.config import settings
 
 from cozepy import ChatStatus, Coze, Message, TokenAuth, COZE_CN_BASE_URL
@@ -9,9 +10,10 @@ router = APIRouter()
 
 
 @router.post("/create")
-async def api_create(data: RequestChat) -> ResponseChat:
+async def api_create(data: RequestChat) -> HTMLResponse:
 
-    coze = Coze(auth=TokenAuth(settings.coze.api_key))
+    # coze = Coze(auth=TokenAuth(settings.coze.api_key))
+    coze = Coze(auth=TokenAuth(settings.coze.api_key), base_url=COZE_CN_BASE_URL)
 
     chat_poll = coze.chat.create_and_poll(
         # id of bot
@@ -22,11 +24,14 @@ async def api_create(data: RequestChat) -> ResponseChat:
         # user input
         additional_messages=[Message.build_user_question_text(data.input)],
     )
+    content = ""
     for message in chat_poll.messages:
         print(message.content, end="")
+        content += message.content
 
     if chat_poll.chat.status == ChatStatus.COMPLETED:
         print()
         print("token usage:", chat_poll.chat.usage.token_count)
 
-    return ResponseChat(chat_poll)
+
+    return ResponseChat(content=content)
