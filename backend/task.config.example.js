@@ -9,8 +9,8 @@ module.exports = {
             watch: false, // 是否监听文件变化
             max_memory_restart: "2G", // 内存超过 1G 时重启
             env: {
-                PATH: "C:\\ProgramData\\Anaconda3\\envs\\brainx\\Scripts;$PATH",  // windows 确保 pm2 加载 Conda 环境路径
-                // PATH: "/opt/anaconda3/envs/brainx/bin:$PATH", // 确保 pm2 加载 Conda 环境路径
+                // PATH: "C:\\ProgramData\\Anaconda3\\envs\\brainx\\Scripts;$PATH",  // windows 确保 pm2 加载 Conda 环境路径
+                PATH: "/opt/anaconda3/envs/brainx/bin:$PATH", // 确保 pm2 加载 Conda 环境路径
                 NODE_ENV: "develop", // 环境变量
             },
             max_size: '10M', // 最大日志文件大小
@@ -29,8 +29,8 @@ module.exports = {
             watch: false, // 是否监听文件变化
             max_memory_restart: "2G", // 内存超过 1G 时重启
             env: {
-                PATH: "C:\\ProgramData\\Anaconda3\\envs\\brainx\\Scripts;$PATH",  // windows 确保 pm2 加载 Conda 环境路径
-                // PATH: "/opt/anaconda3/envs/brainx/bin:$PATH", // 确保 pm2 加载 Conda 环境路径
+                // PATH: "C:\\ProgramData\\Anaconda3\\envs\\brainx\\Scripts;$PATH",  // windows 确保 pm2 加载 Conda 环境路径
+                PATH: "/opt/anaconda3/envs/brainx/bin:$PATH", // 确保 pm2 加载 Conda 环境路径
                 NODE_ENV: "develop", // 环境变量
             },
             max_size: '10M', // 最大日志文件大小
@@ -47,8 +47,8 @@ module.exports = {
             watch: false, // 是否监听文件变化
             max_memory_restart: "2G", // 内存超过 1G 时重启
             env: {
-                PATH: "C:\\ProgramData\\Anaconda3\\envs\\brainx\\Scripts;$PATH",  // windows 确保 pm2 加载 Conda 环境路径
-                // PATH: "/opt/anaconda3/envs/brainx/bin:$PATH", // linux 确保 pm2 加载 Conda 环境路径
+                // PATH: "C:\\ProgramData\\Anaconda3\\envs\\brainx\\Scripts;$PATH",  // windows 确保 pm2 加载 Conda 环境路径
+                PATH: "/opt/anaconda3/envs/brainx/bin:$PATH", // linux 确保 pm2 加载 Conda 环境路径
                 NODE_ENV: "production", // 环境变量
             },
             max_size: '10M', // 最大日志文件大小
