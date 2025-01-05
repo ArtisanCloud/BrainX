@@ -2,7 +2,7 @@ from celery import states
 
 from app import settings
 from app.database.deps import get_sync_db_session
-from app.logger import logger
+from app.service.task import logger_rag as logger
 
 from app.service.task.celery_app import celery_app
 from app.service.task.rag.service import RagProcessorTaskService

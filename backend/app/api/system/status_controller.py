@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from app.logger import logger
 
 from app.config.config import settings
 
@@ -6,7 +7,8 @@ router = APIRouter()
 
 @router.get("/status")
 async def server_status():
-
+    logger.info("Server status info")
+    logger.error("Server status error")
     return {
         "name": settings.server.project_name,
         "system": True,

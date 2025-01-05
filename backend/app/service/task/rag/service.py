@@ -18,7 +18,7 @@ from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.ingestion.splitter.factory import TextSplitterFactory
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
-from app.logger import logger
+from app.service.task import logger_rag as logger
 from app.models import DocumentSegment, User, Dataset
 from app.models.base import UTC
 from app.models.model_provider.provider_model import ModelType

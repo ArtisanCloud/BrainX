@@ -9,7 +9,7 @@ from app import settings
 from app.database.deps import get_sync_db_session
 from app.database.seed import init_user_uuid
 from app.database.session import sync_session_local
-from app.logger import logger
+from app.service.task import logger
 from app.models import User
 from app.service.task.celery_app import celery_app
 from app.cache.factory import CacheFactory

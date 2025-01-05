@@ -1,4 +1,3 @@
-import os
 from app.logger.log import get_logger
 
 

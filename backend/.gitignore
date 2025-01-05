@@ -133,6 +133,7 @@ celerybeat.pid
 
 # Environments
 config.yaml
+task.config.js
 .venv
 env/
 venv/
