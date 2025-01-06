@@ -263,10 +263,6 @@ class RagProcessorTaskService:
             if document_content is None or document_content == "":
                 raise Exception("parsed document content is empty")
 
-            # print("document content:",document_content)
-            if document_content is None or document_content == "":
-                raise Exception("parsed document content is empty")
-
         except Exception as e:
             self.document_dao.set_indexing_status(
                 self.document, DocumentIndexingStatus.ERROR, error=str(e)
