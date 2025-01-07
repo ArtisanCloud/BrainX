@@ -60,7 +60,7 @@ class RagProcessorTaskService:
         stmt = select(Document).where(Document.uuid == document_uuid)
         document = self.db.execute(stmt).scalars().first()
         if document is None:
-            msg_error = f"document {document_uuid} cannot be found in db"
+            msg_error = f"document uuid: {document_uuid}, error: cannot be found in db"
             logger.error(msg_error)
             raise Exception(msg_error)
         return document
@@ -69,7 +69,7 @@ class RagProcessorTaskService:
         stmt = select(Dataset).where(Dataset.uuid == dataset_uuid)
         dataset = self.db.execute(stmt).scalars().first()
         if dataset is None:
-            msg_error = f"dataset {dataset_uuid} cannot be found in db"
+            msg_error = f"dataset uuid: {dataset_uuid}, error: cannot be found in db"
             logger.error(msg_error)
             raise Exception(msg_error)
 
@@ -79,7 +79,7 @@ class RagProcessorTaskService:
         stmt = select(User).where(User.uuid == user_uuid)
         user = self.db.execute(stmt).scalars().first()
         if user is None:
-            msg_error = f"user {user_uuid} cannot be found in db"
+            msg_error = f"user uuid: {user_uuid}, error: cannot be found in db"
             logger.error(msg_error)
             raise Exception(msg_error)
         return user
@@ -101,60 +101,58 @@ class RagProcessorTaskService:
         try:
             in_process_status = DocumentIndexingStatus.processing_statuses()
             if document.indexing_status in in_process_status:
-                logger.info(f"Document {document.uuid} is started.")
-                return False, Exception("Document is started and cannot be processed.")
+                msg = f"Document uuid: {document.uuid}, message: Document is started and cannot be processed."
+                logger.error(msg)
+                return False, Exception(msg)
 
             if document.is_archived:
-                logger.info(f"Document {document.uuid} is archived.")
-                return False, Exception("Document is archived and cannot be processed.")
+                msg = f"Document uuid: {document.uuid}, message: Document is archived and cannot be processed."
+                logger.error(msg)
+                return False, Exception(msg)
 
             if not document.dataset_uuid:
-                logger.info(f"Document {document.uuid} is missing dataset UUID.")
-                return False, Exception("Dataset UUID is missing.")
+                msg = f"Document uuid: {document.uuid}, message: Dataset UUID is missing dataset UUID."
+                logger.error(msg)
+                return False, Exception(msg)
 
             if not document.created_user_by:
-                logger.info(f"Document {document.uuid} is missing created user UUID.")
-                return False, Exception("Created user UUID is missing.")
+                msg = f"Document uuid: {document.uuid} message: Created user UUID is missing."
+                logger.error(msg)
+                return False, Exception(msg)
 
             if document.error_message or document.error_at:
-                logger.info(f"Document {document.uuid} has unresolved errors.")
-                return False, Exception("Document has an unresolved error.")
+                msg = (
+                    f"Document uuid: {document.uuid}, Document has an unresolved error."
+                )
+                logger.error(msg)
+                return False, Exception(msg)
 
             if document.is_paused:
-                logger.info(f"Document {document.uuid} is paused.")
-                return False, Exception("Document is paused and cannot be processed.")
+                msg = f"Document uuid: {document.uuid}, message: Document is paused and cannot be processed."
+                logger.error(msg)
+                return False, Exception(msg)
 
             if not document.resource_uuid and not document.resource_url:
-                logger.info(
-                    f"Document {document.uuid} is missing both resource UUID and URL."
-                )
-                return False, Exception("Both resource UUID and URL are missing.")
+                msg = f"Document uuid: {document.uuid}, message: Document is missing resource UUID and URL."
+                logger.error(msg)
+                return False, Exception(msg)
 
             valid_document_content_types = ContentType.get_content_type_names()
             if document.content_type not in valid_document_content_types:
-                logger.info(
-                    f"Document {document.uuid} has an invalid document content type."
-                )
-                return False, Exception(
-                    "Document content type is not valid for processing."
-                )
+                msg = f"Document uuid: {document.uuid}, message: Document content type is invalid."
+                logger.error(msg)
+                return False, Exception(msg)
 
             if document.process_start_at and document.process_end_at:
                 if document.process_start_at > document.process_end_at:
-                    logger.info(
-                        f"Document {document.uuid} has invalid processing times."
-                    )
-                    return False, Exception(
-                        "Process start time cannot be after process end time."
-                    )
+                    msg = f"Document uuid: {document.uuid}, message: Document processing times are invalid."
+                    logger.error(msg)
+                    return False, Exception(msg)
 
             if not document.dataset_process_rule_uuid:
-                logger.info(
-                    f"Document {document.uuid} is missing dataset process rule UUID."
-                )
-                return False, Exception(
-                    "Batch or dataset process rule UUID is missing."
-                )
+                msg = f"Document uuid: {document.uuid}, message: Batch or dataset process rule UUID is missing."
+                logger.info(msg)
+                return False, Exception(msg)
 
             # 如果所有检查都通过
             return True, None

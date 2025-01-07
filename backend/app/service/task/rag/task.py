@@ -27,7 +27,7 @@ def task_process_document(
 
         except Exception as e:
             logger.error(
-                f"Task: {task_id}, document uuid: {service_rag_processor.document.uuid}, Failed to get error: {e}",
+                f"Task: {task_id}, document UUID: {service_rag_processor.document.uuid}, error: {e}",
                 exc_info=settings.log.exc_info,
             )
             exception = e
@@ -35,7 +35,7 @@ def task_process_document(
         finally:
 
             logger.info(
-                f"Task: {task_id} for document UUID: {service_rag_processor.document.uuid} completed."
+                f"Task: {task_id}, document UUID: {service_rag_processor.document.uuid}, status: completed."
             )
             # 无论任务成功与否，最终更新任务状态
             if exception is not None:

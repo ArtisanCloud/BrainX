@@ -1,9 +1,18 @@
 from gevent import monkey
+monkey.patch_all()
+# monkey.patch_all(ssl=False, aiohttp=False)
+
+from billiard import util
+# 增加缓冲区大小
+util._process_buffer_size = 1024
+
+# 如果上面的方法不行，可以尝试调整 multiprocessing 的缓冲区
+import multiprocessing
+multiprocessing.get_start_method()  # 获取当前启动方法，确保是合适的
+
 import click
 from celery import Celery
 
-monkey.patch_all()
-# monkey.patch_all(ssl=False, aiohttp=False)
 
 from app import settings
 

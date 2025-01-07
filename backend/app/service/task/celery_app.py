@@ -1,5 +1,10 @@
 from app import settings
 
+# 由于monkey.patch_all() 会修改标准库行为
+# Uvicorn 默认使用 asyncio 或 uvloop 事件循环
+# 因此需要确保 Celery 使用的事件循环与 Uvicorn 的一致
+# 只能单独为web api设置一个 celery_app单例，避免影响其他应用
+
 class CelerySingleton:
     _instance = None
 

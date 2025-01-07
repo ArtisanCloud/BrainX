@@ -7,8 +7,8 @@ router = APIRouter()
 
 @router.get("/status")
 async def server_status():
-    logger.info("Server status info")
-    logger.error("Server status error")
+    logger.info("Server status test info")
+    logger.error("Server status test error")
     return {
         "name": settings.server.project_name,
         "system": True,
