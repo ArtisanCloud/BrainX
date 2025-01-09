@@ -15,11 +15,15 @@ class LokiHandler(logging.Handler):
             log_entry = self.format(record)
             timestamp = int(time.time() * 1e9)  # 转换为纳秒
 
+            # 动态更新 level 标签
+            labels_with_level = self.labels.copy()
+            labels_with_level["level"] = record.levelname.lower()  # INFO -> info, ERROR -> error
+
             # 构建 Loki 的日志格式
             payload = {
                 "streams": [
                     {
-                        "stream": self.labels,  # 使用传入的标签
+                        "stream": labels_with_level,
                         "values": [[str(timestamp), log_entry]],
                     }
                 ]

@@ -3,6 +3,9 @@
 export const label_openai_gpt_3_d_5_turbo = 'OpenAI 3.5 turbo'
 export const openai_gpt_3_d_5_turbo = 'gpt-3.5-turbo'
 
+export const label_openai_gpt_4_o = 'OpenAI 4o'
+export const openai_gpt_4_o = 'gpt-4o'
+
 // Baidu Models
 
 export const label_baidu_qianfan_ernie_4_d_0_8k = '百度千帆-ERNIE-4.0-8K'

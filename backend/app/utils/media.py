@@ -19,6 +19,7 @@ class ContentType(Enum):
     PDF = "application/pdf"
     DOC = "application/msword"
     DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    TXT = "text/plain"
     XLS = "application/vnd.ms-excel"  # Excel xls 文件格式
     XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  # Excel xlsx 文件格式
     MARKDOWN = "text/markdown"  # Markdown 文件格式

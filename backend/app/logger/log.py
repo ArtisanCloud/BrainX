@@ -4,6 +4,8 @@ from logging.handlers import TimedRotatingFileHandler, QueueHandler, QueueListen
 import queue
 import sys
 import time
+
+import psutil
 from app.config.config import settings
 
 
@@ -16,15 +18,15 @@ class CustomExtraLogAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         my_context = kwargs.pop("extra", self.extra["extra"])
         # 设置App的名称到日志中
-        if my_context is None:
-            my_context = {"app": settings.server.project_name}
+        # if my_context is None:
+        #     my_context = {"app": settings.server.project_name}
         # print(__name__)
         ############################################################
         # "[ %s ] %s" % (my_context, msg)：这是格式化字符串的方法，
         # 将 my_context 和 msg 插入到字符串中。
         # 最终的结果会是类似于 [context_value] message 的格式。
         ############################################################
-        return "[%s] %s" % (my_context, msg), kwargs
+        return "%s . context:[%s]" % (msg, my_context), kwargs
 
 
 def ensure_log_dir(log_dir: str, permissions: int = 0o755):
@@ -45,13 +47,18 @@ def get_logger(
     job: str = "web_api",
     level=logging.DEBUG,
 ) -> logging.Logger:
-    # print("-------------------log name:",name)
+    # print(
+    #     f"-------------------log name:{name}, log_dir:{log_dir}, job:{job}, level:{level}"
+    # )
     """logging to logfile as well as on console with thread-safety"""
-    FORMAT = "[%(levelname)s  %(name)s %(module)s:%(lineno)s - %(funcName)s() - %(asctime)s]\n\t %(message)s \n"
+    FORMAT = "[%(levelname)s %(name)s:%(lineno)s-%(funcName)s()-%(asctime)s]\n\t %(message)s \n"
     TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
     # 创建日志目录
     ensure_log_dir(log_dir, permissions=0o755)
+
+    current_process = psutil.Process()
+    job_id = f"{job}_{current_process.pid}"
 
     # 创建 logger 实例
     logger_instance = logging.getLogger(name)
@@ -62,7 +69,7 @@ def get_logger(
         # ------ info handler ------
         # 创建 info 级别的日志记录器
         info_handler = TimedRotatingFileHandler(
-            filename=f"{log_dir}info.log",
+            filename=os.path.join(log_dir, "info.log"),
             # 每天午夜进行轮转
             when="midnight",
             # 间隔1天（与 "midnight" 配合使用时，interval 设为 1）
@@ -84,7 +91,7 @@ def get_logger(
 
         # 创建 error 级别的日志记录器
         error_handler = TimedRotatingFileHandler(
-            filename=f"{log_dir}error.log",
+            filename=os.path.join(log_dir, "error.log"),
             when="midnight",
             interval=1,
             backupCount=settings.log.keep_days,
@@ -141,18 +148,22 @@ def get_logger(
     # 添加 Loki Log
     if settings.log.extra.loki.enable:
         from app.logger.loki_handler import LokiHandler
+
         loki_url = settings.log.extra.loki.url  # 从配置中获取 Loki 地址
+        # 从配置中获取 Loki 标签
         loki_labels = {
-            "file_name":log_dir,
+            "filename": log_dir,
             "job": job,
-            "level": settings.log.level,
+            "job_id": job_id,
             "service_name": name,
-        }  # 从配置中获取 Loki 标签
+        }
+        # info logger
         loki_handler = LokiHandler(url=loki_url, labels=loki_labels)
         loki_handler.setFormatter(logging.Formatter(FORMAT, datefmt=TIME_FORMAT))
-        loki_handler.setLevel(level)
+        loki_handler.setLevel(logging.INFO)
         logger_instance.addHandler(loki_handler)
-        logger_instance.info("Loki logging enabled")
+        logger_instance.info(f"Loki info: {job_id}, {name} logging enabled")
+        logger_instance.error(f"Loki error: {job_id}, {name} logging enabled")
 
     logger_instance = CustomExtraLogAdapter(logger_instance, {"extra": None})
     return logger_instance

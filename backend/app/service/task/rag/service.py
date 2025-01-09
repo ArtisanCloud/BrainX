@@ -101,56 +101,56 @@ class RagProcessorTaskService:
         try:
             in_process_status = DocumentIndexingStatus.processing_statuses()
             if document.indexing_status in in_process_status:
-                msg = f"Document uuid: {document.uuid}, message: Document is started and cannot be processed."
+                msg = f"document uuid: {document.uuid}, message: Document is started and cannot be processed."
                 logger.error(msg)
                 return False, Exception(msg)
 
             if document.is_archived:
-                msg = f"Document uuid: {document.uuid}, message: Document is archived and cannot be processed."
+                msg = f"document uuid: {document.uuid}, message: Document is archived and cannot be processed."
                 logger.error(msg)
                 return False, Exception(msg)
 
             if not document.dataset_uuid:
-                msg = f"Document uuid: {document.uuid}, message: Dataset UUID is missing dataset UUID."
+                msg = f"document uuid: {document.uuid}, message: Dataset UUID is missing dataset UUID."
                 logger.error(msg)
                 return False, Exception(msg)
 
             if not document.created_user_by:
-                msg = f"Document uuid: {document.uuid} message: Created user UUID is missing."
+                msg = f"document uuid: {document.uuid} message: Created user UUID is missing."
                 logger.error(msg)
                 return False, Exception(msg)
 
             if document.error_message or document.error_at:
                 msg = (
-                    f"Document uuid: {document.uuid}, Document has an unresolved error."
+                    f"document uuid: {document.uuid}, Document has an unresolved error."
                 )
                 logger.error(msg)
                 return False, Exception(msg)
 
             if document.is_paused:
-                msg = f"Document uuid: {document.uuid}, message: Document is paused and cannot be processed."
+                msg = f"document uuid: {document.uuid}, message: Document is paused and cannot be processed."
                 logger.error(msg)
                 return False, Exception(msg)
 
             if not document.resource_uuid and not document.resource_url:
-                msg = f"Document uuid: {document.uuid}, message: Document is missing resource UUID and URL."
+                msg = f"document uuid: {document.uuid}, message: Document is missing resource UUID and URL."
                 logger.error(msg)
                 return False, Exception(msg)
 
             valid_document_content_types = ContentType.get_content_type_names()
             if document.content_type not in valid_document_content_types:
-                msg = f"Document uuid: {document.uuid}, message: Document content type is invalid."
+                msg = f"document uuid: {document.uuid}, message: Document content type is invalid."
                 logger.error(msg)
                 return False, Exception(msg)
 
             if document.process_start_at and document.process_end_at:
                 if document.process_start_at > document.process_end_at:
-                    msg = f"Document uuid: {document.uuid}, message: Document processing times are invalid."
+                    msg = f"document uuid: {document.uuid}, message: Document processing times are invalid."
                     logger.error(msg)
                     return False, Exception(msg)
 
             if not document.dataset_process_rule_uuid:
-                msg = f"Document uuid: {document.uuid}, message: Batch or dataset process rule UUID is missing."
+                msg = f"document uuid: {document.uuid}, message: Batch or dataset process rule UUID is missing."
                 logger.info(msg)
                 return False, Exception(msg)
 
@@ -194,9 +194,9 @@ class RagProcessorTaskService:
         )
 
         # --------------- Step Load Resource URL into Memory
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid} ~~~~~~~")
         logger.info(
-            f"~~~~~~~ Process document UUID: {self.document.uuid}, "
-            f"loading resource UUID: {self.document.resource_uuid}, URL: {self.document.resource_url}"
+            f"document uuid: {self.document.uuid}, loading resource UUID: {self.document.resource_uuid}, URL: {self.document.resource_url}"
         )
         try:
             file_data = None
@@ -218,7 +218,9 @@ class RagProcessorTaskService:
                     )
                 file_data = BytesIO(response.content)
             else:
-                print(complete_url)
+                logger.info(
+                    f"document uuid: {self.document.uuid}, complete_url: {complete_url} "
+                )
                 if os.path.exists(complete_url):
                     with open(complete_url, "rb") as f:
                         content = f.read()
@@ -235,15 +237,13 @@ class RagProcessorTaskService:
                 self.document, DocumentIndexingStatus.ERROR, error=str(e)
             )
             logger.error(
-                f"Task Error occurred while loading resource from URL: {self.document.resource_url} - {e}"
+                f"document uuid: {self.document.uuid}, Task Error occurred while loading resource from URL: {self.document.resource_url} - {e}"
             )
             return None, e
 
         # --------------- Step Extract Document text
-        logger.info(
-            f"~~~~~~~ Process document UUID: {self.document.uuid}, "
-            f"Step Extract Document text"
-        )
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid} ~~~~~~~")
+        logger.info(f"document uuid: {self.document.uuid}, Step Extract Document text")
         try:
             # save document ingestion status
             self.document_dao.set_indexing_status(
@@ -266,14 +266,14 @@ class RagProcessorTaskService:
                 self.document, DocumentIndexingStatus.ERROR, error=str(e)
             )
             logger.error(
-                f"Task Failed to extract document segments for document UUID: {str(self.document.uuid)} - {e}"
+                f"document uuid: {self.document.uuid}, Task Failed to extract document segments for document UUID: {str(self.document.uuid)} - {e}"
             )
             return None, e
 
         # --------------- Step Cleaning nodes and Split into nodes
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid} ~~~~~~~")
         logger.info(
-            f"~~~~~~~ Process document UUID: {self.document.uuid}, "
-            f"Step Cleaning nodes and Split into nodes"
+            f"document uuid: {self.document.uuid}, Step Cleaning nodes and Split into nodes"
         )
         try:
             # save document ingestion status
@@ -302,14 +302,14 @@ class RagProcessorTaskService:
                 self.document, DocumentIndexingStatus.ERROR, error=str(e)
             )
             logger.error(
-                f"Task Failed to transform the document text to segment, document uuid: {str(self.document.uuid)} - {e}"
+                f"document uuid: {self.document.uuid}, Task Failed to transform the document text to segment - {e}"
             )
             return None, e
 
         # --------------- Step 4: Create Document Segments
+        logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid} ~~~~~~~")
         logger.info(
-            f"~~~~~~~ Process document UUID: {self.document.uuid}, "
-            f"Create Document Segments, split nodes length: {len(nodes)}"
+            f"document uuid: {self.document.uuid}, Create Document Segments, split nodes length: {len(nodes)}"
         )
         try:
             self.document_dao.set_indexing_status(
@@ -329,14 +329,13 @@ class RagProcessorTaskService:
                 self.document, DocumentIndexingStatus.ERROR, error=str(e)
             )
             logger.error(
-                f"Task Failed to index document segments for document UUID, document uuid: {str(self.document.uuid)} - {e}"
+                f"document uuid: {str(self.document.uuid)}, Task Failed to index document segments - {e}"
             )
             return None, e
 
         # --------------- Step 5: Update Document with Indexing Information with status
         logger.info(
-            f"~~~~~~~ Process document UUID: {self.document.uuid}, Update Document with Indexing Information with status"
-        )
+            f"~~~~~~~ Process document UUID: {self.document.uuid}, Update Document with Indexing Information with status ~~~~~~~")
         try:
             self.document_dao.set_indexing_status(
                 self.document, DocumentIndexingStatus.STORING
@@ -357,7 +356,7 @@ class RagProcessorTaskService:
 
         except Exception as e:
             logger.error(
-                f"Task Failed to update document with indexing information for document UUID: {str(self.document.uuid)} - {e}"
+                f"document uuid: {str(self.document.uuid)}, Task Failed to update document with indexing information - {e}"
             )
             return None, e
 

@@ -7,6 +7,7 @@ from enum import Enum
 
 class LLMModel(Enum):
     OPENAI_GPT_3_D_5_TURBO = 'gpt-3.5-turbo'
+    OPENAI_GPT_4O = "gpt-4o"
     
     BAIDU_ERNIE_BOT_TURBO = 'ERNIE-Bot-turbo'
     BAIDU_ERNIE_4_D_0_8K = 'ERNIE-4.0-8K'

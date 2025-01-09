@@ -28,6 +28,7 @@ import {
   label_ollama_qwen_2_5,
   label_ollama_qwen_2_5_72b,
   label_openai_gpt_3_d_5_turbo,
+  label_openai_gpt_4_o,
   label_tencent_hunyuan_lite,
   label_tencent_hunyuan_standard,
   label_tencent_hunyuan_turbo,
@@ -36,6 +37,7 @@ import {
   ollama_qwen_2_5,
   ollama_qwen_2_5_72b,
   openai_gpt_3_d_5_turbo,
+  openai_gpt_4_o,
   tencent_hunyuan_lite,
   tencent_hunyuan_standard,
   tencent_hunyuan_turbo
@@ -84,6 +86,10 @@ const ChatNav = () => {
                   {
                     label: label_openai_gpt_3_d_5_turbo,
                     value: openai_gpt_3_d_5_turbo,
+                  },
+                  {
+                    label: label_openai_gpt_4_o,
+                    value: openai_gpt_4_o,
                   },
                   {
                   	label: label_baidu_qianfan_ernie_4_d_0_8k,
