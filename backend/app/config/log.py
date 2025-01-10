@@ -13,7 +13,6 @@ class ElasticSearch(BaseModel):
 class Loki(BaseModel):
     enable: bool = False
     url: str = "http://localhost:3100/loki/api/v1/push"
-    labels: Dict[str, str] = {}
 
 class ExtraConfig(BaseModel):
     elasticsearch: Optional[ElasticSearch] = None

@@ -162,7 +162,10 @@ log:
       username: "kibana_user"
       password: "your_password"
       index_name: "brain_x_log" # Elasticsearch索引名称
-
+    loki:
+      enable: true
+      url: "http://localhost:3100/loki/api/v1/push"  # Loki 的推送地址
+        
 test:
   db_url: "postgresql+psycopg2://username:password@localhost/test_db"
 
