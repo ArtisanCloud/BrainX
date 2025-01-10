@@ -10,18 +10,21 @@ class ElasticSearch(BaseModel):
     password: str = "your_password"
     index_name: str = "brain_x_log"
 
+
 class Loki(BaseModel):
     enable: bool = False
     url: str = "http://localhost:3100/loki/api/v1/push"
 
+
 class ExtraConfig(BaseModel):
     elasticsearch: Optional[ElasticSearch] = None
     loki: Optional[Loki] = None
-    
+
+
 class Log(BaseModel):
     file: bool = True
     console: bool = True
-    path: str
+    path: str = "logs"
     split: List[str]
     level: str
     interval: int = 1

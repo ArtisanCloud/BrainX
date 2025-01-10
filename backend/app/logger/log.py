@@ -9,10 +9,16 @@ import psutil
 from app.config.config import settings
 
 
-LOGS_DIRECTORY = os.path.join(".", "logs")
+LOGS_DIRECTORY = settings.log.path
 LOGS_TASK_DIRECTORY = os.path.join(LOGS_DIRECTORY, "task")
 LOGS_TASK_RAG_DIRECTORY = os.path.join(LOGS_TASK_DIRECTORY, "rag")
 
+
+# 禁用 FastAPI 默认的日志输出
+if not settings.log.console:
+    logging.getLogger("uvicorn").handlers = []
+    logging.getLogger("uvicorn.error").handlers = []
+    logging.getLogger("uvicorn.access").handlers = []
 
 class CustomExtraLogAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):

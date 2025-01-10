@@ -145,13 +145,14 @@ agent:
     use_jsonb: True
 
 log:
-  path: logs
+  file: true # 是否输出到本地文件
+  console: true # 是否输出到控制台
+  path: ./logs
   split:
     - error
   level: info
   interval: 1 # 间隔1天（与 "midnight" 配合使用时，interval 设为 1）
   keep_days: 30 # 保留最近n天的日志文件
-  console: true # 是否输出到控制台
   stat: false
   exc_info: true
   extra:
