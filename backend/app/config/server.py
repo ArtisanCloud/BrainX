@@ -10,6 +10,7 @@ class ProjectType(str, Enum):
 
 class Server(BaseModel):
     version: str
+    region: str = "global"
     project_name: str
     project_type: ProjectType = ProjectType.Standalone.value
     host: str

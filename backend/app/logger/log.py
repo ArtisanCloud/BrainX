@@ -58,7 +58,7 @@ def get_logger(
     ensure_log_dir(log_dir, permissions=0o755)
 
     current_process = psutil.Process()
-    job_id = f"{job}_{current_process.pid}"
+    node_id = f"{job}_{current_process.pid}"
 
     # 创建 logger 实例
     logger_instance = logging.getLogger(name)
@@ -152,9 +152,14 @@ def get_logger(
         loki_url = settings.log.extra.loki.url  # 从配置中获取 Loki 地址
         # 从配置中获取 Loki 标签
         loki_labels = {
+            "project": settings.server.project_name,
+            "host": settings.server.host,
+            "env": settings.server.environment,
+            "region": settings.server.region,
+            "version": settings.server.version,
             "filename": log_dir,
             "job": job,
-            "job_id": job_id,
+            "node_id": node_id,
             "service_name": name,
         }
         # info logger
@@ -162,8 +167,8 @@ def get_logger(
         loki_handler.setFormatter(logging.Formatter(FORMAT, datefmt=TIME_FORMAT))
         loki_handler.setLevel(logging.INFO)
         logger_instance.addHandler(loki_handler)
-        logger_instance.info(f"Loki info: {job_id}, {name} logging enabled")
-        logger_instance.error(f"Loki error: {job_id}, {name} logging enabled")
+        logger_instance.info(f"Loki info: {node_id}, {name} logging enabled")
+        logger_instance.error(f"Loki error: {node_id}, {name} logging enabled")
 
     logger_instance = CustomExtraLogAdapter(logger_instance, {"extra": None})
     return logger_instance

@@ -1,5 +1,6 @@
 server:
   version: "0.0.7"
+  region: "global"
   project_name: "brainx"
   project_type: "standalone"
   host: "0.0.0.0"
