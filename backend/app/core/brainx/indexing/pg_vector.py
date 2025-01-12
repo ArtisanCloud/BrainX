@@ -3,7 +3,10 @@ from typing import Tuple
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.vector_stores.postgres import PGVectorStore
 from sqlalchemy.engine import make_url
-from app.database.session import async_session_local as app_async_session_local, async_db_engine as app_engine
+from app.database.session import (
+    async_session_local as app_async_session_local,
+    async_db_engine as app_engine,
+)
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -19,7 +22,10 @@ class CustomPGVectorStore(PGVectorStore):
     """
 
     def _connect(self) -> None:
-        self._engine = create_engine(self.connection_string)
+        self._engine = create_engine(
+            self.connection_string,
+            pool_pre_ping=True,  # 检测无效连接并在必要时重新建立连接
+        )
         self._session = sessionmaker(self._engine)
 
         # Use our existing app engine and session so we can use the same connection pool
@@ -69,10 +75,12 @@ class CustomPGVectorStore(PGVectorStore):
         did_run_setup = True
 
 
-def get_vector_store_singleton(table_name: str) -> Tuple[BasePydanticVectorStore | None, Exception | None]:
+def get_vector_store_singleton(
+    table_name: str,
+) -> Tuple[BasePydanticVectorStore | None, Exception | None]:
     global singleton_instances
 
-    if table_name == '':
+    if table_name == "":
         return None, Exception("Table name cannot be empty")
 
     instance = singleton_instances.get(table_name)
