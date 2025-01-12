@@ -21,6 +21,10 @@ if not settings.log.console:
     logging.getLogger("uvicorn.access").handlers = []
 
 class CustomExtraLogAdapter(logging.LoggerAdapter):
+    def __init__(self, logger: logging.Logger, extra: dict):
+        super().__init__(logger, extra)
+        self.logger = logger  # 确保基础 Logger 可访问
+
     def process(self, msg, kwargs):
         my_context = kwargs.pop("extra", self.extra["extra"])
         # 设置App的名称到日志中
