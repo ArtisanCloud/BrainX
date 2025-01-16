@@ -1,5 +1,6 @@
 import logging
 import psutil
+from app.config.config import settings
 from app.logger.log import get_logger
 
 # 获取当前进程
@@ -14,11 +15,13 @@ if hasattr(logger, 'logger'):
 else:
     base_logger = logger
 
-logging.getLogger("uvicorn").handlers = base_logger.handlers
-logging.getLogger("uvicorn.error").handlers = base_logger.handlers
-logging.getLogger("uvicorn.access").handlers = base_logger.handlers
+# 需要将Uvicorn的日志处理器和级别设置为与基础日志器相同
+if settings.log.extra.loki.enable: 
+    logging.getLogger("uvicorn").handlers = base_logger.handlers
+    logging.getLogger("uvicorn.error").handlers = base_logger.handlers
+    logging.getLogger("uvicorn.access").handlers = base_logger.handlers
 
-# 确保日志级别一致
-logging.getLogger("uvicorn").setLevel(base_logger.level)
-logging.getLogger("uvicorn.error").setLevel(base_logger.level)
-logging.getLogger("uvicorn.access").setLevel(base_logger.level)
+    # 确保日志级别一致
+    logging.getLogger("uvicorn").setLevel(base_logger.level)
+    logging.getLogger("uvicorn.error").setLevel(base_logger.level)
+    logging.getLogger("uvicorn.access").setLevel(base_logger.level)
