@@ -8,7 +8,7 @@ server:
   max_bytes: 10485760
   cors_origins:
     - "*"
-  worker_count: 5
+  worker_count: 2
   environment: "local"
   server_render: False
   timezone: "Asia/Shanghai"
@@ -114,7 +114,6 @@ task:
   socket_connect_timeout: 30
   socket_timeout: 30
 
-  
 event:
   enable: False # 默认关闭，如果需要用得到订阅通知事件，可以开启
   driver: rabbitMQ #驱动默认是RabbitMQ
@@ -164,9 +163,9 @@ log:
       password: "your_password"
       index_name: "brain_x_log" # Elasticsearch索引名称
     loki:
-      enable: true
-      url: "http://localhost:3100/loki/api/v1/push"  # Loki 的推送地址
-        
+      enable: false
+      url: "http://localhost:3100/loki/api/v1/push" # Loki 的推送地址
+
 test:
   db_url: "postgresql+psycopg2://username:password@localhost/test_db"
 
@@ -221,7 +220,7 @@ storage:
     secret_key: "YOUR_SECRET_KEY"
     use_ssl: True
     region: "AsiaShanghai"
-    bucket_name: 'bucket.brainx'
+    bucket_name: "bucket.brainx"
   aliyun:
     endpoint: "oss-cn-beijing.aliyuncs.com"
     access_key: "YOUR_ACCESS_KEY"
