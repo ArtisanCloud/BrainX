@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "@/app/components/space/robot-chat/index.module.scss";
-import ChatNav from "@/app/components/space/robot-chat/nav";
+import ChatNav from "../../../../components/space/robot-chat/chat-nav";
 import Profile from "@/app/components/space/profile";
 import Box from "@/app/components/space/robot-chat/box";
 import ChatSidebar from "@/app/components/space/robot-chat/sidebar";
