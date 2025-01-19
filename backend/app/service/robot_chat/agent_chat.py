@@ -18,7 +18,7 @@ from app.utils.media import remove_base64_images_prefix, remove_base64_prefix
 
 
 async def agent_chat_event_generator(
-        request: Request, data: RequestChat, user_uuid: str, db: AsyncSession
+    request: Request, data: RequestChat, user_uuid: str, db: AsyncSession
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"
@@ -28,14 +28,17 @@ async def agent_chat_event_generator(
         question = data.messages[0].content
         app_uuid = data.appUUID
         conversation_uuid = data.conversationUUID
-        base64_images = remove_base64_images_prefix(data.images) 
+        base64_images = remove_base64_images_prefix(data.images)
         # print("conversationUUID:", conversation_uuid)
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await agent_chat(
             db=db,
-            question=question, images=base64_images,
+            question=question,
+            images=base64_images,
             llm=data.llm,
-            user_uuid=user_uuid, app_uuid=app_uuid, conversation_uuid=conversation_uuid
+            user_uuid=user_uuid,
+            app_uuid=app_uuid,
+            conversation_uuid=conversation_uuid,
         )
 
         if exception is not None:
@@ -53,24 +56,31 @@ async def agent_chat_event_generator(
 
     except Exception as e:
         error_msg = "robot chat inner error"
-        logger.error(f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info)
+        logger.error(
+            f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info
+        )
         yield f"data: {json.dumps({'status': 'error', 'message': error_msg})}\n\n"
         await db.rollback()
     finally:
         yield f"data: {json.dumps({'status': 'finished'})}\n\n"
         await db.close()
 
+
 async def agent_chat(
-        db: AsyncSession,
-        app_uuid: str, user_uuid: str,
-        question: str, llm: str,
-        conversation_uuid: str = '',
-        images: list[str] | None = None
+    db: AsyncSession,
+    app_uuid: str,
+    user_uuid: str,
+    question: str,
+    llm: str,
+    conversation_uuid: str = "",
+    images: list[str] | None = None,
 ):
     try:
         # 获取app
         service_app = AppService(db)
-        app, exception = await service_app.app_dao.get_app_by_uuid_with_preloads(app_uuid)
+        app, exception = await service_app.app_dao.get_app_by_uuid_with_preloads(
+            app_uuid
+        )
         if exception:
             return None, None, exception
         # stream_response = chat_by_llm(question, llm, app, 0.5)
@@ -81,25 +91,33 @@ async def agent_chat(
         )
 
         # 如果不是app的对话，则生成临时的新会话ID
-        if app_uuid == '' and conversation_uuid == '':
+        if app_uuid == "" and conversation_uuid == "":
             conversation_uuid = generate_session_id()
 
-        elif app_uuid != '' and conversation_uuid != '':
+        elif app_uuid != "" and conversation_uuid != "":
             # 如果是app的对话，则从数据库中获取对话历史记录
             service_conversation = ConversationService(db)
-            conversation, exception = await service_conversation.conversation_dao.async_get_by_uuid(conversation_uuid)
+            conversation, exception = (
+                await service_conversation.conversation_dao.async_get_by_uuid(
+                    conversation_uuid
+                )
+            )
             if exception:
                 return None, None, exception
 
             # 如果对话历史记录不存在，则创建新的对话历史记录
             question = question[:15] if len(question) > 15 else question
             if conversation is None:
-                new_conversation, exception = await service_conversation.conversation_dao.async_create(Conversation(
-                    uuid=conversation_uuid,
-                    user_uuid=user_uuid,
-                    app_uuid=app_uuid,
-                    name=question,
-                ))
+                new_conversation, exception = (
+                    await service_conversation.conversation_dao.async_create(
+                        Conversation(
+                            uuid=conversation_uuid,
+                            user_uuid=user_uuid,
+                            app_uuid=app_uuid,
+                            name=question,
+                        )
+                    )
+                )
                 if exception:
                     return None, None, exception
             # 如果存在对话历史记录，则直接使用该对话历史记录
@@ -109,10 +127,20 @@ async def agent_chat(
                 # print(type(conversation.user_uuid), type(user_uuid))
                 # print(type(conversation.app_uuid), type(app_uuid))
 
-                if str(conversation.user_uuid) != user_uuid or str(conversation.app_uuid) != app_uuid:
-                    return None, None, Exception(
-                        "Conversation " + conversation_uuid + " not belong to this app or tenant")
-        
+                if (
+                    str(conversation.user_uuid) != user_uuid
+                    or str(conversation.app_uuid) != app_uuid
+                ):
+                    return (
+                        None,
+                        None,
+                        Exception(
+                            "Conversation "
+                            + conversation_uuid
+                            + " not belong to this app or tenant"
+                        ),
+                    )
+
         if images is None or len(images) == 0:
             stream_response, exception = service_brain_x.agent_chat(
                 question=question, session_id=conversation_uuid
@@ -129,8 +157,7 @@ async def agent_chat(
                     }
                 ],
             )
-        
-        
+
         if exception:
             return None, None, exception
 

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from app.logger import logger
 from typing import List, Dict, Any, Optional, TypedDict
 
 from enum import Enum
@@ -68,7 +69,9 @@ class BaseNode(ABC, BaseModel):
     context_manager: ContextManager = None
 
     def __init__(self, node_data: dict):
-        super().__init__(**node_data)  # Ensure that the parent's __init__ method is called
+        super().__init__(
+            **node_data
+        )  # Ensure that the parent's __init__ method is called
         self.id = node_data.get("id", "")
         self.name = node_data.get("name", "")
         self.description = node_data.get("description", "")
@@ -82,10 +85,12 @@ class BaseNode(ABC, BaseModel):
         if input_data:
             for var in input_data:
                 self.set_input(node_id, var)
+
     def _init_output(self, node_id, output_data):
         if output_data:
             for var in output_data:
                 self.set_output(node_id, var)
+
     def set_context_manager(self, context_manager: ContextManager):
         self.context_manager = context_manager
 
@@ -100,13 +105,15 @@ class BaseNode(ABC, BaseModel):
 
     @abstractmethod
     def execute(self, state: GraphState):
-        print(f"BaseNode Execute: ~~~ "
-              f"{self.name}:"
-              f"\n input vars: {self.input_vars}"
-              f"\n output vars: {self.output_vars}"
-              # f"message: {state.messages}, "
-              # f"context nodes length: {len(self.context_manager.get_node_list())}"
-              f"\n~~~")
+        logger.infof(
+            f"BaseNode Execute: ~~~ "
+            f"{self.name}:"
+            f"\n input vars: {self.input_vars}"
+            f"\n output vars: {self.output_vars}"
+            # f"message: {state.messages}, "
+            # f"context nodes length: {len(self.context_manager.get_node_list())}"
+            f"\n~~~"
+        )
 
     def get_id(self):
         return self.id
@@ -139,56 +146,108 @@ class BaseNode(ABC, BaseModel):
 
 # 定义节点信息
 node_info_list: List[NodeInfo] = [
-    NodeInfo(id="plugin", type=NodeType.PLUGIN.value, name="插件",
-             icon="plugin",  # icon_key
-             description="Integrates external plugins.", support_batch=True),
-
-    NodeInfo(id="llm", type=NodeType.LLM.value, name="LLM",
-             icon="llm",  # icon_key
-             description="Invoke the large language model, generate responses using variables and prompt words.",
-             support_batch=True),
-
-    NodeInfo(id="code", type=NodeType.CODE.value, name="代码",
-             icon="code",  # icon_key
-             description="Executes custom code snippets.", support_batch=True),
-
-    NodeInfo(id="knowledge", type=NodeType.KNOWLEDGE.value, name="知识库",
-             icon="knowledge",  # icon_key
-             description="Handles knowledge base interactions.", support_batch=False),
-
-    NodeInfo(id="workflow", type=NodeType.WORKFLOW.value, name="工作流",
-             icon="workflow",  # icon_key
-             description="Invokes another workflow.", support_batch=True),
-
-    NodeInfo(id="condition", type=NodeType.CONDITION.value, name="条件",
-             icon="condition",  # icon_key
-             description="Evaluates conditions to control workflow flow.", support_batch=False),
-
-    NodeInfo(id="loop", type=NodeType.LOOP.value, name="循环",
-             icon="loop",  # icon_key
-             description="Handles looping logic within the workflow.", support_batch=True),
-
-    NodeInfo(id="intent_recognition", type=NodeType.INTENT_RECOGNITION.value, name="认知度",
-             icon="intent_recognition",  # icon_key
-             description="Recognizes user intents.", support_batch=False),
-
-    NodeInfo(id="text_processing", type=NodeType.TEXT_PROCESSING.value, name="文本处理",
-             icon="text_processing",  # icon_key
-             description="Processes and manipulates text.", support_batch=True),
-
-    NodeInfo(id="message", type=NodeType.MESSAGE.value, name="消息",
-             icon="message",  # icon_key
-             description="Sends or receives messages.", support_batch=False),
-
-    NodeInfo(id="question", type=NodeType.QUESTION.value, name="问题",
-             icon="question",  # icon_key
-             description="Handles question and answer interactions.", support_batch=False),
-
-    NodeInfo(id="variable", type=NodeType.VARIABLE.value, name="变量",
-             icon="variable",  # icon_key
-             description="Manages variables within the workflow.", support_batch=True),
-
-    NodeInfo(id="database", type=NodeType.DATABASE.value, name="数据库",
-             icon="database",  # icon_key
-             description="Interacts with the database.", support_batch=True),
+    NodeInfo(
+        id="plugin",
+        type=NodeType.PLUGIN.value,
+        name="插件",
+        icon="plugin",  # icon_key
+        description="Integrates external plugins.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="llm",
+        type=NodeType.LLM.value,
+        name="LLM",
+        icon="llm",  # icon_key
+        description="Invoke the large language model, generate responses using variables and prompt words.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="code",
+        type=NodeType.CODE.value,
+        name="代码",
+        icon="code",  # icon_key
+        description="Executes custom code snippets.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="knowledge",
+        type=NodeType.KNOWLEDGE.value,
+        name="知识库",
+        icon="knowledge",  # icon_key
+        description="Handles knowledge base interactions.",
+        support_batch=False,
+    ),
+    NodeInfo(
+        id="workflow",
+        type=NodeType.WORKFLOW.value,
+        name="工作流",
+        icon="workflow",  # icon_key
+        description="Invokes another workflow.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="condition",
+        type=NodeType.CONDITION.value,
+        name="条件",
+        icon="condition",  # icon_key
+        description="Evaluates conditions to control workflow flow.",
+        support_batch=False,
+    ),
+    NodeInfo(
+        id="loop",
+        type=NodeType.LOOP.value,
+        name="循环",
+        icon="loop",  # icon_key
+        description="Handles looping logic within the workflow.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="intent_recognition",
+        type=NodeType.INTENT_RECOGNITION.value,
+        name="认知度",
+        icon="intent_recognition",  # icon_key
+        description="Recognizes user intents.",
+        support_batch=False,
+    ),
+    NodeInfo(
+        id="text_processing",
+        type=NodeType.TEXT_PROCESSING.value,
+        name="文本处理",
+        icon="text_processing",  # icon_key
+        description="Processes and manipulates text.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="message",
+        type=NodeType.MESSAGE.value,
+        name="消息",
+        icon="message",  # icon_key
+        description="Sends or receives messages.",
+        support_batch=False,
+    ),
+    NodeInfo(
+        id="question",
+        type=NodeType.QUESTION.value,
+        name="问题",
+        icon="question",  # icon_key
+        description="Handles question and answer interactions.",
+        support_batch=False,
+    ),
+    NodeInfo(
+        id="variable",
+        type=NodeType.VARIABLE.value,
+        name="变量",
+        icon="variable",  # icon_key
+        description="Manages variables within the workflow.",
+        support_batch=True,
+    ),
+    NodeInfo(
+        id="database",
+        type=NodeType.DATABASE.value,
+        name="数据库",
+        icon="database",  # icon_key
+        description="Interacts with the database.",
+        support_batch=True,
+    ),
 ]

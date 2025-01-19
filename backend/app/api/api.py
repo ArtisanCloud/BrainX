@@ -47,7 +47,7 @@ api_router.include_router(media_resource_controller.router, prefix="/media/resou
                           tags=["media_resource", "list", "create", "update", "delete"])
 
 # robot_chat bot
-api_router.include_router(chat_controller.router, prefix="/chat_bot",
+api_router.include_router(chat_controller.router, prefix="/chat-bot",
                           dependencies=[Depends(auth_user_token)],
                           tags=["chatbot"])
 
@@ -56,10 +56,10 @@ api_router.include_router(app_controller.router, prefix="/app",
                           dependencies=[Depends(auth_user_token)],
                           tags=["chatbot"])
 # conversation
-api_router.include_router(conversation_controller.router, prefix="/chat_bot/conversation",
+api_router.include_router(conversation_controller.router, prefix="/chat-bot/conversation",
                           dependencies=[Depends(auth_user_token)],
                           tags=["chatbot"])
-api_router.include_router(message_controller.router, prefix="/chat_bot/conversation/message",
+api_router.include_router(message_controller.router, prefix="/chat-bot/conversation/message",
                           dependencies=[Depends(auth_user_token)],
                           tags=["chatbot"])
 

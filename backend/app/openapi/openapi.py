@@ -12,15 +12,24 @@ openapi_router = APIRouter()
 openapi_router.include_router(auth_controller.router, prefix="/auth", tags=["auth"])
 
 # demo
-openapi_router.include_router(demo_controller.router,
-                              dependencies=[Depends(auth_platform_token)],
-                              prefix="/demo", tags=["demo"])
+openapi_router.include_router(
+    demo_controller.router,
+    dependencies=[Depends(auth_platform_token)],
+    prefix="/demo",
+    tags=["demo"],
+)
 
 
-openapi_router.include_router(chat_controller.router,
-                              dependencies=[Depends(auth_platform_token)],
-                              prefix="/chat_bot", tags=["chat"])
+openapi_router.include_router(
+    chat_controller.router,
+    dependencies=[Depends(auth_platform_token)],
+    prefix="/chat-bot",
+    tags=["chat"],
+)
 
-openapi_router.include_router(coze_controller.router,
-                              dependencies=[Depends(auth_platform_token)],
-                              prefix="/coze", tags=["coze"])
+openapi_router.include_router(
+    coze_controller.router,
+    dependencies=[Depends(auth_platform_token)],
+    prefix="/coze",
+    tags=["coze"],
+)

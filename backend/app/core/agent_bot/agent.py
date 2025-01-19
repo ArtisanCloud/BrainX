@@ -170,7 +170,7 @@ class AgentBot:
                 self.routes_options.append(node_id)
 
     def init_router(self):
-        print("------route options:", self.routes_options)
+        logger.info("------route options:", self.routes_options)
 
         # 动态生成 RouteQuery 类
         route_query = create_dynamic_route_query(self.routes_options)
@@ -189,15 +189,15 @@ class AgentBot:
         )
 
         self.router = route_prompt | structured_llm_router
-        # print(
+        # logger.info(
         #     self.router.invoke(
         #         {"question": "Who will the Bears draft first in the NFL draft?"}
         #     )
         # )
-        # print(self.router.invoke({"question": "What are the types of agent memory?"}))
+        # logger.info(self.router.invoke({"question": "What are the types of agent memory?"}))
 
     def agent_route(self, state: GraphState):
-        print(f"---ROUTE QUESTION---: {state['question']}")
+        logger.info(f"---ROUTE QUESTION---: {state['question']}")
 
         # source = self.router.invoke({"question": state['question']})
         source = ""
@@ -206,7 +206,7 @@ class AgentBot:
         except Exception as e:
             logger.error(f"invoke route:{e}", exc_info=False)
 
-        print(f"---SOURCE ROUTE TO---: {source}")
+        logger.info(f"---SOURCE ROUTE TO---: {source}")
         # Check the type of `source`
         if isinstance(source, dict):
             route_to = source.get("route_to")
@@ -214,28 +214,28 @@ class AgentBot:
             route_to = getattr(source, "route_to", None)
 
         if route_to == "web_search":
-            print("---ROUTE QUESTION TO WEB SEARCH---")
+            logger.info("---ROUTE QUESTION TO WEB SEARCH---")
             return "web_search"
         elif route_to == "local_tool":
-            print("---ROUTE QUESTION TO RAG---")
+            logger.info("---ROUTE QUESTION TO RAG---")
             return "local_tool"
 
         # 如果 route_to 在 self.text_datasets 的节点列表中，则动态执行对应的 KnowledgeNode
         text_dataset_ids = {dataset.get_id() for dataset in self.text_datasets}
         if route_to in text_dataset_ids:
-            print(f"---ROUTE QUESTION TO KNOWLEDGE NODE: {route_to} ---")
+            logger.info(f"---ROUTE QUESTION TO KNOWLEDGE NODE: {route_to} ---")
             return route_to
 
         elif route_to == "table_retrieve":
-            print("---ROUTE QUESTION TO RAG---")
+            logger.info("---ROUTE QUESTION TO RAG---")
             return "table_retrieve"
         else:
-            print("---ROUTE QUESTION UNKNOWN redirect to generate ---")
+            logger.info("---ROUTE QUESTION UNKNOWN redirect to generate ---")
             return NodeType.END.value
 
     def call_agent(self, state: GraphState):
         messages = state["messages"]
-        print(f"Calling agent with messages: {messages}")
+        logger.info(f"Calling agent with messages: {messages}")
         # self.default_llm = self.default_llm.bind_tools(self.tools)
         response = self.default_llm.invoke(messages)
 
@@ -275,7 +275,7 @@ class AgentBot:
                     continue
                 self.builder.add_edge(route_option, NodeType.END.value)
 
-            # print(routes)
+            # logger.info(routes)
             self.builder.set_conditional_entry_point(
                 self.agent_route,
                 routes,
@@ -288,7 +288,7 @@ class AgentBot:
 
             self.graph = self.builder.compile()
 
-            # print(self.graph)
+            # logger.info(self.graph)
         except Exception as e:
             raise Exception(f"Failed to build graph: {e}")
 
@@ -304,10 +304,10 @@ class AgentBot:
             with PILImage.open(image_stream) as img:
                 img.save("graph.png")  # 保存为 graph.png
 
-            print("Graph image saved as 'graph.png'.")
+            logger.info("Graph image saved as 'graph.png'.")
 
         except ValueError as e:
-            print(f"Failed to render graph: {e}")
+            logger.error(f"Failed to render graph: {e}")
 
     def run(self, initial_state: GraphState):
         # self.save_graph_image()
