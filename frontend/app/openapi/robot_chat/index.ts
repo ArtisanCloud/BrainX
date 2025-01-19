@@ -1,7 +1,7 @@
 import {backendUrl} from "@/app/config/config";
 import {Message} from "@/app/api/robot-chat/conversation";
 
-export const UriOpenAPIChatBot = '/openapi/v1/chat_bot';
+export const UriOpenAPIChatBot = '/openapi/v1/chat-bot';
 
 export interface RequestSendChat{
 	conversationUUID: string,

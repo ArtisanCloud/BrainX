@@ -40,7 +40,7 @@ export interface ResponseFetchConversationList {
 export async function ActionFetchConversationList(data: RequestFetchConversationList): Promise<ResponseFetchConversationList> {
 	noStore();
 	try {
-		const endpoint = `/api/chat_bot/conversation/list`;
+		const endpoint = `/api/chat-bot/conversation/list`;
 		const queryString = Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&');
 		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
 
@@ -63,7 +63,7 @@ export interface ResponseCreateConversation extends Response {
 
 export async function ActionCreateConversation(option: RequestCreateConversation): Promise<ResponseCreateConversation> {
 
-	const endpoint = `/api/chat_bot/conversation/create`;
+	const endpoint = `/api/chat-bot/conversation/create`;
 
 	const res = await backendClient.backend_post(endpoint, option);
 
@@ -85,7 +85,7 @@ export interface ResponseFetchCachedMessageList {
 export async function ActionFetchCachedMessageList(data: RequestFetchCachedMessageList): Promise<ResponseFetchCachedMessageList> {
 	noStore();
 	try {
-		const endpoint = `/api/chat_bot/conversation/message/list/cached`;
+		const endpoint = `/api/chat-bot/conversation/message/list/cached`;
 		const queryString = Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&');
 		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
 
