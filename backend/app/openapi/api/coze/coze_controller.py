@@ -30,7 +30,6 @@ async def api_create(data: RequestChat) -> HTMLResponse:
         content += message.content
 
     if chat_poll.chat.status == ChatStatus.COMPLETED:
-        print()
         print("token usage:", chat_poll.chat.usage.token_count)
 
 
