@@ -42,6 +42,7 @@ const Sidebar = () => {
               className={styles.userImage}
               // src={user.img || "/noavatar.png"}
               src={"/images/logo-s.png"}
+              priority={true}
               alt=""
               width="50"
               height="50"

@@ -1,5 +1,5 @@
 import Card from '@/app/components/dashboard/card/card';
-import styles from "@/app/(workspace)/index.module.scss";
+import styles from "./index.module.scss";
 import Rightbar from "@/app/components/dashboard/rightbar/rightbar";
 import Transactions from "@/app/components/dashboard/transactions/transactions";
 

@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import styles from '@/app/components/home/home.module.scss';
 import HomeNavbar from "@/app/components/home/navbar";
 import brainXImage from '/public/images/brainx.jpeg';
-import { Button, Image, Link } from "@nextui-org/react"
+import { Button, Image, Link } from "@heroui/react"
 
 export default function Home() {
 	return (

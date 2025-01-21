@@ -38,6 +38,7 @@ const CompactSidebar = () => {
             <Image
               className={styles.userImage}
               src={"/images/logo-s.png"}
+              priority={true}
               alt=""
               width="50"
               height="50"

@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {
 	Dropdown, DropdownItem, DropdownMenu, DropdownTrigger,
 	Link,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import Cookies from "js-cookie";
 import { token_key} from "@/app/utils/auth";
 import { Avatar } from 'antd';

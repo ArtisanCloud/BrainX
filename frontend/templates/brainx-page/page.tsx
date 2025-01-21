@@ -1,6 +1,6 @@
 import styles from './index.module.scss';
 
-const BrainXTemplateComponent: React.FC = () => {
+const BrainXTemplatePage: React.FC = () => {
 
   return (
     <div className={styles.container}>
@@ -8,4 +8,4 @@ const BrainXTemplateComponent: React.FC = () => {
     </div>
   )
 }
-export default BrainXTemplateComponent
+export default BrainXTemplatePage

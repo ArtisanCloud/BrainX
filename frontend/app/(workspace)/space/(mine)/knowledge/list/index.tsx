@@ -14,7 +14,7 @@ import {Dataset, ResponseFetchDatasetList} from "@/app/api/knowledge/dataset";
 import Image from "next/image";
 import {GetOssUrl} from "@/app/lib/url";
 import {getDatasetImportTypeTranslation} from "@/app/utils/dataset"
-import {EditIcon} from "@nextui-org/shared-icons";
+import {EditIcon} from "@heroui/shared-icons";
 import moment from "moment";
 import {useRouter} from "next/navigation";
 import IconText from "@/app/components/icon/knowledge/text";
