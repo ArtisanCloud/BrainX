@@ -1,0 +1,50 @@
+import {Tabs} from 'antd';
+import {EyeOutlined, QuestionCircleOutlined, SearchOutlined} from '@ant-design/icons';
+import QuestionAnswer from "@/app/(workspace)/space/workspace/question-answer/qa";
+import styles from './index.module.scss';
+import VisualSearch from "@/app/(workspace)/space/workspace/question-answer/v-search";
+import VisualQuestionAnswer from "../v-qa";
+import VisualQuestionAnswerByFile from '../v-qa/query-by-file';
+
+const QuestionAnswerTab = () => {
+
+	const items = [
+		{
+			key: 'qa',
+			icon: <QuestionCircleOutlined/>,
+			name: "QA",
+			children: <QuestionAnswer/>
+		},
+		{
+			key: 'vsearch',
+			icon: <SearchOutlined/>,
+			name: "Visual Search",
+			children: <VisualSearch/>
+		},
+		{
+			key: 'vqa',
+			icon: <EyeOutlined/>,
+			name: "Visual QA",
+			children: <VisualQuestionAnswer/>
+			// children: <VisualQuestionAnswerByFile/>
+		},
+	]
+
+	return (
+		<div className={styles.container}>
+			<Tabs
+				defaultActiveKey="qa"
+				items={items.map((item, i) => {
+					const id = String(i + 1);
+					return {
+						key: item.key,
+						label: item.name,
+						children: item.children,
+						icon: item.icon,
+					};
+				})}
+			/>
+		</div>
+	);
+}
+export default QuestionAnswerTab;

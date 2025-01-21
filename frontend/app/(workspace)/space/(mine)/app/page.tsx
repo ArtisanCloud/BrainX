@@ -1,9 +1,9 @@
 import styles from '../index.module.scss';
-import Toolbar from "@/app/components/space/app/toolbar";
-import AppList from "@/app/components/space/app/list";
-import {FetchAppListProvider} from "@/app/components/space/app/provider/fetch-app-list-provider";
-import CreateAppProvider from "@/app/components/space/app/provider/create-app-provider";
-import Navbar from "@/app/components/space/navbar";
+import Toolbar from "./toolbar";
+import AppList from "./list";
+import {FetchAppListProvider} from "@/app/(workspace)/space/(mine)/app/provider/fetch-app-list-provider";
+import CreateAppProvider from "@/app/(workspace)/space/(mine)/app/provider/create-app-provider";
+import Navbar from "../navbar";
 
 const AppPage = () => {
   return (

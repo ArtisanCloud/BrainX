@@ -19,7 +19,7 @@ const Index = ({item}: any) => {
 				...item.defaultParams
 			}}
 			className={`${!hideSidebar ? styles.container : styles.containerCompact} 
-			${pathname.match(new RegExp(`^${item.path}`)) && styles.active}`}
+			${item.path.startsWith(pathname) && styles.active}`}
 		>
 		<div className={styles.icon}>{item.icon}</div>
 			{/*{width > 1024 ? item.title : ""}*/}

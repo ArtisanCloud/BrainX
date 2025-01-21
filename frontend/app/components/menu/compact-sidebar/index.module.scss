@@ -4,7 +4,11 @@
   padding: 12px;
   //border: 1px solid red;
   height: 100%;
-  background-color: var(--bgSideBar);
+  background: linear-gradient(180deg, var(--bgSideBar), var(--bgSideBarGradient));
+  background-size: 200% 200%;
+  animation: gradientAnimation 6s ease infinite;
+
+
   display: flex;
   flex-direction: column;
 
@@ -77,7 +81,7 @@
     .logout {
       margin-top: 20px;
       background-color: transparent;
-      color: #ce3f3f;
+      color: #ff0000;
       border: none;
 
     }
@@ -88,9 +92,12 @@
   }
 
   .drawerHandler {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: 120px;
     color: white;
-    padding:8px;
+    //padding:8px;
     //border: 1px solid red;
   }
 }

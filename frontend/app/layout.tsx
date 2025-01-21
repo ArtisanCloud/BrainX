@@ -1,4 +1,4 @@
-import "@/app/components/globals.scss";
+import "@/app/styles/globals.scss";
 import {inter} from '@/app/styles/fonts';
 import {AntdRegistry} from '@ant-design/nextjs-registry';
 import {NextUIProvider} from "@nextui-org/react";

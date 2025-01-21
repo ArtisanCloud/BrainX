@@ -6,7 +6,7 @@ import styles from "./index.module.scss";
 import {Button, Avatar} from "antd"
 import {menuItems} from "@/app/components/menu";
 import {LogoutOutlined} from '@ant-design/icons'
-import {MdOutlineArrowForward} from "react-icons/md";
+import { TbLayoutSidebarLeftExpandFilled } from "react-icons/tb";
 import React, {useContext} from "react";
 import {HideSidebarContext, SidebarContextType} from "@/app/components/menu/provider/sidebar-provider";
 import Link from "next/link";
@@ -71,7 +71,7 @@ const CompactSidebar = () => {
         />
       </div>
       <div className={styles.drawerHandler}>
-        <MdOutlineArrowForward onClick={handleClickDrawerHandle}/>
+        <TbLayoutSidebarLeftExpandFilled size={30} onClick={handleClickDrawerHandle}/>
       </div>
     </div>
   );

@@ -3,16 +3,20 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 5px 0px;
+  margin: 5px 0;
   border-radius: 10px;
-  color: var(--textSoft);
+  color: var(--textLight);
+  .icon{
+    color: var(--iconLight);
+
+  }
 }
 
 .containerCompact {
   //width: 24px;
   //border: 1px solid #e4e7ec;
   border-radius: 10px;
-  color: var(--textSoft);
+  color: var(--textLight);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -51,5 +55,8 @@
 .active {
   //background-color: #76a0ea;
   color: var(--text);
-  background-color: #dde2ea;
+  background-color: #c3d5f1;
+  .icon{
+    color: var(--text);
+  }
 }

@@ -1,14 +1,14 @@
 "use client";
 
-import styles from "@/app/components/space/question-answer/index.module.scss";
-import History from "@/app/components/space/question-answer/history";
-import {QuestionAnswerProvider} from "@/app/components/space/question-answer/question-answer-provider";
-import {ProfileProvider} from "@/app/components/space/profile/provider/profile-provider";
-import QuestionAnswerTab from "@/app/components/space/question-answer/tab";
-import Profile from "@/app/components/space/profile";
-import QANav from "@/app/components/space/question-answer/nav";
+import styles from "@/app/(workspace)/space/workspace/question-answer/index.module.scss";
+import History from "./history";
+import {QuestionAnswerProvider} from "@/app/(workspace)/space/workspace/question-answer/question-answer-provider";
+import {ProfileProvider} from "@/app/(workspace)/space/(mine)/profile/provider/profile-provider";
+import QuestionAnswerTab from "./tab";
+import Profile from "../../(mine)/profile";
+import QANav from "./nav";
 import React from "react";
-import SelectLLMProvider from "@/app/components/space/provider/llm";
+import SelectLLMProvider from "@/app/(workspace)/space/(mine)/provider/llm";
 
 const QuestionAnswerPage = () => {
 	return (

@@ -6,7 +6,12 @@
   padding: 12px;
   //border: 1px solid red;
   height: 100%;
-  background-color: var(--bgSideBar);
+
+  background: linear-gradient(135deg, var(--bgSideBar), var(--bgSideBarGradient));
+  background-size: 200% 200%;
+  animation: gradientAnimation 6s ease infinite;
+
+
 
   .menu{
     .user {
@@ -63,7 +68,7 @@
 
 
     .cat {
-      color: var(--textSoft);
+      color: var(--textLight);
       font-weight: bold;
       font-size: 13px;
       margin: 12px 8px;
@@ -79,7 +84,7 @@
       border-radius: 10px;
       background: none;
       border: none;
-      color: #ce3f3f;
+      color: #ff0000;
       width: 100%;
     }
     .logout:hover {

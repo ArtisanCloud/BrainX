@@ -9,7 +9,7 @@ import {RiRobot2Line} from "react-icons/ri";
 import {GrAppsRounded, GrBusinessService} from "react-icons/gr";
 import React, {useContext, useEffect} from "react";
 import {HideSidebarContext, SidebarContextType} from "@/app/components/menu/provider/sidebar-provider";
-
+import styles from "./index.module.scss";
 
 export const menuItems = [
 
@@ -94,8 +94,8 @@ const Menu = () => {
 	const {hideSidebar} = useContext(HideSidebarContext) as SidebarContextType;
 
 	return (
-		<div>
-			{/*{width > 1024 ? (*/}
+		<div className={styles.container}>
+		{/*{width > 1024 ? (*/}
 			{!hideSidebar ? (
 				<Sidebar/>
 			) : (

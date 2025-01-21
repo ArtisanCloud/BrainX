@@ -1,5 +1,5 @@
 import styles from '../index.module.scss';
-import Navbar from "@/app/components/space/navbar";
+import Navbar from "../navbar";
 
 const PluginPage = () => {
 	return (

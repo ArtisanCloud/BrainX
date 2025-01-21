@@ -3,7 +3,7 @@
 import Image from "next/image";
 import MenuLink from "@/app/components/menu/menu-link";
 import styles from "./index.module.scss";
-import {MdOutlineArrowBack} from "react-icons/md";
+import { TbLayoutSidebarRightExpand } from "react-icons/tb";
 import {LogoutOutlined} from '@ant-design/icons'
 import {Avatar} from 'antd';
 import {Form} from "antd"
@@ -80,7 +80,7 @@ const Sidebar = () => {
         </Form>
       </div>
       <div className={styles.drawerHandler}>
-        <MdOutlineArrowBack onClick={handleClickDrawerHandle}/>
+        <TbLayoutSidebarRightExpand size={30}  onClick={handleClickDrawerHandle}/>
       </div>
 
     </div>

@@ -1,4 +1,4 @@
-import styles from "@/app/components/space/robot-chat/index.module.scss";
+import styles from "@/app/(workspace)/space/workspace/robot-chat/index.module.scss";
 const OpenDocPage = () => {
 		return (
 				<div className={styles.container}>

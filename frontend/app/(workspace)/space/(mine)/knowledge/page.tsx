@@ -1,9 +1,9 @@
 import styles from '../index.module.scss';
-import Toolbar from "@/app/components/space/knowledge/toolbar";
-import DatasetList from "@/app/components/space/knowledge/list";
-import {FetchDatasetListProvider} from "@/app/components/space/knowledge/provider/fetch-dataset-list-provider";
-import CreateDatasetProvider from "@/app/components/space/knowledge/provider/create-dataset-provider";
-import Navbar from "@/app/components/space/navbar";
+import Toolbar from "./toolbar";
+import DatasetList from "./list";
+import {FetchDatasetListProvider} from "@/app/(workspace)/space/(mine)/knowledge/provider/fetch-dataset-list-provider";
+import CreateDatasetProvider from "@/app/(workspace)/space/(mine)/knowledge/provider/create-dataset-provider";
+import Navbar from "../navbar";
 
 const KnowledgePage = () => {
 	return (
