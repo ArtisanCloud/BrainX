@@ -6,7 +6,7 @@ import styles from "./index.module.scss";
 import {Button, Avatar} from "antd"
 import {menuItems} from "@/app/components/menu";
 import {LogoutOutlined} from '@ant-design/icons'
-import { TbLayoutSidebarLeftExpandFilled } from "react-icons/tb";
+import {TbLayoutSidebarLeftExpandFilled} from "react-icons/tb";
 import React, {useContext} from "react";
 import {HideSidebarContext, SidebarContextType} from "@/app/components/menu/provider/sidebar-provider";
 import Link from "next/link";
@@ -55,6 +55,9 @@ const CompactSidebar = () => {
           ))}
         </ul>
 
+
+      </div>
+      <div className={styles.bottomBox}>
         <Avatar style={{
           marginTop: '20px',
           backgroundColor: '#af99d0',
@@ -64,15 +67,17 @@ const CompactSidebar = () => {
                 size="small" gap={4}>
           {user?.account}
         </Avatar>
+
         <Button
+          className={styles.logout}
           onClick={handleSignOut}
+          danger
           size="small"
           icon={<LogoutOutlined/>}
-          className={styles.logout}
         />
-      </div>
-      <div className={styles.drawerHandler}>
-        <TbLayoutSidebarLeftExpandFilled size={30} onClick={handleClickDrawerHandle}/>
+        <div className={styles.drawerHandler}>
+          <TbLayoutSidebarLeftExpandFilled size={30} onClick={handleClickDrawerHandle}/>
+        </div>
       </div>
     </div>
   );

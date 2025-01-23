@@ -3,7 +3,7 @@
 import Image from "next/image";
 import MenuLink from "@/app/components/menu/menu-link";
 import styles from "./index.module.scss";
-import { TbLayoutSidebarRightExpand } from "react-icons/tb";
+import {TbLayoutSidebarRightExpand} from "react-icons/tb";
 import {LogoutOutlined} from '@ant-design/icons'
 import {Avatar} from 'antd';
 import {Form} from "antd"
@@ -18,7 +18,7 @@ import useSessionStore from "@/app/store/session";
 const Sidebar = () => {
   // const { user } = await auth();
   const {hideSidebar, setHideSidebar} = useContext(HideSidebarContext) as SidebarContextType;
-  const {  sessionLogout, user} = useSessionStore();
+  const {sessionLogout, user} = useSessionStore();
 
   const handleClickDrawerHandle = () => {
     setHideSidebar(!hideSidebar)
@@ -63,6 +63,10 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
+
+      </div>
+
+      <div className={styles.bottomBox}>
         <Form
           name="signout"
           onFinish={handleSignOut}
@@ -79,9 +83,9 @@ const Sidebar = () => {
             <LogoutOutlined/> Logout
           </button>
         </Form>
-      </div>
-      <div className={styles.drawerHandler}>
-        <TbLayoutSidebarRightExpand size={30}  onClick={handleClickDrawerHandle}/>
+        <div className={styles.drawerHandler}>
+          <TbLayoutSidebarRightExpand size={30} onClick={handleClickDrawerHandle}/>
+        </div>
       </div>
 
     </div>

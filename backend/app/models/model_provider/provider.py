@@ -1,10 +1,10 @@
 from enum import Enum
 
 from sqlalchemy import SmallInteger, BigInteger, TIMESTAMP, String, Boolean, UUID, ForeignKey, Text
-from sqlalchemy.orm import mapped_column, relationship, Mapped
+from sqlalchemy.orm import mapped_column
 
 from app import settings
-from app.models.base import BaseORM, table_name_provider
+from app.models.base import BaseORM, table_name_provider,table_name_tenant
 
 
 class ProviderType(Enum):
@@ -18,6 +18,7 @@ class Provider(BaseORM):
     __tablename__ = table_name_provider
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'), index=True)
     provider_name = mapped_column(String, nullable=False)
     provider_type = mapped_column(String, nullable=False)  # e.g., 'custom', 'system'
     encrypted_config = mapped_column(Text, nullable=True)

@@ -23,6 +23,7 @@ class HuggingFaceHubTextEmbeddingModel(TextEmbeddingModel):
             # 只有在没有缓存实例时才创建新的实例
             embeddings_instance = HuggingFaceEmbeddings(model_name=settings.models.qa_embedding_model_name)
             HuggingFaceHubTextEmbeddingModel._embeddings_cache = embeddings_instance  # 将实例缓存到类变量中
+            print("HuggingFace Embeddings loaded")
 
         embeddings_instance = HuggingFaceHubTextEmbeddingModel._embeddings_cache  # 获取缓存的实例
 

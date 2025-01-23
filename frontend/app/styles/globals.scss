@@ -37,6 +37,15 @@
   box-sizing: border-box;
 }
 
+
+html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div {
+  height: 100%;
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);

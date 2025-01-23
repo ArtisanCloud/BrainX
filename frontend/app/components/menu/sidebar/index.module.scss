@@ -1,6 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: var(--menu-width);
   position: sticky;
   padding: 12px;
@@ -12,8 +13,8 @@
   animation: gradientAnimation 6s ease infinite;
 
 
-
-  .menu{
+  .menu {
+    //border: 1px solid green;
     .user {
       display: flex;
       align-items: center;
@@ -41,6 +42,7 @@
         color: white;
       }
     }
+
     .user::after {
       content: '';
       position: absolute;
@@ -50,20 +52,21 @@
       border-bottom: #e4e7ec 1px solid;
       transform: translateX(-50%);
     }
+
     .list {
       margin-top: 40px;
       list-style: none;
       //border: #2e374a 1px solid;
       position: relative;
     }
+
     .list::after {
       content: '';
       position: absolute;
       bottom: 0;
       left: 50%;
       width: 80%; /* 控制底部边框的长度为宽度的一半 */
-      border-bottom: #e4e7ec 1px solid;
-      transform: translateX(-50%);
+
     }
 
 
@@ -73,33 +76,46 @@
       font-size: 13px;
       margin: 12px 8px;
     }
+  }
+
+  .bottomBox {
+    display: flex;
+    flex-direction: column;
+    border-top: #e4e7ec 1px solid;
+    //transform: translateX(-50%);
+    //border: 1px solid blue;
 
     .logout {
+      cursor: pointer;
       padding: 20px;
-      margin: 5px 0px;
+      margin: 5px 0;
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
       border-radius: 10px;
       background: none;
       border: none;
-      color: #ff0000;
+      color: #c9c7a7;
       width: 100%;
+
     }
+
     .logout:hover {
+      color: #ff0000;
       background-color: #dde2ea;
     }
-  }
 
-  .drawerHandler {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin-top: 10px;
-    color: white;
-    padding:8px;
-    //border: 1px solid red;
+    .drawerHandler {
+
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-top: 10px;
+      color: white;
+      padding: 8px;
+      //border: 1px solid red;
+    }
   }
 }
 

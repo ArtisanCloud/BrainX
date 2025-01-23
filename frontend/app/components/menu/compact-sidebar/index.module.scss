@@ -11,8 +11,10 @@
 
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 
   .menu {
+
     //border: 1px solid green;
     .user {
       display: flex;
@@ -66,7 +68,6 @@
       bottom: 0;
       left: 50%;
       width: 80%; /* 控制底部边框的长度为宽度的一半 */
-      border-bottom: #e4e7ec 1px solid;
       transform: translateX(-50%);
     }
 
@@ -78,27 +79,37 @@
       margin: 12px 8px;
     }
 
+
+  }
+
+  .bottomBox {
+    display: flex;
+    flex-direction: column;
+    border-top: #e4e7ec 1px solid;
+
     .logout {
+      cursor: pointer;
       margin-top: 20px;
       background-color: transparent;
-      color: #ff0000;
+      color: #c9c7a7;
       border: none;
-
     }
 
     .logout:hover {
-      background-color: #2e374a;
+      background-color: #dde2ea;
+      color: red;
     }
-  }
 
-  .drawerHandler {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 120px;
-    color: white;
-    //padding:8px;
-    //border: 1px solid red;
+    .drawerHandler {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 120px;
+      color: white;
+      //padding:8px;
+      //border: 1px solid red;
+    }
   }
 }
 

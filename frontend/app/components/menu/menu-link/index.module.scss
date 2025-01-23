@@ -6,10 +6,12 @@
   margin: 5px 0;
   border-radius: 10px;
   color: var(--textLight);
-  .icon{
+
+  .icon {
     color: var(--iconLight);
 
   }
+
 }
 
 .containerCompact {
@@ -55,8 +57,12 @@
 .active {
   //background-color: #76a0ea;
   color: var(--text);
-  background-color: #c3d5f1;
-  .icon{
+  //background-color: #c3d5f1;
+  background: linear-gradient(135deg, #c3d5f1, var(--bgSideBar));
+  background-size: 200% 200%;
+  animation: gradientAnimation 6s ease infinite;
+
+  .icon {
     color: var(--text);
   }
 }

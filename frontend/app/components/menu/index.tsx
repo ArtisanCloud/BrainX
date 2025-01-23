@@ -55,22 +55,22 @@ export const menuItems = [
 	// 		},
 	// 	],
 	// },
-	{
-		title: "协作",
-		list: [
-
-			{
-				title: "用户",
-				path: "/space/users",
-				icon: <MdSupervisedUserCircle/>,
-			},
-			{
-				title: "团队",
-				path: "/space/teams",
-				icon: <MdPeople/>,
-			},
-		],
-	},
+	// {
+	// 	title: "协作",
+	// 	list: [
+	//
+	// 		{
+	// 			title: "用户",
+	// 			path: "/space/users",
+	// 			icon: <MdSupervisedUserCircle/>,
+	// 		},
+	// 		{
+	// 			title: "团队",
+	// 			path: "/space/teams",
+	// 			icon: <MdPeople/>,
+	// 		},
+	// 	],
+	// },
 	{
 		title: "其他",
 		list: [
