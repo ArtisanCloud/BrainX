@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.openapi.api import auth_controller
-from app.openapi.api.chat_bot import chat_controller
+from app.openapi.api.chat_bot import chat_controller, invoke_controller
 from app.openapi.api.demo import demo_controller
 from app.openapi.api.coze import coze_controller
 from app.openapi.middleware.auth import auth_platform_token
@@ -25,6 +25,13 @@ openapi_router.include_router(
     dependencies=[Depends(auth_platform_token)],
     prefix="/chat-bot",
     tags=["chat"],
+)
+
+openapi_router.include_router(
+    invoke_controller.router,
+    dependencies=[Depends(auth_platform_token)],
+    prefix="/invoke",
+    tags=["invoke"],
 )
 
 openapi_router.include_router(

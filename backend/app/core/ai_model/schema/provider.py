@@ -13,8 +13,9 @@ class Help(BaseModel):
     """
     帮助信息模型，包含帮助标题和链接。
     """
+
     title: MultilingualField  # 帮助标题，支持多语言
-    url: HttpUrl  # 帮助链接，必须是有效的URL
+    url: MultilingualField  # 帮助链接，必须是有效的URL
 
 
 # 配置方法枚举
@@ -22,6 +23,7 @@ class ConfigurateMethod(Enum):
     """
     枚举类，用于定义提供者模型的配置方法。
     """
+
     PREDEFINED_MODEL = "predefined"  # 预定义模型
     CUSTOMIZED_MODEL = "customized"  # 自定义模型
 
@@ -31,8 +33,9 @@ class CredentialFormSchema(BaseModel):
     """
     凭证表单字段的模型定义，描述每个字段的属性。
     """
+
     variable: str  # 字段变量名称
-    label: MultilingualField  # 字段标签，支持多语言
+    title: MultilingualField  # 字段标签，支持多语言
     type: FormType  # 字段类型，使用 FormType 枚举
     required: bool = True  # 是否必填，默认为 True
     default: Optional[str] = None  # 默认值，可选
@@ -47,6 +50,7 @@ class ProviderCredentialSchema(BaseModel):
     """
     提供者凭证模式定义，包含多个凭证表单字段。
     """
+
     credential_form_schemas: List[CredentialFormSchema]  # 凭证表单字段列表
 
 
@@ -55,6 +59,7 @@ class FieldModelSchema(BaseModel):
     """
     模型字段定义，描述模型字段的标题和可选的占位符。
     """
+
     title: MultilingualField  # 字段标题，支持多语言
     placeholder: Optional[MultilingualField] = None  # 占位符，支持多语言
 
@@ -64,6 +69,7 @@ class ModelCredentialSchema(BaseModel):
     """
     模型凭证模式定义，包含模型字段和多个凭证表单字段。
     """
+
     model: FieldModelSchema  # 模型字段
     credential_form_schemas: List[CredentialFormSchema]  # 凭证表单字段列表
 
@@ -73,18 +79,23 @@ class ProviderSchema(BaseModel):
     """
     提供者模式定义，描述提供者的详细信息、支持的模型类型、配置方法等。
     """
+
     provider: str  # 提供者名称
     title: MultilingualField  # 提供者的标题，支持多语言
-    description: Optional[MultilingualField]  # 提供者的描述，支持多语言
-    icon_small: Optional[MultilingualField]  # 小图标路径，支持多语言
-    icon_large: Optional[MultilingualField]  # 大图标路径，支持多语言
-    background: str  # 背景颜色（HEX 格式）
+    description: Optional[MultilingualField] = None  # 提供者的描述，支持多语言
+    icon_small: Optional[MultilingualField] = None  # 小图标路径，支持多语言
+    icon_large: Optional[MultilingualField] = None  # 大图标路径，支持多语言
+    background: str = None  # 背景颜色（HEX 格式）
     help: Help  # 帮助信息
     supported_model_types: List[ModelType]  # 支持的模型类型列表
     configurate_methods: List[ConfigurateMethod]  # 支持的配置方法列表
     models: List[ProviderModelSchema] = []  # 可用的模型列表，默认为空
-    provider_credential_schema: Optional[ProviderCredentialSchema] = None  # 提供者凭证模式，可选
-    models_credential_schema: Optional[ModelCredentialSchema] = None  # 模型凭证模式，可选
+    provider_credential_schema: Optional[ProviderCredentialSchema] = (
+        None  # 提供者凭证模式，可选
+    )
+    models_credential_schema: Optional[ModelCredentialSchema] = (
+        None  # 模型凭证模式，可选
+    )
 
     class Config:
         validate_assignment = False

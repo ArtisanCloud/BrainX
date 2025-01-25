@@ -25,8 +25,8 @@ class ModelType(Enum):
 
     LLM = "llm"
     EMBEDDING = "embedding"
-    TEXT_EMBEDDING = "text_embedding"
-    IMAGE_EMBEDDING = "image_embedding"
+    TEXT_EMBEDDING = "text-embedding"
+    IMAGE_EMBEDDING = "image-embedding"
     RERANK = "rerank"
     SPEECH2TEXT = "speech2text"
     MODERATION = "moderation"

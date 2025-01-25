@@ -16,11 +16,29 @@
       "name": "Python: Test Load Provider Models with pytest",
       "type": "debugpy",
       "request": "launch",
-      "module": "pytest", 
+      "module": "pytest",
       "args": [
         "-q",
         "--tb=short",
         "tests/test_unit/core/ai_model/test_load_provider_models.py::test_load_provider_models",
+        "-p",
+        "no:warnings"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Python: Test multilingual schema with pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-q",
+        "--tb=short",
+        "tests/test_unit/core/ai_model/test_multilingual.py::test_multilingual_field",
         "-p",
         "no:warnings"
       ],

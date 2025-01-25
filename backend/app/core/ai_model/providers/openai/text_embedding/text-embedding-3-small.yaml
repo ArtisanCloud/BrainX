@@ -6,10 +6,10 @@ model_type: text-embedding
 features: []
 fetch_from: customized
 model_properties:
-  CONTEXT_SIZE: 2048
-  MAX_CHUNKS: 16
-  SUPPORTED_FILE_EXTENSIONS:
+  context_size: 2048
+  max_chunks: 16
+  supported_file_extensions:
     - .txt
     - .pdf
-  MAX_CHARACTERS_PER_CHUNK: 5000
+  max_characters_per_chunk: 5000
 deprecated: false

@@ -1,6 +1,6 @@
 model: gpt-4o-2024-05-13
-label:
-  zh_Hans: gpt-4o-2024-05-13
+title:
+  zh_CN: gpt-4o-2024-05-13
   en_US: gpt-4o-2024-05-13
 model_type: llm
 features:
@@ -26,19 +26,19 @@ parameter_rules:
     min: 1
     max: 4096
   - name: response_format
-    label:
-      zh_Hans: 回复格式
+    title:
+      zh_CN: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_Hans: 指定模型必须输出的格式
+      zh_CN: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:
       - text
       - json_object
 pricing:
-  input: '5.00'
-  output: '15.00'
-  unit: '0.000001'
+  input: "5.00"
+  output: "15.00"
+  unit: "0.000001"
   currency: USD

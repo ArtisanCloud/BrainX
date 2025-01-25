@@ -16,5 +16,4 @@ supported_model_types:
   - llm
   - text-embedding
 configurate_methods:
-  - customizable-model_provider
-
+  - customized

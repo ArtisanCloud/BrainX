@@ -11,6 +11,7 @@ class ModelFeature(Enum):
     """
     Enum class for llm feature.
     """
+
     TOOL_CALL = "tool-call"
     MULTI_TOOL_CALL = "multi-tool-call"
     AGENT_THOUGHT = "agent-thought"
@@ -35,17 +36,23 @@ class ModelPropertyKey(Enum):
     WORD_LIMIT = "word_limit"
     AUDIO_TYPE = "audio_type"
     MAX_WORKERS = "max_workers"
+    ARCHITECTURE = "architecture"
+    EMBEDDINGS_SIZE = "embeddings_size"
+    LANGUAGES_SUPPORTED = "languages_supported"
+    POOLING = "pooling"
+    MAX_SEQUENCE_LENGTH = "max_sequence_length"
 
 
 class ProviderModelSchema(BaseModel):
     """
     Model class for provider model_provider.
     """
+
     model: str
     title: MultilingualField
     model_type: ModelType
     features: Optional[list[ModelFeature]] = None
-    fetch_from: FetchFrom
+    fetch_from: Optional[FetchFrom] = None
     model_properties: dict[ModelPropertyKey, Any]
     deprecated: bool = False
 

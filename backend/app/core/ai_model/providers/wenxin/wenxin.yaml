@@ -1,5 +1,5 @@
 provider: wenxin
-label:
+title:
   en_US: WenXin
   zh_CN: 文心一言
 icon_small:
@@ -19,4 +19,4 @@ supported_model_types:
   - llm
   - text-embedding
 configurate_methods:
-  - predefined-model_provider
+  - predefined

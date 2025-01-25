@@ -1,5 +1,7 @@
+import mimetypes
 import os
 from typing import Dict, Optional, Tuple
+from fastapi import Path
 
 from sqlalchemy.orm import Session
 
@@ -29,8 +31,9 @@ class ProviderManager:
             case _:
                 raise Exception("Unsupported framework type for Provider Manager")
 
-    def get_model(self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType) -> Tuple[
-        Optional[AIModel], Optional[Exception]]:
+    def get_model(
+        self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType
+    ) -> Tuple[Optional[AIModel], Optional[Exception]]:
 
         # self.model_provider_driver
         _global_provider_cache[provider]
@@ -38,14 +41,15 @@ class ProviderManager:
         return None, None
 
     def get_default_model(
-            self, db: Session,
-            tenant_uuid: str, model_type: ModelType
+        self, db: Session, tenant_uuid: str, model_type: ModelType
     ) -> Tuple[Optional[AIModel], Optional[Exception]]:
         try:
             # 获取默认模型
             service_tenant_default_model = TenantDefaultModelDAO(db)
-            default_model, exception = service_tenant_default_model.get_default_model_by_uuid(
-                tenant_uuid, model_type.value
+            default_model, exception = (
+                service_tenant_default_model.get_default_model_by_uuid(
+                    tenant_uuid, model_type.value
+                )
             )
 
             if exception is not None:
@@ -54,9 +58,8 @@ class ProviderManager:
             if default_model is None:
                 raise Exception("Cannot query the default_model")
 
-            model = (
-                self.model_provider_driver.
-                generate_provider_model(model_type, ProviderID(default_model.provider_name), default_model.name)
+            model = self.model_provider_driver.generate_provider_model(
+                model_type, ProviderID(default_model.provider_name), default_model.name
             )
             if not model:
                 return None, Exception("Cannot generate the provider model")
@@ -67,61 +70,146 @@ class ProviderManager:
 
         return model, None
 
-    def load_provider_models(self) -> Dict[str, ProviderSchema]:
+    def load_provider_models(self) -> Tuple[Dict[str, ProviderSchema] | Exception]:
         """Gather all configuration files under the given base path."""
         global _global_provider_cache
 
         # 如果全局缓存存在，直接返回它
         if _global_provider_cache is not None:
-            return _global_provider_cache
+            return _global_provider_cache, None
 
-        base_path = os.path.join(get_project_path(), 'core/ai_model/providers')
+        try:
 
-        provider_schemas: Dict[str, ProviderSchema] = {}
-        # print(base_path,provider_schemas)
-        for folder_name in os.listdir(base_path):
-            folder_path = os.path.join(base_path, folder_name)
-            if os.path.isdir(folder_path):  # 确保是一个目录
-                provider_config_schema: Optional[ProviderSchema] = None
+            base_path = os.path.join(get_project_path(), "core/ai_model/providers")
 
-                # 加载主配置文件（如 openai.yml）
-                for file in os.listdir(folder_path):
-                    if file.endswith('.yml') or file.endswith('.yaml'):
-                        filepath = os.path.join(folder_path, file)
-                        yaml_data = load_yaml_file(filepath)
+            provider_schemas: Dict[str, ProviderSchema] = {}
+            # print(base_path,provider_schemas)
+            for folder_name in os.listdir(base_path):
+                folder_path = os.path.join(base_path, folder_name)
+                if os.path.isdir(folder_path):  # 确保是一个目录
+                    provider_config_schema: Optional[ProviderSchema] = None
 
-                        provider_config_schema = ProviderSchema.construct(**yaml_data)
-                        # print(provider_config_schema)
-                        break  # 只加载一个主配置文件
+                    # 加载主配置文件（如 openai.yml）
+                    for file in os.listdir(folder_path):
+                        if file.endswith(".yml") or file.endswith(".yaml"):
+                            filepath = os.path.join(folder_path, file)
+                            yaml_data = load_yaml_file(filepath)
 
-                if provider_config_schema is None:
-                    continue
+                            provider_config_schema = ProviderSchema(**yaml_data)
+                            # print(provider_config_schema)
+                            break  # 只加载一个主配置文件
 
-                # 加载模型类型子文件夹中的所有 YAML 文件
-                for model_type in os.listdir(folder_path):
-                    model_type_path = os.path.join(folder_path, model_type)
-                    if os.path.isdir(model_type_path):  # 确保是一个目录
+                    if provider_config_schema is None:
+                        continue
 
-                        for model_file in os.listdir(model_type_path):
-                            if model_file.endswith('.yml') or model_file.endswith('.yaml'):
-                                model_filepath = os.path.join(model_type_path, model_file)
-                                # print("~~~~", model_file, model_filepath)
+                    # 加载模型类型子文件夹中的所有 YAML 文件
+                    for model_type in os.listdir(folder_path):
+                        model_type_path = os.path.join(folder_path, model_type)
+                        if os.path.isdir(model_type_path):  # 确保是一个目录
 
-                                # 加载该模型的配置文件
-                                yaml_data = load_yaml_file(model_filepath)
-                                model_schema = ProviderModelSchema.construct(**yaml_data)
-                                # print("!!!!!!!",model_schema)
-                                provider_config_schema.models.append(model_schema)
+                            for model_file in os.listdir(model_type_path):
+                                if model_file.endswith(".yml") or model_file.endswith(
+                                    ".yaml"
+                                ):
+                                    model_filepath = os.path.join(
+                                        model_type_path, model_file
+                                    )
+                                    # print("~~~~", model_file, model_filepath)
 
-                # print(provider_config)
-                provider_schemas[folder_name] = provider_config_schema
+                                    # 加载该模型的配置文件
+                                    yaml_data = load_yaml_file(model_filepath)
+                                    model_schema = ProviderModelSchema(**yaml_data)
+                                    # print("!!!!!!!",model_schema)
+                                    # print("!!!!!!!", type(model_schema))
+                                    provider_config_schema.models.append(model_schema)
+
+                    # print(provider_config)
+                    provider_schemas[folder_name] = provider_config_schema
+        except Exception as e:
+            return None, e
 
         # 保存到全局缓存中
         _global_provider_cache = provider_schemas
         # print(_global_provider_cache)
 
-        return provider_schemas
+        return provider_schemas, None
 
-    def convert_default_model_to_model(self, default_model: ProviderModel) -> Tuple[
-        Optional[AIModel], Optional[Exception]]:
+    def convert_default_model_to_model(
+        self, default_model: ProviderModel
+    ) -> Tuple[Optional[AIModel], Optional[Exception]]:
         return None, None
+
+    def get_provider_schema(self, provider: str) -> ProviderSchema:
+        """
+        Get provider instance by provider name
+        :param provider: provider name
+        :return: provider instance
+        """
+        # scan all providers
+        model_provider_models, exception = self.load_provider_models()
+        if exception:
+            raise exception
+        # print(111, model_provider_models)
+
+        # get the provider
+        model_provider = model_provider_models[provider]
+        # print(type(model_provider))
+        if not model_provider:
+            raise Exception(f"Invalid provider: {provider}")
+
+        return model_provider
+
+    def get_model_provider_icon(
+        self, provider: str, icon_type: str, lang: str
+    ) -> tuple[Optional[bytes], Optional[str], Optional[Exception]]:
+        """
+        get model provider icon.
+
+        :param provider: provider name
+        :param icon_type: icon type (icon_small or icon_large)
+        :param lang: language (zh_CN or en_US)
+        :return:
+        """
+        provider_descriptor = self.get_provider_schema(provider)
+        file_name: str | None = None
+
+        if icon_type.lower() == "icon_small":
+            if not provider_descriptor.icon_small:
+                raise ValueError(f"Provider {provider} does not have small icon.")
+
+            if lang.lower() == "zh_cn":
+                file_name = (
+                    provider_descriptor.icon_small.zh_CN
+                    or provider_descriptor.icon_small.en_US
+                )
+            else:
+                file_name = provider_descriptor.icon_small.en_US
+        else:
+            if not provider_descriptor.icon_large:
+                raise ValueError(f"Provider {provider} does not have large icon.")
+
+            if lang.lower() == "zh_cn":
+                # print(provider_descriptor.icon_large)
+                file_name = provider_descriptor.icon_large.zh_CN
+            else:
+                file_name = provider_descriptor.icon_large.en_US
+        if not file_name:
+            return None, None, Exception("Icon file not found.")
+
+        root_path = get_project_path()
+        provider_instance_path = os.path.join(
+            root_path, "core", "ai_model", "providers", provider
+        )
+
+        file_path = os.path.join(provider_instance_path, "assets")
+        file_path = os.path.join(file_path, file_name)
+        if not os.path.exists(file_path):
+            return None, None, Exception("File not found: {}".format(file_path))
+
+        mimetype, _ = mimetypes.guess_type(file_path)
+        mimetype = mimetype or "application/octet-stream"
+
+        # read binary from file
+        # byte_data = Path(file_path).read_bytes()
+        # return byte_data, mimetype, None
+        return file_path, mimetype, None

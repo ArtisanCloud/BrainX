@@ -76,7 +76,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             )
             if exception:
                 raise exception
-            print("invoke llm:", llm)
+            logger.info(f"invoke llm: {llm}")
 
             chain = llm
 
@@ -146,7 +146,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
     ) -> Tuple[str | None, Exception | None]:
         try:
             chat_llm, exception = get_llm(
-                llm=self.llm, 
+                llm=self.llm,
                 params={"temperature": temperature, "streaming": False},
             )
             if exception:
@@ -208,7 +208,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
         try:
             chat_llm, exception = get_llm(
-                llm=self.llm, 
+                llm=self.llm,
                 params={"temperature": temperature, "streaming": True},
             )
             if exception is not None:

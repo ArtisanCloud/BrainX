@@ -1,6 +1,6 @@
 model: gpt-3.5-turbo-16k-0613
-label:
-  zh_Hans: gpt-3.5-turbo-16k-0613
+title:
+  zh_CN: gpt-3.5-turbo-16k-0613
   en_US: gpt-3.5-turbo-16k-0613
 model_type: llm
 features:
@@ -27,7 +27,7 @@ parameter_rules:
   - name: response_format
     use_template: response_format
 pricing:
-  input: '0.003'
-  output: '0.004'
-  unit: '0.001'
+  input: "0.003"
+  output: "0.004"
+  unit: "0.001"
   currency: USD

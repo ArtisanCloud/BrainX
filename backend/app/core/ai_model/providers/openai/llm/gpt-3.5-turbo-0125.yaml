@@ -1,6 +1,6 @@
 model: gpt-3.5-turbo-0125
-label:
-  zh_Hans: gpt-3.5-turbo-0125
+title:
+  zh_CN: gpt-3.5-turbo-0125
   en_US: gpt-3.5-turbo-0125
 model_type: llm
 features:
@@ -25,19 +25,19 @@ parameter_rules:
     min: 1
     max: 4096
   - name: response_format
-    label:
-      zh_Hans: 回复格式
+    title:
+      zh_CN: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_Hans: 指定模型必须输出的格式
+      zh_CN: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:
       - text
       - json_object
 pricing:
-  input: '0.0005'
-  output: '0.0015'
-  unit: '0.001'
+  input: "0.0005"
+  output: "0.0015"
+  unit: "0.001"
   currency: USD

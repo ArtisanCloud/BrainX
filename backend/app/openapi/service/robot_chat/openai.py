@@ -8,13 +8,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.logger import logger
 from app import settings
 
-from app.openapi.schemas.chat import ChatResponseMessage, Choice, RequestOpenAIChat, ResponseOpenAIChat
+from app.openapi.schemas.chat import (
+    ChatResponseMessage,
+    Choice,
+    RequestOpenAIChat,
+    ResponseOpenAIChat,
+)
 from app.service.robot_chat.agent_chat import agent_chat
 from app.utils.media import remove_base64_images_prefix
 
 
 async def agent_openai_chat_event_generator(
-        request: Request, data: RequestOpenAIChat, user_uuid: str, db: AsyncSession
+    request: Request, data: RequestOpenAIChat, user_uuid: str, db: AsyncSession
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"
@@ -24,14 +29,17 @@ async def agent_openai_chat_event_generator(
         question = data.messages[0].content
         app_uuid = data.app_uuid
         conversation_uuid = data.conversation_uuid
-        base64_images = remove_base64_images_prefix(data.images) 
+        base64_images = remove_base64_images_prefix(data.images)
         # print("conversationUUID:", conversation_uuid)
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await agent_chat(
             db=db,
-            question=question, images=base64_images,
+            question=question,
+            images=base64_images,
             llm=data.model,
-            user_uuid=user_uuid, app_uuid=app_uuid, conversation_uuid=conversation_uuid
+            user_uuid=user_uuid,
+            app_uuid=app_uuid,
+            conversation_uuid=conversation_uuid,
         )
 
         if exception is not None:
@@ -51,15 +59,15 @@ async def agent_openai_chat_event_generator(
                 object="chat.completion.chunk",
                 created=timestamp,
                 model=data.model,
-                system_fingerprint='fp_44709d6fcb',
+                system_fingerprint="fp_44709d6fcb",
                 choices=[
                     Choice(
                         index=0,
                         delta=ChatResponseMessage(role="assistant", content=content),
-                        finish_reason="stop"
+                        finish_reason="stop",
                     )
                 ],
-                usage=None
+                usage=None,
             )
             # print(res.model_dump())
             # yield f"{json.dumps(res.model_dump())}\n\n"
@@ -68,7 +76,9 @@ async def agent_openai_chat_event_generator(
 
     except Exception as e:
         error_msg = "robot chat inner error"
-        logger.error(f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info)
+        logger.error(
+            f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info
+        )
         yield f"data: {json.dumps({'status': 'error', 'message': error_msg})}\n\n"
         await db.rollback()
     finally:

@@ -1,9 +1,9 @@
 model: gpt-3.5-turbo-instruct
-label:
-  zh_Hans: gpt-3.5-turbo-instruct
+title:
+  zh_CN: gpt-3.5-turbo-instruct
   en_US: gpt-3.5-turbo-instruct
 model_type: llm
-features: [ ]
+features: []
 model_properties:
   mode: completion
   context_size: 4096
@@ -24,7 +24,7 @@ parameter_rules:
   - name: response_format
     use_template: response_format
 pricing:
-  input: '0.0015'
-  output: '0.002'
-  unit: '0.001'
+  input: "0.0015"
+  output: "0.002"
+  unit: "0.001"
   currency: USD

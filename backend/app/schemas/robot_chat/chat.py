@@ -12,9 +12,14 @@ class RequestChat(BaseSchema):
     images: Optional[List[str]] = None
 
 
-class ResponseChatStream:
-    data: str
+class RequestCompletion(BaseSchema):
+    llm: str | None
+    appUUID: Optional[str] | None
+    system: Optional[str] | None
+    user: Optional[str] | None
+    messages: Optional[list[MessageSchema]] | None = None
+    images: Optional[List[str]] = None
 
-    def __init__(self, data: str):
-        super().__init__()
-        self.data = data
+
+class ResponseChatCompletion(BaseSchema):
+    data: str

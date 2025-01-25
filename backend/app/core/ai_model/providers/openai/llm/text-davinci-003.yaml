@@ -1,9 +1,9 @@
 model: text-davinci-003
-label:
-  zh_Hans: text-davinci-003
+title:
+  zh_CN: text-davinci-003
   en_US: text-davinci-003
 model_type: llm
-features: [ ]
+features: []
 model_properties:
   mode: completion
   context_size: 4096
@@ -22,8 +22,8 @@ parameter_rules:
     min: 1
     max: 4096
 pricing:
-  input: '0.001'
-  output: '0.002'
-  unit: '0.001'
+  input: "0.001"
+  output: "0.002"
+  unit: "0.001"
   currency: USD
 deprecated: true

@@ -1,6 +1,6 @@
 model: chatgpt-4o-latest
-label:
-  zh_Hans: chatgpt-4o-latest
+title:
+  zh_CN: chatgpt-4o-latest
   en_US: chatgpt-4o-latest
 model_type: llm
 features:
@@ -26,19 +26,19 @@ parameter_rules:
     min: 1
     max: 16384
   - name: response_format
-    label:
-      zh_Hans: 回复格式
+    title:
+      zh_CN: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_Hans: 指定模型必须输出的格式
+      zh_CN: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:
       - text
       - json_object
 pricing:
-  input: '2.50'
-  output: '10.00'
-  unit: '0.000001'
+  input: "2.50"
+  output: "10.00"
+  unit: "0.000001"
   currency: USD
