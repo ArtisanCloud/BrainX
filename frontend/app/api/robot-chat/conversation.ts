@@ -41,8 +41,7 @@ export async function ActionFetchConversationList(data: RequestFetchConversation
 	noStore();
 	try {
 		const endpoint = `/api/chat-bot/conversation/list`;
-		const queryString = Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&');
-		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
+		const res = await backendClient.backend_get(endpoint, {params:data,cache: 'no-store'});
 
 		return res as ResponseFetchConversationList;
 
@@ -86,8 +85,7 @@ export async function ActionFetchCachedMessageList(data: RequestFetchCachedMessa
 	noStore();
 	try {
 		const endpoint = `/api/chat-bot/conversation/message/list/cached`;
-		const queryString = Object.entries(data).map(([key, value]) => `${key}=${value}`).join('&');
-		const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
+		const res = await backendClient.backend_get(endpoint, {params:data,cache: 'no-store'});
 
 		return res as ResponseFetchCachedMessageList;
 

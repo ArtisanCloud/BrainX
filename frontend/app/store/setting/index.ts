@@ -1,14 +1,20 @@
-import {create} from 'zustand';
+import { create } from "zustand";
+import { Provider } from "@/app/api/model-provider/provider";
 
 // 定义 store 状态类型
 interface SettingsState {
-  language:string;
+  providers: Record<string, Provider>;
+  language: string;
+  setLanguage: (language: string) => void;
+  setProviders: (providers: Record<string, Provider>) => void;
 }
 
 // 创建 zustand store
 const useSettingsStore = create<SettingsState>((set) => ({
-  language: 'zh/CN',
-  setLanguage: (language) => set({ language }),
+  providers: {}, // 初始化为一个空对象
+  language: "zh/CN",
+  setLanguage: (language: string) => set({ language }),
+  setProviders: (providers: Record<string, Provider>) => set({ providers }),
 }));
 
-export default useSettingsStore
+export default useSettingsStore;

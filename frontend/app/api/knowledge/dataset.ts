@@ -49,8 +49,10 @@ export async function ActionFetchDatasetList(pg: RequestPagination): Promise<Res
   noStore();
   try {
     const endpoint = `/api/rag/dataset/list`;
-    const queryString = Object.entries(pg).map(([key, value]) => `${key}=${value}`).join('&');
-    const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
+    const res = await backendClient.backend_get(endpoint, {
+      params:pg,
+      cache: 'no-store'
+    });
 
     return res as ResponseFetchDatasetList;
 
@@ -70,7 +72,7 @@ export async function ActionGetDataset(option: RequestGetDataset): Promise<Respo
   noStore();
   try {
     const endpoint = `/api/rag/dataset/${option.uuid}`;
-    const res = await backendClient.backend_get(`${endpoint}`, {cache: 'no-store'});
+    const res = await backendClient.backend_get(`${endpoint}`, {params:option,cache: 'no-store'});
 
     return res as ResponseGetDataset;
 

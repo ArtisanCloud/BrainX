@@ -56,8 +56,7 @@ export async function ActionFetchDocumentList(pg: RequestFetchDocumentList): Pro
   noStore();
   try {
     const endpoint = `/api/rag/dataset/document/list`;
-    const queryString = Object.entries(pg).map(([key, value]) => `${key}=${value}`).join('&');
-    const res = await backendClient.backend_get(`${endpoint}?${queryString}`, {cache: 'no-store'});
+    const res = await backendClient.backend_get(endpoint, {params:pg,cache: 'no-store'});
 
     return res as ResponseFetchDocumentList;
 

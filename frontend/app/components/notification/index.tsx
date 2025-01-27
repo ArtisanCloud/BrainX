@@ -6,6 +6,7 @@ import { message } from 'antd';
 // 创建 NotificationContext
 const NotificationContext = createContext<{
   msgSuccess: (content: string) => void;
+  msgInfo: (content: string) => void;
   msgError: (content: string) => void;
   msgWarn: (content: string) => void;
 } | null>(null);
@@ -18,6 +19,13 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const msgSuccess = useCallback((content: string) => {
     messageApi.open({
       type: 'success',
+      content,
+    });
+  }, [messageApi]);
+
+  const msgInfo = useCallback((content: string) => {
+    messageApi.open({
+      type: 'info',
       content,
     });
   }, [messageApi]);
@@ -38,7 +46,7 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // 提供通知方法给整个应用
   return (
-    <NotificationContext.Provider value={{ msgSuccess, msgError, msgWarn }}>
+    <NotificationContext.Provider value={{ msgSuccess,msgInfo, msgError, msgWarn }}>
       {contextHolder}
       {children}
     </NotificationContext.Provider>

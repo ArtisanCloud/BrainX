@@ -4,7 +4,7 @@ const BrainXTemplatePage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      Hello, World!
+      BrainXTemplate
     </div>
   )
 }

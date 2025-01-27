@@ -36,6 +36,11 @@ class BackendClient {
 	}
 
 	public async backend_get(endpoint: string, init?: any) {
+		if (init?.params){
+		const queryString = Object.entries(init.params).map(([key, value]) => `${key}=${value}`).join('&');
+			endpoint = `${endpoint}?${queryString}`
+		}
+		// console.log(init?.params,endpoint)
 		return this.get(backendUrl, endpoint, init)
 	}
 
@@ -88,13 +93,13 @@ class BackendClient {
 		const url = host + endpoint;
 		const headers = this.get_header();
 		delete headers['Content-Type']; // 让浏览器自动设置 multipart/form-data
-	
+
 		const res = await fetch(url, {
 			method: "POST",
 			headers: headers,
 			body: formData,
 		});
-	
+
 		return this.processResponse(res);
 	}
 
@@ -160,15 +165,31 @@ class BackendClient {
 			})
 		}
 
-		const result = (await res.json()) as APIResponse
-		if (result.error != null && result.error != '') {
-			// console.log(result)
-			this.processStatusErrorResponse(result).then(() => {
-				throw new Error(`request error: ${result.error}`);
-			})
-		}
+		// 根据 Content-Type 处理响应
+		const contentType = res.headers.get("Content-Type");
 
-		return result
+		if (contentType && contentType.includes("image/svg+xml")) {
+			// 处理 SVG 响应，返回纯文本内容
+			const svgContent = await res.text();
+			return svgContent;
+		} else if (contentType && contentType.includes("application/json")) {
+			// 处理 JSON 响应
+			const result = await res.json() as APIResponse;
+			if (result.error != null && result.error != '') {
+				await this.processStatusErrorResponse(result);
+				throw new Error(`request error: ${result.error}`);
+			}
+			return result;
+		} else if (contentType && contentType.includes("image/png")) {
+			// 处理 PNG 图片，返回二进制 Blob 数据
+			const imageBlob = await res.blob();
+			const imageUrl = URL.createObjectURL(imageBlob); // 创建图片的 URL
+			return imageUrl;
+		} else {
+			// 其他类型的处理（如图片或文本）
+			const textContent = await res.text();
+			return textContent;
+		}
 	}
 
 }
