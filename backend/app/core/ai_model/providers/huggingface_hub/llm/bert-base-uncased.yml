@@ -1,9 +1,9 @@
 model: bert-base-uncased
-title:
+label:
   en_US: BERT Base Uncased
-  zh_CN: BERT 基础版（小写）
+  zh_Hans: BERT 基础版（小写）
 model_type: text-embedding
 features: []
-fetch_from: customized
+fetch_from: customizable-model
 model_properties: {}
 deprecated: false

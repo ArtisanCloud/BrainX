@@ -1,6 +1,6 @@
 model: gpt-4-32k
-title:
-  zh_CN: gpt-4-32k
+label:
+  zh_Hans: gpt-4-32k
   en_US: gpt-4-32k
 model_type: llm
 features:
@@ -25,12 +25,12 @@ parameter_rules:
     min: 1
     max: 32768
   - name: seed
-    title:
-      zh_CN: 种子
+    label:
+      zh_Hans: 种子
       en_US: Seed
     type: int
     help:
-      zh_CN:
+      zh_Hans:
         如果指定，模型将尽最大努力进行确定性采样，使得重复的具有相同种子和参数的请求应该返回相同的结果。不能保证确定性，您应该参考 system_fingerprint
         响应参数来监视变化。
       en_US:
@@ -40,12 +40,12 @@ parameter_rules:
         system_fingerprint response parameter to monitor changes in the backend.
     required: false
   - name: response_format
-    title:
-      zh_CN: 回复格式
+    label:
+      zh_Hans: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_CN: 指定模型必须输出的格式
+      zh_Hans: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:

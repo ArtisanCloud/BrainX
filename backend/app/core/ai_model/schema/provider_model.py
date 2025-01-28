@@ -3,7 +3,7 @@ from typing import Optional, Any
 
 from pydantic import BaseModel
 
-from app.core.ai_model.schema.base import MultilingualField
+from app.core.ai_model.schema.base import I18nObject
 from app.models.model_provider.provider_model import ModelType
 
 
@@ -20,8 +20,8 @@ class ModelFeature(Enum):
 
 
 class FetchFrom(Enum):
-    PREDEFINED = "predefined"
-    CUSTOMIZED = "customized"
+    PREDEFINED = "predefined-model"
+    CUSTOMIZED = "customizable-model"
 
 
 class ModelPropertyKey(Enum):
@@ -49,7 +49,7 @@ class ProviderModelSchema(BaseModel):
     """
 
     model: str
-    title: MultilingualField
+    label: I18nObject
     model_type: ModelType
     features: Optional[list[ModelFeature]] = None
     fetch_from: Optional[FetchFrom] = None

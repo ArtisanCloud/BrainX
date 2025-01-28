@@ -1,6 +1,6 @@
 model: gpt-3.5-turbo-16k-0613
-title:
-  zh_CN: gpt-3.5-turbo-16k-0613
+label:
+  zh_Hans: gpt-3.5-turbo-16k-0613
   en_US: gpt-3.5-turbo-16k-0613
 model_type: llm
 features:

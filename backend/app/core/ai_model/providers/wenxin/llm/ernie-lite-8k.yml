@@ -1,10 +1,10 @@
 model: ernie-lite-8k
-title:
+label:
   en_US: ERNIE Lite 8K
-  zh_CN: ERNIE Lite 8K
+  zh_Hans: ERNIE Lite 8K
 model_type: text-embedding
 features: []
-fetch_from: customized
+fetch_from: customizable-model
 model_properties:
   context_size: 8192
   max_chunks: 30

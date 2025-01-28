@@ -1,9 +1,9 @@
 model: universal-sentence-encoder
-title:
+label:
   en_US: Universal Sentence Encoder
-  zh_CN: 通用句子编码器
+  zh_Hans: 通用句子编码器
 model_type: text-embedding
 features: []
-fetch_from: customized
+fetch_from: customizable-model
 model_properties: {}
 deprecated: false

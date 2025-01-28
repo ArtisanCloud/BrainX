@@ -2,8 +2,8 @@
  * 多语言字段接口
  * 用于支持多语言字段，包括中文（可选）和英文字段。
  */
-export interface MultilingualField {
-  zh_CN?: string; // 中文字段，可选
+export interface I18nObject {
+  zh_Hans?: string; // 中文字段，可选
   en_US: string; // 英文字段，必填
 }
 
@@ -24,8 +24,8 @@ export enum ModelFeature {
  * 用于定义模型的获取方式。
  */
 export enum FetchFrom {
-  PREDEFINED = "predefined",
-  CUSTOMIZED = "customized",
+  PREDEFINED = "predefined-model",
+  CUSTOMIZED = "customizable-model",
 }
 
 /**
@@ -60,7 +60,7 @@ export interface FormShowOnObject {
  * 定义表单选项，包括多语言标题、值和显示条件。
  */
 export interface FormOption {
-  title: MultilingualField; // 选项标题，多语言支持
+  label: I18nObject; // 选项标题，多语言支持
   value: string; // 选项值
   show_on?: FormShowOnObject[]; // 选项显示条件，可选
 }

@@ -1,6 +1,6 @@
 model: gpt-3.5-turbo-instruct
-title:
-  zh_CN: gpt-3.5-turbo-instruct
+label:
+  zh_Hans: gpt-3.5-turbo-instruct
   en_US: gpt-3.5-turbo-instruct
 model_type: llm
 features: []

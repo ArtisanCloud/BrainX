@@ -1,10 +1,10 @@
 model: text-embedding-3-large
-title:
+label:
   en_US: Text Embedding 3 Large
-  zh_CN: 文本嵌入3 大型版
+  zh_Hans: 文本嵌入3 大型版
 model_type: text-embedding
 features: []
-fetch_from: customized
+fetch_from: customizable-model
 model_properties:
   context_size: 8192
   max_chunks: 32

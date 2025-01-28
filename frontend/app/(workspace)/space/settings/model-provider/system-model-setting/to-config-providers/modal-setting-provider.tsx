@@ -11,20 +11,19 @@ import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
   CogIcon,
-  PlusIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { ProviderIcon } from "./provider-icon";
 import DynamicForm from "../../components/dynamic-form";
 
 // 定义 Props 接口
-interface ModelSettingProviderProps {
+interface ModalSettingProviderProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function ModelSettingProvider({
+export default function ModalSettingProvider({
   provider,
-}: ModelSettingProviderProps) {
+}: ModalSettingProviderProps) {
   const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
   const [formValues, setFormValues] = useState<Record<string, any>>({});
@@ -40,7 +39,7 @@ export default function ModelSettingProvider({
   };
 
   const onSubmit = () => {
-    console.log("form:", formValues); // 表单变化时触发的回调函数
+    // console.log("form:", formValues); // 表单变化时触发的回调函数
     setIsOpen(false); // 关闭Modal
   };
 
@@ -50,7 +49,7 @@ export default function ModelSettingProvider({
   };
 
   const onFilledRequired = (filled: boolean) => {
-    console.log(filled);
+    // console.log(filled);
     setRequiredFilled(filled);
   };
 
@@ -95,7 +94,7 @@ export default function ModelSettingProvider({
               </div>
               <div className="sticky bottom-0 flex justify-between items-center mt-2 -mx-2 pt-4 px-2 pb-6 flex-wrap gap-y-2 bg-white">
                 <div className="inline-flex items-center text-xs text-primary-600">
-                  {provider.help.title.zh_CN + " "}
+                  {provider.help?.label?.en_US + " "}
                   <a
                     href={provider.help?.url.en_US || "#"}
                     target="_blank"

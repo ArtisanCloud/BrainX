@@ -1,32 +1,34 @@
-import styles from './index.module.scss';
-import {useEffect} from "react";
+import styles from "./index.module.scss";
+import { useEffect } from "react";
 import useSettingsStore from "@/app/store/setting";
-import {useNotification} from "@/app/components/notification";
+import { useNotification } from "@/app/components/notification";
 import useLoadingStore from "@/app/store/global-loading";
-import {ActionFetchProviderList, ResponseFetchProviderList} from "@/app/api/model-provider/provider";
+import {
+  ActionFetchProviderList,
+  ResponseFetchProviderList,
+} from "@/app/api/model-provider/provider";
 import SystemModelSetting from "@/app/(workspace)/space/settings/model-provider/system-model-setting";
-import ToConfigProviders
-  from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers";
+import ToConfigProviders from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers";
 
 const ModelProviderComponent: React.FC = () => {
-
-  const {providers,setProviders} = useSettingsStore();
-  const {loading,setLoading} = useLoadingStore();
-  const {msgInfo, msgError}= useNotification()
+  const { setProviders } = useSettingsStore();
+  const { loading, setLoading } = useLoadingStore();
+  const { msgError } = useNotification();
   useEffect(() => {
     const fetchProviders = async () => {
-      if (loading){
-        return
-      }else{
-        setLoading(true)
+      if (loading) {
+        return;
+      } else {
+        setLoading(true);
       }
       try {
         // 调用 ActionFetchProviderList 获取数据
-        const response: ResponseFetchProviderList = await ActionFetchProviderList();
+        const response: ResponseFetchProviderList =
+          await ActionFetchProviderList();
         setProviders(response.data); // 将数据保存到 zustand store
         // console.log(response.data)
       } catch (error) {
-        msgError('加载提供者列表失败');
+        msgError("加载提供者列表失败");
       } finally {
         setLoading(false);
       }
@@ -43,7 +45,9 @@ const ModelProviderComponent: React.FC = () => {
           <SystemModelSetting />
         </div>
         <div className={styles.configuredModelProviders}>
-          <span className="text-lg font-semibold text-gray-500">还未添加模型</span>
+          <span className="text-lg font-semibold text-gray-500">
+            还未添加模型
+          </span>
         </div>
       </div>
       <div className={styles.toConfigModelProvidersBox}>
@@ -54,6 +58,6 @@ const ModelProviderComponent: React.FC = () => {
         <ToConfigProviders />
       </div>
     </div>
-  )
-}
-export default ModelProviderComponent
+  );
+};
+export default ModelProviderComponent;

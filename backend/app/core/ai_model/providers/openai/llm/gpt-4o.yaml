@@ -1,6 +1,6 @@
 model: gpt-4o
-title:
-  zh_CN: gpt-4o
+label:
+  zh_Hans: gpt-4o
   en_US: gpt-4o
 model_type: llm
 features:
@@ -26,12 +26,12 @@ parameter_rules:
     min: 1
     max: 4096
   - name: response_format
-    title:
-      zh_CN: 回复格式
+    label:
+      zh_Hans: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_CN: 指定模型必须输出的格式
+      zh_Hans: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:

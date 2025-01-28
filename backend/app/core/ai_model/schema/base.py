@@ -5,19 +5,19 @@ from pydantic import BaseModel, model_validator, field_validator
 
 
 # 定义支持多语言的字段对象
-class MultilingualField(BaseModel):
-    zh_CN: Optional[str] = None  # 中文字段，可选，默认为 None
+class I18nObject(BaseModel):
+    zh_Hans: Optional[str] = None  # 中文字段，可选，默认为 None
     en_US: str  # 英文字段，必填
 
     # 使用 @model_validator 来进行模型级别的验证
     @model_validator(mode="before")
-    def set_default_zh_CN(cls, values):
-        if "zh_CN" not in values or not values["zh_CN"]:
-            values["zh_CN"] = values["en_US"]
+    def set_default_zh_Hans(cls, values):
+        if "zh_Hans" not in values or not values["zh_Hans"]:
+            values["zh_Hans"] = values["en_US"]
         return values
 
     # 使用 @field_validator 来验证字段类型
-    @field_validator("en_US", "zh_CN")
+    @field_validator("en_US", "zh_Hans")
     def ensure_string(cls, value):
         if isinstance(value, str):
             return value
@@ -56,12 +56,12 @@ class FormOption(BaseModel):
     用于定义表单选项的模型类，包含选项的标题、多语言支持、值及其显示条件。
     """
 
-    title: MultilingualField  # 选项标题，支持多语言
+    label: I18nObject  # 选项标题，支持多语言
     value: str  # 选项值
     show_on: list[FormShowOnObject] = []  # 选项显示条件，默认为空列表
 
     def __init__(self, **data):
         super().__init__(**data)
         # 如果没有提供标题，默认使用选项值作为标题
-        if not self.title:
-            self.title = MultilingualField(en_US=self.value)
+        if not self.label:
+            self.label = I18nObject(en_US=self.value)

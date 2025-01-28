@@ -3,7 +3,7 @@ from pydantic import BaseModel, HttpUrl
 from typing import Optional, List
 
 # 这些是你定义的依赖模块
-from .base import MultilingualField, FormType, FormOption, FormShowOnObject
+from .base import I18nObject, FormType, FormOption, FormShowOnObject
 from .provider_model import ProviderModelSchema
 from app.models.model_provider.provider_model import ModelType
 
@@ -14,8 +14,8 @@ class Help(BaseModel):
     帮助信息模型，包含帮助标题和链接。
     """
 
-    title: MultilingualField  # 帮助标题，支持多语言
-    url: MultilingualField  # 帮助链接，必须是有效的URL
+    label: I18nObject  # 帮助标题，支持多语言
+    url: I18nObject  # 帮助链接，必须是有效的URL
 
 
 # 配置方法枚举
@@ -24,8 +24,8 @@ class ConfigurateMethod(Enum):
     枚举类，用于定义提供者模型的配置方法。
     """
 
-    PREDEFINED_MODEL = "predefined"  # 预定义模型
-    CUSTOMIZED_MODEL = "customized"  # 自定义模型
+    PREDEFINED_MODEL = "predefined-model"  # 预定义模型
+    CUSTOMIZED_MODEL = "customizable-model"  # 自定义模型
 
 
 # 凭证表单字段的定义
@@ -35,12 +35,12 @@ class CredentialFormSchema(BaseModel):
     """
 
     variable: str  # 字段变量名称
-    title: MultilingualField  # 字段标签，支持多语言
+    label: I18nObject  # 字段标签，支持多语言
     type: FormType  # 字段类型，使用 FormType 枚举
     required: bool = True  # 是否必填，默认为 True
     default: Optional[str] = None  # 默认值，可选
     options: Optional[List[FormOption]] = None  # 字段选项，用于选择类型字段
-    placeholder: Optional[MultilingualField] = None  # 占位符，支持多语言
+    placeholder: Optional[I18nObject] = None  # 占位符，支持多语言
     max_length: int = 0  # 字段最大长度
     show_on: List[FormShowOnObject] = []  # 字段展示条件
 
@@ -60,8 +60,8 @@ class FieldModelSchema(BaseModel):
     模型字段定义，描述模型字段的标题和可选的占位符。
     """
 
-    title: MultilingualField  # 字段标题，支持多语言
-    placeholder: Optional[MultilingualField] = None  # 占位符，支持多语言
+    label: I18nObject  # 字段标题，支持多语言
+    placeholder: Optional[I18nObject] = None  # 占位符，支持多语言
 
 
 # 模型凭证的定义
@@ -81,10 +81,10 @@ class ProviderSchema(BaseModel):
     """
 
     provider: str  # 提供者名称
-    title: MultilingualField  # 提供者的标题，支持多语言
-    description: Optional[MultilingualField] = None  # 提供者的描述，支持多语言
-    icon_small: Optional[MultilingualField] = None  # 小图标路径，支持多语言
-    icon_large: Optional[MultilingualField] = None  # 大图标路径，支持多语言
+    label: I18nObject  # 提供者的标题，支持多语言
+    description: Optional[I18nObject] = None  # 提供者的描述，支持多语言
+    icon_small: Optional[I18nObject] = None  # 小图标路径，支持多语言
+    icon_large: Optional[I18nObject] = None  # 大图标路径，支持多语言
     background: str = None  # 背景颜色（HEX 格式）
     help: Help  # 帮助信息
     supported_model_types: List[ModelType]  # 支持的模型类型列表

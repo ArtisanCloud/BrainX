@@ -20,7 +20,7 @@ async def seed_default_tenant_models(db) -> Exception | None:
                 provider = Provider(
                     provider_name=provider_name,
                     provider_type=ProviderType.SYSTEM.value,
-                    encrypted_config='',
+                    encrypted_config="",
                     is_valid=True,
                 )
                 db.add(provider)
@@ -40,7 +40,9 @@ async def seed_default_tenant_models(db) -> Exception | None:
                 providers.append(provider)
 
             # Check if the table is empty
-            model_providers_count = await db.scalar(select(func.count()).select_from(TenantDefaultModel))
+            model_providers_count = await db.scalar(
+                select(func.count()).select_from(TenantDefaultModel)
+            )
             # print(model_providers_count)
             if model_providers_count == 0:
                 db.add_all(models)
@@ -50,6 +52,7 @@ async def seed_default_tenant_models(db) -> Exception | None:
 
     except Exception as e:
         return e
+
 
 # async def seed_model_providers(db) -> Exception | None:
 #     try:
@@ -74,7 +77,7 @@ async def seed_default_tenant_models(db) -> Exception | None:
 #
 #                 for model_type, model_configs in config["models"].items():
 #                     for model_name, model_config in model_configs.items():
-#                         model_display_name = model_config.get("title", {}).get("zh_CN", model_name)
+#                         model_display_name = model_config.get("title", {}).get("zh_Hans", model_name)
 #                         model = ProviderModel(
 #                             provider_uuid=provider.uuid,
 #                             provider_name=config["provider"],

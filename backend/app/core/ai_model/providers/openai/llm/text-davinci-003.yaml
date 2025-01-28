@@ -1,6 +1,6 @@
 model: text-davinci-003
-title:
-  zh_CN: text-davinci-003
+label:
+  zh_Hans: text-davinci-003
   en_US: text-davinci-003
 model_type: llm
 features: []

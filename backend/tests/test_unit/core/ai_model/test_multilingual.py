@@ -1,24 +1,24 @@
-from app.core.ai_model.schema.base import MultilingualField
+from app.core.ai_model.schema.base import I18nObject
 
 
 def test_multilingual_field():
     # 测试传入只有 en_US 的情况
     data = {"en_US": "Hello"}
-    field = MultilingualField(**data)
+    field = I18nObject(**data)
     assert field.en_US == "Hello"
-    assert field.zh_CN == "Hello"  # zh_CN 应该默认为 en_US 的值
+    assert field.zh_Hans == "Hello"  # zh_Hans 应该默认为 en_US 的值
 
-    # 测试传入 zh_CN 和 en_US 都有的情况
-    data = {"en_US": "Hello", "zh_CN": "你好"}
-    field = MultilingualField(**data)
+    # 测试传入 zh_Hans 和 en_US 都有的情况
+    data = {"en_US": "Hello", "zh_Hans": "你好"}
+    field = I18nObject(**data)
     assert field.en_US == "Hello"
-    assert field.zh_CN == "你好"  # zh_CN 使用传入的值
+    assert field.zh_Hans == "你好"  # zh_Hans 使用传入的值
 
-    # 测试传入没有 zh_CN 的情况，应该自动使用 en_US 的值
-    data = {"en_US": "Hello", "zh_CN": None}
-    field = MultilingualField(**data)
+    # 测试传入没有 zh_Hans 的情况，应该自动使用 en_US 的值
+    data = {"en_US": "Hello", "zh_Hans": None}
+    field = I18nObject(**data)
     assert field.en_US == "Hello"
-    assert field.zh_CN == "Hello"  # zh_CN 应该从 en_US 继承
+    assert field.zh_Hans == "Hello"  # zh_Hans 应该从 en_US 继承
 
     print("All tests passed.")
 

@@ -3,7 +3,7 @@ import {
   FormOption,
   FormShowOnObject,
   FormType,
-  MultilingualField,
+  I18nObject,
 } from "@/app/api/model-provider/index";
 import { ModelType, ProviderModel } from "@/app/api/model-provider/model";
 import { backendClient } from "@/app/api/backend";
@@ -13,9 +13,9 @@ import { backendUrl } from "@/app/config/config";
 
 export interface Help {
   // 帮助标题，支持多语言
-  title: MultilingualField;
+  label: I18nObject;
   // 帮助链接，必须是有效的 URL
-  url: MultilingualField;
+  url: I18nObject;
 }
 
 // 配置方法枚举
@@ -29,7 +29,7 @@ export interface CredentialForm {
   // 字段变量名称
   variable: string;
   // 字段标签，支持多语言
-  title: MultilingualField;
+  label: I18nObject;
   // 字段类型，使用 FormType 枚举
   type: FormType;
   // 是否必填，默认为 true
@@ -39,7 +39,7 @@ export interface CredentialForm {
   // 字段选项，用于选择类型字段
   options?: FormOption[];
   // 占位符，支持多语言
-  placeholder?: MultilingualField;
+  placeholder?: I18nObject;
   // 字段最大长度
   max_length?: number;
   // 字段展示条件
@@ -55,9 +55,9 @@ export interface ProviderCredential {
 // 模型字段接口
 export interface FieldModel {
   // 字段标题，支持多语言
-  title: MultilingualField;
+  title: I18nObject;
   // 占位符，支持多语言
-  placeholder?: MultilingualField;
+  placeholder?: I18nObject;
 }
 
 // 模型凭证接口
@@ -65,7 +65,7 @@ export interface ModelCredential {
   // 模型字段
   model: FieldModel;
   // 凭证表单字段列表
-  credentialForms: CredentialForm[];
+  credential_form_schemas: CredentialForm[];
 }
 
 // 提供者接口
@@ -73,13 +73,13 @@ export interface Provider {
   // 提供者名称
   provider: string;
   // 提供者的标题，支持多语言
-  title: MultilingualField;
+  label: I18nObject;
   // 提供者的描述，支持多语言
-  description?: MultilingualField;
+  description?: I18nObject;
   // 小图标路径，支持多语言
-  iconSmall?: MultilingualField;
+  iconSmall?: I18nObject;
   // 大图标路径，支持多语言
-  iconLarge?: MultilingualField;
+  iconLarge?: I18nObject;
   // 背景颜色（HEX 格式）
   background: string;
   // 帮助信息
@@ -122,7 +122,7 @@ export async function ActionGetProviderIcon(
 ): Promise<any> {
   noStore();
   try {
-    const endpoint = `/api/model-provider/icon/${providerName}/icon_large/zh_CN`;
+    const endpoint = `/api/model-provider/icon/${providerName}/icon_large/zh_Hans`;
     const resource = await backendClient.backend_get(endpoint, {});
     // 返回直接的 SVG or PNG 内容
     return resource;

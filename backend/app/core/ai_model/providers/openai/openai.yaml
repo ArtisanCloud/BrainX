@@ -1,18 +1,18 @@
 provider: openai
-title:
+label:
   en_US: OpenAI
 description:
   en_US: Models provided by OpenAI, such as GPT-3.5-Turbo and GPT-4.
-  zh_CN: OpenAI 提供的模型，例如 GPT-3.5-Turbo 和 GPT-4。
+  zh_Hans: OpenAI 提供的模型，例如 GPT-3.5-Turbo 和 GPT-4。
 icon_small:
   en_US: icon_s_en.svg
 icon_large:
   en_US: icon_l_en.svg
 background: "#E5E7EB"
 help:
-  title:
+  label:
     en_US: Get your API Key from OpenAI
-    zh_CN: 从 OpenAI 获取 API Key
+    zh_Hans: 从 OpenAI 获取 API Key
   url:
     en_US: https://platform.openai.com/account/api-keys
 supported_model_types:
@@ -22,68 +22,68 @@ supported_model_types:
   - moderation
   - tts
 configurate_methods:
-  - predefined
-  - customized
+  - predefined-model
+  - customizable-model
 models_credential_schema:
   model:
-    title:
+    label:
       en_US: Model Name
-      zh_CN: 模型名称
+      zh_Hans: 模型名称
     placeholder:
       en_US: Enter your model name
-      zh_CN: 输入模型名称
+      zh_Hans: 输入模型名称
   credential_form_schemas:
     - variable: openai_api_key
-      title:
+      label:
         en_US: API Key
       type: secret-input
       required: true
       placeholder:
-        zh_CN: 在此输入您的 API Key
+        zh_Hans: 在此输入您的 API Key
         en_US: Enter your API Key
     - variable: openai_organization
-      title:
-        zh_CN: 组织 ID
+      label:
+        zh_Hans: 组织 ID
         en_US: Organization
       type: text-input
       required: false
       placeholder:
-        zh_CN: 在此输入您的组织 ID
+        zh_Hans: 在此输入您的组织 ID
         en_US: Enter your Organization ID
     - variable: openai_api_base
-      title:
-        zh_CN: API Base
+      label:
+        zh_Hans: API Base
         en_US: API Base
       type: text-input
       required: false
       placeholder:
-        zh_CN: 在此输入您的 API Base
+        zh_Hans: 在此输入您的 API Base
         en_US: Enter your API Base
 provider_credential_schema:
   credential_form_schemas:
     - variable: openai_api_key
-      title:
+      label:
         en_US: API Key
       type: secret-input
       required: true
       placeholder:
-        zh_CN: 在此输入您的 API Key
+        zh_Hans: 在此输入您的 API Key
         en_US: Enter your API Key
     - variable: openai_organization
-      title:
-        zh_CN: 组织 ID
+      label:
+        zh_Hans: 组织 ID
         en_US: Organization
       type: text-input
       required: false
       placeholder:
-        zh_CN: 在此输入您的组织 ID
+        zh_Hans: 在此输入您的组织 ID
         en_US: Enter your Organization ID
     - variable: openai_api_base
-      title:
-        zh_CN: API Base
+      label:
+        zh_Hans: API Base
         en_US: API Base
       type: text-input
       required: false
       placeholder:
-        zh_CN: 在此输入您的 API Base, 如：https://api.openai.com
+        zh_Hans: 在此输入您的 API Base, 如：https://api.openai.com
         en_US: Enter your API Base, e.g. https://api.openai.com

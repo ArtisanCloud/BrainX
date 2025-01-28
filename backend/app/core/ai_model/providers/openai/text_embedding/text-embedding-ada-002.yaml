@@ -1,10 +1,10 @@
 model: text-embedding-ada-002
-title:
+label:
   en_US: Text Embedding ADA 002
-  zh_CN: 文本嵌入 ADA 002
+  zh_Hans: 文本嵌入 ADA 002
 model_type: text-embedding
 features: []
-fetch_from: customized
+fetch_from: customizable-model
 model_properties:
   context_size: 4096
   max_chunks: 20

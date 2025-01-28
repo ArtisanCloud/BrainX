@@ -2,7 +2,7 @@ import {
   FetchFrom,
   ModelFeature,
   ModelPropertyKey,
-  MultilingualField,
+  I18nObject,
 } from "@/app/api/model-provider/index";
 
 /**
@@ -29,7 +29,7 @@ export enum ModelType {
  */
 export interface ProviderModel {
   model: string; // 模型名称
-  title: MultilingualField; // 多语言标题
+  label: I18nObject; // 多语言标题
   model_type: ModelType; // 模型类型
   features?: ModelFeature[]; // 特性列表（可选）
   fetch_from: FetchFrom; // 获取方式

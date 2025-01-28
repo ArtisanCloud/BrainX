@@ -1,9 +1,9 @@
 model: roberta-large
-title:
+label:
   en_US: RoBERTa Large
-  zh_CN: RoBERTa 大型版
+  zh_Hans: RoBERTa 大型版
 model_type: text-embedding
 features: []
-fetch_from: customized
+fetch_from: customizable-model
 model_properties: {}
 deprecated: false

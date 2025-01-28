@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Input, Select, Radio, Switch, SelectItem, Form } from "@heroui/react"; // 替换为实际使用的 UI 库组件
+import {
+  Input,
+  Select,
+  Radio,
+  Switch,
+  SelectItem,
+  RadioGroup,
+} from "@heroui/react"; // 替换为实际使用的 UI 库组件
 import { CredentialForm } from "@/app/api/model-provider/provider";
-import { FormOption, FormType } from "@/app/api/model-provider";
+import {
+  FormOption as DynamicFormOption,
+  FormType,
+} from "@/app/api/model-provider";
 
 export default function DynamicForm({
   credentialSchemas,
@@ -29,7 +39,7 @@ export default function DynamicForm({
 
   // 检查必填字段是否已填写
   const checkFilledRequired = () => {
-    const filled = credentialSchemas.every((field) => {
+    const filled = credentialSchemas?.every((field) => {
       // 检查字段是必填并且已经有值
       return field.required === false || formValues[field.variable];
     });
@@ -48,13 +58,22 @@ export default function DynamicForm({
 
   return (
     <>
-      {credentialSchemas.map((field: CredentialForm) => {
+      {credentialSchemas?.map((field: CredentialForm | undefined) => {
+        if (!field) {
+          return (
+            <p key={Math.random()} className="text-red-500">
+              Invalid field data
+            </p>
+          );
+        }
+
         const isRequired = field.required !== false; // 默认为 true
         const placeholder =
-          field.placeholder?.zh_CN ||
+          field.placeholder?.zh_Hans ||
           field.placeholder?.en_US ||
           "Enter your value here"; // 示例支持多语言
-        const title = field.title.zh_CN || field.title?.zh_CN || "Field"; // 示例支持多语言
+        const title = field.label?.zh_Hans || field.label?.en_US || "Field"; // 示例支持多语言
+
         // console.log(field);
         // 根据字段类型动态渲染表单
         let inputElement;
@@ -64,7 +83,7 @@ export default function DynamicForm({
             inputElement = (
               <Input
                 errorMessage={
-                  (isRequired && field.placeholder?.zh_CN) ||
+                  (isRequired && field.placeholder?.zh_Hans) ||
                   field.placeholder?.en_US
                     ? "This field is required"
                     : ""
@@ -86,12 +105,13 @@ export default function DynamicForm({
             inputElement = (
               <Select
                 placeholder={placeholder}
-                items={field.options}
+                // items={transformOptions(field.options!)}
+                items={field.options!}
                 onChange={(value) => handleChange(field.variable, value)} // 修复：使用箭头函数传递参数
               >
-                {(option: FormOption) => (
-                  <SelectItem>
-                    {option.title.zh_CN || option.title.en_US}
+                {(option: DynamicFormOption) => (
+                  <SelectItem key={option.label.en_US} textValue={option.value}>
+                    {option.label.zh_Hans || option.label.en_US}
                   </SelectItem>
                 )}
               </Select>
@@ -100,19 +120,19 @@ export default function DynamicForm({
 
           case FormType.RADIO:
             inputElement = (
-              <div className="flex flex-col">
-                {field.options?.map((option) => (
-                  <title key={option.value} className="flex items-center">
+              <div className="flex flex-row gap-4">
+                {field?.options?.map((option) => (
+                  <RadioGroup
+                    key={option.value}
+                    onChange={(value) => handleChange(field.variable, value)} // 改变选中值时调用
+                  >
                     <Radio
-                      name={field.variable}
                       value={option.value}
                       checked={formValues[field.variable] === option.value}
-                      onChange={() =>
-                        handleChange(field.variable, option.value)
-                      }
-                    />
-                    <span className="ml-2">{option.title.zh_CN}</span>
-                  </title>
+                    >
+                      {field.label.zh_Hans || option.label.en_US}
+                    </Radio>
+                  </RadioGroup>
                 ))}
               </div>
             );

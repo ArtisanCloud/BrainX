@@ -167,7 +167,7 @@ class ProviderManager:
 
         :param provider: provider name
         :param icon_type: icon type (icon_small or icon_large)
-        :param lang: language (zh_CN or en_US)
+        :param lang: language (zh_Hans or en_US)
         :return:
         """
         provider_descriptor = self.get_provider_schema(provider)
@@ -179,7 +179,7 @@ class ProviderManager:
 
             if lang.lower() == "zh_cn":
                 file_name = (
-                    provider_descriptor.icon_small.zh_CN
+                    provider_descriptor.icon_small.zh_Hans
                     or provider_descriptor.icon_small.en_US
                 )
             else:
@@ -190,7 +190,7 @@ class ProviderManager:
 
             if lang.lower() == "zh_cn":
                 # print(provider_descriptor.icon_large)
-                file_name = provider_descriptor.icon_large.zh_CN
+                file_name = provider_descriptor.icon_large.zh_Hans
             else:
                 file_name = provider_descriptor.icon_large.en_US
         if not file_name:

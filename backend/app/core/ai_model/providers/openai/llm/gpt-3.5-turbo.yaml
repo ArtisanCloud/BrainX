@@ -1,6 +1,6 @@
 model: gpt-3.5-turbo
-title:
-  zh_CN: gpt-3.5-turbo
+label:
+  zh_Hans: gpt-3.5-turbo
   en_US: gpt-3.5-turbo
 model_type: llm
 features:
@@ -25,12 +25,12 @@ parameter_rules:
     min: 1
     max: 4096
   - name: response_format
-    title:
-      zh_CN: 回复格式
+    label:
+      zh_Hans: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_CN: 指定模型必须输出的格式
+      zh_Hans: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:

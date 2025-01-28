@@ -1,6 +1,6 @@
 model: chatgpt-4o-latest
-title:
-  zh_CN: chatgpt-4o-latest
+label:
+  zh_Hans: chatgpt-4o-latest
   en_US: chatgpt-4o-latest
 model_type: llm
 features:
@@ -26,12 +26,12 @@ parameter_rules:
     min: 1
     max: 16384
   - name: response_format
-    title:
-      zh_CN: 回复格式
+    label:
+      zh_Hans: 回复格式
       en_US: response_format
     type: string
     help:
-      zh_CN: 指定模型必须输出的格式
+      zh_Hans: 指定模型必须输出的格式
       en_US: specifying the format that the model_provider must output
     required: false
     options:
