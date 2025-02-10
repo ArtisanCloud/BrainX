@@ -1,13 +1,23 @@
+from ast import Tuple
 import http
-from fastapi import APIRouter, Request
-from fastapi.responses import FileResponse, StreamingResponse
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import FileResponse
+from app.database.deps import get_async_db_session
 from app.logger import logger
 
 from app.config.config import settings
 from app.core.ai_model.model_manager import ModelManager
 from app.core.rag import FrameworkDriverType
 from app.schemas.base import ResponseSchema
-from app.schemas.model_provider.model_provider import ResponseGetModelProviderList
+from app.schemas.model_provider.provider import (
+    RequestCreateModelProvider,
+    ResponseCreateModelProvider,
+    ResponseGetModelProviderList,
+)
+from app.service.model_provider.create import create_model_provider
 
 
 router = APIRouter()
@@ -61,3 +71,24 @@ async def api_get_model_provider_icon(
     except Exception as e:
         logger.error(e, exc_info=settings.log.exc_info)
         return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+
+@router.post("create")
+async def api_create_model_provider(
+    request: RequestCreateModelProvider,
+    db: AsyncSession = Depends(get_async_db_session),
+) -> ResponseCreateModelProvider | ResponseSchema:
+    try:
+        model_provider, exception = await create_model_provider(db, model_provider)
+        if exception is not None:
+            raise exception
+
+    except Exception as e:
+        logger.error(e, exc_info=settings.log.exc_info)
+        if isinstance(e, SQLAlchemyError):
+            e = Exception("database query: pls check log")
+        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+
+    res = ResponseCreateModelProvider(result=True)
+
+    return res

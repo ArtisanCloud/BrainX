@@ -15,7 +15,7 @@ class AlembicManager:
         # Change DB URL to use psycopg driver for this specific check
         self.db_url = get_database_sync_url()
         # Set up Alembic configuration
-        self.alembic_cfg = Config("alembic.ini")
+        self.alembic_cfg = Config("etc/alembic.ini")
         self.alembic_cfg.set_main_option("sqlalchemy.url", self.db_url)
 
         self.check_and_create_schema(settings.database.db_schema)
@@ -84,7 +84,7 @@ class AlembicManager:
 #         )
 #
 #         # Set up Alembic configuration
-#         alembic_cfg = Config("alembic.ini")
+#         alembic_cfg = Config("etc/alembic.ini")
 #         alembic_cfg.set_main_option("sqlalchemy.url", db_url)
 #
 #         # Perform database upgrade

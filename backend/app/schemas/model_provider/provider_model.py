@@ -1,7 +1,6 @@
-from typing import Dict, Optional
+from typing import Optional
 from pydantic import UUID4, constr
 from datetime import datetime
-from app.core.ai_model.schema.provider import ProviderSchema
 
 from app.schemas.base import BaseSchema
 
@@ -18,7 +17,3 @@ class ProviderModelSchema(BaseSchema):
     quota_type: Optional[int]
     quota_limit: Optional[int]
     quota_used: int = 0
-
-
-class ResponseGetModelProviderList(BaseSchema):
-    data: Dict[str, ProviderSchema]

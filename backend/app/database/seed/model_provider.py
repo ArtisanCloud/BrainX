@@ -18,6 +18,7 @@ async def seed_default_tenant_models(db) -> Exception | None:
             for provider_name, config in provider_config.items():
 
                 provider = Provider(
+                    tenant_uuid=init_tenant_uuid,
                     provider_name=provider_name,
                     provider_type=ProviderType.SYSTEM.value,
                     encrypted_config="",

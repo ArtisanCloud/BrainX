@@ -6,17 +6,7 @@ from app.schemas.tenant.user import UserSchema
 from app.service.user.service import UserService
 
 
-def transform_user_to_reply(user: User) -> [UserSchema | None]:
-    if user is None:
-        return None
-
-    return UserSchema.from_orm(user)
-
-
-async def create_user_by_account(
-        db: AsyncSession,
-        account: str, password: str
-):
+async def create_user_by_account(db: AsyncSession, account: str, password: str):
     service_user = UserService(db)
 
     # check user exist or not
@@ -30,10 +20,7 @@ async def create_user_by_account(
     # hash password
     hashed_password = hash_password(password)
     # upsert 客户
-    user = User(
-        account=account,
-        password=hashed_password
-    )
+    user = User(account=account, password=hashed_password)
     user, exception = await service_user.init_user(user)
 
     if exception:

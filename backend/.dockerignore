@@ -1,0 +1,31 @@
+# 排除 dist 目录
+/dist
+
+# 排除 logs 目录
+/logs
+
+# 排除 .git 文件夹
+/.git
+
+# 排除 .vscode 文件夹
+/.vscode
+
+# 排除 .idea 文件夹
+/.idea
+
+# 排除 .pytest_cache 文件夹
+/.pytest_cache
+
+# 排除 test.db 文件
+/test.db
+
+# 排除 config.yaml 文件
+/config.yaml
+
+
+# 排除 .continue 文件
+/.continue
+
+# 排除所有 Python 字节码文件
+__pycache__/
+*.pyc

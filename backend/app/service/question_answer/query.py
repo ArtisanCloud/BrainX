@@ -9,15 +9,15 @@ from app.schemas.question_answer.query import ResponseQuery, Document as Documen
 from app.service.brainx.service import BrainXService
 
 
-def transform_documents_to_reply(answer: str, documents: List[DocumentNode]) -> ResponseQuery:
+def transform_documents_to_reply(
+    answer: str, documents: List[DocumentNode]
+) -> ResponseQuery:
     return ResponseQuery(
         answer=answer,
         documents=[
-            transform_document_to_reply(document)
-            if document is not None
-            else None
+            transform_document_to_reply(document) if document is not None else None
             for document in documents
-        ]
+        ],
     )
 
 
@@ -26,28 +26,21 @@ def transform_document_to_reply(document: DocumentNode) -> DocumentSchema:
         # text=document.page_content,
         text="",
         similarity=document.metadata.get("score", 0.0),
-        node_id=document.metadata['node_id'],
+        node_id=document.metadata["node_id"],
         metadata=document.metadata,
     )
 
 
-async def query_by_text(
-        question: str,
-        llm: str
-) -> ResponseQuery | ResponseSchema:
+async def query_by_text(question: str, llm: str) -> ResponseQuery | ResponseSchema:
     service_brain_x = BrainXService(
-        llm,
-        streaming=False,
-        collection_name="opl_embeddings"
+        llm, streaming=False, collection_name="opl_embeddings"
     )
 
     res = ResponseQuery(answer="暂时没有找到答案，请稍后再试。", documents=[])
     try:
         # retrieve langchain documents
         docs, exception = await service_brain_x.retrieve(
-            question,
-            top_k=2,
-            score_threshold=0.7
+            question, top_k=2, score_threshold=0.7
         )
         # print(docs)
 
@@ -55,13 +48,13 @@ async def query_by_text(
             raise exception
 
         if len(docs) > 0:
-            template = (docs[0].page_content +
-                        " \n\n 请根据以上召回内容，针对此问题'{query}'，做一个回答")
+            template = (
+                docs[0].page_content
+                + " \n\n 请根据以上召回内容，针对此问题'{query}'，做一个回答"
+            )
             # print(template)
             response, exception = service_brain_x.invoke(
-                query={"query": question},
-                input_variables=["query"],
-                template=template
+                query={"query": question}, input_variables=["query"], template=template
             )
             if exception:
                 raise exception

@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.rag.dataset import DatasetDAO
 from app.dao.rag.document import DocumentDAO
 from app.logger import logger
-from app.models import  Document, DatasetSegmentRule
+from app.models import Document, DatasetSegmentRule
+from app.schemas.rag.document import DocumentSchema
 
 
 class DocumentService:
@@ -14,12 +15,16 @@ class DocumentService:
         self.dataset_dao = DatasetDAO(db)
         self.document_dao = DocumentDAO(db)
 
-    async def add_content(self, segment_rule: DatasetSegmentRule, documents: List[Document]):
+    async def add_content(
+        self, segment_rule: DatasetSegmentRule, documents: List[Document]
+    ):
 
         try:
             # 先创建分割规则
             if segment_rule is not None:
-                segment_rule, exception = await self.dataset_dao.async_create(segment_rule)
+                segment_rule, exception = await self.dataset_dao.async_create(
+                    segment_rule
+                )
                 if exception is not None:
                     return None, None, exception
 
@@ -33,3 +38,15 @@ class DocumentService:
         except SQLAlchemyError as e:
             logger.error("捕获到SQLAlchemyError异常:", e)
             return None, None, e
+
+
+def transform_documents_to_reply(documents: [Document]) -> List[DocumentSchema] | None:
+    data = [transform_document_to_reply(document) for document in documents]
+    return data
+
+
+def transform_document_to_reply(document: Document) -> [DocumentSchema | None]:
+    if document is None:
+        return None
+
+    return DocumentSchema.from_orm(document)

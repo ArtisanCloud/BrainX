@@ -12,6 +12,8 @@ a = Analysis(
     'asyncpg.pgproto.pgproto',
     'scipy.special._cdflib',
     'socksio',
+    'numpy.distutils',
+    'pydantic.deprecated.decorator',
     'tkinter',
     'tiktoken_ext.openai_public',
     'tiktoken_ext',

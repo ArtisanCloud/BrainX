@@ -66,7 +66,7 @@ def __setup_sentry():
 async def lifespan(app: FastAPI):
     # first wait for DB to be connectable
     await check_database_connection()
-    cfg = Config("alembic.ini")
+    cfg = Config("etc/alembic.ini")
     # Change DB URL to use psycopg driver for this specific check
     db_url = get_database_sync_url()
     cfg.set_main_option("sqlalchemy.url", db_url)

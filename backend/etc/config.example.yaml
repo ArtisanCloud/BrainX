@@ -1,7 +1,7 @@
 server:
   version: "0.0.7"
   region: "global"
-  project_name: "brainx"
+  project_name: "BrainX"
   project_type: "standalone"
   host: "0.0.0.0"
   port: 8000

@@ -63,7 +63,7 @@ class Settings(BaseModel):
 
 
 # Load the YAML file into a Python object
-with open("config.yaml", "r", encoding="utf-8") as f:
+with open("etc/config.yaml", "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
 # Create a Settings object from the YAML data

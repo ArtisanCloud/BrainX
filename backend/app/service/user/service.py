@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
 from app.dao.tenant.user import UserDAO
 from app.models.originaztion.user import User
+from app.schemas.tenant.user import UserSchema
 
 
 class UserService:
@@ -12,7 +13,9 @@ class UserService:
         self.user_dao = UserDAO(db)
         self.tenant_default_model_dao = TenantDefaultModelDAO(db)
 
-    async def check_register_account_exist(self, account: str) -> Tuple[bool | None, Exception | None]:
+    async def check_register_account_exist(
+        self, account: str
+    ) -> Tuple[bool | None, Exception | None]:
 
         try:
             user, exception = await self.user_dao.get_by_account(account)
@@ -28,3 +31,10 @@ class UserService:
         user, exception = await self.user_dao.init_user(user)
 
         return user, exception
+
+
+def transform_user_to_reply(user: User) -> [UserSchema | None]:
+    if user is None:
+        return None
+
+    return UserSchema.from_orm(user)

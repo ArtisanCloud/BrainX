@@ -1,6 +1,7 @@
 import sys
 
 import alembic
+from alembic.config import Config
 import uvicorn
 from app.config.config import settings
 from app.logger import logger
@@ -15,17 +16,17 @@ def start():
     if settings.server.server_render:
         # on render.com deployments, run migrations
         logger.debug("Running migrations")
-        alembic_args = ["--raiseerr", "upgrade", "head"]
-        alembic.config.main(argv=alembic_args)
+        alembic_cfg = Config("etc/alembic.ini")
+        alembic.command.upgrade(alembic_cfg, "head")
         logger.debug("Migrations complete")
     else:
         logger.debug("Skipping migrations")
 
     # if need fastapi reload
     live_reload = not settings.server.server_render
-    # print(live_reload, settings.server.worker_count)
+    # print(live_reload, settings.server)
     uvicorn.run(
-        "app.main:app",
+        app="app.main:app",
         host=settings.server.host,
         port=settings.server.port,
         reload=live_reload,

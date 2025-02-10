@@ -11,7 +11,7 @@ class HuggingFaceHubTextEmbeddingModel(TextEmbeddingModel):
 
         self.model_id = model_id
 
-    def verify_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, model: str, credentials: Mapping) -> None:
         pass
 
     def get_provider_model(self) -> any:
@@ -21,11 +21,17 @@ class HuggingFaceHubTextEmbeddingModel(TextEmbeddingModel):
         if HuggingFaceHubTextEmbeddingModel._embeddings_cache is None:
             print("Loading HuggingFace Embeddings...")
             # 只有在没有缓存实例时才创建新的实例
-            embeddings_instance = HuggingFaceEmbeddings(model_name=settings.models.qa_embedding_model_name)
-            HuggingFaceHubTextEmbeddingModel._embeddings_cache = embeddings_instance  # 将实例缓存到类变量中
+            embeddings_instance = HuggingFaceEmbeddings(
+                model_name=settings.models.qa_embedding_model_name
+            )
+            HuggingFaceHubTextEmbeddingModel._embeddings_cache = (
+                embeddings_instance  # 将实例缓存到类变量中
+            )
             print("HuggingFace Embeddings loaded")
 
-        embeddings_instance = HuggingFaceHubTextEmbeddingModel._embeddings_cache  # 获取缓存的实例
+        embeddings_instance = (
+            HuggingFaceHubTextEmbeddingModel._embeddings_cache
+        )  # 获取缓存的实例
 
         # 打印缓存对象的内存地址
         # print(f"Cache object address: {id(embeddings_instance)}")

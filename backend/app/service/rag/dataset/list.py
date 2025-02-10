@@ -13,28 +13,31 @@ from app.service.rag.dataset.create import transform_dataset_to_reply
 from app.models.rag.dataset import Dataset
 
 
-def transform_datasets_to_reply(datasets: [Dataset]) -> List[DatasetSchema]:
-    data = [transform_dataset_to_reply(resource) for resource in datasets]
-    # print(data)
-    return data
-
-
 async def get_dataset_list(
-        db: AsyncSession,
-        tenant_uuid: str,
-        pagination: Pagination,
-        conditions: Dict[str, Any] = None,
-) -> Tuple[List[DatasetSchema] | None, ResponsePagination | None, SQLAlchemyError | None]:
+    db: AsyncSession,
+    tenant_uuid: str,
+    pagination: Pagination,
+    conditions: Dict[str, Any] = None,
+) -> Tuple[
+    List[DatasetSchema] | None, ResponsePagination | None, SQLAlchemyError | None
+]:
     stmt = (
-        select(Dataset).
-        where(Dataset.tenant_uuid == tenant_uuid).
-        where(Dataset.deleted_at.is_(None))
+        select(Dataset)
+        .where(Dataset.tenant_uuid == tenant_uuid)
+        .where(Dataset.deleted_at.is_(None))
     )
     # print(str(stmt), tenant_uuid)
     if conditions:
         # 生成动态的 where 子句
         stmt = stmt.where(
-            and_(*(getattr(Dataset, field) == value for field, value in conditions.items() if value is not None)))
+            and_(
+                *(
+                    getattr(Dataset, field) == value
+                    for field, value in conditions.items()
+                    if value is not None
+                )
+            )
+        )
     # 排序
     stmt = stmt.order_by(Dataset.created_at)
 

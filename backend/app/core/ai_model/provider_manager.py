@@ -119,8 +119,6 @@ class ProviderManager:
                                     # 加载该模型的配置文件
                                     yaml_data = load_yaml_file(model_filepath)
                                     model_schema = ProviderModelSchema(**yaml_data)
-                                    # print("!!!!!!!",model_schema)
-                                    # print("!!!!!!!", type(model_schema))
                                     provider_config_schema.models.append(model_schema)
 
                     # print(provider_config)
