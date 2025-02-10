@@ -17,8 +17,8 @@ app-run:
 
 task-run:
 	echo "Running celery task in production mode."
-	./dist/task/task  -A app.service.task.celery_app --loglevel=info -P gevent
+	./dist/task/task -A app.service.task.celery_worker worker -n celery@worker_task --loglevel=info -P gevent
 
 task-rag-run:
 	echo "Running celery rag task in production mode."
-	./dist/task/task  -A app.service.task.celery_app -Q rag_queue --loglevel=info -P gevent
+	./dist/task/task -A app.service.task.celery_worker worker -Q rag_queue -n celery@worker_rag --loglevel=info -P gevent

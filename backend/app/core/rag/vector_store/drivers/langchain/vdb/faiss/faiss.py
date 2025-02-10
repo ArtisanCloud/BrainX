@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Optional
-import faiss
+# import faiss
 import numpy as np
 
 from app.core.rag.vector_store.interface import BaseVectorStore
@@ -13,11 +13,11 @@ class FaissVectorStore(BaseVectorStore):
         :param dimension: 向量的维度
         :param index_path: 索引文件的路径（如果存在）
         """
-        self.dimension = dimension
-        self.index = faiss.IndexFlatL2(dimension)  # 使用 L2 距离进行索引
-
-        if index_path:
-            self.index = faiss.read_index(index_path)
+        # self.dimension = dimension
+        # self.index = faiss.IndexFlatL2(dimension)  # 使用 L2 距离进行索引
+        #
+        # if index_path:
+        #     self.index = faiss.read_index(index_path)
 
     def add_vectors(self, vectors: List[List[float]], document_ids: List[str],
                     metadata: Optional[List[Dict]] = None) -> None:

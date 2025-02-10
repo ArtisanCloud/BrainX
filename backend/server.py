@@ -25,14 +25,15 @@ def start():
     # if need fastapi reload
     live_reload = not settings.server.server_render
     # print(live_reload, settings.server)
-    uvicorn.run(
+    config = uvicorn.Config(
         app="app.main:app",
         host=settings.server.host,
         port=settings.server.port,
-        reload=live_reload,
+        reload=not settings.server.server_render,
         workers=settings.server.worker_count,
-
     )
+    print(f"🚀 Uvicorn 配置: reload={config.reload}, workers={config.workers}")
+    uvicorn.Server(config).run()
 
 
 def main():
