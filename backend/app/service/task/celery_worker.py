@@ -1,7 +1,7 @@
 from gevent import monkey
 
-monkey.patch_all()
-# monkey.patch_all(ssl=False, aiohttp=False)
+# monkey.patch_all()
+monkey.patch_all(ssl=False, aiohttp=False)
 
 from billiard import util
 
@@ -16,7 +16,6 @@ multiprocessing.get_start_method()  # 获取当前启动方法，确保是合适
 import click
 from celery import Celery
 
-
 from app import settings
 
 
@@ -26,7 +25,6 @@ def create_celery_worker():
         broker=settings.task.celery_broker_url,
         backend=settings.task.celery_result_backend,
     )
-    
 
     app.conf.update(
         imports=[
@@ -77,6 +75,8 @@ celery_worker = create_celery_worker()
 # 是否禁用 Celery 默认的日志输出
 if not settings.log.console:
     from celery import signals
+
+
     @signals.setup_logging.connect
     def disable_celery_logging(**kwargs):
         import logging
@@ -84,6 +84,7 @@ if not settings.log.console:
             logger = logging.getLogger(logger_name)
             logger.handlers = []  # 移除默认处理器
             logger.propagate = False  # 禁用日志向上传播
+
 
 # 设置启动参数
 @click.command(
@@ -118,11 +119,12 @@ def main(loglevel, app, queue, pool, args):
     if pool:
         command += ["-P", pool]
 
-    command += list(args)
+    # command += list(args)
+    # print("Executing Celery command: ", command)
+    # celery_worker.start(command)
 
-    print("Executing Celery command: ", command)
-
-    celery_worker.start(command)
+    print("Executing Celery arg: ", args)
+    celery_worker.start(args)
 
 
 if __name__ == "__main__":

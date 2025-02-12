@@ -36,8 +36,8 @@ docker-buildx:docker-buildx-backend docker-buildx-frontend docker-buildx-gateway
 docker-buildx-backend:
 
 	docker buildx build \
-		--build-arg PYTHON_IMAGE=${PYTHON_IMAGE} \
-		--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
+		--build-arg BRAINX_BACKEND_IMAGE=${BRAINX_BACKEND_IMAGE} \
+		--build-arg BRAINX_BACKEND_IMAGE_VERSION=${BRAINX_BACKEND_IMAGE_VERSION} \
 		--build-arg HOST_PROXY=${HOST_PROXY} \
 		${DOCKER_PLATFORM_FLAG} \
 		--tag ${DOCKER_BACKEND_IMAGE_NAME}:$(DOCKER_IMAGE_VERSION) \

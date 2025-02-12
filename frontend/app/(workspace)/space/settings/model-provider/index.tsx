@@ -46,7 +46,7 @@ const ModelProviderComponent: React.FC = () => {
         </div>
         <div className={styles.configuredModelProviders}>
           <span className="text-lg font-semibold text-gray-500">
-            还未添加模型
+            请添加模型
           </span>
         </div>
       </div>
