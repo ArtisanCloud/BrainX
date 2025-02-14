@@ -8,9 +8,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:docker": "env-cmd -f .env.production.docker next build",
-    "start": "next start -H $HOST -p $PORT",
-    "start-win": "set HOST=0.0.0.0 && set PORT=3000 && next start -H %HOST% -p %PORT%",
+    "build:docker": "env-cmd -f docker/.env.docker next build",
+    "start": "next start",
+    "start:docker": "env-cmd -f docker/.env.docker next start",
+    "start:win": "set HOST=0.0.0.0 && set PORT=3000 && next start -H %HOST% -p %PORT%",
     "seed": "node -r dotenv/config app/scripts/seed.js",
     "lint": "next lint"
   },
@@ -64,6 +65,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.0.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
     "postcss": "^8",
