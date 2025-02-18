@@ -28,7 +28,7 @@ COPY --from=builder /app/.next /app/.next
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/public /app/public
-COPY --from=builder /app/docker/.env.docker.example /app/docker/.env.docker
+COPY --from=builder /app/docker/.env.docker /app/docker/.env.docker
 
 # 暴露 3000 端口
 EXPOSE 3000
