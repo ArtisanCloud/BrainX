@@ -10,6 +10,7 @@ from app.service.media_resource.service import MediaResourceService
 from app.service.rag.document.list import transform_documents_to_reply
 from app.service.rag.dataset.service import DatasetService
 from app.service.rag.document.service import DocumentService
+from app.service.task import logger_rag as logger
 
 from app.models.rag.document import (
     Document,
@@ -74,14 +75,17 @@ async def add_document_content(
 
         for index, media_source in enumerate(data.media_resources):
             if media_source.is_local_stored:
-                resource_url, _ = get_storage_complete_url(media_source)
+                resource_url, _ = get_storage_complete_url(media_source.url)
+                data_source_type = DataSourceType.UPLOAD_FILE.value
             else:
                 resource_url = MediaResourceService.get_oss_resource_url(media_source)
+                data_source_type = DataSourceType.OSS_URL.value
+            logger.info(f"media_source.is_local_stored is {media_source.is_local_stored}, resource_url: {resource_url}")
             documents.append(
                 Document(
                     tenant_uuid=user.tenant_owner_uuid,
                     dataset_uuid=dataset.uuid,
-                    data_source_type=DataSourceType.Upload_FILE.value,
+                    data_source_type=data_source_type,
                     resource_uuid=media_source.uuid,
                     resource_url=resource_url,
                     status=DocumentStatus.DRAFT,

@@ -251,12 +251,12 @@ async def api_re_process_document(
             raise exception
         if document is None:
             raise Exception("document not found")
-        
+
         # print(document)
         task_id = str(uuid.uuid4())
         with get_sync_db_session() as sync_db:
             service_rag_processor = RagProcessorTaskService(sync_db, document.uuid, session_user.uuid)
-            exception = service_rag_processor.process_document()
+            _, exception = service_rag_processor.process_document()
             if exception is not None:
                 raise exception
 

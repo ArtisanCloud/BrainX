@@ -1,4 +1,4 @@
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse, unquote, urljoin
 from pathlib import Path
 from typing import Tuple
 import platform
@@ -12,6 +12,25 @@ def get_project_root() -> str:
     # 假设 utils 目录在项目根目录的 app/utils 下
     project_root = current_file.parent.parent.parent
     return str(project_root)
+
+
+def get_storage_path(uri: str) -> str:
+    project_root = get_project_root()
+    abs_path = os.path.normpath(os.path.join(project_root, uri))
+    return abs_path
+
+
+def get_oss_url(uri: str) -> str:
+    print(settings.storage.minio)
+    endpoint = settings.storage.minio.endpoint
+    use_ssl = settings.storage.minio.use_ssl
+
+    # 根据 use_ssl 补齐协议
+    protocol = "https://" if use_ssl else "http://"
+    full_endpoint = f"{protocol}{endpoint}"
+
+    # 拼接完整 URL
+    return urljoin(full_endpoint, uri)
 
 
 def get_storage_complete_url(resource_url: str) -> Tuple[str, bool]:

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.libs.security import hash_password
 from app.models.originaztion.user import User
 from app.schemas.tenant.user import UserSchema
-from app.service.user.service import UserService
+from app.service.user.service import UserService, transform_user_to_reply
 
 
 async def create_user_by_account(db: AsyncSession, account: str, password: str):

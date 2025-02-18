@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.rag.pivot_app_to_dataset import PivotAppToDataset
 from app.schemas.rag.dataset import DatasetSchema
 from app.models.rag.dataset import Dataset
-from app.service.rag.dataset.service import DatasetService
+from app.service.rag.dataset.service import DatasetService, transform_datasets_with_app_to_reply
 
 
 async def get_dataset_list_with_connected_app(

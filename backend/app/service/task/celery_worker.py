@@ -97,7 +97,7 @@ if not settings.log.console:
 @click.option("-A", "--app", default=None, help="Celery app path.")
 @click.option("-Q", "--queue", default=None, help="Queue to listen to.")
 @click.option(
-    "-P", "--pool", default=None, help="Pool execution method (e.g., prefork, gevent)."
+    "-P", "--pool", default="gevent", help="Pool execution method (e.g., prefork, gevent)."
 )
 @click.argument("args", nargs=-1, type=click.UNPROCESSED)
 def main(loglevel, app, queue, pool, args):
@@ -105,11 +105,11 @@ def main(loglevel, app, queue, pool, args):
 
     command = []
 
-    if app:
-        command += ["-A", app]
+    # if app:
+    command += ["-A", app]
 
-    if "worker" not in args:
-        command += ["worker"]
+    # if "worker" not in args:
+    command += ["worker"]
 
     command += ["--loglevel=" + loglevel]
 
@@ -119,12 +119,12 @@ def main(loglevel, app, queue, pool, args):
     if pool:
         command += ["-P", pool]
 
-    # command += list(args)
-    # print("Executing Celery command: ", command)
-    # celery_worker.start(command)
+    command += list(args)
+    print("Executing Celery command: ", command)
+    celery_worker.worker_main(command)
 
-    print("Executing Celery arg: ", args)
-    celery_worker.start(args)
+    # print("Executing Celery arg: ", args)
+    # celery_worker.start(args)
 
 
 if __name__ == "__main__":

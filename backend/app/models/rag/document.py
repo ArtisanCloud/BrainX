@@ -16,9 +16,10 @@ class DocumentType(IntEnum):
 
 
 class DataSourceType(IntEnum):
-    Upload_FILE = 1
+    UPLOAD_FILE = 1
+    OSS_URL = 2
     CRAWLER_URL = 2
-    IMPORT_PLATFORM = 3
+    IMPORT_PLATFORM = 4
 
 
 class ContentType(IntEnum):

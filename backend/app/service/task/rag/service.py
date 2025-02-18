@@ -22,9 +22,9 @@ from app.service.task import logger_rag as logger
 from app.models import DocumentSegment, User, Dataset
 from app.models.base import UTC
 from app.models.model_provider.provider_model import ModelType
-from app.models.rag.document import DocumentIndexingStatus, Document, ContentType
+from app.models.rag.document import DocumentIndexingStatus, Document, ContentType, DataSourceType
 from app.models.rag.document_node import DocumentNode
-from app.utils.url import get_storage_complete_url
+from app.utils.url import get_storage_complete_url, get_oss_url, get_storage_path
 
 
 class RagProcessorTaskService:
@@ -206,8 +206,12 @@ class RagProcessorTaskService:
             )
 
             # logger.info(f"Loading resource UUID: {resource_uuid}, URL: {resource_url}")
-            complete_url, is_url = get_storage_complete_url(self.document.resource_url)
-            if is_url:
+            # complete_url, is_url = get_storage_complete_url(self.document.resource_url)
+            if self.document.data_source_type==DataSourceType.OSS_URL.value:
+                complete_url = get_oss_url(self.document.resource_url)
+                logger.info(
+                    f"document uuid: {self.document.uuid}, complete_url: {complete_url} "
+                )
                 response = requests.get(complete_url)
                 response.raise_for_status()  # 抛出请求异常
 
@@ -218,8 +222,9 @@ class RagProcessorTaskService:
                     )
                 file_data = BytesIO(response.content)
             else:
+                complete_url = get_storage_path(self.document.resource_url)
                 logger.info(
-                    f"document uuid: {self.document.uuid}, complete_url: {complete_url} "
+                    f"document uuid: {self.document.uuid}, complete_path: {complete_url} "
                 )
                 if os.path.exists(complete_url):
                     with open(complete_url, "rb") as f:

@@ -49,6 +49,10 @@ RUN pip install --upgrade pip && \
 RUN pyinstaller server.spec -y
 RUN pyinstaller task.spec -y
 
+
+# 执行下载脚本，确保 NLTK 数据被正确下载
+RUN python /app/docker/scripts/download_nltk_data.py
+
 # CMD ["tail", "-f", "/dev/null"]
 
 # 第二阶段：使用指定 Python 版本的 slim 镜像作为运行环境
@@ -75,8 +79,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # 重新安装 Python 项目的依赖
 COPY --from=builder /app/requirements.txt /app/requirements.txt
 
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+#RUN pip install --upgrade pip && \
+#    pip install --no-cache-dir -r requirements.txt
 
 # 从构建器镜像中复制构建好的应用程序到当前镜像中
 COPY --from=builder /app/dist /app/dist
@@ -96,8 +100,6 @@ RUN chmod +x /app/docker/scripts/download_nltk_data.py
 RUN chmod +x /app/docker/Makefile-build.mk
 
 
-# 执行下载脚本，确保 NLTK 数据被正确下载
-RUN python /app/docker/scripts/download_nltk_data.py
 
 
 

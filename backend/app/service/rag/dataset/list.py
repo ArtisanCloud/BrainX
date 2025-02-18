@@ -11,6 +11,7 @@ from app.service.base import paginate_query
 from app.service.rag.dataset.create import transform_dataset_to_reply
 
 from app.models.rag.dataset import Dataset
+from app.service.rag.dataset.service import transform_datasets_to_reply
 
 
 async def get_dataset_list(

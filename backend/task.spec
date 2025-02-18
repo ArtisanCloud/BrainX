@@ -41,6 +41,7 @@ a = Analysis(
         'celery.worker.strategy',
         'celery.fixups.django',
         'celery.loaders.app',
+        'celery.backends.database',
         'app.service.task.task',
         'app.service.task.celery_worker',
         'app.service.task.rag',
@@ -51,6 +52,7 @@ a = Analysis(
         'eventlet.hubs.selects',
         'pydantic.deprecated.decorator',
         'numpy.distutils',
+        'kombu.transport.pyamqp',
         'dns.dnssec',
         'dns.namedict'
     ],
