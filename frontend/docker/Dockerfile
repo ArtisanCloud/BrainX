@@ -21,6 +21,13 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+# 切换到 root 用户
+USER root
+
+# 创建必要的目录并修改权限
+RUN mkdir -p /app/.next/cache/images && chmod -R 777 /app/.next/cache
+
+
 # # 切换到 root 用户
 USER node
 
