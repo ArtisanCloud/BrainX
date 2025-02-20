@@ -9,6 +9,7 @@ a = Analysis(
     # ("docker_dependency_supplement/punkt","./llama_index/core/_static/nltk_cache/punkt")
     ],
     hiddenimports=[
+    'app.main',
     'asyncpg.pgproto.pgproto',
     'scipy.special._cdflib',
     'socksio',

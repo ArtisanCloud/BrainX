@@ -19,6 +19,7 @@ if not settings.log.console:
     logging.getLogger("uvicorn").handlers = []
     logging.getLogger("uvicorn.error").handlers = []
     logging.getLogger("uvicorn.access").handlers = []
+    print("log console setting uvicorn logger disabled")
 
 class CustomExtraLogAdapter(logging.LoggerAdapter):
     def __init__(self, logger: logging.Logger, extra: dict):

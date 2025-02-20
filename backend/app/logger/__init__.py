@@ -15,23 +15,33 @@ if hasattr(logger, 'logger'):
 else:
     base_logger = logger
 
-# 需要将Uvicorn的日志处理器和级别设置为与基础日志器相同
-if settings.log.extra.loki.enable:
-    logger = logging.getLogger("uvicorn")
+
+# print("base_logger: ", base_logger)
+
+def setup_uvicorn_logging():
+    print("🚀 开始配置 Uvicorn 日志")
+
+    # 🚀 处理 "uvicorn" 服务器日志
+    uvicorn_logger = logging.getLogger("uvicorn")
+    uvicorn_logger.handlers.clear()
     for handler in base_logger.handlers:
-        logger.addHandler(handler)
-    # 确保日志级别一致
-    logger.setLevel(base_logger.level)
+        uvicorn_logger.addHandler(handler)
+    uvicorn_logger.setLevel(base_logger.level)
 
-    # 这样做同样对 "uvicorn.error" 和 "uvicorn.access" 进行相同处理
-    logging.getLogger("uvicorn.error").setLevel(base_logger.level)
-    logging.getLogger("uvicorn.access").setLevel(base_logger.level)
+    # 🚀 处理 "uvicorn.access" 访问日志
+    uvicorn_access_logger = logging.getLogger("uvicorn.access")
+    uvicorn_access_logger.handlers.clear()  # 🚨 清空默认 stdout
+    for handler in base_logger.handlers:
+        uvicorn_access_logger.addHandler(handler)  # ✅ 添加 LokiHandler
+    uvicorn_access_logger.setLevel(base_logger.level)
 
-    # logging.getLogger("uvicorn").handlers = base_logger.handlers
-    # logging.getLogger("uvicorn.error").handlers = base_logger.handlers
-    # logging.getLogger("uvicorn.access").handlers = base_logger.handlers
-    #
-    # # 确保日志级别一致
-    # logging.getLogger("uvicorn").setLevel(base_logger.level)
-    # logging.getLogger("uvicorn.error").setLevel(base_logger.level)
-    # logging.getLogger("uvicorn.access").setLevel(base_logger.level)
+    # 🚀 处理 "uvicorn.error" 服务器错误日志
+    uvicorn_error_logger = logging.getLogger("uvicorn.error")
+    uvicorn_error_logger.handlers.clear()
+    for handler in base_logger.handlers:
+        uvicorn_error_logger.addHandler(handler)
+    uvicorn_error_logger.setLevel(base_logger.level)
+
+    print("🚀 Uvicorn 日志已绑定 Loki")
+    # print("uvicorn_access_logger handlers: ", uvicorn_access_logger.handlers)
+

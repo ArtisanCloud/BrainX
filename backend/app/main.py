@@ -8,7 +8,7 @@ from app import default_local_storage_path
 from app.cache.factory import CacheFactory
 from app.database.session import get_database_sync_url
 from app.events.manager import startup_events, shutdown_events
-from app.logger import logger
+from app.logger import logger, setup_uvicorn_logging
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -28,7 +28,6 @@ from contextlib import asynccontextmanager
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
 from app.schedule.scheduler import Scheduler
-from server import start
 
 
 # 检查当前数据库版本
@@ -64,6 +63,10 @@ def __setup_sentry():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # 需要将Uvicorn的日志处理器和级别设置为与基础日志器相同
+    if settings.log.extra.loki.enable:
+        setup_uvicorn_logging()
+
     # first wait for DB to be connectable
     await check_database_connection()
     cfg = Config("etc/alembic.ini")
@@ -164,4 +167,4 @@ app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
 # print_routes(app)
 
 if __name__ == '__main__':
-    start()
+   print("start with app.main")

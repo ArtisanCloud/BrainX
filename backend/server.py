@@ -4,7 +4,7 @@ import alembic
 from alembic.config import Config
 import uvicorn
 from app.config.config import settings
-from app.logger import logger
+from app.logger import logger, setup_uvicorn_logging
 import asyncio
 
 
@@ -29,11 +29,14 @@ def start():
         app="app.main:app",
         host=settings.server.host,
         port=settings.server.port,
-        reload=not settings.server.server_render,
+        # reload=not settings.server.server_render,
+        reload=False,
         workers=settings.server.worker_count,
     )
+
     print(f"🚀 Uvicorn 配置: reload={config.reload}, workers={config.workers}")
     uvicorn.Server(config).run()
+
 
 
 def main():
@@ -109,7 +112,7 @@ def main():
             raise e
 
     if "--start" in sys.argv:
-        from app.main import start
+        # from app.main import start
         start()
 
 
