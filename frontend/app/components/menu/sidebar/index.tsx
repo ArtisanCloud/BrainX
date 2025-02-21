@@ -44,8 +44,8 @@ const Sidebar = () => {
               src={"/images/logo-s.png"}
               priority={true}
               alt=""
-              width="50"
-              height="50"
+              width={50}
+              height={50}
             />
             <div className={styles.userDetail}>
               {/*<span className={styles.username}>{user.username}</span>*/}

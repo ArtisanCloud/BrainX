@@ -8,6 +8,10 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
+  // solve nextjs preload google font issue
+  experimental: {
+    optimizeCss: true,
+  },
   // ssr: false,
   images: {
     remotePatterns: [

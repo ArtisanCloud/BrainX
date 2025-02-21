@@ -40,8 +40,8 @@ const CompactSidebar = () => {
               src={"/images/logo-s.png"}
               priority={true}
               alt=""
-              width="50"
-              height="50"
+              width={50}
+              height={50}
             />
           </Link>
         </div>

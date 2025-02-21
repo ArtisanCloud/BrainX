@@ -37,6 +37,12 @@ COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/public /app/public
 COPY --from=builder /app/docker/.env.docker /app/docker/.env.docker
 
+# 切换到 root 用户
+USER root
+RUN chown -R node:node /app/.next && chmod -R 775 /app/.next
+
+USER node
+
 # 暴露 3000 端口
 EXPOSE 3000
 
