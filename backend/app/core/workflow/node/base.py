@@ -105,7 +105,7 @@ class BaseNode(ABC, BaseModel):
 
     @abstractmethod
     def execute(self, state: GraphState):
-        logger.infof(
+        logger.info(
             f"BaseNode Execute: ~~~ "
             f"{self.name}:"
             f"\n input vars: {self.input_vars}"
