@@ -1,12 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*
 
+import emoji
+import unstructured
+
+emoji_json_path = os.path.join(emoji.__path__[0], 'unicode_codes', 'emoji.json')
+words_file_path = os.path.join(os.path.dirname(unstructured.__file__), 'nlp', 'english-words.txt')
+
 a = Analysis(
     ['server.py'],
     pathex=[],
     binaries=[],
     datas=[
-    # ("docker_dependency_supplement/stopwords","./llama_index/core/_static/nltk_cache/stopwords"),
-    # ("docker_dependency_supplement/punkt","./llama_index/core/_static/nltk_cache/punkt")
+     (emoji_json_path, 'emoji/unicode_codes'),
+     (words_file_path, 'unstructured/nlp')
+#     ("docker_dependency_supplement/stopwords","./llama_index/core/_static/nltk_cache/stopwords"),
+#     ("docker_dependency_supplement/punkt","./llama_index/core/_static/nltk_cache/punkt")
     ],
     hiddenimports=[
     'app.main',
@@ -19,7 +27,6 @@ a = Analysis(
     'tkinter',
     'tiktoken_ext.openai_public',
     'tiktoken_ext',
-    'emoji',
     'celery.backends.database',
     'celery.fixups',
     'celery.backends',

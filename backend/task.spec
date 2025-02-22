@@ -6,6 +6,12 @@ import sys
 
 project_root = os.path.abspath(os.path.dirname(sys.argv[0]))
 
+import emoji
+import unstructured
+
+emoji_json_path = os.path.join(emoji.__path__[0], 'unicode_codes', 'emoji.json')
+words_file_path = os.path.join(os.path.dirname(unstructured.__file__), 'nlp', 'english-words.txt')
+
 # 自动收集 'app' 和 'asyncpg' 的所有子模块
 app_submodules = collect_submodules('app')
 asyncpg_submodules = collect_submodules('asyncpg')
@@ -18,7 +24,10 @@ a = Analysis(
     ['app/service/task/celery_worker.py'],
     pathex=[project_root],
     binaries=[],
-    datas=[],
+    datas=[
+        (emoji_json_path, 'emoji/unicode_codes'),
+        (words_file_path, 'unstructured/nlp')
+    ],
     hiddenimports=app_submodules + asyncpg_submodules + gevent_submodules +  [
         'celery.fixups',
         'celery.backends',
@@ -55,7 +64,7 @@ a = Analysis(
         'kombu.transport.pyamqp',
         'dns.dnssec',
         'dns.namedict',
-        'emoji'
+        'emoji',
     ],
     hookspath=['./hooks'],               # 指向自定义的 hook 文件
     hooksconfig={},
