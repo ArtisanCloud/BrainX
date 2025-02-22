@@ -8,10 +8,14 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apk add python3 make gcc g++
-
-# 执行 Next.js 的静态资源编译
-RUN npm ci && npm run build:docker
+RUN apk add python3 make gcc g++ && \
+    npm ci && npm run build:docker && \
+    chown -R node:node /app && \
+    chmod -R 775 /app && \
+    # 确保 .next/cache/images 目录存在并具有正确权限
+    mkdir -p /app/.next/cache/images && \
+    chown -R node:node /app/.next/cache && \
+    chmod -R 775 /app/.next/cache
 
 # 第二阶段：运行阶段
 FROM node:${NODE_VERSION} AS runner
@@ -25,10 +29,9 @@ ENV NODE_ENV=production
 USER root
 
 # 创建必要的目录并修改权限
-RUN mkdir -p /app/.next/cache/images && chmod -R 777 /app/.next/cache
+RUN chown -R node:node /app/ && chmod -R 775 /app/
 
-
-# # 切换到 root 用户
+# 切换到 node 用户
 USER node
 
 COPY --from=builder /app/.next /app/.next
@@ -36,12 +39,6 @@ COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/public /app/public
 COPY --from=builder /app/docker/.env.docker /app/docker/.env.docker
-
-# 切换到 root 用户
-USER root
-RUN chown -R node:node /app/.next && chmod -R 775 /app/.next
-
-USER node
 
 # 暴露 3000 端口
 EXPOSE 3000
