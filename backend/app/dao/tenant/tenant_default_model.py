@@ -35,6 +35,11 @@ class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
         try:
             query = self._get_default_model_by_uuid(tenant_uuid, model_type)
             # print(query, tenant_uuid, model_type)
+
+            # Debug Query
+            # compiled_query = str(query.compile(compile_kwargs={"literal_binds": True}))
+            # print("Executing SQL query:", compiled_query)
+
             # 这里需要根据 db 类型执行查询操作
             result = self.db.execute(query)  # 同步查询
             default_model = result.scalars().first()

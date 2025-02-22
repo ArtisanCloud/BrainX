@@ -1,3 +1,4 @@
+import urllib
 from urllib.parse import urlparse, unquote, urljoin
 from pathlib import Path
 from typing import Tuple
@@ -15,6 +16,18 @@ def get_project_root() -> str:
 
 
 def get_storage_path(uri: str) -> str:
+    # 处理 file:// URL
+    if uri.startswith("file://"):
+        # 解析 file:// URL
+        parsed_url = urllib.parse.urlparse(uri)
+        file_path = parsed_url.path  # 获取文件的路径部分
+
+        # 如果文件路径包含 URL 编码字符，进行解码
+        file_path = urllib.parse.unquote(file_path)
+
+        # 确保文件路径是绝对路径，通常不需要再用 get_project_root 拼接
+        return os.path.normpath(file_path)
+
     project_root = get_project_root()
     abs_path = os.path.normpath(os.path.join(project_root, uri))
     return abs_path

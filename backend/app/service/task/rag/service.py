@@ -29,11 +29,11 @@ from app.utils.url import get_storage_complete_url, get_oss_url, get_storage_pat
 
 class RagProcessorTaskService:
     def __init__(
-        self,
-        db: Optional[Session],
-        document_uuid: str,
-        user_uuid: str,
-        task: Any = None,
+            self,
+            db: Optional[Session],
+            document_uuid: str,
+            user_uuid: str,
+            task: Any = None,
     ):
         self.task = task
         self.request = None
@@ -91,7 +91,7 @@ class RagProcessorTaskService:
 
     @staticmethod
     def is_document_available_to_process(
-        document: Document,
+            document: Document,
     ) -> Tuple[bool, Exception | None]:
         """
         检查文档是否可用于处理。
@@ -207,8 +207,14 @@ class RagProcessorTaskService:
 
             # logger.info(f"Loading resource UUID: {resource_uuid}, URL: {resource_url}")
             # complete_url, is_url = get_storage_complete_url(self.document.resource_url)
-            if self.document.data_source_type==DataSourceType.OSS_URL.value:
-                complete_url = get_oss_url(self.document.resource_url)
+            if (
+                    self.document.data_source_type == DataSourceType.OSS_URL.value
+                    or self.document.data_source_type == DataSourceType.CRAWLER_URL.value
+            ):
+                complete_url = self.document.resource_url
+                # 需要拼接oss url resource
+                if self.document.data_source_type == DataSourceType.OSS_URL.value:
+                    complete_url = get_oss_url(self.document.resource_url)
                 logger.info(
                     f"document uuid: {self.document.uuid}, complete_url: {complete_url} "
                 )
