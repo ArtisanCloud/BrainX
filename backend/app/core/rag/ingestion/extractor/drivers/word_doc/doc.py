@@ -61,7 +61,6 @@ class DocDataExtractor(BaseDataExtractor):
             self.load()
 
         try:
-
             self.doc = self.loader.load()
             # print(len(self.doc))
             for index, page in enumerate(self.doc):

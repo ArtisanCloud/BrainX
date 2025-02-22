@@ -19,6 +19,7 @@ a = Analysis(
     'tkinter',
     'tiktoken_ext.openai_public',
     'tiktoken_ext',
+    'emoji',
     'celery.backends.database',
     'celery.fixups',
     'celery.backends',

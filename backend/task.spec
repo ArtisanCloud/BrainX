@@ -54,7 +54,8 @@ a = Analysis(
         'numpy.distutils',
         'kombu.transport.pyamqp',
         'dns.dnssec',
-        'dns.namedict'
+        'dns.namedict',
+        'emoji'
     ],
     hookspath=['./hooks'],               # 指向自定义的 hook 文件
     hooksconfig={},

@@ -278,7 +278,7 @@ class RagProcessorTaskService:
                 self.document, DocumentIndexingStatus.ERROR, error=str(e)
             )
             logger.error(
-                f"document uuid: {self.document.uuid}, Task Failed to extract document segments for document UUID: {str(self.document.uuid)} - {e}"
+                f"document uuid: {self.document.uuid}, Task Failed to extract document segments: {e}"
             )
             return None, e
 
