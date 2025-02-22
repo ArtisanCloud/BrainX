@@ -28,7 +28,6 @@ from contextlib import asynccontextmanager
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
 from app.schedule.scheduler import Scheduler
-from app.utils.media import add_custom_mimetypes
 
 
 # 检查当前数据库版本
@@ -68,9 +67,6 @@ async def lifespan(app: FastAPI):
     if settings.log.extra.loki.enable:
         setup_uvicorn_logging()
 
-    # add custom mimetypes
-    add_custom_mimetypes()
-
     # first wait for DB to be connectable
     await check_database_connection()
     cfg = Config("etc/alembic.ini")
@@ -104,14 +100,14 @@ async def lifespan(app: FastAPI):
             scheduler.start()
         except Exception as e:
             raise e
-    
+
     # create the event manager
     if settings.event.enable:
         try:
             asyncio.create_task(startup_events())
         except Exception as e:
             raise e
-    
+
     yield
 
     if settings.event.enable:
@@ -171,4 +167,4 @@ app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
 # print_routes(app)
 
 if __name__ == '__main__':
-   print("start with app.main")
+    print("start with app.main")
