@@ -54,6 +54,10 @@ a = Analysis(
     excludes=[],
     noarchive=False,
     optimize=0,
+    # pro
+
+    #custom
+
 )
 pyz = PYZ(a.pure)
 

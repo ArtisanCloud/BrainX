@@ -64,7 +64,10 @@ a = Analysis(
         'kombu.transport.pyamqp',
         'dns.dnssec',
         'dns.namedict',
-        'emoji',
+        # pro
+
+        #custom
+
     ],
     hookspath=['./hooks'],               # 指向自定义的 hook 文件
     hooksconfig={},
