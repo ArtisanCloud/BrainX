@@ -9,9 +9,9 @@ const nextConfig = {
     includePaths: [path.join(__dirname, 'styles')],
   },
   // solve nextjs preload google font issue
-  experimental: {
-    optimizeCss: true,
-  },
+  // experimental: {
+  //   optimizeCss: true,
+  // },
   // ssr: false,
   images: {
     remotePatterns: [
