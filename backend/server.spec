@@ -56,7 +56,7 @@ a = Analysis(
     optimize=0,
     # pro
 
-    #custom
+    # custom
 
 )
 pyz = PYZ(a.pure)
