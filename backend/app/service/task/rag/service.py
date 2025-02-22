@@ -254,7 +254,8 @@ class RagProcessorTaskService:
 
         # --------------- Step Extract Document text
         logger.info(f"~~~~~~~ Process document UUID: {self.document.uuid} ~~~~~~~")
-        logger.info(f"document uuid: {self.document.uuid}, Step Extract Document text")
+        logger.info(
+            f"document uuid: {self.document.uuid}, Step Extract Document text, extractor_type: '{content_type}'")
         try:
             # save document ingestion status
             self.document_dao.set_indexing_status(

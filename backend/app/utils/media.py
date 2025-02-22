@@ -1,5 +1,6 @@
 import base64
 import io
+import mimetypes
 from enum import Enum
 from typing import List
 
@@ -35,6 +36,19 @@ MAGIC_NUMBERS = {
     ContentType.DOCX: ["504B0304"],  # DOCX 文件
 }
 
+
+def add_custom_mimetypes():
+    # 自定义的 MIME 类型注册到 mimetypes 中
+    mimetypes.add_type(ContentType.DOCX.value, ".docx")
+    mimetypes.add_type(ContentType.PDF.value, ".pdf")
+    mimetypes.add_type(ContentType.DOC.value, ".doc")
+    mimetypes.add_type(ContentType.PNG.value, ".png")
+    mimetypes.add_type(ContentType.JPEG.value, ".jpg")
+    mimetypes.add_type(ContentType.TXT.value, ".txt")
+    mimetypes.add_type(ContentType.XLSX.value, ".xlsx")
+    mimetypes.add_type(ContentType.XLS.value, ".xls")
+
+    logger.info("Custom MIME types added successfully.")
 
 def image_base64_to_embed(image_string: str, clip_model: SentenceTransformer):
     try:

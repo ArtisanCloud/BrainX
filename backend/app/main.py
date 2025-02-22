@@ -28,6 +28,7 @@ from contextlib import asynccontextmanager
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton, CustomPGVectorStore
 from app.openapi.openapi import openapi_router
 from app.schedule.scheduler import Scheduler
+from app.utils.media import add_custom_mimetypes
 
 
 # 检查当前数据库版本
@@ -66,6 +67,9 @@ async def lifespan(app: FastAPI):
     # 需要将Uvicorn的日志处理器和级别设置为与基础日志器相同
     if settings.log.extra.loki.enable:
         setup_uvicorn_logging()
+
+    # add custom mimetypes
+    add_custom_mimetypes()
 
     # first wait for DB to be connectable
     await check_database_connection()
