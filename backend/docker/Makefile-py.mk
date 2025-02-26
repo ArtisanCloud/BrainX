@@ -22,3 +22,4 @@ task-run:
 task-rag-run:
 	echo "Running celery rag task in production mode."
 	celery -A app.service.task.celery_worker worker -Q rag_queue -n brainx@worker_rag --loglevel=info -P gevent
+
