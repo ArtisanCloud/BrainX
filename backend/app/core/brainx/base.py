@@ -32,6 +32,11 @@ class LLMModel(Enum):
     KIMI_MOONSHOT_V1_32K = "moonshot-v1-32k"
     KIMI_MOONSHOT_V1_128K = "moonshot-v1-128k"
 
+    OLLAMA_DEEPSEEK_R1_1_5B = "deepseek-r1:1.5b"
+    OLLAMA_DEEPSEEK_R1_7B = "deepseek-r1:7b"
+    OLLAMA_DEEPSEEK_R1_8B = "deepseek-r1:8b"
+    OLLAMA_DEEPSEEK_R1_14B = "deepseek-r1:14b"
+    OLLAMA_DEEPSEEK_R1_70B = "deepseek-r1:70b"
     OLLAMA_13B_ALPACA_16K = "13B-alpaca-16k:latest"
     OLLAMA_GEMMA_2B = "gemma:2b"
     OLLAMA_GEMMA_7B = "gemma:7b"
