@@ -67,6 +67,10 @@ export const ollama_llama3_2 = 'llama3.2'
 export const label_ollama_llama3_2_72b = 'Llama3.3'
 export const ollama_llama3_2_72b = 'Llama3.3'
 
+export const label_ollama_llama3_3 = 'ollama Llama3.3'
+export const ollama_llama3_3 = 'llama3.3'
+
+
 export const label_ollama_qwen_2_5 = 'ollama qwen2.5'
 export const ollama_qwen_2_5 = 'qwen2.5'
 

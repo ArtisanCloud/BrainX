@@ -24,7 +24,7 @@ import {
   label_doubao_lite_32k,
   label_kimi_moonshot_v1_8k,
   label_ollama_13b_alpaca_16k, label_ollama_deepseek_r1_70b,
-  label_ollama_gemma_2b, label_ollama_llama3_2,
+  label_ollama_gemma_2b, label_ollama_llama3_2, label_ollama_llama3_3,
   label_ollama_qwen_2_5,
   label_ollama_qwen_2_5_72b,
   label_openai_gpt_3_d_5_turbo,
@@ -33,7 +33,7 @@ import {
   label_tencent_hunyuan_standard,
   label_tencent_hunyuan_turbo,
   ollama_13b_alpaca_16k, ollama_deepseek_r1_70b,
-  ollama_gemma_2b, ollama_llama3_2,
+  ollama_gemma_2b, ollama_llama3_2, ollama_llama3_3,
   ollama_qwen_2_5,
   ollama_qwen_2_5_72b,
   openai_gpt_3_d_5_turbo,
@@ -131,7 +131,10 @@ const ChatNav = () => {
                     label: label_ollama_llama3_2,
                     value: ollama_llama3_2,
                   },
-
+                  {
+                    label: label_ollama_llama3_3,
+                    value: ollama_llama3_3,
+                  },
                   {
                     label: label_ollama_qwen_2_5,
                     value: ollama_qwen_2_5,
