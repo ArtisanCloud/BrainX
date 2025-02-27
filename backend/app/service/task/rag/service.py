@@ -210,6 +210,7 @@ class RagProcessorTaskService:
             if (
                     self.document.data_source_type == DataSourceType.OSS_URL.value
                     or self.document.data_source_type == DataSourceType.CRAWLER_URL.value
+                    or self.document.data_source_type == DataSourceType.IMPORT_PLATFORM.value
             ):
                 complete_url = self.document.resource_url
                 # 需要拼接oss url resource
