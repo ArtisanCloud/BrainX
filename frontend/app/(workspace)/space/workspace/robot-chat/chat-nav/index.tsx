@@ -23,7 +23,7 @@ import {
   label_baidu_qianfan_ernie_4_d_0_8k,
   label_doubao_lite_32k,
   label_kimi_moonshot_v1_8k,
-  label_ollama_13b_alpaca_16k,
+  label_ollama_13b_alpaca_16k, label_ollama_deepseek_r1_70b,
   label_ollama_gemma_2b, label_ollama_llama3_2,
   label_ollama_qwen_2_5,
   label_ollama_qwen_2_5_72b,
@@ -32,7 +32,7 @@ import {
   label_tencent_hunyuan_lite,
   label_tencent_hunyuan_standard,
   label_tencent_hunyuan_turbo,
-  ollama_13b_alpaca_16k,
+  ollama_13b_alpaca_16k, ollama_deepseek_r1_70b,
   ollama_gemma_2b, ollama_llama3_2,
   ollama_qwen_2_5,
   ollama_qwen_2_5_72b,
@@ -88,6 +88,10 @@ const ChatNav = () => {
                     value: openai_gpt_3_d_5_turbo,
                   },
                   {
+                    label: label_ollama_deepseek_r1_70b,
+                    value: ollama_deepseek_r1_70b,
+                  },
+                  {
                     label: label_openai_gpt_4_o,
                     value: openai_gpt_4_o,
                   },
@@ -136,10 +140,10 @@ const ChatNav = () => {
                     label: label_ollama_qwen_2_5_72b,
                     value: ollama_qwen_2_5_72b,
                   },
-                  {
-                    label: label_ollama_gemma_2b,
-                    value: ollama_gemma_2b,
-                  },
+                  // {
+                  //   label: label_ollama_gemma_2b,
+                  //   value: ollama_gemma_2b,
+                  // },
                   {
                     label:label_kimi_moonshot_v1_8k,
                     value:kimi_moonshot_v1_8k

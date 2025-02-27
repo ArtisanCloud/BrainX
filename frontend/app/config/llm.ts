@@ -6,6 +6,10 @@ export const openai_gpt_3_d_5_turbo = 'gpt-3.5-turbo'
 export const label_openai_gpt_4_o = 'OpenAI 4o'
 export const openai_gpt_4_o = 'gpt-4o'
 
+// DeepSeek Models
+export const label_ollama_deepseek_r1_70b = 'DeepSeek-R1 70B'
+export const ollama_deepseek_r1_70b = 'deepseek-r1:70b'
+
 // Baidu Models
 
 export const label_baidu_qianfan_ernie_4_d_0_8k = '百度千帆-ERNIE-4.0-8K'
