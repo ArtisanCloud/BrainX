@@ -91,6 +91,13 @@ class LLMModel(Enum):
         )
 
     @classmethod
+    def is_deepseek_model(cls, llm: str) -> bool:
+        """判断是否为Ollama模型"""
+        return any(
+            llm == model.value for model in cls if (model.name.startswith("OLLAMA_DEEPSEEK") or model.name.startswith("DEEPSEEK"))
+        )
+
+    @classmethod
     def get_model_brand(cls, llm: str) -> str:
         """获取模型的品牌"""
         for model in cls:

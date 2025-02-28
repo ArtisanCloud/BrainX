@@ -1,3 +1,4 @@
+import re
 from typing import Any, Iterator, Tuple, Type, Dict
 from langchain_community.chat_message_histories import (
     ChatMessageHistory,
@@ -6,10 +7,11 @@ from langchain_community.chat_message_histories import (
 from langchain_core.output_parsers import JsonOutputParser
 
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
+from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough, RunnableLambda
 from langchain_core.runnables.utils import Input
 
 from app import settings
+from app.core.brainx.base import LLMModel
 from app.core.brainx.chat.app import get_chat_prompt_template
 from app.core.brainx.llm.langchain import get_llm
 from app.core.libs.json import sanitize_json
@@ -21,19 +23,19 @@ from app.models import App
 
 class LangchainAgentExecutor(BaseAgentExecutor):
     def __init__(
-        self, llm: str, temperature: float = 0.5, streaming: bool = False, **kwargs
+            self, llm: str, temperature: float = 0.5, streaming: bool = False, **kwargs
     ):
         super().__init__(
             llm=llm, temperature=temperature, streaming=streaming, **kwargs
         )
 
     def stream(
-        self,
-        query: Dict,
-        temperature: float = 0.5,
-        input_variables=list[str],
-        template: str = "",
-        **kwargs: Any,
+            self,
+            query: Dict,
+            temperature: float = 0.5,
+            input_variables=list[str],
+            template: str = "",
+            **kwargs: Any,
     ) -> Tuple[Iterator | None, Exception | None]:
         try:
             llm, exception = get_llm(
@@ -60,13 +62,13 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return None, e
 
     def invoke(
-        self,
-        query: Any,
-        temperature: float = 0.5,
-        input_variables=list[str],
-        template: str = "",
-        output_schemas: Any = None,
-        **kwargs: Any,
+            self,
+            query: Any,
+            temperature: float = 0.5,
+            input_variables=list[str],
+            template: str = "",
+            output_schemas: Any = None,
+            **kwargs: Any,
     ) -> Tuple[Any | None, Exception | None]:
         try:
 
@@ -126,6 +128,9 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                 # print("after json parser invoke", obj)
                 return obj, None
 
+            if LLMModel.is_deepseek_model(self.llm):
+                output.content = self.remove_think_tags(output.content)
+
             response = convert_document_to_response(output)
 
             return response, None
@@ -137,12 +142,12 @@ class LangchainAgentExecutor(BaseAgentExecutor):
             return None, e
 
     def chat_completion(
-        self,
-        query: Dict,
-        temperature: float = 0.5,
-        app: App = None,
-        session_id: str = "",
-        **kwargs: Any,
+            self,
+            query: Dict,
+            temperature: float = 0.5,
+            app: App = None,
+            session_id: str = "",
+            **kwargs: Any,
     ) -> Tuple[str | None, Exception | None]:
         try:
             chat_llm, exception = get_llm(
@@ -182,8 +187,8 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Add message trimming to the chain
             chain_with_trimming = (
-                RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                | chain_with_message_history
+                    RunnablePassthrough.assign(messages_trimmed=trim_messages)
+                    | chain_with_message_history
             )
 
             # Stream the response
@@ -192,18 +197,21 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                 config={"configurable": {"session_id": "test_session_id"}},
             )
 
+            if LLMModel.is_deepseek_model(self.llm):
+                completion_response = self.remove_think_tags(completion_response)
+
             return completion_response, None
 
         except Exception as e:
             return None, e
 
     def chat_stream(
-        self,
-        question: Dict,
-        app: App = None,
-        temperature: float = 0.5,
-        session_id: str = "",
-        **kwargs: Any,
+            self,
+            question: Dict,
+            app: App = None,
+            temperature: float = 0.5,
+            session_id: str = "",
+            **kwargs: Any,
     ) -> Tuple[Iterator | None, Exception | None]:
 
         try:
@@ -246,8 +254,8 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
             # Add message trimming to the chain
             chain_with_trimming = (
-                RunnablePassthrough.assign(messages_trimmed=trim_messages)
-                | chain_with_message_history
+                    RunnablePassthrough.assign(messages_trimmed=trim_messages)
+                    | chain_with_message_history
             )
 
             # Stream the response
@@ -260,6 +268,10 @@ class LangchainAgentExecutor(BaseAgentExecutor):
 
         except Exception as e:
             return None, e
+
+    @classmethod
+    def remove_think_tags(cls, text: str) -> str:
+        return re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
 
     def get_chat_history(self, session_id: str) -> ChatMessageHistory:
         chat_history_cls: Type[ChatMessageHistory] = (
