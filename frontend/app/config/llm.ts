@@ -6,10 +6,6 @@ export const openai_gpt_3_d_5_turbo = 'gpt-3.5-turbo'
 export const label_openai_gpt_4_o = 'OpenAI 4o'
 export const openai_gpt_4_o = 'gpt-4o'
 
-// DeepSeek Models
-export const label_ollama_deepseek_r1_70b = 'DeepSeek-R1 70B'
-export const ollama_deepseek_r1_70b = 'deepseek-r1:70b'
-
 // Baidu Models
 
 export const label_baidu_qianfan_ernie_4_d_0_8k = '百度千帆-ERNIE-4.0-8K'
@@ -54,25 +50,32 @@ export const label_kimi_moonshot_v1_128k = 'moonshot-v1-128k'
 export const kimi_moonshot_v1_128k = 'moonshot-v1-128k'
 
 // Ollama Models
+// DeepSeek Models
+export const label_ollama_deepseek_r1_1_5b = 'Ollama DeepSeek-R1 1.5B'
+export const ollama_deepseek_r1_1_5b = 'deepseek-r1:1.5b'
 
-export const label_ollama_13b_alpaca_16k = 'ollama LLama2-中文-13B'
+export const label_ollama_deepseek_r1_70b = 'Ollama DeepSeek-R1 70B'
+export const ollama_deepseek_r1_70b = 'deepseek-r1:70b'
+
+
+export const label_ollama_13b_alpaca_16k = 'Ollama LLama2-中文-13B'
 export const ollama_13b_alpaca_16k = '13B-alpaca-16k:latest'
 
-export const label_ollama_gemma_2b = 'ollama Gemma 2b'
+export const label_ollama_gemma_2b = 'Ollama Gemma 2b'
 export const ollama_gemma_2b = 'gemma:2b'
 
-export const label_ollama_llama3_2 = 'ollama Llama3.2'
+export const label_ollama_llama3_2 = 'Ollama Llama3.2'
 export const ollama_llama3_2 = 'llama3.2'
 
-export const label_ollama_llama3_2_72b = 'Llama3.3'
+export const label_ollama_llama3_2_72b = 'Ollama Llama3.3'
 export const ollama_llama3_2_72b = 'Llama3.3'
 
-export const label_ollama_llama3_3 = 'ollama Llama3.3'
+export const label_ollama_llama3_3 = 'Ollama Llama3.3'
 export const ollama_llama3_3 = 'llama3.3'
 
 
-export const label_ollama_qwen_2_5 = 'ollama qwen2.5'
+export const label_ollama_qwen_2_5 = 'Ollama qwen2.5'
 export const ollama_qwen_2_5 = 'qwen2.5'
 
-export const label_ollama_qwen_2_5_72b = 'ollama qwen2.5:72b'
+export const label_ollama_qwen_2_5_72b = 'Ollama qwen2.5:72b'
 export const ollama_qwen_2_5_72b = 'qwen2.5:72b'
