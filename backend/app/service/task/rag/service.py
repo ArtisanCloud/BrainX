@@ -1,10 +1,8 @@
+import urllib.parse
 from datetime import datetime
-from io import BytesIO
-import mimetypes
 import os
 from typing import Any, List, Tuple, Optional
 
-import requests
 from requests import RequestException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -24,6 +22,7 @@ from app.models.base import UTC
 from app.models.model_provider.provider_model import ModelType
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType, DataSourceType
 from app.models.rag.document_node import DocumentNode
+from app.utils.document import parse_local_document, load_document
 from app.utils.url import get_storage_complete_url, get_oss_url, get_storage_path
 
 
@@ -183,6 +182,7 @@ class RagProcessorTaskService:
         )
 
         if exception is not None:
+            logger.error(f"process document {self.document.uuid} error: {exception}", exc_info=settings.log.exc_info)
             return None, exception
         # create indexer
         indexer = IndexingFactory.get_indexer(
@@ -219,26 +219,31 @@ class RagProcessorTaskService:
                 logger.info(
                     f"document uuid: {self.document.uuid}, complete_url: {complete_url} "
                 )
-                response = requests.get(complete_url)
-                response.raise_for_status()  # 抛出请求异常
+                doc, err = load_document(complete_url)
+                if err is not None:
+                    raise Exception(f"parse http document error: {err}")
 
-                content_type = response.headers.get("Content-Type")
+                content_type = doc.get("mime_type")
                 if content_type is None:
                     raise Exception(
                         f"Content-Type not found for document UUID: {str(self.document.uuid)}"
                     )
-                file_data = BytesIO(response.content)
+                file_data = doc.get("content")
             else:
                 complete_url = get_storage_path(self.document.resource_url)
                 logger.info(
                     f"document uuid: {self.document.uuid}, complete_path: {complete_url} "
                 )
                 if os.path.exists(complete_url):
-                    with open(complete_url, "rb") as f:
-                        content = f.read()
-                        # 根据文件扩展名判断content type
-                        content_type, _ = mimetypes.guess_type(complete_url)
-                        file_data = BytesIO(content)
+                    doc, exception = parse_local_document(
+                        urllib.parse.urlparse(self.document.resource_url),
+                        complete_url,
+                    )
+                    if exception is not None:
+                        raise Exception(f"parse local document error: {exception}")
+                    content_type = doc.get("mime_type")
+                    file_data = doc.get("content")
+
                 else:
                     raise Exception(f"File not found: {complete_url}")
 
@@ -389,20 +394,20 @@ class RagProcessorTaskService:
                 # 假设处理成功，清空错误信息
                 document.error_message = None
                 document.error_at = None
-                print("Error has been resolved.")
+                logger.error("Error has been resolved.")
 
             # 如果文档处于暂停状态，解除暂停
             if document.is_paused:
                 document.is_paused = False
                 document.paused_by = None
                 document.paused_at = None
-                print("Document has been unpaused.")
+                logger.error("Document has been unpaused.")
 
             # 保存预处理后的状态
             return True
 
         except Exception as e:
-            print(f"Preprocessing failed: {e}")
+            logger.error(f"Preprocessing failed: {e}")
             return False
 
     def reset_document(self) -> Optional[Exception]:
@@ -435,7 +440,7 @@ class RagProcessorTaskService:
             return None
 
         except Exception as e:
-            print(f"Reset failed: {e}")
+            logger.error(f"Reset failed: {e}")
             return e
 
         # finally:

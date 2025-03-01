@@ -19,6 +19,10 @@ def task_process_document(
         )
         task_id = self.request.id
         exception = None
+        logger.info(
+            f"Start to Task: {task_id}, document UUID: {service_rag_processor.document.uuid}"
+        )
+
 
         try:
             _, exception = service_rag_processor.process_document()
