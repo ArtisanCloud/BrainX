@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta, Session
-from sqlalchemy.exc import SQLAlchemyError
 from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Union, Sequence
 
 from app.config.config import UTC
@@ -18,7 +17,7 @@ class BaseDAO(Generic[ModelType]):
         self.model = model
 
     async def async_create(self, obj: ModelType) -> Tuple[
-        Optional[ModelType], Optional[SQLAlchemyError]]:
+        Optional[ModelType], Optional[Exception]]:
         """
         创建新的模型对象
         """
@@ -30,13 +29,13 @@ class BaseDAO(Generic[ModelType]):
                 await self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
                 return obj, None
-            except SQLAlchemyError as e:
+            except Exception as e:
                 return None, e
         else:
             return None, Exception("a_create method requires an AsyncSession")
 
     def sync_create(self, obj: ModelType) -> Tuple[
-        Optional[ModelType], Optional[SQLAlchemyError]]:
+        Optional[ModelType], Optional[Exception]]:
         """
         创建新的模型对象
         """
@@ -48,13 +47,13 @@ class BaseDAO(Generic[ModelType]):
                 self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
                 return obj, None
-            except SQLAlchemyError as e:
+            except Exception as e:
                 return None, e
         else:
             return None, Exception("sync_create method requires an Session")
 
     async def async_create_many(self, objs: List[ModelType]) -> Tuple[
-        Optional[List[ModelType]], Optional[SQLAlchemyError]]:
+        Optional[List[ModelType]], Optional[Exception]]:
         """
         创建新的模型对象
         """
@@ -64,14 +63,14 @@ class BaseDAO(Generic[ModelType]):
                 await self.db.flush()
                 # print(objs)
                 return objs, None
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return None, e
         else:
             return None, Exception("async_create_many method requires an AsyncSession")
 
     def sync_create_many(self, objs: List[ModelType]) -> Tuple[
-        Optional[List[ModelType]], Optional[SQLAlchemyError]]:
+        Optional[List[ModelType]], Optional[Exception]]:
         """
         创建新的模型对象
         """
@@ -81,13 +80,13 @@ class BaseDAO(Generic[ModelType]):
                 self.db.flush()
                 # print(objs)
                 return objs, None
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return None, e
         else:
             return None, Exception("sync_create_many method requires an Session")
 
-    async def async_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[SQLAlchemyError]]:
+    async def async_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
         根据 UUID 获取模型对象
         """
@@ -95,12 +94,12 @@ class BaseDAO(Generic[ModelType]):
             try:
                 result = await self.db.execute(select(self.model).filter(self.model.uuid == uuid))
                 return result.scalar_one_or_none(), None
-            except SQLAlchemyError as e:
+            except Exception as e:
                 return None, e
         else:
             return None, Exception("async_get_by_uuid method requires an AsyncSession")
 
-    async def sync_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[SQLAlchemyError]]:
+    async def sync_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
         根据 UUID 获取模型对象
         """
@@ -108,13 +107,13 @@ class BaseDAO(Generic[ModelType]):
             try:
                 result = self.db.execute(select(self.model).filter(self.model.uuid == uuid))
                 return result.scalar_one_or_none(), None
-            except SQLAlchemyError as e:
+            except Exception as e:
                 return None, e
         else:
             return None, Exception("sync_get_by_uuid method requires an Session")
 
     async def async_get_objects_by_conditions(self, conditions: Dict[str, Any]) -> Tuple[
-        Optional[Sequence[ModelType]], Optional[SQLAlchemyError]]:
+        Optional[Sequence[ModelType]], Optional[Exception]]:
         """
         根据给定的条件查询模型对象
         """
@@ -133,10 +132,8 @@ class BaseDAO(Generic[ModelType]):
             result = await self.db.execute(query)
             objects = result.scalars().all()
             return objects, None
-        except SQLAlchemyError as e:
+        except Exception as e:
             return None, e
-        except ValueError as ve:
-            return None, ve
 
     def _build_filters(self, conditions: Dict[str, Any]) -> List:
         """
@@ -165,7 +162,7 @@ class BaseDAO(Generic[ModelType]):
         return filters
 
     async def async_update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
-        Optional[ModelType], Optional[SQLAlchemyError]]:
+        Optional[ModelType], Optional[Exception]]:
         """
         更新模型对象
         """
@@ -175,20 +172,20 @@ class BaseDAO(Generic[ModelType]):
                 if error:
                     return None, error
                 if not obj:
-                    return None, SQLAlchemyError(f"Object with uuid {obj_uuid} not found")
+                    return None, Exception(f"Object with uuid {obj_uuid} not found")
 
                 for field, value in update_data.items():
                     setattr(obj, field, value)
 
                 return obj, None
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return None, e
         else:
             return None, Exception("async_update method requires an AsyncSession")
 
     async def sync_update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
-        Optional[ModelType], Optional[SQLAlchemyError]]:
+        Optional[ModelType], Optional[Exception]]:
         """
         更新模型对象
         """
@@ -198,20 +195,20 @@ class BaseDAO(Generic[ModelType]):
                 if error:
                     return None, error
                 if not obj:
-                    return None, SQLAlchemyError(f"Object with uuid {obj_uuid} not found")
+                    return None, Exception(f"Object with uuid {obj_uuid} not found")
 
                 for field, value in update_data.items():
                     setattr(obj, field, value)
 
                 return obj, None
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return None, e
         else:
             return None, Exception("sync_update method requires an Session")
 
     async def async_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
-        Optional[ModelType], Optional[SQLAlchemyError]]:
+        Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象
         """
@@ -222,7 +219,7 @@ class BaseDAO(Generic[ModelType]):
                 if error:
                     return None, error
                 if not obj:
-                    return None, SQLAlchemyError(f"Object with uuid {obj_uuid} not found")
+                    return None, Exception(f"Object with uuid {obj_uuid} not found")
 
                 for field, value in patch_data.items():
                     setattr(obj, field, value)
@@ -233,14 +230,14 @@ class BaseDAO(Generic[ModelType]):
 
                 return obj, None
 
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return None, e
         else:
             return None, Exception("async_patch method requires an AsyncSession")
 
     async def sync_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
-        Optional[ModelType], Optional[SQLAlchemyError]]:
+        Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象
         """
@@ -251,7 +248,7 @@ class BaseDAO(Generic[ModelType]):
                 if error:
                     return None, error
                 if not obj:
-                    return None, SQLAlchemyError(f"Object with uuid {obj_uuid} not found")
+                    return None, Exception(f"Object with uuid {obj_uuid} not found")
 
                 for field, value in patch_data.items():
                     setattr(obj, field, value)
@@ -262,14 +259,14 @@ class BaseDAO(Generic[ModelType]):
 
                 return obj, None
 
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return None, e
         else:
             return None, Exception("sync_patch method requires an Session")
 
     async def async_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
-        bool, Optional[SQLAlchemyError]]:
+        bool, Optional[Exception]]:
         """
         通用的软删除方法，适用于任意模型对象
         """
@@ -291,14 +288,14 @@ class BaseDAO(Generic[ModelType]):
 
                     return True, None
 
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return False, e
         else:
             return False, Exception("async_soft_delete method requires an AsyncSession")
 
     def sync_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
-        bool, Optional[SQLAlchemyError]]:
+        bool, Optional[Exception]]:
         """
         通用的软删除方法，适用于任意模型对象
         """
@@ -312,7 +309,7 @@ class BaseDAO(Generic[ModelType]):
                     exist_obj = result.scalars().first()
 
                     if exist_obj is None:
-                        return None, Exception(f"{model_cls.__name__} not found")
+                        return False, Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
@@ -320,13 +317,13 @@ class BaseDAO(Generic[ModelType]):
 
                     return True, None
 
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return False, e
         else:
             return False, Exception("sync_soft_delete method requires an Session")
 
-    async def async_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[SQLAlchemyError]]:
+    async def async_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
         """
         删除模型对象
         """
@@ -336,18 +333,18 @@ class BaseDAO(Generic[ModelType]):
                 if error:
                     return False, error
                 if not obj:
-                    return False, SQLAlchemyError(f"Object with uuid {obj_uuid} not found")
+                    return False, Exception(f"Object with uuid {obj_uuid} not found")
 
                 await self.db.delete(obj)
 
                 return True, None
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return False, e
         else:
-            return None, Exception("async_delete method requires an AsyncSession")
+            return False, Exception("async_delete method requires an AsyncSession")
 
-    def sync_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[SQLAlchemyError]]:
+    def sync_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
         """
         删除模型对象
         """
@@ -357,13 +354,13 @@ class BaseDAO(Generic[ModelType]):
                 if error:
                     return False, error
                 if not obj:
-                    return False, SQLAlchemyError(f"Object with uuid {obj_uuid} not found")
+                    return False, Exception(f"Object with uuid {obj_uuid} not found")
 
                 self.db.delete(obj)
 
                 return True, None
-            except SQLAlchemyError as e:
+            except Exception as e:
 
                 return False, e
         else:
-            return None, Exception("sync_delete method requires an Session")
+            return False, Exception("sync_delete method requires an Session")
