@@ -23,19 +23,27 @@ def start():
         logger.debug("Skipping migrations")
 
     # if need fastapi reload
-    live_reload = not settings.server.server_render
+    # live_reload = not settings.server.server_render
     # print(live_reload, settings.server)
-    config = uvicorn.Config(
+    # config = uvicorn.Config(
+    #     app="app.main:app",
+    #     host=settings.server.host,
+    #     port=settings.server.port,
+    #     # reload=not settings.server.server_render,
+    #     reload=False,
+    #     workers=settings.server.worker_count,
+    # )
+    #
+    # print(f"🚀 Uvicorn 配置: reload={config.reload}, workers={config.workers}")
+    # uvicorn.Server(config).run()
+    print(f"🚀 Uvicorn 配置:  reload=False, workers={settings.server.worker_count}")
+    uvicorn.run(
         app="app.main:app",
         host=settings.server.host,
         port=settings.server.port,
-        # reload=not settings.server.server_render,
         reload=False,
         workers=settings.server.worker_count,
     )
-
-    print(f"🚀 Uvicorn 配置: reload={config.reload}, workers={config.workers}")
-    uvicorn.Server(config).run()
 
 
 
