@@ -135,6 +135,30 @@ class BaseDAO(Generic[ModelType]):
         except Exception as e:
             return None, e
 
+    def sync_get_objects_by_conditions(
+        self, conditions: Dict[str, Any]
+    ) -> Tuple[Optional[Sequence[ModelType]], Optional[Exception]]:
+        """
+        根据给定的条件查询模型对象
+        """
+        try:
+            query = select(self.model)
+            filters = self._build_filters(conditions)
+
+            if filters:
+                query = query.filter(and_(*filters))
+
+            # 打印生成的 SQL 查询语句
+            # query_str = str(query)
+            # print(conditions)
+            # print(f"Generated SQL query: {query_str}")
+
+            result = self.db.execute(query)
+            objects = result.scalars().all()
+            return objects, None
+        except Exception as e:
+            return None, e
+
     def _build_filters(self, conditions: Dict[str, Any]) -> List:
         """
         构建查询过滤器列表

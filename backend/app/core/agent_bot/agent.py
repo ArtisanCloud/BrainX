@@ -170,7 +170,7 @@ class AgentBot:
                 self.routes_options.append(node_id)
 
     def init_router(self):
-        logger.info("------route options:", self.routes_options)
+        logger.info(f"------route options:{self.routes_options}")
 
         # 动态生成 RouteQuery 类
         route_query = create_dynamic_route_query(self.routes_options)
