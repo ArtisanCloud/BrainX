@@ -36,6 +36,7 @@ class LLMModel(Enum):
     OLLAMA_DEEPSEEK_R1_7B = "deepseek-r1:7b"
     OLLAMA_DEEPSEEK_R1_8B = "deepseek-r1:8b"
     OLLAMA_DEEPSEEK_R1_14B = "deepseek-r1:14b"
+    OLLAMA_DEEPSEEK_R1_32B = "deepseek-r1:32b"
     OLLAMA_DEEPSEEK_R1_70B = "deepseek-r1:70b"
     OLLAMA_13B_ALPACA_16K = "13B-alpaca-16k:latest"
     OLLAMA_GEMMA_2B = "gemma:2b"
