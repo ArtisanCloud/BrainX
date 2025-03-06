@@ -2,12 +2,11 @@ import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from app.database.session import get_database_sync_url
-
+from tests.conftest import TEST_DATABASE_URL
 
 # 创建同步数据库引擎并配置连接池
 sync_db_engine = create_engine(
-    get_database_sync_url(),
+    TEST_DATABASE_URL,
     pool_size=5,  # 设置池大小（最大连接数）
     max_overflow=10,  # 最大溢出连接数
     pool_timeout=3,  # 设置连接池超时时间为3秒

@@ -3,6 +3,8 @@ from datetime import datetime
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta, Session
+from sqlalchemy.exc import IntegrityError
+
 from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Union, Sequence
 
 from app.config.config import UTC
@@ -40,7 +42,6 @@ class BaseDAO(Generic[ModelType]):
         创建新的模型对象
         """
         if isinstance(self.db, Session):
-            # print(obj)
             try:
                 self.db.add(obj)
                 self.db.flush()
@@ -51,6 +52,58 @@ class BaseDAO(Generic[ModelType]):
                 return None, e
         else:
             return None, Exception("sync_create method requires an Session")
+
+    def sync_upsert(self, obj: ModelType, uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
+        """
+        先查询是否存在该记录：
+        - 如果存在，则更新
+        - 如果不存在，则创建
+        :param obj: SQLAlchemy 模型对象
+        :param uid_key: 用于唯一标识的字段（如 'id', 'uuid' 等）
+        """
+        if not hasattr(obj, uid_key):
+            return None, ValueError(f"Model {obj.__class__.__name__} 没有 `{uid_key}` 字段")
+
+        uid_value = getattr(obj, uid_key)  # 获取唯一标识的值
+        if isinstance(self.db, Session):
+            try:
+                # 先查询是否存在
+                existing_obj, error = self.sync_get_by_uuid(uid_value)
+                if error is None or existing_obj is not None:
+                    return self.sync_update(existing_obj, obj)  # 传入数据库对象，而不是 uid
+                else:
+                    return self.sync_create(obj)
+
+            except IntegrityError as e:
+                self.db.rollback()
+                return None, e
+        else:
+            return None, Exception("sync_upsert method requires a Session")
+
+    async def async_upsert(self, obj: ModelType, uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
+        """
+        先查询是否存在该记录：
+        - 如果存在，则更新
+        - 如果不存在，则创建
+        :param obj: SQLAlchemy 模型对象
+        :param uid_key: 用于唯一标识的字段（如 'id', 'uuid' 等）
+        """
+        if not hasattr(obj, uid_key):
+            return None, ValueError("unknown_field")
+
+        uid_value = getattr(obj, uid_key)  # 获取唯一标识的值
+
+        try:
+            # 先查询是否存在
+            existing_obj, error = await self.async_get_by_uuid(uid_value)
+            if error is None and existing_obj is not None:
+                update_data = {k: v for k, v in obj.__dict__.items() if not k.startswith('_')}
+                return await self.async_update(uid_value, update_data)  # 传入数据库对象，而不是 uid
+            else:
+                return await self.async_create(obj)
+
+        except IntegrityError as e:
+            return None, e
 
     async def async_create_many(self, objs: List[ModelType]) -> Tuple[
         Optional[List[ModelType]], Optional[Exception]]:
@@ -99,7 +152,7 @@ class BaseDAO(Generic[ModelType]):
         else:
             return None, Exception("async_get_by_uuid method requires an AsyncSession")
 
-    async def sync_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    def sync_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
         根据 UUID 获取模型对象
         """
@@ -136,7 +189,7 @@ class BaseDAO(Generic[ModelType]):
             return None, e
 
     def sync_get_objects_by_conditions(
-        self, conditions: Dict[str, Any]
+            self, conditions: Dict[str, Any]
     ) -> Tuple[Optional[Sequence[ModelType]], Optional[Exception]]:
         """
         根据给定的条件查询模型对象
@@ -208,7 +261,7 @@ class BaseDAO(Generic[ModelType]):
         else:
             return None, Exception("async_update method requires an AsyncSession")
 
-    async def sync_update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
+    def sync_update(self, obj_uuid: Any, update_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         更新模型对象
@@ -260,14 +313,14 @@ class BaseDAO(Generic[ModelType]):
         else:
             return None, Exception("async_patch method requires an AsyncSession")
 
-    async def sync_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
+    def sync_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象
         """
         if isinstance(self.db, Session):
             try:
-                obj, error = await self.sync_get_by_uuid(obj_uuid)
+                obj, error = self.sync_get_by_uuid(obj_uuid)
 
                 if error:
                     return None, error

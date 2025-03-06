@@ -1,7 +1,7 @@
 from uuid import UUID
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.rag.document import Document, DocumentIndexingStatus
 from app.models import User
 from app.dao.rag.document import DocumentDAO
