@@ -194,6 +194,14 @@ tencent_hunyuan:
 ollama:
   url: "http://localhost:11434"
 
+llama_cpp:
+  url: "http://localhost:8080"
+  timeout: 300
+
+vllm:
+  url: "http://localhost:8007"
+  timeout: 300
+
 coze:
   api_base: https://api.coze.cn/v3
   api_key: "YOUR_API_KEY"

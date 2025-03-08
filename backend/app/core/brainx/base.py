@@ -50,6 +50,11 @@ class LLMModel(Enum):
     OLLAMA_QWEN_CODER_2_5 = "qwen2.5-coder"
     OLLAMA_DEEP_SEEK_R1_70 = "deepseek-r1:70b"
 
+    LLAMA_CPP_DEEPSEEK_R1_DISTILL_QWEN_1_5B_Q4_K_M = "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf"
+    LLAMA_CPP_DEEPSEEK_R1_DISTILL_QWEN_70B_Q4_K_M = "DeepSeek-R1-Distill-Llama-70B-Q4_K_M.gguf"
+    LLAMA_CPP_DEEPSEEK_R1_DISTILL_QWEN_70B_Q3_K_M = "DeepSeek-R1-Distill-Llama-70B-Q3_K_M.gguf"
+    VLLM = ""
+
     @classmethod
     def is_baidu_model(cls, llm: str) -> bool:
         """判断是否为百度模型"""
@@ -93,10 +98,25 @@ class LLMModel(Enum):
         )
 
     @classmethod
+    def is_llama_cpp_model(cls, llm: str) -> bool:
+        """判断是否为Llama CPP使用模型"""
+        return any(
+            llm == model.value for model in cls if model.name.startswith("LLAMA_CPP")
+        )
+
+    @classmethod
+    def is_vllm_model(cls, llm: str) -> bool:
+        """判断是否为VLLM使用模型"""
+        return any(
+            llm == model.value for model in cls if model.name.startswith("VLLM")
+        )
+
+    @classmethod
     def is_deepseek_model(cls, llm: str) -> bool:
         """判断是否为Ollama模型"""
         return any(
-            llm == model.value for model in cls if (model.name.startswith("OLLAMA_DEEPSEEK") or model.name.startswith("DEEPSEEK"))
+            llm == model.value for model in cls if
+            (model.name.startswith("OLLAMA_DEEPSEEK") or model.name.startswith("DEEPSEEK"))
         )
 
     @classmethod

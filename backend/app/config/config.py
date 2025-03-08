@@ -11,6 +11,7 @@ from app.config.cache import Cache
 from app.config.celery import CeleryConfig
 from app.config.database import Database
 from app.config.event import Event
+from app.config.llama_cpp import LlamaCPP
 from app.config.log import Log
 from app.config.ollama import OLLAMA
 from app.config.coze import Coze
@@ -24,6 +25,7 @@ from app.config.storage import Storage
 from app.config.tencent import TencentHunYuan
 from app.config.test import Test
 from app.config.agent.agent import Agent
+from app.config.vllm import VLLM
 
 
 class Polygon(BaseModel):
@@ -56,6 +58,8 @@ class Settings(BaseModel):
     baidu_qianfan: BaiduQianfan
     tencent_hunyuan: TencentHunYuan
     ollama: OLLAMA
+    llama_cpp: LlamaCPP
+    vllm: VLLM
     coze: Coze
     polygon: Polygon
     sentry: Sentry
@@ -86,6 +90,8 @@ settings = Settings(
     baidu_qianfan=BaiduQianfan(**config["baidu_qianfan"]),
     tencent_hunyuan=TencentHunYuan(**config["tencent_hunyuan"]),
     ollama=OLLAMA(**config["ollama"]),
+    llama_cpp=LlamaCPP(**config["llama_cpp"]),
+    vllm=VLLM(**config["vllm"]),
     coze=Coze(**config["coze"]),
     polygon=Polygon(**config["polygon"]),
     sentry=Sentry(**config["sentry"]),
