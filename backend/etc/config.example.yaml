@@ -142,6 +142,7 @@ agent:
     # 默认使用postgres，和database用的dsn一致，除非你需要自己定义自己另外地址的pgvector地址
     url: "postgresql+psycopg://username:password@127.0.0.1:5432/brain_x"
     use_jsonb: True
+  disable_gpu: False
 
 log:
   file: true # 是否输出到本地文件
