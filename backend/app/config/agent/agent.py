@@ -12,4 +12,4 @@ class Agent(BaseModel):
     vector_store_collection: str = "rag_embeddings"
     router_llm: str
     pgvector: PGVector
-    disable_gpu: bool = False
+
