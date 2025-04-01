@@ -128,7 +128,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                 # print("after json parser invoke", obj)
                 return obj, None
 
-            if LLMModel.is_deepseek_model(self.llm):
+            if LLMModel.is_thinking_model(self.llm):
                 output.content = self.remove_think_tags(output.content)
 
             response = convert_document_to_response(output)
@@ -197,7 +197,7 @@ class LangchainAgentExecutor(BaseAgentExecutor):
                 config={"configurable": {"session_id": "test_session_id"}},
             )
 
-            if LLMModel.is_deepseek_model(self.llm):
+            if LLMModel.is_thinking_model(self.llm):
                 completion_response = self.remove_think_tags(completion_response)
 
             return completion_response, None

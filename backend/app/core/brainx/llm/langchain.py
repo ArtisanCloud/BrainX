@@ -4,6 +4,7 @@ from langchain_community.chat_models import QianfanChatEndpoint, ChatCoze
 from langchain_community.llms.moonshot import Moonshot
 from langchain_community.llms.vllm import VLLM
 from langchain_core.language_models import BaseChatModel
+from langchain_deepseek import ChatDeepSeek
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 
@@ -80,6 +81,25 @@ def get_tencent_huyuan_llm(llm: str, params: Dict[str, Union[float, bool, int, s
         temperature=temperature,
         streaming=streaming,
         request_timeout=request_timeout,
+    )
+
+def get_deepseek_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
+    # 从 params 中获取并进行处理
+    temperature = float(params.get("temperature", 0))  # 默认值 0
+    if temperature < 0:
+        temperature = 0
+    if temperature > 1:
+        temperature = 1
+    streaming = bool(params.get("streaming", False))  # 默认值 False
+    request_timeout = int(params.get("request_timeout", 300))  # 默认值 300
+    # 返回 ChatOpenAI 实例
+    return ChatDeepSeek(
+        api_key=settings.deepseek.api_key,
+        api_base=settings.deepseek.api_base,
+        model=llm,
+        temperature=temperature,
+        streaming=streaming,
+        timeout=request_timeout,
     )
 
 
@@ -173,6 +193,9 @@ def get_llm(
 
             case _ if LLMModel.is_tencent_hunyuan_model(llm):
                 mdl_llm = get_tencent_huyuan_llm(llm, params)
+
+            case _ if LLMModel.is_deepseek_model(llm):
+                mdl_llm = get_deepseek_llm(llm, params)
 
             case _ if LLMModel.is_ollama_model(llm):
                 mdl_llm = get_ollama_llm(llm, params)

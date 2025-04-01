@@ -10,6 +10,7 @@ from app.config.baidu import BaiduQianfan
 from app.config.cache import Cache
 from app.config.celery import CeleryConfig
 from app.config.database import Database
+from app.config.deepseek import DeepSeek
 from app.config.event import Event
 from app.config.llama_cpp import LlamaCPP
 from app.config.log import Log
@@ -57,6 +58,7 @@ class Settings(BaseModel):
     kimi: Kimi
     baidu_qianfan: BaiduQianfan
     tencent_hunyuan: TencentHunYuan
+    deepseek: DeepSeek
     ollama: OLLAMA
     llama_cpp: LlamaCPP
     vllm: VLLM
@@ -89,6 +91,7 @@ settings = Settings(
     kimi=Kimi(**config["kimi"]),
     baidu_qianfan=BaiduQianfan(**config["baidu_qianfan"]),
     tencent_hunyuan=TencentHunYuan(**config["tencent_hunyuan"]),
+    deepseek=DeepSeek(**config["deepseek"]),
     ollama=OLLAMA(**config["ollama"]),
     llama_cpp=LlamaCPP(**config["llama_cpp"]),
     vllm=VLLM(**config["vllm"]),

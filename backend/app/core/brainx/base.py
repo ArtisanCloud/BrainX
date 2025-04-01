@@ -32,6 +32,9 @@ class LLMModel(Enum):
     KIMI_MOONSHOT_V1_32K = "moonshot-v1-32k"
     KIMI_MOONSHOT_V1_128K = "moonshot-v1-128k"
 
+    DEEPSEEK_CHAT = "deepseek-chat"
+    DEEPSEEK_REASONER = "deepseek-reasoner"
+
     OLLAMA_DEEPSEEK_R1_1_5B = "deepseek-r1:1.5b"
     OLLAMA_DEEPSEEK_R1_7B = "deepseek-r1:7b"
     OLLAMA_DEEPSEEK_R1_8B = "deepseek-r1:8b"
@@ -91,6 +94,23 @@ class LLMModel(Enum):
         )
 
     @classmethod
+    def is_deepseek_model(cls, llm: str) -> bool:
+        """判断是否为Deepseek模型"""
+        return any(
+            llm == model.value for model in cls if model.name.startswith("DEEPSEEK")
+        )
+
+    @classmethod
+    def is_thinking_model(cls, llm: str) -> bool:
+        """判断是否为Ollama模型"""
+        return any(
+            llm == model.value for model in cls if
+            (
+                    model.name.startswith("OLLAMA_DEEPSEEK") or
+                    model.name.startswith("DEEPSEEK"))
+        )
+
+    @classmethod
     def is_ollama_model(cls, llm: str) -> bool:
         """判断是否为Ollama模型"""
         return any(
@@ -109,14 +129,6 @@ class LLMModel(Enum):
         """判断是否为VLLM使用模型"""
         return any(
             llm == model.value for model in cls if model.name.startswith("VLLM")
-        )
-
-    @classmethod
-    def is_deepseek_model(cls, llm: str) -> bool:
-        """判断是否为Ollama模型"""
-        return any(
-            llm == model.value for model in cls if
-            (model.name.startswith("OLLAMA_DEEPSEEK") or model.name.startswith("DEEPSEEK"))
         )
 
     @classmethod
