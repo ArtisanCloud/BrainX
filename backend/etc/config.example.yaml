@@ -191,6 +191,11 @@ tencent_hunyuan:
   api_key: sk-ADKNWJj4VLqaazEgPDRaIwWHWkY05XFnmdw91rxxxxxx
   request_timeout: 30
 
+deepseek:
+  api_base: "https://api.deepseek.com"
+  api_key: sk-a5c611111111111111111
+  request_timeout: 30
+
 ollama:
   url: "http://localhost:11434"
 
