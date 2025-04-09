@@ -91,7 +91,7 @@ def get_deepseek_llm(llm: str, params: Dict[str, Union[float, bool, int, str]]):
     if temperature > 1:
         temperature = 1
     streaming = bool(params.get("streaming", False))  # 默认值 False
-    request_timeout = int(params.get("request_timeout", 300))  # 默认值 300
+    request_timeout = settings.deepseek.request_timeout  # 默认值 300
     # 返回 ChatOpenAI 实例
     return ChatDeepSeek(
         api_key=settings.deepseek.api_key,
