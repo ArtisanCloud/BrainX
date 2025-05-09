@@ -2462,18 +2462,18 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10"
 
 [[package]]
 name = "langchain-core"
-version = "0.3.28"
+version = "0.3.59"
 description = "Building applications with LLMs through composability"
 optional = false
-python-versions = "<4.0,>=3.9"
+python-versions = ">=3.9"
 files = [
-    {file = "langchain_core-0.3.28-py3-none-any.whl", hash = "sha256:a02f81ca53a8eed757133797e5a602ca80c1324bbecb0c5d86ef7bd3d6625372"},
-    {file = "langchain_core-0.3.28.tar.gz", hash = "sha256:407f7607e6b3c0ebfd6094da95d39b701e22e59966698ef126799782953e7f2c"},
+    {file = "langchain_core-0.3.59-py3-none-any.whl", hash = "sha256:9686baaff43f2c8175535da13faf40e6866769015e93130c3c1e4243e7244d70"},
+    {file = "langchain_core-0.3.59.tar.gz", hash = "sha256:052a37cf298c505144f007e5aeede6ecff2dc92c827525d1ef59101eb3a4551c"},
 ]
 
 [package.dependencies]
 jsonpatch = ">=1.33,<2.0"
-langsmith = ">=0.1.125,<0.3"
+langsmith = ">=0.1.125,<0.4"
 packaging = ">=23.2,<25"
 pydantic = [
     {version = ">=2.5.2,<3.0.0", markers = "python_full_version < \"3.12.4\""},
@@ -2482,6 +2482,21 @@ pydantic = [
 PyYAML = ">=5.3"
 tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10.0.0"
 typing-extensions = ">=4.7"
+
+[[package]]
+name = "langchain-deepseek"
+version = "0.1.3"
+description = "An integration package connecting DeepSeek and LangChain"
+optional = false
+python-versions = "<4.0,>=3.9"
+files = [
+    {file = "langchain_deepseek-0.1.3-py3-none-any.whl", hash = "sha256:8588e826371b417fca65c02f4273b4061eb9815a7bfcd5eb05acaa40d603aa89"},
+    {file = "langchain_deepseek-0.1.3.tar.gz", hash = "sha256:89dd6aa120fb50dcfcd3d593626d34c1c40deefe4510710d0807fcc19481adf5"},
+]
+
+[package.dependencies]
+langchain-core = ">=0.3.47,<1.0.0"
+langchain-openai = ">=0.3.9,<1.0.0"
 
 [[package]]
 name = "langchain-huggingface"
@@ -2518,18 +2533,18 @@ ollama = ">=0.3.0,<1"
 
 [[package]]
 name = "langchain-openai"
-version = "0.2.6"
+version = "0.3.16"
 description = "An integration package connecting OpenAI and LangChain"
 optional = false
-python-versions = "<4.0,>=3.9"
+python-versions = ">=3.9"
 files = [
-    {file = "langchain_openai-0.2.6-py3-none-any.whl", hash = "sha256:d56e4d9183bdd1a5fb5f3ed9d287f15108e01d631ded170dd330a566f2927b95"},
-    {file = "langchain_openai-0.2.6.tar.gz", hash = "sha256:7054e5f64498ad8e59d77cdc210103f5ea4f67258997edc48ae237298adeb316"},
+    {file = "langchain_openai-0.3.16-py3-none-any.whl", hash = "sha256:eae74a6758d38a26159c5fde5abf8ef313e6400efb01a08f12dd7410c9f4fd0f"},
+    {file = "langchain_openai-0.3.16.tar.gz", hash = "sha256:4e423e39d072f1432adc9430f2905fe635cc019f01ad1bdffa5ed8d0dda32149"},
 ]
 
 [package.dependencies]
-langchain-core = ">=0.3.15,<0.4.0"
-openai = ">=1.54.0,<2.0.0"
+langchain-core = ">=0.3.58,<1.0.0"
+openai = ">=1.68.2,<2.0.0"
 tiktoken = ">=0.7,<1"
 
 [[package]]
@@ -3951,13 +3966,13 @@ sympy = "*"
 
 [[package]]
 name = "openai"
-version = "1.61.1"
+version = "1.78.0"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "openai-1.61.1-py3-none-any.whl", hash = "sha256:72b0826240ce26026ac2cd17951691f046e5be82ad122d20a8e1b30ca18bd11e"},
-    {file = "openai-1.61.1.tar.gz", hash = "sha256:ce1851507218209961f89f3520e06726c0aa7d0512386f0f977e3ac3e4f2472e"},
+    {file = "openai-1.78.0-py3-none-any.whl", hash = "sha256:1ade6a48cd323ad8a7715e7e1669bb97a17e1a5b8a916644261aaef4bf284778"},
+    {file = "openai-1.78.0.tar.gz", hash = "sha256:254aef4980688468e96cbddb1f348ed01d274d02c64c6c69b0334bf001fb62b3"},
 ]
 
 [package.dependencies]
@@ -3972,7 +3987,8 @@ typing-extensions = ">=4.11,<5"
 
 [package.extras]
 datalib = ["numpy (>=1)", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)"]
-realtime = ["websockets (>=13,<15)"]
+realtime = ["websockets (>=13,<16)"]
+voice-helpers = ["numpy (>=2.0.2)", "sounddevice (>=0.5.1)"]
 
 [[package]]
 name = "openpyxl"
@@ -7259,4 +7275,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<3.13"
-content-hash = "bc9f4b001b8a1da7722d8ea49399b871f09854fe2cf7672b144fe9a080fcaeab"
+content-hash = "0042d4cb97333a9d08432f7e9dcad5e9c79fca4b797e2e180b1189893c55bc67"
