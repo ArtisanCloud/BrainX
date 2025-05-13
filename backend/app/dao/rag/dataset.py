@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import lazyload
 
 from app.dao.base import BaseDAO
+from app.database.session_manager import is_dep_session
 from app.logger import logger
 from app.models import App
 from app.models.rag.dataset import Dataset, DatasetSegmentRule
@@ -88,8 +89,6 @@ class DatasetDAO(BaseDAO[Dataset]):
                 PivotAppToDataset.app_uuid == app_uuid
             )
             await self.async_db.execute(stmt)
-
-            await self.async_db.commit()  # 提交事务
             return None
         except SQLAlchemyError as e:
             return e
@@ -114,7 +113,6 @@ class DatasetDAO(BaseDAO[Dataset]):
                     pivot_entry = PivotAppToDataset(app_uuid=app_uuid, dataset_uuid=dataset_uuid)
                     self.async_db.add(pivot_entry)
 
-            await self.async_db.commit()  # 提交事务
             return None
         except SQLAlchemyError as e:
             return e
@@ -132,9 +130,13 @@ class DatasetDAO(BaseDAO[Dataset]):
                 PivotAppToDataset.app_uuid == app_uuid
             )
             await self.async_db.execute(stmt)
-            await self.async_db.commit()  # 提交事务
+            if not is_dep_session(self.async_db):
+                await self.async_db.commit()
+
             return None
         except SQLAlchemyError as e:
+            if not is_dep_session(self.async_db):
+                await self.async_db.rollback()
             return e
 
     async def get_connected_datasets(self, app_uuid: str) -> Tuple[Sequence[Dataset] | None, SQLAlchemyError | None]:

@@ -9,6 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import async_session_local, sync_session_local
 
+"""
+| 场景                     | 如何获取 Session                        | 是否需要 `commit/rollback` |
+| ---------------------- | ----------------------------------- | ---------------------- |
+| FastAPI（异步）            | `Depends(get_async_db_session_dep)` | ❌ 不需要，已自动处理            |
+| Celery、脚本等（同步）         | `with get_sync_db_session_dep()`    | ❌ 不需要，已自动处理            |
+| 直接调用 `session_local()` | ✅ 必须手动 commit/rollback/close        |                        |
+"""
+
 
 async def get_async_db_session_dep() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
@@ -68,3 +76,4 @@ def get_sync_db_session_dep() -> Session:
 
         logger.info("Sync DB session closed")
         sync_db.close()
+

@@ -9,6 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import async_session_local, sync_session_local
 
+"""
+| 场景                                    | 当前是否自动 commit/rollback | 是否需要手动控制 |
+| ------------------------------------- | ---------------------- | -------- |
+| FastAPI + `get_async_db_session()`    | ❌ 否                    | ✅ 需要     |
+| 脚本 / Celery + `get_sync_db_session()` | ❌ 否                    | ✅ 需要     |
+
+"""
+
 
 async def get_async_db_session() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
@@ -45,3 +53,8 @@ def get_sync_db_session() -> Session:
         # 关闭数据库会话
         logger.info("Sync DB session closed")
         sync_db.close()
+
+
+# 判断 db 是否为 FastAPI 依赖注入提供的对象
+def is_dep_session(db: Session | AsyncSession) -> bool:
+    return hasattr(db, "execute")  # 依赖注入的 db 会有 execute 方法

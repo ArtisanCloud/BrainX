@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Sequence
 
 from app.config.config import UTC
+from app.database.session_manager import is_dep_session
 
 # 定义 ModelType 类型变量，限定为 SQLAlchemy 的 DeclarativeMeta
 ModelType = TypeVar('ModelType', bound=DeclarativeMeta)
@@ -31,8 +32,12 @@ class BaseDAO(Generic[ModelType]):
                 await self.async_db.flush()
                 await self.async_db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
+                if not is_dep_session(self.async_db):
+                    await self.async_db.commit()
                 return obj, None
             except Exception as e:
+                if not is_dep_session(self.async_db):
+                    await self.async_db.rollback()
                 return None, e
         else:
             return None, Exception("a_create method requires an AsyncSession")
@@ -48,8 +53,12 @@ class BaseDAO(Generic[ModelType]):
                 self.sync_db.flush()
                 self.sync_db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.commit()
                 return obj, None
             except Exception as e:
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.rollback()
                 return None, e
         else:
             return None, Exception("sync_create method requires an Session")
@@ -114,10 +123,13 @@ class BaseDAO(Generic[ModelType]):
             try:
                 self.async_db.add_all(objs)
                 await self.async_db.flush()
+                if not is_dep_session(self.async_db):
+                    await self.async_db.commit()
                 # print(objs)
                 return objs, None
             except Exception as e:
-
+                if not is_dep_session(self.async_db):
+                    await self.async_db.rollback()
                 return None, e
         else:
             return None, Exception("async_create_many method requires an AsyncSession")
@@ -132,8 +144,12 @@ class BaseDAO(Generic[ModelType]):
                 self.sync_db.add_all(objs)
                 self.sync_db.flush()
                 # print(objs)
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.commit()
                 return objs, None
             except Exception as e:
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.rollback()
                 return None, e
         else:
             return None, Exception("sync_create_many method requires an Session")
@@ -253,8 +269,12 @@ class BaseDAO(Generic[ModelType]):
                 for field, value in update_data.items():
                     setattr(obj, field, value)
 
+                if not is_dep_session(self.async_db):
+                    await self.async_db.commit()
                 return obj, None
             except Exception as e:
+                if not is_dep_session(self.async_db):
+                    await self.async_db.rollback()
 
                 return None, e
         else:
@@ -275,10 +295,12 @@ class BaseDAO(Generic[ModelType]):
 
                 for field, value in update_data.items():
                     setattr(obj, field, value)
-
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.commit()
                 return obj, None
             except Exception as e:
-
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.rollback()
                 return None, e
         else:
             return None, Exception("sync_update method requires an Session")
@@ -304,10 +326,14 @@ class BaseDAO(Generic[ModelType]):
                 await self.async_db.flush()
                 await self.async_db.refresh(obj)
 
+                if not is_dep_session(self.async_db):
+                    await self.async_db.commit()
+
                 return obj, None
 
             except Exception as e:
-
+                if not is_dep_session(self.async_db):
+                    await self.async_db.rollback()
                 return None, e
         else:
             return None, Exception("async_patch method requires an AsyncSession")
@@ -332,11 +358,14 @@ class BaseDAO(Generic[ModelType]):
 
                 self.sync_db.flush()
                 self.sync_db.refresh(obj)
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.commit()
 
                 return obj, None
 
             except Exception as e:
-
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.rollback()
                 return None, e
         else:
             return None, Exception("sync_patch method requires an Session")
@@ -361,11 +390,13 @@ class BaseDAO(Generic[ModelType]):
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
                     await self.async_db.flush()
-
+                    if not is_dep_session(self.async_db):
+                        await self.async_db.commit()
                     return True, None
 
             except Exception as e:
-
+                if not is_dep_session(self.async_db):
+                    await self.sync_db.rollback()
                 return False, e
         else:
             return False, Exception("async_soft_delete method requires an AsyncSession")
@@ -390,11 +421,13 @@ class BaseDAO(Generic[ModelType]):
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
                     self.async_db.flush()
-
+                    if not is_dep_session(self.sync_db):
+                        self.sync_db.commit()
                     return True, None
 
             except Exception as e:
-
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.rollback()
                 return False, e
         else:
             return False, Exception("sync_soft_delete method requires an Session")
@@ -412,10 +445,12 @@ class BaseDAO(Generic[ModelType]):
                     return False, Exception(f"Object with uuid {obj_uuid} not found")
 
                 await self.async_db.delete(obj)
-
+                if not is_dep_session(self.async_db):
+                    await self.async_db.commit()
                 return True, None
             except Exception as e:
-
+                if not is_dep_session(self.async_db):
+                    self.sync_db.rollback()
                 return False, e
         else:
             return False, Exception("async_delete method requires an AsyncSession")
@@ -433,10 +468,12 @@ class BaseDAO(Generic[ModelType]):
                     return False, Exception(f"Object with uuid {obj_uuid} not found")
 
                 self.async_db.delete(obj)
-
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.commit()
                 return True, None
             except Exception as e:
-
+                if not is_dep_session(self.sync_db):
+                    self.sync_db.rollback()
                 return False, e
         else:
             return False, Exception("sync_delete method requires an Session")

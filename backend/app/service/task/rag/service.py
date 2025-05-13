@@ -16,6 +16,7 @@ from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.ingestion.splitter.factory import TextSplitterFactory
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
+from app.database.session_manager import is_dep_session
 from app.service.task import logger_rag as logger
 from app.models import DocumentSegment, User, Dataset
 from app.models.base import UTC
@@ -436,7 +437,8 @@ class RagProcessorTaskService:
             self.document.updated_at = datetime.now(UTC)  # 更新操作时间为当前时间
 
             # 保存预处理后的状态
-            self.sync_db.commit()  # 提交数据库事务
+            if not is_dep_session(self.sync_db):
+                self.sync_db.commit()  # 提交数据库事务
             return None
 
         except Exception as e:
