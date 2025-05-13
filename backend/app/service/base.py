@@ -1,4 +1,4 @@
-from typing import List, Any, Tuple, Sequence
+from typing import Any, Tuple, Sequence
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +9,7 @@ from app.schemas.base import Pagination, ResponsePagination
 
 
 async def paginate_query(
-        db: AsyncSession,
+        async_db: AsyncSession,
         query: select,
         table: Any,
         pagination: Pagination,
@@ -31,13 +31,13 @@ async def paginate_query(
         # print("SQL Pagination Query:", str(query))
 
         # 执行查询并获取结果
-        result = await db.execute(query)
+        result = await async_db.execute(query)
         if need_unique:
             result = result.unique()
         items = result.scalars().all()
 
         # 获取总行数
-        result = await db.execute(select(func.count('*')).select_from(table))
+        result = await async_db.execute(select(func.count('*')).select_from(table))
         total_rows = result.scalars().one()
         # total_rows = await db.query(func.count('*'))
         # 计算总页数

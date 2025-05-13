@@ -9,10 +9,10 @@ from app.models.rag.dataset import Dataset
 
 
 async def create_dataset(
-    db: AsyncSession,
+   async_db: AsyncSession,
     dataset: Dataset,
 ) -> Tuple[DatasetSchema | None, Exception | None]:
-    service_dataset = DatasetService(db)
+    service_dataset = DatasetService(async_db)
     dataset, exception = await service_dataset.dataset_dao.async_create(dataset)
     if exception:
         return None, exception

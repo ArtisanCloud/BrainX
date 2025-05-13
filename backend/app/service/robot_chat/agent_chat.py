@@ -14,11 +14,11 @@ from app.schemas.robot_chat.chat import RequestChat
 from app.service.app.service import AppService
 from app.service.brainx.service import BrainXService
 from app.service.conversation.service import ConversationService
-from app.utils.media import remove_base64_images_prefix, remove_base64_prefix
+from app.utils.media import remove_base64_images_prefix
 
 
 async def agent_chat_event_generator(
-    request: Request, data: RequestChat, user_uuid: str, db: AsyncSession
+        request: Request, data: RequestChat, user_uuid: str, async_db: AsyncSession
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"
@@ -32,7 +32,7 @@ async def agent_chat_event_generator(
         # print("conversationUUID:", conversation_uuid)
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await agent_chat(
-            db=db,
+            async_db=async_db,
             question=question,
             images=base64_images,
             llm=data.llm,
@@ -60,24 +60,24 @@ async def agent_chat_event_generator(
             f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info
         )
         yield f"data: {json.dumps({'status': 'error', 'message': error_msg})}\n\n"
-        await db.rollback()
+        await async_db.rollback()
     finally:
         yield f"data: {json.dumps({'status': 'finished'})}\n\n"
-        await db.close()
+        await async_db.close()
 
 
 async def agent_chat(
-    db: AsyncSession,
-    app_uuid: str,
-    user_uuid: str,
-    question: str,
-    llm: str,
-    conversation_uuid: str = "",
-    images: list[str] | None = None,
+        async_db: AsyncSession,
+        app_uuid: str,
+        user_uuid: str,
+        question: str,
+        llm: str,
+        conversation_uuid: str = "",
+        images: list[str] | None = None,
 ):
     try:
         # 获取app
-        service_app = AppService(db)
+        service_app = AppService(async_db)
         app, exception = await service_app.app_dao.get_app_by_uuid_with_preloads(
             app_uuid
         )
@@ -96,7 +96,7 @@ async def agent_chat(
 
         elif app_uuid != "" and conversation_uuid != "":
             # 如果是app的对话，则从数据库中获取对话历史记录
-            service_conversation = ConversationService(db)
+            service_conversation = ConversationService(async_db)
             conversation, exception = (
                 await service_conversation.conversation_dao.async_get_by_uuid(
                     conversation_uuid
@@ -128,8 +128,8 @@ async def agent_chat(
                 # print(type(conversation.app_uuid), type(app_uuid))
 
                 if (
-                    str(conversation.user_uuid) != user_uuid
-                    or str(conversation.app_uuid) != app_uuid
+                        str(conversation.user_uuid) != user_uuid
+                        or str(conversation.app_uuid) != app_uuid
                 ):
                     return (
                         None,

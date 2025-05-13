@@ -35,12 +35,11 @@ def transform_image_document_to_reply(document: any) -> ImageDocumentSchema | No
 
 
 async def visual_search(
-        db: AsyncSession,
+       async_db: AsyncSession,
         target_embedding: any,
         match_threshold=0.5,
         limit=3,
 ) -> ResponseVisualSearch | None:
-    # print(db)
     try:
         target_embedding_json = json.dumps(target_embedding)
 

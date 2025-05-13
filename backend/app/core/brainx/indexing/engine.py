@@ -1,14 +1,11 @@
-from llama_index.core import StorageContext, VectorStoreIndex, ServiceContext, get_response_synthesizer, Settings
+from llama_index.core import StorageContext, VectorStoreIndex, ServiceContext, get_response_synthesizer
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-from llama_index.llms.openai import OpenAI
 
-from app.core.brainx.base import LLMModel
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton
-from app.core.brainx.llm.llamaindex import get_ollama_llm
 from app.config.config import settings
 
 

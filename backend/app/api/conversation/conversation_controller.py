@@ -9,7 +9,7 @@ from starlette.requests import Request
 
 from app import settings
 from app.database.base import PER_PAGE, PAGE
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.database.seed.user import init_user_uuid
 from app.logger import logger
 from app.models.robot_chat.conversation import Conversation
@@ -28,7 +28,7 @@ router = APIRouter()
 @router.get("/list")
 async def api_get_conversation_list(
         request: Request,
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseGetConversationList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -38,7 +38,7 @@ async def api_get_conversation_list(
     # print("app_uuid:", app_uuid)
 
     try:
-        conversations, pagination, exception = await get_conversation_list(db, p, app_uuid)
+        conversations, pagination, exception = await get_conversation_list(async_db, p, app_uuid)
         if exception is not None:
             raise exception
 
@@ -54,8 +54,8 @@ async def api_get_conversation_list(
 
 
 @router.get("/{conversation_id}")
-async def api_get_conversation_by_id(conversation_id: int, db: AsyncSession = Depends(get_async_db_session)):
-    conversation = await db.get(Conversation, conversation_id)
+async def api_get_conversation_by_id(conversation_id: int, async_db: AsyncSession = Depends(get_async_db_session_dep)):
+    conversation = await async_db.get(Conversation, conversation_id)
     if conversation is None:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conversation
@@ -64,13 +64,13 @@ async def api_get_conversation_by_id(conversation_id: int, db: AsyncSession = De
 @router.post("/create")
 async def api_create_conversation(
         data: RequestCreateConversation,
-        db: AsyncSession = Depends(get_async_db_session)):
+        async_db: AsyncSession = Depends(get_async_db_session_dep)):
     try:
 
         conversation = make_conversation(data)
         conversation.user_uuid = uuid.UUID(init_user_uuid)
 
-        conversation, exception = await create_conversation(db, conversation)
+        conversation, exception = await create_conversation(async_db, conversation)
         if exception is not None:
             raise exception
 
@@ -89,13 +89,13 @@ async def api_create_conversation(
 async def api_patch_conversation(
         conversation_uuid: str,  # 接收路径参数 conversation_uuid
         data: RequestPatchConversation,
-        db: AsyncSession = Depends(get_async_db_session)):
+        async_db: AsyncSession = Depends(get_async_db_session_dep)):
     try:
 
         update_data = data.dict(exclude_unset=True)
         # print(conversation_uuid, update_data)
 
-        conversation, exception = await patch_conversation(db, conversation_uuid, update_data)
+        conversation, exception = await patch_conversation(async_db, conversation_uuid, update_data)
         if exception is not None:
             raise exception
 
@@ -113,10 +113,10 @@ async def api_patch_conversation(
 @router.delete("/delete/{conversation_uuid}")
 async def api_delete_conversation(
         conversation_uuid: str,  # 接收路径参数 conversation_uuid
-        db: AsyncSession = Depends(get_async_db_session)):
+        async_db: AsyncSession = Depends(get_async_db_session_dep)):
     try:
         user_id = 1
-        result, exception = await soft_delete_conversation(db, user_id, conversation_uuid)
+        result, exception = await soft_delete_conversation(async_db, user_id, conversation_uuid)
         if exception is not None:
             raise exception
 

@@ -15,8 +15,8 @@ from app.models.rag.pivot_app_to_dataset import PivotAppToDataset
 
 
 class DatasetDAO(BaseDAO[Dataset]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, Dataset)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(Dataset, async_db, sync_db)
 
     async def load_segment_rule(self, dataset: Dataset) -> Tuple[Dataset | None, SQLAlchemyError | None]:
         try:
@@ -26,7 +26,7 @@ class DatasetDAO(BaseDAO[Dataset]):
             #     return dataset, None
 
             # 手动查询 segment_rule
-            result = await self.db.execute(
+            result = await self.async_db.execute(
                 select(DatasetSegmentRule).where(DatasetSegmentRule.dataset_uuid == dataset.uuid)
             )
             segment_rule = result.scalars().first()
@@ -62,7 +62,7 @@ class DatasetDAO(BaseDAO[Dataset]):
             # 排序
             stmt = stmt.order_by(Dataset.created_at)
 
-            result = await self.db.execute(stmt)
+            result = await self.async_db.execute(stmt)
             rows = result.unique().scalars().all()
             return rows, None
 
@@ -80,16 +80,16 @@ class DatasetDAO(BaseDAO[Dataset]):
             # 创建新的 PivotAppToDataset 实例
             for dataset_uuid in connect_database_uuids:
                 pivot_entry = PivotAppToDataset(app_uuid=app_uuid, dataset_uuid=dataset_uuid)
-                self.db.add(pivot_entry)
+                self.async_db.add(pivot_entry)
 
             # 删除与指定 app_uuids 相关的 PivotAppToDataset 记录
             stmt = delete(PivotAppToDataset).where(
                 PivotAppToDataset.dataset.in_(disconnect_database_uuids),
                 PivotAppToDataset.app_uuid == app_uuid
             )
-            await self.db.execute(stmt)
+            await self.async_db.execute(stmt)
 
-            await self.db.commit()  # 提交事务
+            await self.async_db.commit()  # 提交事务
             return None
         except SQLAlchemyError as e:
             return e
@@ -104,7 +104,7 @@ class DatasetDAO(BaseDAO[Dataset]):
             # 创建新的 PivotAppToDataset 实例
             for dataset_uuid in connect_database_uuids:
                 # 检查是否已存在关联
-                exists = await self.db.execute(
+                exists = await self.async_db.execute(
                     select(PivotAppToDataset)
                     .where(PivotAppToDataset.app_uuid == app_uuid)
                     .where(PivotAppToDataset.dataset_uuid == dataset_uuid)
@@ -112,9 +112,9 @@ class DatasetDAO(BaseDAO[Dataset]):
                 # 如果不存在则插入
                 if not exists.scalars().first():
                     pivot_entry = PivotAppToDataset(app_uuid=app_uuid, dataset_uuid=dataset_uuid)
-                    self.db.add(pivot_entry)
+                    self.async_db.add(pivot_entry)
 
-            await self.db.commit()  # 提交事务
+            await self.async_db.commit()  # 提交事务
             return None
         except SQLAlchemyError as e:
             return e
@@ -131,8 +131,8 @@ class DatasetDAO(BaseDAO[Dataset]):
                 PivotAppToDataset.dataset_uuid.in_(dataset_uuids),
                 PivotAppToDataset.app_uuid == app_uuid
             )
-            await self.db.execute(stmt)
-            await self.db.commit()  # 提交事务
+            await self.async_db.execute(stmt)
+            await self.async_db.commit()  # 提交事务
             return None
         except SQLAlchemyError as e:
             return e
@@ -144,7 +144,7 @@ class DatasetDAO(BaseDAO[Dataset]):
                 .join(PivotAppToDataset, Dataset.uuid == PivotAppToDataset.dataset_uuid)
                 .where(PivotAppToDataset.app_uuid == app_uuid)
             )
-            result = await self.db.execute(stmt)
+            result = await self.async_db.execute(stmt)
             datasets = result.scalars().all()
             return datasets, None
 

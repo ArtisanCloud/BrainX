@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Dict
+from typing import List, Optional, Tuple, Dict, Any
 
 from llama_index.core import VectorStoreIndex, get_response_synthesizer
 from llama_index.core.indices.vector_store import VectorIndexRetriever
@@ -25,7 +25,7 @@ class LlamaIndexRetriever(BaseRetriever):
         # Initialize LlamaIndex resources
         self.index = self._initialize_retriever()
 
-    def _initialize_retriever(self):
+    def _initialize_retriever(self) -> Any:
         """
         Private method to initialize the LlamaIndex retrieval.
 
@@ -36,7 +36,7 @@ class LlamaIndexRetriever(BaseRetriever):
         # For example, return a new instance of LlamaIndex
         pass
 
-    def retrieve(self, query: str, top_k: int=3, score_threshold: float=0.5, filters: Dict = None) -> Tuple[
+    def retrieve(self, query: str, top_k: int = 3, score_threshold: float = 0.5, filters: Dict = None) -> Tuple[
         List[DocumentNode] | None, Exception | None]:
         try:
 

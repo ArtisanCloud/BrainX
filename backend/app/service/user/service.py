@@ -9,9 +9,9 @@ from app.schemas.tenant.user import UserSchema
 
 
 class UserService:
-    def __init__(self, db: AsyncSession):
-        self.user_dao = UserDAO(db)
-        self.tenant_default_model_dao = TenantDefaultModelDAO(db)
+    def __init__(self,async_db: AsyncSession):
+        self.user_dao = UserDAO(async_db)
+        self.tenant_default_model_dao = TenantDefaultModelDAO(async_db)
 
     async def check_register_account_exist(
         self, account: str

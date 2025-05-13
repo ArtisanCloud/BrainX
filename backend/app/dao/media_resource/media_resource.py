@@ -32,8 +32,8 @@ DEFAULT_STORAGE_PATH = "public/static"
 
 
 class MediaResourceDAO(BaseDAO[MediaResource]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, MediaResource)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(MediaResource, async_db, sync_db)
 
     async def build_find_query_no_page(self, query: select, opt: FindManyMediaResourcesOption) -> select:
         if opt.ids:
@@ -51,7 +51,7 @@ class MediaResourceDAO(BaseDAO[MediaResource]):
 
     async def find_all_media_resources(self) -> Tuple[List[MediaResource], SQLAlchemyError]:
         try:
-            result = await self.db.execute(select(MediaResource))
+            result = await self.async_db.execute(select(MediaResource))
             return result.scalars().all(), None
         except SQLAlchemyError as e:
             return [], e
@@ -62,16 +62,17 @@ class MediaResourceDAO(BaseDAO[MediaResource]):
         try:
             stmt = select(MediaResource)
             stmt = await self.build_find_query_no_page(stmt, opt)
-            return await paginate_query(self.db, stmt, opt.page_embed_option, True)
+            return await paginate_query(self.async_db, stmt, opt.page_embed_option, True)
         except SQLAlchemyError as e:
             return None, None, e
 
-    async def create_media_resource(self, resource: MediaResource) -> Tuple[MediaResource | None, SQLAlchemyError | None]:
+    async def create_media_resource(self, resource: MediaResource) -> Tuple[
+        MediaResource | None, SQLAlchemyError | None]:
         try:
-            self.db.add(resource)
+            self.async_db.add(resource)
 
-            await self.db.flush()
-            await self.db.refresh(resource)
+            await self.async_db.flush()
+            await self.async_db.refresh(resource)
             return resource, None
         except SQLAlchemyError as e:
 
@@ -81,8 +82,8 @@ class MediaResourceDAO(BaseDAO[MediaResource]):
             self, resources: List[MediaResource]
     ) -> Tuple[List[MediaResource] | None, SQLAlchemyError | None]:
         try:
-            self.db.add_all(resources)
-            await self.db.flush()
+            self.async_db.add_all(resources)
+            await self.async_db.flush()
 
             return resources, None
         except SQLAlchemyError as e:

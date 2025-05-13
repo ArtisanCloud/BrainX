@@ -7,7 +7,7 @@ from starlette.requests import Request
 
 from app import settings
 from app.database.base import PER_PAGE, PAGE
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.logger import logger
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.robot_chat.conversation import ResponseGetMessageList
@@ -19,7 +19,7 @@ router = APIRouter()
 @router.get("/list/cached")
 async def api_get_message_list(
         request: Request,
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseGetMessageList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -29,7 +29,7 @@ async def api_get_message_list(
     # print("app_uuid:", app_uuid)
 
     try:
-        messages, pagination, exception = await get_cached_message_list(db, conversation_uuid, p)
+        messages, pagination, exception = await get_cached_message_list(async_db, conversation_uuid, p)
         if exception is not None:
             raise exception
 

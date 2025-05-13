@@ -12,6 +12,9 @@ from app.models.rag.invoke_response import InvokeResponse
 
 
 class BrainXService:
+    llm: str
+    streaming: bool
+
     def __init__(
         self,
         llm: str,

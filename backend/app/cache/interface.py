@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional, Callable
-import asyncio
 
 
 class CacheInterface(ABC):

@@ -32,7 +32,7 @@ class ProviderManager:
                 raise Exception("Unsupported framework type for Provider Manager")
 
     def get_model(
-        self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType
+        self, sync_db: Session, tenant_uuid: str, provider: str, model_type: ModelType
     ) -> Tuple[Optional[AIModel], Optional[Exception]]:
 
         # self.model_provider_driver
@@ -41,11 +41,11 @@ class ProviderManager:
         return None, None
 
     def get_default_model(
-        self, db: Session, tenant_uuid: str, model_type: ModelType
+        self, sync_db: Session, tenant_uuid: str, model_type: ModelType
     ) -> Tuple[Optional[AIModel], Optional[Exception]]:
         try:
             # 获取默认模型
-            service_tenant_default_model = TenantDefaultModelDAO(db)
+            service_tenant_default_model = TenantDefaultModelDAO(sync_db=sync_db)
             default_model, exception = (
                 service_tenant_default_model.get_default_model_by_uuid(
                     tenant_uuid, model_type.value

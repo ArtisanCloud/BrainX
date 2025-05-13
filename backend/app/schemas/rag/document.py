@@ -6,7 +6,6 @@ from app.models.rag.document import Document
 from app.schemas.base import Pagination, ResponsePagination, BaseSchema, BaseObjectSchema
 from app.schemas.media_resource.schema import MediaResourceSchema
 from app.schemas.rag.document_segment import DocumentSegmentSchema
-from app.service.rag.document_segment.list import transform_document_segments_to_reply
 from app.utils.datetime import format_datetime
 
 

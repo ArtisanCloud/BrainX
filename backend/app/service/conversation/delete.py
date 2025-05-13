@@ -6,11 +6,11 @@ from app.service.conversation.service import ConversationService
 
 
 async def soft_delete_conversation(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user_id: int,
         conversation_uuid: str
 ) -> Tuple[bool | None, Exception | None]:
-    service_conversation = ConversationService(db)
+    service_conversation = ConversationService(async_db)
     result, exception = await service_conversation.soft_delete_conversation(user_id, conversation_uuid)
 
     if exception:

@@ -12,9 +12,9 @@ from app.models.robot_chat.conversation import Conversation
 
 
 async def create_conversation(
-    db: AsyncSession, conversation: Conversation
+   async_db: AsyncSession, conversation: Conversation
 ) -> Tuple[ConversationSchema | None, Exception | None]:
-    service_conversation = ConversationService(db)
+    service_conversation = ConversationService(async_db)
 
     conversation, exception = await service_conversation.create_conversation(
         conversation

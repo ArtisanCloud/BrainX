@@ -19,7 +19,7 @@ from app.utils.media import remove_base64_images_prefix
 
 
 async def agent_openai_chat_event_generator(
-    request: Request, data: RequestOpenAIChat, user_uuid: str, db: AsyncSession
+    request: Request, data: RequestOpenAIChat, user_uuid: str,async_db: AsyncSession
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"

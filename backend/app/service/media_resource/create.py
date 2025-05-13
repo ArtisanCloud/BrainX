@@ -15,11 +15,11 @@ from app.utils.datetime import datetime_format
 
 
 async def create_media_resource_by_file(
-    db: AsyncSession,
+   async_db: AsyncSession,
     handler: UploadFile,
 ) -> Tuple[MediaResourceSchema | None, Exception | None]:
     # Create media resource
-    service_media_resource = MediaResourceService(db)
+    service_media_resource = MediaResourceService(async_db)
     media_resource, exception = await service_media_resource.make_media_resource(
         bucket_media_resource_product, handler
     )
@@ -37,7 +37,7 @@ async def create_media_resource_by_file(
 
 
 async def create_media_resource_by_base64_string(
-    db: AsyncSession,
+   async_db: AsyncSession,
     user: User,
     bucket: str,
     base64_data: str,
@@ -46,7 +46,7 @@ async def create_media_resource_by_base64_string(
 ) -> Tuple[MediaResourceSchema | None, Exception | None]:
     try:
         # Create media resource
-        service_media_resource = MediaResourceService(db)
+        service_media_resource = MediaResourceService(async_db)
         media_resource, exception = (
             await service_media_resource.make_oss_resource_by_base64_string(
                 user, bucket, base64_data, media_name, sort_index

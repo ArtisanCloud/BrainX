@@ -8,11 +8,11 @@ from app.service.media_resource.service import MediaResourceService
 
 
 async def get_media_resource_by_uuid(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user: User,
         media_resource_uuid: str
 ) -> Tuple[MediaResource | None, Exception | None]:
-    service_media_resource = MediaResourceService(db)
+    service_media_resource = MediaResourceService(async_db)
     media_resource, exception = await (
         service_media_resource.
         media_resource_dao.

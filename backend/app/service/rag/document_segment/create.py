@@ -12,10 +12,10 @@ from app.models.rag.document_segment import DocumentSegment
 
 
 async def create_document_segment(
-    db: AsyncSession,
+   async_db: AsyncSession,
     document_segment: DocumentSegment,
 ) -> Tuple[DocumentSegmentSchema | None, Exception | None]:
-    service_document_segment = DocumentSegmentService(db)
+    service_document_segment = DocumentSegmentService(async_db)
     document_segment, exception = await service_document_segment.app_dao.async_create(
         document_segment
     )

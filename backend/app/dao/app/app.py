@@ -1,17 +1,16 @@
-from typing import Union, Tuple
+from typing import  Tuple
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session, selectinload, joinedload
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
 from app.models.app.app import App
-from app.models.rag.pivot_app_to_dataset import PivotAppToDataset
 
 
 class AppDAO(BaseDAO[App]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, App)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(App, async_db, sync_db)
 
     async def get_app_by_uuid_with_preloads(self, app_uuid: str) -> Tuple[App | None, SQLAlchemyError | None]:
         # 构建查询语句，左连接 PivotAppToDataset 中的 Dataset 和 current_app_model_config
@@ -30,7 +29,7 @@ class AppDAO(BaseDAO[App]):
             # print(query, app_uuid)
 
             # 执行查询并返回结果
-            result = await self.db.execute(query)
+            result = await self.async_db.execute(query)
             app = result.scalars().first()
             return app, None
 

@@ -12,10 +12,10 @@ from langchain_community.chat_message_histories import ChatMessageHistory, Redis
 
 class MessageDAO(BaseDAO[Message]):
     def __init__(self,
-                 db: Union[AsyncSession, Session],
-                 chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory
+                 chat_history_cls: Type[ChatMessageHistory] = RedisChatMessageHistory,
+                 async_db: AsyncSession = None, sync_db: Session = None,
                  ):
-        super().__init__(db, Message)
+        super().__init__(Message, async_db, sync_db)
 
         self.cached_chat_history_cls = chat_history_cls
         self.chat_history_kwargs = {}

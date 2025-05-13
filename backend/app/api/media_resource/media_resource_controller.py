@@ -9,7 +9,7 @@ from app import settings
 from app.api.middleware.auth import get_session_user
 from app.database.base import PER_PAGE, PAGE
 from app.logger import logger
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.models import User
 from app.schemas.base import ResponseSchema, Pagination
 from app.schemas.media_resource.schema import ResponseGetMediaResourceList, ResponseCreateMediaResource, \
@@ -24,7 +24,7 @@ router = APIRouter()
 @router.get("/list")
 async def api_get_media_resource_list(
         request: Request,
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseGetMediaResourceList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -33,7 +33,7 @@ async def api_get_media_resource_list(
     p = Pagination(page=page, page_size=page_size)
 
     try:
-        media_resources, pagination, exception = await get_media_resource_list(db, p)
+        media_resources, pagination, exception = await get_media_resource_list(async_db, p)
         if exception is not None:
             raise exception
 
@@ -51,12 +51,12 @@ async def api_get_media_resource_list(
 @router.post("/create")
 async def create_media_resource(
         sort_index: int,
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
         resource: UploadFile = File(...)
 ) -> ResponseCreateMediaResource | ResponseSchema:
     try:
 
-        media_resource, exception = await create_media_resource_by_file(db, resource)
+        media_resource, exception = await create_media_resource_by_file(async_db, resource)
         if exception is not None:
             raise exception
 
@@ -76,7 +76,7 @@ async def create_media_resource(
 async def create_media_resource(
         data: RequestCreateMediaResourceByBase64,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseCreateMediaResource | ResponseSchema:
     try:
         # Parse multipart form
@@ -84,7 +84,7 @@ async def create_media_resource(
         #
         # print(session_user)
         media_resource, exception = await create_media_resource_by_base64_string(
-            db, session_user,
+            async_db, session_user,
             data.bucketName, data.base64Data,
             data.mediaName, data.sortIndex,
         )
@@ -107,10 +107,10 @@ async def create_media_resource(
 async def api_get_media_resource_by_uuid(
         media_resource_uuid: str,
         session_user: User = Depends(get_session_user),
-        db: AsyncSession = Depends(get_async_db_session)
+        async_db: AsyncSession = Depends(get_async_db_session_dep)
 ):
     try:
-        media_resource, exception = await get_media_resource_by_uuid(db, session_user, media_resource_uuid)
+        media_resource, exception = await get_media_resource_by_uuid(async_db, session_user, media_resource_uuid)
         if exception is not None:
             raise exception
 

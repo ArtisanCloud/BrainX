@@ -8,11 +8,11 @@ from app.service.rag.document.service import DocumentService
 
 
 async def get_document_by_uuid(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user: User,
         document_uuid: str
 ) -> Tuple[Document | None, Exception | None]:
-    service_document = DocumentService(db)
+    service_document = DocumentService(async_db)
     document, exception = await (service_document.
                                  document_dao.
                                  get_by_uuid(document_uuid))

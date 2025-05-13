@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple, Dict, Any
+from typing import List, Optional, Tuple, Any
 
 from app.models.rag.document_node import DocumentNode
 

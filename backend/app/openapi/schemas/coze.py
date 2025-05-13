@@ -1,6 +1,6 @@
 
 from typing import Dict, List, Optional
-from cozepy import ChatPoll, Message
+from cozepy import Message
 from pydantic import BaseModel
 
 

@@ -11,9 +11,9 @@ from app.schemas.rag.document import DocumentSchema
 
 
 class DocumentService:
-    def __init__(self, db: AsyncSession):
-        self.dataset_dao = DatasetDAO(db)
-        self.document_dao = DocumentDAO(db)
+    def __init__(self,async_db: AsyncSession):
+        self.dataset_dao = DatasetDAO(async_db)
+        self.document_dao = DocumentDAO(async_db)
 
     async def add_content(
         self, segment_rule: DatasetSegmentRule, documents: List[Document]

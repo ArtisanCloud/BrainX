@@ -2,6 +2,7 @@ from typing import List, Tuple, Sequence
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.dao.rag.dataset import DatasetDAO
 from app.models.rag.dataset import Dataset
@@ -9,8 +10,8 @@ from app.schemas.rag.dataset import DatasetSchema
 
 
 class DatasetService:
-    def __init__(self, db: AsyncSession):
-        self.dataset_dao = DatasetDAO(db)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        self.dataset_dao = DatasetDAO(async_db, sync_db)
 
     async def sync_dataset_with_apps(
         self,

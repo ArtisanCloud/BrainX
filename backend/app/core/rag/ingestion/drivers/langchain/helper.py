@@ -5,7 +5,6 @@ from langchain_core.documents import Document
 from langchain_core.runnables.utils import Output
 
 from app.core.libs.node import generate_node_hash
-from app.logger import logger
 from app.models.rag.document_node import DocumentNode
 from app.models.rag.invoke_response import InvokeResponse
 

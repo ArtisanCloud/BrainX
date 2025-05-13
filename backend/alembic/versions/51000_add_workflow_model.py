@@ -5,7 +5,7 @@ Revises: 14000
 Create Date: 2024-06-15 00:45:05.449070
 
 """
-import datetime
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -14,8 +14,7 @@ from sqlalchemy import UUID
 
 from app import settings
 from app.models import Tenant
-from app.models.base import table_name_tenant, time_now
-from app.models.originaztion.user import table_name_user
+from app.models.base import  time_now
 from app.models.workflow.workflow import table_name_workflow
 
 # revision identifiers, used by Alembic.

@@ -32,10 +32,10 @@ def sign_token(user: User, secret_key, expires_in) -> AccessTokenSchema:
 
 
 async def login_by_account(
-        db: AsyncSession,
+       async_db: AsyncSession,
         account: str, password: str
 ) -> tuple[AccessTokenSchema | None, Exception | None]:
-    service_user = UserService(db)
+    service_user = UserService(async_db)
 
     # check user exist or not
     user, exception = await service_user.user_dao.get_by_account(account)

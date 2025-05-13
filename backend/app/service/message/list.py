@@ -1,10 +1,7 @@
-import uuid
 from typing import Tuple, List
-
-from langchain_core.messages import BaseMessage
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, UUID, desc
+from sqlalchemy import select, desc
 
 from app.schemas.base import Pagination, ResponsePagination
 from app.schemas.robot_chat.conversation import MessageSchema
@@ -20,13 +17,13 @@ from app.service.message.service import (
 
 
 async def get_cached_message_list(
-    db: AsyncSession,
+   async_db: AsyncSession,
     conversation_uuid: str,
     pagination: Pagination,
 ) -> Tuple[
     List[MessageSchema] | None, ResponsePagination | None, SQLAlchemyError | None
 ]:
-    service_message = MessageService(db)
+    service_message = MessageService(async_db)
     messages, pg, exception = await service_message.get_cached_message_list(
         conversation_uuid, pagination
     )
@@ -39,7 +36,7 @@ async def get_cached_message_list(
 
 
 async def get_message_list(
-    db: AsyncSession, pagination: Pagination, app_uuid: str | None = None
+   async_db: AsyncSession, pagination: Pagination, app_uuid: str | None = None
 ) -> Tuple[
     List[MessageSchema] | None, ResponsePagination | None, SQLAlchemyError | None
 ]:
@@ -50,7 +47,7 @@ async def get_message_list(
         .order_by(desc(Message.updated_at))
     )
     # print(stmt)
-    res, pg, exception = await paginate_query(db, stmt, Message, pagination, True)
+    res, pg, exception = await paginate_query(async_db, stmt, Message, pagination, True)
     # print(res, pg, exception)
     if exception:
         return None, None, exception

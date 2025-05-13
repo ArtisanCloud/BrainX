@@ -8,12 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
 
+from app.dao.base import BaseDAO
 from app.models.tenant.pivot_tenant_to_user import PivotTenantToUser
 
-
-class PivotTenantToUserDAO:
-    def __init__(self, db: Union[AsyncSession, Session]):
-        self.db = db
+class PivotTenantToUserDAO(BaseDAO[PivotTenantToUser]):
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(PivotTenantToUser, async_db, sync_db)
 
     def generate_uuid(self):
         str_merged_uuid = self.user_uuid + self.tenant_uuid
@@ -34,7 +34,7 @@ class PivotTenantToUserDAO:
     async def create_pivot(self, tenant_uuid: str, user_uuid: str) -> Tuple[PivotTenantToUser | None, SQLAlchemyError | None]:
         try:
             pivot = PivotTenantToUser(tenant_uuid=tenant_uuid, user_uuid=user_uuid)
-            self.db.add(pivot)
+            self.async_db.add(pivot)
 
             return pivot, None
         except SQLAlchemyError as e:
@@ -44,11 +44,11 @@ class PivotTenantToUserDAO:
     async def delete_pivot(self, tenant_uuid: str, user_uuid: str) -> Tuple[bool, SQLAlchemyError | None]:
         try:
             stmt = select(PivotTenantToUser).filter_by(tenant_uuid=tenant_uuid, user_uuid=user_uuid)
-            result = await self.db.execute(stmt)
+            result = await self.async_db.execute(stmt)
             pivot = result.scalar_one_or_none()
 
             if pivot:
-                self.db.delete(pivot)
+                self.async_db.delete(pivot)
 
                 return True, None
             else:

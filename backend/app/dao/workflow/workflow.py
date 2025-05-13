@@ -7,5 +7,5 @@ from app.models.workflow.workflow import Workflow
 
 
 class WorkflowDAO(BaseDAO[Workflow]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, Workflow)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(Workflow, async_db, sync_db)

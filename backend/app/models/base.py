@@ -1,17 +1,16 @@
-from sqlalchemy import TIMESTAMP, BigInteger, select, PrimaryKeyConstraint, Column
+from sqlalchemy import TIMESTAMP, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from enum import IntEnum, Enum
 
-from pytz import timezone
 from datetime import datetime
 import uuid as uuid
 
 from sqlalchemy.orm import declarative_base, mapped_column
 from app.config.config import UTC
 
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 
 
 def time_now():
@@ -52,14 +51,14 @@ class BaseORM(Base):
     @classmethod
     def get_by_uuid(cls, uuid):
         stmt = select(cls).filter(cls.uuid == uuid, cls.deleted_at.is_(None)).first()
-        db: AsyncSession = get_async_db_session()
-        return db.execute(stmt)
+        async_db: AsyncSession = get_async_db_session_dep()
+        return async_db.execute(stmt)
 
     @classmethod
     def get_by_id(cls, id):
         stmt = select(cls).filter(cls.id == id, cls.deleted_at.is_(None)).first()
-        db: AsyncSession = get_async_db_session()
-        return db.execute(stmt)
+        async_db: AsyncSession = get_async_db_session_dep()
+        return async_db.execute(stmt)
 
 
 class BasePivotModel(Base):

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import StreamingResponse
 
 from app import settings
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.database.seed import init_user_uuid
 from app.logger import logger
 from app.openapi.schemas.demo import ResponseHelloWorld, RequestHelloWorld, RequestEchoLongTime, ResponseEchoLongTime
@@ -72,7 +72,7 @@ async def api_echo_long_time(
 async def api_chat(
         request: Request,
         data: RequestQuery,
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> StreamingResponse:
     try:
         question = data.question
@@ -80,7 +80,7 @@ async def api_chat(
         conversation_uuid = ""
 
         stream_response, conversation_uuid, exception = await chat(
-            db,
+            async_db,
             question, data.llm,
             init_user_uuid, app_uuid, conversation_uuid
         )

@@ -29,7 +29,7 @@ from app.utils.url import get_storage_complete_url, get_oss_url, get_storage_pat
 class RagProcessorTaskService:
     def __init__(
             self,
-            db: Optional[Session],
+            sync_db: Optional[Session],
             document_uuid: str,
             user_uuid: str,
             task: Any = None,
@@ -40,14 +40,14 @@ class RagProcessorTaskService:
         self.dataset: Dataset
         self.user: User
 
-        if db is None:
+        if sync_db is None:
             raise Exception("db session is None")
-        self.db = db
+        self.sync_db = sync_db
         self.model_manager = ModelManager(
             FrameworkDriverType(settings.agent.framework_driver)
         )
-        self.document_dao = DocumentDAO(self.db)
-        self.document_segment_dao = DocumentSegmentDAO(self.db)
+        self.document_dao = DocumentDAO(sync_db=self.sync_db)
+        self.document_segment_dao = DocumentSegmentDAO(sync_db=self.sync_db)
 
         # 执行查询逻辑
         self.document = self._get_document(document_uuid)
@@ -57,7 +57,7 @@ class RagProcessorTaskService:
 
     def _get_document(self, document_uuid: str) -> Document:
         stmt = select(Document).where(Document.uuid == document_uuid)
-        document = self.db.execute(stmt).scalars().first()
+        document = self.sync_db.execute(stmt).scalars().first()
         if document is None:
             msg_error = f"document uuid: {document_uuid}, error: cannot be found in db"
             logger.error(msg_error)
@@ -66,7 +66,7 @@ class RagProcessorTaskService:
 
     def _get_dataset(self, dataset_uuid: str) -> Dataset:
         stmt = select(Dataset).where(Dataset.uuid == dataset_uuid)
-        dataset = self.db.execute(stmt).scalars().first()
+        dataset = self.sync_db.execute(stmt).scalars().first()
         if dataset is None:
             msg_error = f"dataset uuid: {dataset_uuid}, error: cannot be found in db"
             logger.error(msg_error)
@@ -76,7 +76,7 @@ class RagProcessorTaskService:
 
     def _get_user(self, user_uuid: str) -> User:
         stmt = select(User).where(User.uuid == user_uuid)
-        user = self.db.execute(stmt).scalars().first()
+        user = self.sync_db.execute(stmt).scalars().first()
         if user is None:
             msg_error = f"user uuid: {user_uuid}, error: cannot be found in db"
             logger.error(msg_error)
@@ -85,8 +85,8 @@ class RagProcessorTaskService:
 
     def __del__(self):
         # 关闭数据库会话
-        if self.db:
-            self.db.close()
+        if self.sync_db:
+            self.sync_db.close()
 
     @staticmethod
     def is_document_available_to_process(
@@ -175,7 +175,7 @@ class RagProcessorTaskService:
 
         # create embedding model instance
         embedding_model_instance, exception = self.model_manager.get_model_instance(
-            self.db,
+            self.sync_db,
             self.document.tenant_uuid,
             self.dataset.embedding_model_provider,
             ModelType.TEXT_EMBEDDING,
@@ -436,12 +436,13 @@ class RagProcessorTaskService:
             self.document.updated_at = datetime.now(UTC)  # 更新操作时间为当前时间
 
             # 保存预处理后的状态
-            # self.db.commit()  # 提交数据库事务
+            self.sync_db.commit()  # 提交数据库事务
             return None
 
         except Exception as e:
             logger.error(f"Reset failed: {e}")
+            self.sync_db.rollback()  # 回滚数据库事务
             return e
 
         # finally:
-        #     self.db.close()
+        #     self.sync_db.close()

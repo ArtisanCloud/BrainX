@@ -1,7 +1,7 @@
 from celery import states
 
 from app import settings
-from app.database.deps import get_sync_db_session
+from app.database.deps import get_sync_db_session_dep
 from app.service.task import logger_rag as logger
 
 from app.service.task.celery_app import celery_app
@@ -12,7 +12,7 @@ from app.service.task.rag.service import RagProcessorTaskService
 def task_process_document(
     self, document_uuid: str, user_uuid: str = None, *args, **kwargs
 ):
-    with get_sync_db_session() as db:
+    with get_sync_db_session_dep() as db:
 
         service_rag_processor = RagProcessorTaskService(
             db, document_uuid, user_uuid, task=self

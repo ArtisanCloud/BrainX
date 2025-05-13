@@ -7,12 +7,12 @@ from app.schemas.robot_chat.conversation import ConversationSchema
 
 
 class ConversationService:
-    def __init__(self, db: AsyncSession):
-        self.conversation_dao = ConversationDAO(db)
+    def __init__(self, async_db: AsyncSession):
+        self.conversation_dao = ConversationDAO(async_db)
 
 
 def transform_conversation_to_reply(
-    conversation: Conversation,
+        conversation: Conversation,
 ) -> [ConversationSchema | None]:
     if conversation is None:
         return None
@@ -21,7 +21,7 @@ def transform_conversation_to_reply(
 
 
 def transform_conversations_to_reply(
-    conversations: [Conversation],
+        conversations: [Conversation],
 ) -> List[ConversationSchema]:
     data = [transform_conversation_to_reply(resource) for resource in conversations]
     # print(data)

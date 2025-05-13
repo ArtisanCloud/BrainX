@@ -5,15 +5,12 @@ Revises: 10000
 Create Date: 2024-06-15 00:44:38.755516
 
 """
-import datetime
 from typing import Sequence, Union
 from sqlalchemy.dialects.postgresql import UUID
 
 from alembic import op
 import sqlalchemy as sa
 
-from app import settings
-from app.config.server import ProjectType
 from app.models.base import time_now
 from app.models.tenant.tenant import table_name_tenant
 

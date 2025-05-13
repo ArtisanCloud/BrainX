@@ -5,14 +5,13 @@ from app.schemas.auth import AccessTokenSchema
 
 
 class PlatformService:
-    def __init__(self, db: AsyncSession):
-        self.platform_dao = PlatformDAO(db)
+    def __init__(self, async_db: AsyncSession):
+        self.platform_dao = PlatformDAO(async_db)
 
     async def auth_by_account(self,
-            db: AsyncSession,
-            access_key: str, secret_key: str
-    ) -> tuple[AccessTokenSchema | None, Exception | None]:
-
+                              async_db: AsyncSession,
+                              access_key: str, secret_key: str
+                              ) -> tuple[AccessTokenSchema | None, Exception | None]:
         # # check platform exist or not
         # platform, exception = await self.platform_dao.async_get_by_access_key(account)
         # if exception is not None:
@@ -37,4 +36,3 @@ class PlatformService:
         # return access_token, exception
 
         return None, None
-

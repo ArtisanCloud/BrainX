@@ -7,5 +7,5 @@ from app.models.model_provider.provider import Provider
 
 
 class ProviderDAO(BaseDAO[Provider]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, Provider)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(Provider, async_db, sync_db)

@@ -5,7 +5,7 @@ Revises: 51300
 Create Date: 2024-04-22 15:10:57.595552
 
 """
-import datetime
+
 from typing import Sequence, Union
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -15,9 +15,9 @@ import sqlalchemy as sa
 from app import settings
 from app.models.app.app import table_name_app
 from app.models.base import time_now
-from app.models.originaztion.user import table_name_user, User
-from app.models.tenant.tenant import table_name_tenant, Tenant
-from app.models.workflow.workflow import table_name_workflow, Workflow
+from app.models.originaztion.user import User
+from app.models.tenant.tenant import Tenant
+from app.models.workflow.workflow import Workflow
 
 # revision identifiers, used by Alembic.
 revision: str = '51400'

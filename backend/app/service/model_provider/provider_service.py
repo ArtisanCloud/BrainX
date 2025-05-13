@@ -11,8 +11,8 @@ from app.models.model_provider.provider import Provider
 
 
 class ProviderService:
-    def __init__(self, db: AsyncSession):
-        self.model_provider_dao = ProviderDAO(db)
+    def __init__(self, async_db: AsyncSession):
+        self.model_provider_dao = ProviderDAO(async_db)
         self.provider_manager = ProviderManager(
             FrameworkDriverType(settings.agent.framework_driver)
         )

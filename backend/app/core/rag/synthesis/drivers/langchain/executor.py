@@ -7,7 +7,7 @@ from langchain_community.chat_message_histories import (
 from langchain_core.output_parsers import JsonOutputParser
 
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough, RunnableLambda
+from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
 from langchain_core.runnables.utils import Input
 
 from app import settings

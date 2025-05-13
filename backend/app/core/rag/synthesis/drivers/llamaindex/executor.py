@@ -1,20 +1,38 @@
-from typing import Optional, Any, List, Dict
+from typing import Optional, Any, List, Dict, Iterator, Tuple
 
 from app.core.rag.synthesis.interface import BaseAgentExecutor
+from app.models import App
 
 
 class LlamaIndexAgentExecutor(BaseAgentExecutor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def invoke(self, query: Dict, config: Optional[Any] = None, **kwargs: Any) -> str:
-        return ""
+    def stream(self, query: Any,
+               temperature: float = 0.5,
+               input_variables=list[str], template: str = '',
+               **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
+        return None, None
 
-    def stream(self, query: Dict, config: Optional[Any] = None, **kwargs: Any) -> Any:
-        return
+    def invoke(self, query: Any,
+               temperature: float = 0.5,
+               input_variables=list[str], template: str = '',
+               output_schemas: Any = None,
+               **kwargs: Any) -> Tuple[Any | None, Exception | None]:
+        return None, None
 
-    def completion(self, query: Dict, config: Optional[Any] = None, **kwargs: Any) -> str:
-        return ""
+    def chat_completion(self,
+                        question: Any,
+                        temperature: float = 0.5,
+                        app: App = None,
+                        session_id: str = "",
+                        **kwargs: Any) -> Tuple[str, Exception | None]:
+        return "", None
 
-    def execute(self, tasks: List[str], config: Optional[Any] = None, **kwargs: Any) -> List[str]:
-        return []
+    def chat_stream(self,
+                    question: Any,
+                    temperature: float = 0.5,
+                    app: App = None,
+                    session_id: str = "",
+                    **kwargs: Any) -> Tuple[Iterator | None, Exception | None]:
+        return None, None

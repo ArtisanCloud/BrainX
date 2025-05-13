@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import UUID, Text, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 

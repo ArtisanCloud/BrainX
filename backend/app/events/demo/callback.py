@@ -1,6 +1,5 @@
 from pika import BasicProperties, DeliveryMode
 from pika.channel import Channel
-from pika.exceptions import AMQPConnectionError, ConnectionClosed
 
 import json
 import time

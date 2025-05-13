@@ -1,6 +1,5 @@
-from typing import Tuple, Optional, Union
+from typing import Tuple, Optional
 
-from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
@@ -9,13 +8,12 @@ from app.config.config import UTC
 from app.dao.base import BaseDAO
 from app.models import User
 from app.models.rag.document import Document, DocumentIndexingStatus, DocumentStatus
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class DocumentDAO(BaseDAO[Document]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, Document)
-        self.db = db
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(Document, async_db, sync_db)
 
     def _set_indexing_status(self, document: Document,
                              indexing_status: DocumentIndexingStatus,
@@ -88,8 +86,8 @@ class DocumentDAO(BaseDAO[Document]):
             document, error = self._set_indexing_status(document, status, error, user)
             if error:
                 return None, error
-            await self.db.flush()
-            await self.db.refresh(document)
+            await self.async_db.flush()
+            await self.async_db.refresh(document)
             return document, None
         except SQLAlchemyError as e:
             print("error: ", e)
@@ -103,18 +101,19 @@ class DocumentDAO(BaseDAO[Document]):
             document, error = self._set_indexing_status(document, status, error, user)
             if error:
                 return None, error
-            self.db.flush()
-            self.db.refresh(document)
+            self.async_db.flush()
+            self.async_db.refresh(document)
             return document, None
         except SQLAlchemyError as e:
             print("error: ", e)
             return None, e
 
-    def set_word_count(self, document: Document, word_count: int) -> Tuple[Optional[Document], Optional[SQLAlchemyError]]:
+    def set_word_count(self, document: Document, word_count: int) -> Tuple[
+        Optional[Document], Optional[SQLAlchemyError]]:
         try:
             document.word_count = word_count
-            self.db.flush()
-            self.db.refresh(document)
+            self.sync_db.flush()
+            self.sync_db.refresh(document)
             return document, None
         except SQLAlchemyError as e:
             return None, e

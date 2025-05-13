@@ -1,8 +1,9 @@
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Any
 # import faiss
 import numpy as np
 
 from app.core.rag.vector_store.interface import BaseVectorStore
+from app.models.rag.document_node import DocumentNode
 
 
 class FaissVectorStore(BaseVectorStore):
@@ -18,6 +19,15 @@ class FaissVectorStore(BaseVectorStore):
         #
         # if index_path:
         #     self.index = faiss.read_index(index_path)
+
+    def add_documents(self, nodes: List[DocumentNode], **kwargs: Any) -> List[str]:
+        """
+        将文档节点添加到向量存储中。
+        :param nodes: 文档节点列表
+        :param kwargs: 其他参数
+        :return: 文档 ID 列表
+        """
+        return []
 
     def add_vectors(self, vectors: List[List[float]], document_ids: List[str],
                     metadata: Optional[List[Dict]] = None) -> None:
@@ -89,3 +99,21 @@ class FaissVectorStore(BaseVectorStore):
             [(str(idx), float(dist)) for idx, dist in zip(indices[i], distances[i])]
             for i in range(len(query_vectors))
         ]
+
+    def search_by_text(self, text: str, top_k: int, filter_by: dict) -> List[DocumentNode]:
+        return []
+
+    def search_by_vector(self, query_vector: List[float], top_k: int) -> List[DocumentNode]:
+        return []
+
+    def delete_documents(self, document_ids: List[str], collection_only: bool = False, ) -> None:
+        return None
+
+    def update_documents(self, nodes: List[DocumentNode], **kwargs: Any):
+        return []
+
+    def upsert_documents(self, nodes: List[DocumentNode], **kwargs: Any):
+        return []
+
+    def get_base_vector_store(self) -> "BaseVectorStore":
+        return self

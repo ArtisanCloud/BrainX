@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta, Session
 from sqlalchemy.exc import IntegrityError
 
-from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Union, Sequence
+from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Sequence
 
 from app.config.config import UTC
 
@@ -14,8 +14,9 @@ ModelType = TypeVar('ModelType', bound=DeclarativeMeta)
 
 
 class BaseDAO(Generic[ModelType]):
-    def __init__(self, db: Union[AsyncSession, Session], model: Type[ModelType]):
-        self.db = db
+    def __init__(self, model: Type[ModelType], async_db: AsyncSession = None, sync_db: Session = None):
+        self.async_db = async_db
+        self.sync_db = sync_db
         self.model = model
 
     async def async_create(self, obj: ModelType) -> Tuple[
@@ -23,12 +24,12 @@ class BaseDAO(Generic[ModelType]):
         """
         创建新的模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             # print(obj)
             try:
-                self.db.add(obj)
-                await self.db.flush()
-                await self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
+                self.async_db.add(obj)
+                await self.async_db.flush()
+                await self.async_db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
                 return obj, None
             except Exception as e:
@@ -41,11 +42,11 @@ class BaseDAO(Generic[ModelType]):
         """
         创建新的模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
-                self.db.add(obj)
-                self.db.flush()
-                self.db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
+                self.sync_db.add(obj)
+                self.sync_db.flush()
+                self.sync_db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
                 return obj, None
             except Exception as e:
@@ -65,7 +66,7 @@ class BaseDAO(Generic[ModelType]):
             return None, ValueError(f"Model {obj.__class__.__name__} 没有 `{uid_key}` 字段")
 
         uid_value = getattr(obj, uid_key)  # 获取唯一标识的值
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
                 # 先查询是否存在
                 existing_obj, error = self.sync_get_by_uuid(uid_value)
@@ -75,7 +76,6 @@ class BaseDAO(Generic[ModelType]):
                     return self.sync_create(obj)
 
             except IntegrityError as e:
-                self.db.rollback()
                 return None, e
         else:
             return None, Exception("sync_upsert method requires a Session")
@@ -110,10 +110,10 @@ class BaseDAO(Generic[ModelType]):
         """
         创建新的模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             try:
-                self.db.add_all(objs)
-                await self.db.flush()
+                self.async_db.add_all(objs)
+                await self.async_db.flush()
                 # print(objs)
                 return objs, None
             except Exception as e:
@@ -127,14 +127,13 @@ class BaseDAO(Generic[ModelType]):
         """
         创建新的模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
-                self.db.add_all(objs)
-                self.db.flush()
+                self.sync_db.add_all(objs)
+                self.sync_db.flush()
                 # print(objs)
                 return objs, None
             except Exception as e:
-
                 return None, e
         else:
             return None, Exception("sync_create_many method requires an Session")
@@ -143,9 +142,9 @@ class BaseDAO(Generic[ModelType]):
         """
         根据 UUID 获取模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             try:
-                result = await self.db.execute(select(self.model).filter(self.model.uuid == uuid))
+                result = await self.async_db.execute(select(self.model).filter(self.model.uuid == uuid))
                 return result.scalar_one_or_none(), None
             except Exception as e:
                 return None, e
@@ -156,9 +155,9 @@ class BaseDAO(Generic[ModelType]):
         """
         根据 UUID 获取模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
-                result = self.db.execute(select(self.model).filter(self.model.uuid == uuid))
+                result = self.sync_db.execute(select(self.model).filter(self.model.uuid == uuid))
                 return result.scalar_one_or_none(), None
             except Exception as e:
                 return None, e
@@ -182,7 +181,7 @@ class BaseDAO(Generic[ModelType]):
             # print(conditions)
             # print(f"Generated SQL query: {query_str}")
 
-            result = await self.db.execute(query)
+            result = await self.async_db.execute(query)
             objects = result.scalars().all()
             return objects, None
         except Exception as e:
@@ -206,7 +205,7 @@ class BaseDAO(Generic[ModelType]):
             # print(conditions)
             # print(f"Generated SQL query: {query_str}")
 
-            result = self.db.execute(query)
+            result = self.sync_db.execute(query)
             objects = result.scalars().all()
             return objects, None
         except Exception as e:
@@ -243,7 +242,7 @@ class BaseDAO(Generic[ModelType]):
         """
         更新模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             try:
                 obj, error = await self.async_get_by_uuid(obj_uuid)
                 if error:
@@ -266,7 +265,7 @@ class BaseDAO(Generic[ModelType]):
         """
         更新模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
                 obj, error = self.sync_get_by_uuid(obj_uuid)
                 if error:
@@ -289,7 +288,7 @@ class BaseDAO(Generic[ModelType]):
         """
         部分更新模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             try:
                 obj, error = await self.async_get_by_uuid(obj_uuid)
 
@@ -302,8 +301,8 @@ class BaseDAO(Generic[ModelType]):
                     setattr(obj, field, value)
                 setattr(obj, "updated_at", datetime.now(UTC))
 
-                await self.db.flush()
-                await self.db.refresh(obj)
+                await self.async_db.flush()
+                await self.async_db.refresh(obj)
 
                 return obj, None
 
@@ -318,7 +317,7 @@ class BaseDAO(Generic[ModelType]):
         """
         部分更新模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
                 obj, error = self.sync_get_by_uuid(obj_uuid)
 
@@ -331,8 +330,8 @@ class BaseDAO(Generic[ModelType]):
                     setattr(obj, field, value)
                 setattr(obj, "updated_at", datetime.now(UTC))
 
-                self.db.flush()
-                self.db.refresh(obj)
+                self.sync_db.flush()
+                self.sync_db.refresh(obj)
 
                 return obj, None
 
@@ -347,9 +346,9 @@ class BaseDAO(Generic[ModelType]):
         """
         通用的软删除方法，适用于任意模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             try:
-                async with self.db as session:  # 假设 self.db 返回 AsyncSession 实例
+                async with self.async_db as session:  # 假设 self.async_db 返回 AsyncSession 实例
                     # 构建查询条件
                     query = select(model_cls).where(
                         and_(*[getattr(model_cls, key) == value for key, value in conditions.items()]))
@@ -361,7 +360,7 @@ class BaseDAO(Generic[ModelType]):
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
-                    await self.db.flush()
+                    await self.async_db.flush()
 
                     return True, None
 
@@ -376,9 +375,9 @@ class BaseDAO(Generic[ModelType]):
         """
         通用的软删除方法，适用于任意模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
-                with self.db as session:  # 假设 self.db 返回 AsyncSession 实例
+                with self.sync_db as session:  # 假设 self.async_db 返回 AsyncSession 实例
                     # 构建查询条件
                     query = select(model_cls).where(
                         and_(*[getattr(model_cls, key) == value for key, value in conditions.items()]))
@@ -390,7 +389,7 @@ class BaseDAO(Generic[ModelType]):
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
-                    self.db.flush()
+                    self.async_db.flush()
 
                     return True, None
 
@@ -404,7 +403,7 @@ class BaseDAO(Generic[ModelType]):
         """
         删除模型对象
         """
-        if isinstance(self.db, AsyncSession):
+        if isinstance(self.async_db, AsyncSession):
             try:
                 obj, error = await self.async_get_by_uuid(obj_uuid)
                 if error:
@@ -412,7 +411,7 @@ class BaseDAO(Generic[ModelType]):
                 if not obj:
                     return False, Exception(f"Object with uuid {obj_uuid} not found")
 
-                await self.db.delete(obj)
+                await self.async_db.delete(obj)
 
                 return True, None
             except Exception as e:
@@ -425,7 +424,7 @@ class BaseDAO(Generic[ModelType]):
         """
         删除模型对象
         """
-        if isinstance(self.db, Session):
+        if isinstance(self.sync_db, Session):
             try:
                 obj, error = self.sync_get_by_uuid(obj_uuid)
                 if error:
@@ -433,7 +432,7 @@ class BaseDAO(Generic[ModelType]):
                 if not obj:
                     return False, Exception(f"Object with uuid {obj_uuid} not found")
 
-                self.db.delete(obj)
+                self.async_db.delete(obj)
 
                 return True, None
             except Exception as e:

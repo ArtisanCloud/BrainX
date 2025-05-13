@@ -10,29 +10,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.session import async_session_local, sync_session_local
 
 
-async def get_async_db_session_dep() -> AsyncSession:
+async def get_async_db_session() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
 
     async with async_session_local() as async_db:
         await async_db.execute(
             text(f"SET search_path TO {settings.database.db_schema}, public")
         )
-
-        try:
-            yield async_db
-            #  commit the db session if no exception occurs
-            #  if context_set_db_session_rollback is set to True then rollback the db session
-            if context_set_db_session_rollback.get():
-                logger.info("Rollback Async DB session")
-                await async_db.rollback()
-            else:
-                await async_db.commit()
-        except Exception as e:
-            #  rollback the db session if any exception occurs
-            logger.error(f"Async Session local error: {e}")
-            await async_db.rollback()
-            raise e
-
+        yield async_db
+        # 需要在外部with域中调用commit或者rollback
         # No need for `await db.close()` since context manager handles it
         # finally:
         #  close the db session
@@ -41,7 +27,7 @@ async def get_async_db_session_dep() -> AsyncSession:
 
 @contextmanager
 # 为了某些场景，比如 Celery 等需要直接调用的场景，你可以使用一个简单的函数来获取 session：
-def get_sync_db_session_dep() -> Session:
+def get_sync_db_session() -> Session:
     sync_db = sync_session_local()
     if not sync_db:
         raise ValueError("Failed to initialize sync session")
@@ -54,17 +40,8 @@ def get_sync_db_session_dep() -> Session:
 
     try:
         yield sync_db
-        # 提交事务
-
-        logger.info("Sync DB commit")
-        sync_db.commit()
-    except Exception as e:
-        # 出现异常时回滚事务
-        logger.error("Sync DB rollback")
-        sync_db.rollback()
-        raise e
+        # 需要在外部with域中调用commit或者rollback
     finally:
         # 关闭数据库会话
-
         logger.info("Sync DB session closed")
         sync_db.close()

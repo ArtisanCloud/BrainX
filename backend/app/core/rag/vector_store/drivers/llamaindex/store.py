@@ -11,6 +11,6 @@ class LlamaIndexVectorStoreDriver(VectorStoreDriver):
         """
         self.vector_store = vector_store
 
-    def get_vector_store(self):
+    def get_base_vector_store(self) -> "BaseVectorStore":
         return self.vector_store
 

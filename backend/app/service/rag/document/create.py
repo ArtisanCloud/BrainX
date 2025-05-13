@@ -12,10 +12,10 @@ from app.models.rag.document import Document
 
 
 async def create_document(
-    db: AsyncSession,
+   async_db: AsyncSession,
     document: Document,
 ) -> Tuple[DocumentSchema | None, Exception | None]:
-    service_document = DocumentService(db)
+    service_document = DocumentService(async_db)
     document, exception = await service_document.document_dao.async_create(document)
 
     if exception:

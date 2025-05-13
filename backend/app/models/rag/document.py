@@ -1,6 +1,6 @@
 from enum import IntEnum, auto
 
-from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Text, Integer, TIMESTAMP, Float, JSON
+from sqlalchemy import String, SmallInteger, ForeignKey, Boolean, UUID, Integer, TIMESTAMP, Float, JSON
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app import settings

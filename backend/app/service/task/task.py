@@ -1,13 +1,11 @@
 import time
-from typing import Any
 
 from celery import Task, states
-from sqlalchemy import text, update, UUID
-from sqlalchemy.orm import Session
+from sqlalchemy import text
+
+from app.database.session_manager import get_sync_db_session
 
 from app import settings
-from app.database.deps import get_sync_db_session
-from app.database.seed import init_user_uuid
 from app.database.session import sync_session_local
 from app.service.task import logger
 from app.models import User
@@ -20,18 +18,18 @@ TASK_30S_SYNC_LOCK_KEY = "lock:task_multiple_30s_tasks_sync"
 @celery_app.task
 def run_manual_connect_db():
     # 手动启动生成器
-    db = sync_session_local()
-    db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
+    sync_db = sync_session_local()
+    sync_db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
 
     try:
         # 获取数据库会话对象
         # 使用 db 进行数据库操作
-        result = db.query(User).limit(1).scalar()
+        result = sync_db.query(User).limit(1).scalar()
         print("manual operation:", result)
-        db.commit()
+        sync_db.commit()
     except Exception as e:
         # 处理异常
-        db.rollback()
+        sync_db.rollback()
         raise e
 
     finally:
@@ -143,15 +141,16 @@ class TaskService:
     def run_with_connect_db(self):
         # db = sync_session_local()
         # 手动启动生成器
-        with get_sync_db_session() as db:
+        with get_sync_db_session() as sync_db:
             try:
                 # 获取数据库会话对象
                 # 使用 db 进行数据库操作
-                result = db.query(User).limit(1).scalar()
+                result = sync_db.query(User).limit(1).scalar()
                 print("with auto operation:", result)
-                # db.commit()
+                sync_db.commit()
             except Exception as e:
                 # 处理异常
+                sync_db.rollback()
                 raise e
             finally:
                 # 手动关闭生成器

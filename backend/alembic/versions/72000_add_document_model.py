@@ -5,7 +5,7 @@ Revises: 71100
 Create Date: 2024-07-15 21:29:16.538231
 
 """
-import datetime
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -14,8 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from app import settings
 from app.models import Dataset, Tenant, MediaResource, User, DatasetSegmentRule
-from app.models.base import table_name_document, table_name_tenant, table_name_user, table_name_dataset, \
-    table_name_media_resource, table_name_dataset_segment_rule, time_now
+from app.models.base import table_name_document,  table_name_user, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '72000'

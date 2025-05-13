@@ -6,8 +6,8 @@ from app.schemas.tenant.user import UserSchema
 from app.service.user.service import UserService, transform_user_to_reply
 
 
-async def create_user_by_account(db: AsyncSession, account: str, password: str):
-    service_user = UserService(db)
+async def create_user_by_account(async_db: AsyncSession, account: str, password: str):
+    service_user = UserService(async_db)
 
     # check user exist or not
     exist, exception = await service_user.check_register_account_exist(account)

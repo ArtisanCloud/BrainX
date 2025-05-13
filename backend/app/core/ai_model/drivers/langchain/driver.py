@@ -1,5 +1,3 @@
-from enum import Enum
-
 from app.constant.ai_model.provider import ProviderID
 from app.core.ai_model.drivers.interface.ai_model import AIModel
 from app.core.ai_model.drivers.langchain.factory import ModelProviderFactory
@@ -7,9 +5,11 @@ from app.models.model_provider.provider_model import ModelType
 
 
 class LangchainModelProviderDriver:
+    model: AIModel
+    model_provider: any
 
     def __init__(self):
-        self.model: AIModel
+        pass
 
     def generate_provider_model(
             self,

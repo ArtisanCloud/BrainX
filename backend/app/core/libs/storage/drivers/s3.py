@@ -1,7 +1,7 @@
 import boto3
 from botocore.config import Config
 
-from app.core.libs.storage.storage_abc import StorageABC
+from app.core.libs.storage.storage_abc import StorageABC, ObjectResult
 
 from typing import Generator, Union
 
@@ -21,8 +21,22 @@ class S3Storage(StorageABC):
             config=Config(s3={'addressing_style': config.get('S3_ADDRESS_STYLE')})
         )
 
-    def save(self, filename: str, data: bytes) -> None:
-        self.s3_client.put_object(Bucket=self.config['bucket'], Key=filename, Body=data)
+    def save(self,
+             bucket_name: str,
+             object_name: str,
+             data: bytes,
+             length: int,
+             content_type: str = "application/octet-stream",
+             metadata: dict | None = None,
+             # sse: Sse | None = None,
+             # progress: ProgressType | None = None,
+             part_size: int = 0,
+             num_parallel_uploads: int = 3,
+             # tags: Tags | None = None,
+             # retention: Retention | None = None,
+             legal_hold: bool = False
+             ) -> ObjectResult:
+        return self.s3_client.put_object(Bucket=self.config['bucket'], Key=object_name, Body=data)
 
     def load_once(self, filename: str) -> bytes:
         response = self.s3_client.get_object(Bucket=self.config['bucket'], Key=filename)
@@ -42,6 +56,9 @@ class S3Storage(StorageABC):
             return True
         except:
             return False
+
+    async def check_bucket_exists(self, bucket: str) -> Exception | None:
+        raise NotImplementedError
 
     def delete(self, filename: str) -> None:
         self.s3_client.delete_object(Bucket=self.config['bucket'], Key=filename)

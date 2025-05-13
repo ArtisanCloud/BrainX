@@ -29,9 +29,9 @@ async def event_api_generator(request: Request, llm: str, stream_response: Itera
             if token:
                 content = ""
                 if (
-                    LLMModel.is_openai_model(llm)
-                    or LLMModel.is_kimi_model(llm)
-                    or LLMModel.is_tencent_hunyuan_model(llm)
+                        LLMModel.is_openai_model(llm)
+                        or LLMModel.is_kimi_model(llm)
+                        or LLMModel.is_tencent_hunyuan_model(llm)
                 ):
                     if isinstance(token, str):
                         content = token
@@ -67,7 +67,7 @@ async def event_api_generator(request: Request, llm: str, stream_response: Itera
 
 
 async def chat_event_generator(
-    request: Request, data: RequestChat, user_uuid: str, db: AsyncSession
+        request: Request, data: RequestChat, user_uuid: str, async_db: AsyncSession
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"
@@ -79,7 +79,7 @@ async def chat_event_generator(
 
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await chat(
-            db=db,
+            async_db=async_db,
             question=question,
             images=base64_images,
             llm=data.llm,
@@ -114,19 +114,19 @@ async def chat_event_generator(
             f"Failed to generate event stream: {e}", exc_info=settings.log.exc_info
         )
         yield f"data: {json.dumps({'status': 'error', 'message': error_msg})}\n\n"
-        await db.rollback()
+        await async_db.rollback()
     finally:
         yield f"data: {json.dumps({'status': 'finished'})}\n\n"
-        await db.close()
+        await async_db.close()
 
 
 async def chat(
-    db: AsyncSession,
-    question: str,
-    llm: str,
-    images: list[str] | None = None,
-    user_uuid: str = None,
-    conversation_uuid: str = "",
+        async_db: AsyncSession,
+        question: str,
+        llm: str,
+        images: list[str] | None = None,
+        user_uuid: str = None,
+        conversation_uuid: str = "",
 ):
     # print(question, images)
     # return None, None, None
@@ -145,7 +145,7 @@ async def chat(
 
     elif conversation_uuid != "":
         # 如果是app的对话，则从数据库中获取对话历史记录
-        service_conversation = ConversationService(db)
+        service_conversation = ConversationService(async_db)
         conversation, exception = (
             await service_conversation.conversation_dao.async_get_by_uuid(
                 conversation_uuid

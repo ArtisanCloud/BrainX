@@ -8,11 +8,11 @@ from app.service.conversation.service import ConversationService
 
 
 async def patch_conversation(
-        db: AsyncSession,
+       async_db: AsyncSession,
         conversation_uuid: str,
         update_data: Dict[str, Any]
 ) -> Tuple[ConversationSchema | None, Exception | None]:
-    service_conversation = ConversationService(db)
+    service_conversation = ConversationService(async_db)
     conversation, exception = await service_conversation.patch_conversation(conversation_uuid, update_data)
 
     if exception:

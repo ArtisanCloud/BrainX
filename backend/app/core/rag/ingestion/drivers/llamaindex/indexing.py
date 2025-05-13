@@ -4,6 +4,7 @@ from app.core.ai_model.model_instance import ModelInstance
 from app.core.rag.ingestion.cleaner.base import Cleaner
 from app.core.rag.ingestion.interface import BaseIndexing
 from app.core.rag.ingestion.splitter.base import BaseTextSplitter
+from app.core.rag.vector_store.interface import BaseVectorStore
 from app.models import User, Document
 from app.models.rag.document_node import DocumentNode
 
@@ -29,8 +30,14 @@ class LlamaIndexIndexer(BaseIndexing):
             node.page_content = document_text
 
             # parse document to nodes
-            document_nodes = self.split_documents([node])
+            # document_nodes = self.split_documents([node])
 
         # print("split segments:", [segment.page_content for segment in segments])
 
         return []
+
+    def save_nodes_to_store_vector(self, nodes: List[DocumentNode]) -> Tuple[int, int, Exception]:
+        raise NotImplementedError
+
+    def get_base_vector_store(self) -> BaseVectorStore:
+        raise NotImplementedError

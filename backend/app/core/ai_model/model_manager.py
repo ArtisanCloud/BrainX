@@ -16,13 +16,13 @@ class ModelManager:
         # 提供底层的提供商管理功能
         self.provider_manager = ProviderManager(framework_type)
 
-    def get_model_instance(self, db: Session, tenant_uuid: str, provider: str, model_type: ModelType) -> Tuple[
+    def get_model_instance(self, sync_db: Session, tenant_uuid: str, provider: str, model_type: ModelType) -> Tuple[
         Optional[ModelInstance], Optional[Exception]]:
         if not provider:
-            return self.get_default_model_instance(db, tenant_uuid, model_type)
+            return self.get_default_model_instance(sync_db, tenant_uuid, model_type)
 
         model, exception = self.provider_manager.get_model(
-            db, tenant_uuid,
+            sync_db, tenant_uuid,
             provider, model_type
         )
         if exception is not None:
@@ -34,7 +34,7 @@ class ModelManager:
         ), None
 
     def get_default_model_instance(
-            self, db: Session, tenant_uuid: str, model_type: ModelType
+            self, sync_db: Session, tenant_uuid: str, model_type: ModelType
     ) -> Tuple[Optional[ModelInstance], Optional[Exception]]:
 
         model, exception = self.provider_manager.get_default_model(db, tenant_uuid, model_type)

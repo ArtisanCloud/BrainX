@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy import select, func
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.model_provider.provider_model import ProviderModelDAO
 from app.database.seed import init_model_provider_uuid, init_user_uuid
@@ -11,11 +12,11 @@ from app.models.app.app_model_config import AppModelConfig
 
 
 # 添加代理人数据
-async def seed_apps(db) -> Exception | None:
+async def seed_apps(async_db: AsyncSession) -> Exception | None:
     print("start seed apps")
     try:
         # Check if the table is empty
-        apps_count = await db.scalar(select(func.count()).select_from(App))
+        apps_count = await async_db.scalar(select(func.count()).select_from(App))
 
         if apps_count == 0:
             apps_data = [
@@ -54,10 +55,10 @@ async def seed_apps(db) -> Exception | None:
                 }
             ]
 
-            apps = await get_apps_from_data(db, apps_data)
+            apps = await get_apps_from_data(async_db, apps_data)
             # print(apps)
-            db.add_all(apps)
-            await db.flush()  # 添加 await 关键字
+            async_db.add_all(apps)
+            await async_db.flush()  # 添加 await 关键字
 
         print("success seed apps -----------")
         return None
@@ -66,8 +67,8 @@ async def seed_apps(db) -> Exception | None:
         return e
 
 
-async def get_apps_from_data(db, data: list[dict]) -> list[App]:
-    dao = ProviderModelDAO(db)
+async def get_apps_from_data(async_db: AsyncSession, data: list[dict]) -> list[App]:
+    dao = ProviderModelDAO(async_db)
 
     apps = []
     for i, item in enumerate(data):

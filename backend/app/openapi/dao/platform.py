@@ -7,5 +7,5 @@ from app.openapi.models.platform import Platform
 
 
 class PlatformDAO(BaseDAO[Platform]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, Platform)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(Platform, async_db, sync_db)

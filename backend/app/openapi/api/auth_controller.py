@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.logger import logger
 from app.openapi.middleware.auth import auth_openapi_access_key
 from app.schemas.base import ResponseSchema
@@ -17,11 +17,11 @@ router = APIRouter()
 @router.post("/")
 async def api_auth(
         data: RequestAuthPlatform,
-        db: AsyncSession = Depends(get_async_db_session),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 
 ) -> ResponseAuthPlatform | ResponseSchema:
     try:
-        # service_platform = PlatformService(db)
+        # service_platform = PlatformService(async_db)
         # token, exception = await service_platform.auth_by_platform(db, data.account, data.password)
         token, exception = auth_openapi_access_key(data)
         if exception is not None:

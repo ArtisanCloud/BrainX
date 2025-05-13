@@ -6,8 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
-from app.api.middleware.auth import get_session_user
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.logger import logger
 from app.models import User
 from app.openapi.schemas.chat import RequestOpenAIChat
@@ -27,14 +26,14 @@ async def api_chat(
     request: Request,
     data: RequestChat,
     # session_user: User = Depends(get_session_user),
-    db: AsyncSession = Depends(get_async_db_session),
+    async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> StreamingResponse:
     try:
         session_user = User(uuid=init_user_uuid)
         # print("conversationUUID:", data)
         return StreamingResponse(
             chat_event_generator(
-                request=request, data=data, user_uuid=str(session_user.uuid), db=db
+                request=request, data=data, user_uuid=str(session_user.uuid), async_db=async_db
             ),
             media_type="text/event-stream",
             headers={
@@ -61,13 +60,13 @@ async def api_agent_chat(
     request: Request,
     data: RequestChat,
     # session_user: User = Depends(get_session_user),
-    db: AsyncSession = Depends(get_async_db_session),
+    async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> StreamingResponse:
     try:
         session_user = User(uuid=init_user_uuid)
         return StreamingResponse(
             agent_chat_event_generator(
-                request=request, data=data, user_uuid=str(session_user.uuid), db=db
+                request=request, data=data, user_uuid=str(session_user.uuid), async_db=async_db
             ),
             media_type="text/event-stream",
             headers={
@@ -97,13 +96,13 @@ async def api_agent_openai_chat(
     request: Request,
     data: RequestOpenAIChat,
     # session_user: User = Depends(get_session_user),
-    db: AsyncSession = Depends(get_async_db_session),
+    async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> StreamingResponse:
     try:
         session_user = User(uuid=init_user_uuid)
         return StreamingResponse(
             agent_openai_chat_event_generator(
-                request=request, data=data, user_uuid=str(session_user.uuid), db=db
+                request=request, data=data, user_uuid=str(session_user.uuid), async_db=async_db
             ),
             media_type="text/event-stream",
             headers={

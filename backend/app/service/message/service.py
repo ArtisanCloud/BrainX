@@ -11,11 +11,11 @@ from app.schemas.robot_chat.conversation import MessageSchema
 
 
 class MessageService:
-    def __init__(self, db: AsyncSession):
-        self.conversation_dao = MessageDAO(db)
+    def __init__(self, async_db: AsyncSession):
+        self.conversation_dao = MessageDAO(async_db)
 
     async def get_cached_message_list(
-        self, conversation_uuid: str, p: Pagination
+            self, conversation_uuid: str, p: Pagination
     ) -> Tuple[
         Optional[List[BaseMessage]], Optional[ResponsePagination], Optional[Exception]
     ]:

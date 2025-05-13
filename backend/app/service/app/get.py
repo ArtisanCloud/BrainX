@@ -8,11 +8,11 @@ from app.service.app.service import AppService
 
 
 async def get_app_by_uuid(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user: User,
         app_uuid: str
 ) -> Tuple[App | None, Exception | None]:
-    service_app = AppService(db)
+    service_app = AppService(async_db)
     app, exception = await service_app.app_dao.get_app_by_uuid_with_preloads(app_uuid)
 
     if exception:

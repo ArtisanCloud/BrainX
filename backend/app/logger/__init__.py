@@ -1,6 +1,5 @@
 import logging
 import psutil
-from app.config.config import settings
 from app.logger.log import get_logger
 
 # 获取当前进程

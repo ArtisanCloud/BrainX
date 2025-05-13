@@ -3,20 +3,19 @@ from typing import Tuple, List
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import joinedload
 
 from app.schemas.base import Pagination, ResponsePagination
 from app.schemas.app.app import AppSchema
 from app.service.app.service import transform_apps_to_reply
 
 from app.service.base import paginate_query
-from app.service.app.create import transform_app_to_reply
 
 from app.models.app.app import App
 
 
 async def get_app_list(
-    db: AsyncSession, tenant_uuid: str, pagination: Pagination
+   async_db: AsyncSession, tenant_uuid: str, pagination: Pagination
 ) -> Tuple[List[AppSchema] | None, ResponsePagination | None, SQLAlchemyError | None]:
     stmt = (
         select(App)
@@ -32,7 +31,7 @@ async def get_app_list(
     )
     # print(stmt)
     res, pg, exception = await paginate_query(
-        db, stmt, App, pagination, True, need_unique=True
+        async_db, stmt, App, pagination, True, need_unique=True
     )
     if exception:
         return None, None, exception

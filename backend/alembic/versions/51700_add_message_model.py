@@ -5,7 +5,6 @@ Revises: 51600
 Create Date: 2024-07-07 00:27:18.478591
 
 """
-import datetime
 from typing import Sequence, Union
 
 from alembic import op
@@ -13,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy import UUID
 
 from app import settings
-from app.models.base import table_name_message, table_name_conversation, time_now
+from app.models.base import table_name_message, time_now
 
 # revision identifiers, used by Alembic.
 revision: str = '51700'

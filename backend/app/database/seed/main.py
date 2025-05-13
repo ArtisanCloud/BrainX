@@ -24,38 +24,38 @@ async_session_local = sessionmaker(
 
 # 初始化会话
 async def start_seed() -> Exception | None:
-    async with async_session_local() as db:
-        await db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
+    async with async_session_local() as async_db:
+        await async_db.execute(text(f"SET search_path TO {settings.database.db_schema}, public"))
         try:
             #  执行添加root用户租户
-            e = await seed_tenants(db)
+            e = await seed_tenants(async_db)
             if e:
                 raise e
 
             #  执行添加root用户种子
-            e = await seed_users(db)
+            e = await seed_users(async_db)
             if e:
                 raise e
 
             # 执行添加种子数据的函数
-            e = await seed_default_tenant_models(db)
+            e = await seed_default_tenant_models(async_db)
             if e:
                 raise e
 
             # 执行添加种子数据的函数
-            e = await seed_apps(db)
+            e = await seed_apps(async_db)
             if e:
                 raise e
 
-            await db.commit()
+            await async_db.commit()
             
         except Exception as e:
-            await db.rollback()
+            await async_db.rollback()
 
             return e
 
         finally:
-            await db.close()
+            await async_db.close()
 
         # await seed_conversations()
 

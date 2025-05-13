@@ -25,9 +25,9 @@ from app.utils.media import (
 
 
 class MediaResourceService:
-    def __init__(self, db: AsyncSession):
-        self.db = db
-        self.media_resource_dao = MediaResourceDAO(self.db)
+    def __init__(self,async_db: AsyncSession):
+        self.async_db = async_db
+        self.media_resource_dao = MediaResourceDAO(self.async_db)
         self.oss_client: Storage | None = None
 
         self.oss_client = client_storage

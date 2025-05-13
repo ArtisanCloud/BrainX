@@ -18,8 +18,6 @@ async def api_query(
     """
     query question_answer by text
     """
-
-    # print(db)
     question = query.question
     # print(question)
     llm = 'default'

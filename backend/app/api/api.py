@@ -1,12 +1,10 @@
-import os
-
 from fastapi import APIRouter, Depends
 
 from app.api.auth import auth_controller
 from app.api.cache import cache_controller
 from app.api.conversation import conversation_controller, message_controller
 from app.api.event import event_controller
-from app.api.middleware.auth import auth_user_token, get_session_user
+from app.api.middleware.auth import auth_user_token
 from app.api.rag import (
     dataset_controller,
     document_controller,

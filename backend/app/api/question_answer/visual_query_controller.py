@@ -8,7 +8,6 @@ from app.schemas.question_answer.visual_query import (
     RequestVisualQuery,
     ResponseVisualQuery,
 )
-from app.service.question_answer.visual_query import visual_query
 from app.config.config import settings
 from app.utils.media import remove_base64_prefix
 
@@ -59,7 +58,6 @@ async def api_visual_query(
 
 import tempfile
 import os
-from typing import List
 import ollama
 
 

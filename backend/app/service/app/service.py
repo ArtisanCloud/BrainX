@@ -13,8 +13,8 @@ from app.service.rag.dataset.service import transform_dataset_to_reply
 
 
 class AppService:
-    def __init__(self, db: AsyncSession):
-        self.app_dao = AppDAO(db)
+    def __init__(self,async_db: AsyncSession):
+        self.app_dao = AppDAO(async_db)
 
 
 def transform_app_model_config_to_reply(

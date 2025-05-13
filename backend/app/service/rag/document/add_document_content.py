@@ -24,9 +24,9 @@ from app.utils.url import get_storage_complete_url
 
 
 async def add_document_content(
-    db: AsyncSession,
-    user: User,
-    data: RequestAddDocumentContent,
+        async_db: AsyncSession,
+        user: User,
+        data: RequestAddDocumentContent,
 ) -> Tuple[List[DocumentSchema] | None, Exception | None]:
     try:
         # 获取资源文件
@@ -34,7 +34,7 @@ async def add_document_content(
             return None, Exception("lack of document files")
 
         # 先获取dataset对象，确认用户拥有这个dataset
-        service_dataset = DatasetService(db)
+        service_dataset = DatasetService(async_db)
         dataset, exception = await service_dataset.dataset_dao.async_get_by_uuid(
             data.dataset_uuid
         )
@@ -63,9 +63,9 @@ async def add_document_content(
                 mode=data.rule_mode,
                 rules=rule,
             )
-            db.add(segment_rule)
-            await db.flush()
-            await db.refresh(segment_rule)
+            async_db.add(segment_rule)
+            await async_db.flush()
+            await async_db.refresh(segment_rule)
         else:
             # 如果易经存在了，则不需要更新segment_rule
             pass
@@ -102,7 +102,7 @@ async def add_document_content(
                 )
             )
 
-        service_document = DocumentService(db)
+        service_document = DocumentService(async_db)
         segment_rule, documents, exception = await service_document.add_content(
             segment_rule, documents
         )

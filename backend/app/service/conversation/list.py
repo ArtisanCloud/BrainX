@@ -1,9 +1,8 @@
-import uuid
 from typing import Tuple, List
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, UUID, desc
+from sqlalchemy import select, desc
 
 from app.schemas.base import Pagination, ResponsePagination
 from app.schemas.robot_chat.conversation import ConversationSchema
@@ -15,7 +14,7 @@ from app.service.conversation.service import transform_conversations_to_reply
 
 
 async def get_conversation_list(
-    db: AsyncSession, pagination: Pagination, app_uuid: str | None = None
+   async_db: AsyncSession, pagination: Pagination, app_uuid: str | None = None
 ) -> Tuple[
     List[ConversationSchema] | None, ResponsePagination | None, SQLAlchemyError | None
 ]:
@@ -26,7 +25,7 @@ async def get_conversation_list(
         .order_by(desc(Conversation.updated_at))
     )
     # print(stmt)
-    res, pg, exception = await paginate_query(db, stmt, Conversation, pagination, True)
+    res, pg, exception = await paginate_query(async_db, stmt, Conversation, pagination, True)
     # print(res, pg, exception)
     if exception:
         return None, None, exception

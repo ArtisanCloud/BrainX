@@ -6,11 +6,11 @@ from app.service.app.service import AppService
 
 
 async def soft_delete_app(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user_id: int,
         app_uuid: str
 ) -> Tuple[bool | None, Exception | None]:
-    service_app = AppService(db)
+    service_app = AppService(async_db)
     result, exception = await service_app.soft_delete_app(user_id, app_uuid)
 
     if exception:

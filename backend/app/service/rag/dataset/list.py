@@ -8,14 +8,13 @@ from app.schemas.base import Pagination, ResponsePagination
 from app.schemas.rag.dataset import DatasetSchema
 
 from app.service.base import paginate_query
-from app.service.rag.dataset.create import transform_dataset_to_reply
 
 from app.models.rag.dataset import Dataset
 from app.service.rag.dataset.service import transform_datasets_to_reply
 
 
 async def get_dataset_list(
-    db: AsyncSession,
+   async_db: AsyncSession,
     tenant_uuid: str,
     pagination: Pagination,
     conditions: Dict[str, Any] = None,
@@ -42,7 +41,7 @@ async def get_dataset_list(
     # 排序
     stmt = stmt.order_by(Dataset.created_at)
 
-    res, pg, exception = await paginate_query(db, stmt, Dataset, pagination, True)
+    res, pg, exception = await paginate_query(async_db, stmt, Dataset, pagination, True)
     if exception:
         return None, None, exception
 

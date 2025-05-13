@@ -15,13 +15,13 @@ from app.models.tenant.tenant import Tenant, TenantDefaultModel
 
 
 class UserDAO(BaseDAO[User]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, User)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(User, async_db, sync_db)
 
     async def load_owner_tenant(self, user: User) -> Tuple[User | None, SQLAlchemyError | None]:
         try:
             stmt = select(Tenant).filter_by(uuid=user.tenant_owner_uuid)
-            result = await self.db.execute(stmt)
+            result = await self.async_db.execute(stmt)
             user.owned_tenant = result.scalar_one_or_none()
 
         except SQLAlchemyError as e:
@@ -36,7 +36,7 @@ class UserDAO(BaseDAO[User]):
 
         try:
             stmt = select(User).filter(User.account == account)
-            result = await self.db.execute(stmt)
+            result = await self.async_db.execute(stmt)
             return result.scalar_one_or_none(), None
 
         except SQLAlchemyError as e:
@@ -50,7 +50,7 @@ class UserDAO(BaseDAO[User]):
                 name=f"{user.account}的租户",
                 status=BaseStatus.ACTIVE,
             )
-            self.db.add(tenant)
+            self.async_db.add(tenant)
 
             # create user
             user = User(
@@ -61,7 +61,7 @@ class UserDAO(BaseDAO[User]):
                 password=user.password,
                 status="active",
             )
-            self.db.add(user)
+            self.async_db.add(user)
 
             # connect user and tenant
             # pivot = PivotTenantToUser(
@@ -71,20 +71,20 @@ class UserDAO(BaseDAO[User]):
             # pivot.generate_uuid()
 
             # print(pivot)
-            # self.db.add(pivot)
+            # self.async_db.add(pivot)
 
             # create tenant default model
-            tenant_default_model_dao = TenantDefaultModelDAO(self.db)
+            tenant_default_model_dao = TenantDefaultModelDAO(self.async_db)
             default_models, exception = await tenant_default_model_dao.get_tenant_default_model_from_config(user)
             if exception:
                 return None, exception
-            self.db.add_all(default_models)
+            self.async_db.add_all(default_models)
 
             # 在这里调用 flush()，以便获取 user 的 uuid
-            await self.db.flush()  # 确保所有添加的对象已经持久化到数据库
+            await self.async_db.flush()  # 确保所有添加的对象已经持久化到数据库
 
-            await self.db.commit()
-            await self.db.refresh(user)
+            await self.async_db.commit()
+            await self.async_db.refresh(user)
 
             return user, None
 

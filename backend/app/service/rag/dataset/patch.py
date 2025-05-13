@@ -8,11 +8,11 @@ from app.service.rag.dataset.service import DatasetService
 
 
 async def patch_dataset(
-        db: AsyncSession,
+       async_db: AsyncSession,
         dataset_uuid: str,
         update_data: Dict[str, Any]
 ) -> Tuple[DatasetSchema | None, Exception | None]:
-    service_dataset = DatasetService(db)
+    service_dataset = DatasetService(async_db)
     dataset, exception = await service_dataset.dataset_dao.patch(dataset_uuid, update_data)
 
     if exception:

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import FileResponse
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.logger import logger
 
 from app.config.config import settings
@@ -76,10 +76,10 @@ async def api_get_model_provider_icon(
 @router.post("create")
 async def api_create_model_provider(
     request: RequestCreateModelProvider,
-    db: AsyncSession = Depends(get_async_db_session),
+    async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseCreateModelProvider | ResponseSchema:
     try:
-        model_provider, exception = await create_model_provider(db, model_provider)
+        model_provider, exception = await create_model_provider(async_db, model_provider)
         if exception is not None:
             raise exception
 

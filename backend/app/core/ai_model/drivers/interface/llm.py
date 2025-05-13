@@ -6,6 +6,8 @@ from .ai_model import AIModel
 
 class LLM(AIModel):
 
-    @abstractmethod
     def validate_credentials(self, model: str, credentials: Mapping) -> None:
+        raise NotImplementedError
+
+    def get_provider_model(self) -> any:
         raise NotImplementedError

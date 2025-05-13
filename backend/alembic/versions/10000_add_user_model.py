@@ -16,7 +16,6 @@ from app.models.base import time_now
 from app.models.originaztion.user import table_name_user
 
 from sqlalchemy.dialects.postgresql import UUID
-import datetime
 
 # revision identifiers, used by Alembic.
 revision: str = '10000'

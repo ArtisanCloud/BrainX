@@ -7,10 +7,10 @@ from app.models import User
 
 
 @pytest.mark.asyncio
-async def test_sync_upsert_create(db: AsyncSession):
+async def test_sync_upsert_create(async_db: AsyncSession):
     """测试 sync_upsert 创建新对象"""
 
-    dao = UserDAO(db)
+    dao = UserDAO(async_db)
 
     obj = User(
         uuid="00000000-0000-0000-0001-1607772020bf",
@@ -28,9 +28,9 @@ async def test_sync_upsert_create(db: AsyncSession):
     assert created_obj.nick_name == "mike"
 
 @pytest.mark.asyncio
-async def test_sync_upsert_update(db: AsyncSession):
+async def test_sync_upsert_update(async_db: AsyncSession):
     """测试 sync_upsert 更新已存在的对象"""
-    dao = UserDAO(db)
+    dao = UserDAO(async_db)
 
     # 先创建一个对象
     obj = User(
@@ -58,9 +58,9 @@ async def test_sync_upsert_update(db: AsyncSession):
     assert result_obj.nick_name == "mike_updated"
 
 @pytest.mark.asyncio
-async def test_sync_upsert_invalid_uid(db: AsyncSession):
+async def test_sync_upsert_invalid_uid(async_db: AsyncSession):
     """测试 sync_upsert 传入无效的唯一标识字段"""
-    dao = UserDAO(db)
+    dao = UserDAO(dasync_db)
     obj = User(
         uuid="10000000-0000-0000-0001-1607772020bb",
         name="Mike", nick_name="mike",

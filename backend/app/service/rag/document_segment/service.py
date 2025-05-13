@@ -7,8 +7,8 @@ from app.schemas.rag.document_segment import DocumentSegmentSchema
 
 
 class DocumentSegmentService:
-    def __init__(self, db: AsyncSession):
-        self.app_dao = DocumentSegmentDAO(db)
+    def __init__(self,async_db: AsyncSession):
+        self.app_dao = DocumentSegmentDAO(async_db)
 
 
 def transform_document_segments_to_reply(

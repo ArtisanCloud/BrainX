@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database.deps import get_async_db_session
+from app.database.deps import get_async_db_session_dep
 from app.schemas.auth import auth_user_uuid_key, ALGORITHM, SECRET_KEY
 from app.service.user.service import UserService
 from starlette.requests import Request
@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_session_user(
         request: Request,
-        db: AsyncSession = Depends(get_async_db_session)
+        async_db: AsyncSession = Depends(get_async_db_session_dep)
 ):
     session_exception = HTTPException(
         status_code=401,
@@ -25,7 +25,7 @@ async def get_session_user(
     if user_uuid is None:
         raise session_exception
 
-    service_user = UserService(db)
+    service_user = UserService(async_db)
     # print("get session user:", user_uuid)
     current_user, exception = await service_user.user_dao.async_get_by_uuid(user_uuid)
     # print(current_user)

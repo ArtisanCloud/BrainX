@@ -11,11 +11,11 @@ from app.config.config import settings
 
 
 async def create_model_provider(
-    db: AsyncSession,
+   async_db: AsyncSession,
     model_provider: Provider,
 ) -> Tuple[ProvderSchema | None, Exception | None]:
     try:
-        service_model_provider = ProviderService(db)
+        service_model_provider = ProviderService(async_db)
 
         service_model_provider.provider_manager.get_model()
 

@@ -5,7 +5,7 @@ Revises: 51500
 Create Date: 2024-07-06 22:53:03.223522
 
 """
-import datetime
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 from app import settings
 from app.models import AppModelConfig, App, User
-from app.models.base import table_name_user, table_name_app, table_name_app_model_config, time_now
+from app.models.base import  time_now
 from app.models.robot_chat.conversation import table_name_conversation
 from sqlalchemy import UUID
 

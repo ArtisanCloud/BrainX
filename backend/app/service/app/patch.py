@@ -8,11 +8,11 @@ from app.service.app.service import AppService
 
 
 async def patch_app(
-        db: AsyncSession,
+       async_db: AsyncSession,
         app_uuid: str,
         update_data: Dict[str, Any]
 ) -> Tuple[AppSchema | None, Exception | None]:
-    service_app = AppService(db)
+    service_app = AppService(async_db)
     app, exception = await service_app.app_dao.async_patch(app_uuid, update_data)
 
     if exception:

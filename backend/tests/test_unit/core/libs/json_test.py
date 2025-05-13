@@ -1,5 +1,3 @@
-import pytest
-
 from app.core.libs.json import sanitize_json
 
 

@@ -14,7 +14,7 @@ from app.service.rag.document.service import transform_documents_to_reply
 
 
 async def get_document_list(
-    db: AsyncSession, tenant_uuid: str, dataset_uuid: str, pagination: Pagination
+   async_db: AsyncSession, tenant_uuid: str, dataset_uuid: str, pagination: Pagination
 ) -> Tuple[
     List[DocumentSchema] | None, ResponsePagination | None, SQLAlchemyError | None
 ]:
@@ -30,7 +30,7 @@ async def get_document_list(
         # )
     )
     # print(stmt)
-    res, pg, exception = await paginate_query(db, stmt, Document, pagination, True)
+    res, pg, exception = await paginate_query(async_db, stmt, Document, pagination, True)
 
     if exception:
         return None, None, exception
@@ -39,7 +39,7 @@ async def get_document_list(
 
 
 async def get_document_list_by_documents(
-    db: AsyncSession,
+   async_db: AsyncSession,
     tenant_uuid: str,
     documents_uuids: List[str],
     pagination: Pagination,
@@ -59,7 +59,7 @@ async def get_document_list_by_documents(
         # )
     )
     # print(stmt)
-    res, pg, exception = await paginate_query(db, stmt, Document, pagination, True)
+    res, pg, exception = await paginate_query(async_db, stmt, Document, pagination, True)
 
     if exception:
         return None, None, exception

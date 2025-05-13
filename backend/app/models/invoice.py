@@ -1,6 +1,6 @@
 from enum import Enum
 
-from sqlalchemy import Column, String
+from sqlalchemy import  String
 from sqlalchemy.orm import mapped_column
 
 from app import settings

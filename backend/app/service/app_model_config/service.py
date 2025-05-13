@@ -7,9 +7,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 class AppModelConfigService:
-    def __init__(self, db: AsyncSession):
-        self.db = db
-        self.app_model_config_dao = AppModelConfigDAO(self.db)
+    def __init__(self,async_db: AsyncSession):
+        self.async_db = async_db
+        self.app_model_config_dao = AppModelConfigDAO(self.async_db)
 
     async def create_app_model_config(self, config_data: AppModelConfigSchema) -> Tuple[
         AppModelConfig | None, Exception | None]:

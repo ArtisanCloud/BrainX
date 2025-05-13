@@ -11,12 +11,12 @@ from app.models.tenant.tenant import Tenant
 
 
 class TenantDAO(BaseDAO[Tenant]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, Tenant)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(Tenant, async_db, sync_db)
 
     async def load_owner_user(self, tenant: Tenant):
         stmt = select(User).filter_by(tenant_owner_uuid=tenant.tenant_owner_uuid)
-        result = await self.db.execute(stmt)
+        result = await self.async_db.execute(stmt)
         tenant.owned_user = result.scalar_one_or_none()
 
         return tenant

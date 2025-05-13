@@ -4,7 +4,8 @@ from app.models.robot_chat.conversation import Conversation
 
 
 async def get_conversation_by_id(
-        db: AsyncSession,
+        async_db: AsyncSession,
         conversation_id: int
 ) -> Conversation:
-    return await db.get(Conversation, conversation_id)
+    conversation, err = await async_db.get(Conversation, conversation_id)
+    return conversation

@@ -1,21 +1,19 @@
-from typing import Tuple, List, Dict, Any
+from typing import Tuple, List
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.rag.pivot_app_to_dataset import PivotAppToDataset
 from app.schemas.rag.dataset import DatasetSchema
-from app.models.rag.dataset import Dataset
 from app.service.rag.dataset.service import DatasetService, transform_datasets_with_app_to_reply
 
 
 async def get_dataset_list_with_connected_app(
-    db: AsyncSession,
+   async_db: AsyncSession,
     tenant_uuid: str,
     app_uuid: str,
     only_connected: bool,
 ) -> Tuple[List[DatasetSchema] | None, SQLAlchemyError | None]:
-    dataset_service = DatasetService(db)
+    dataset_service = DatasetService(async_db)
 
     # 只需要关联过app的dataset
     filter_by_app_uuid = None

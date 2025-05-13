@@ -8,11 +8,11 @@ from app.service.rag.dataset.service import DatasetService
 
 
 async def get_dataset_by_uuid(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user: User,
         dataset_uuid: str
 ) -> Tuple[Dataset | None, Exception | None]:
-    service_dataset = DatasetService(db)
+    service_dataset = DatasetService(async_db)
     dataset, exception = await service_dataset.dataset_dao.async_get_by_uuid(dataset_uuid)
 
     #

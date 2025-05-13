@@ -9,8 +9,8 @@ from tests import test_user_uuid, test_document_uuid
 
 
 @pytest.mark.asyncio
-async def test_set_indexing_status(db: AsyncSession):
-    dao = DocumentDAO(db)
+async def test_set_indexing_status(async_db: AsyncSession):
+    dao = DocumentDAO(async_db)
     user_uuid = UUID(test_user_uuid)
     document_uuid = UUID(test_document_uuid)
     # 创建一个文档和用户

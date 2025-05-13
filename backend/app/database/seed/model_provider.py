@@ -1,4 +1,5 @@
 from sqlalchemy import select, func
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.constant.provider_config import provider_config
 from app.database.seed import init_tenant_uuid
@@ -7,10 +8,10 @@ from app.models.model_provider.provider import ProviderType
 from app.models.tenant.tenant import TenantDefaultModel
 
 
-async def seed_default_tenant_models(db) -> Exception | None:
+async def seed_default_tenant_models(async_db:AsyncSession) -> Exception | None:
     try:
         # Check if the table is empty
-        providers_count = await db.scalar(select(func.count()).select_from(Provider))
+        providers_count = await async_db.scalar(select(func.count()).select_from(Provider))
         if providers_count == 0:
             providers = []
             models = []
@@ -24,9 +25,9 @@ async def seed_default_tenant_models(db) -> Exception | None:
                     encrypted_config="",
                     is_valid=True,
                 )
-                db.add(provider)
-                await db.flush()
-                await db.refresh(provider)
+                async_db.add(provider)
+                await async_db.flush()
+                await async_db.refresh(provider)
 
                 for model_name, model_configs in config["models"].items():
                     model = TenantDefaultModel(
@@ -41,13 +42,13 @@ async def seed_default_tenant_models(db) -> Exception | None:
                 providers.append(provider)
 
             # Check if the table is empty
-            model_providers_count = await db.scalar(
+            model_providers_count = await async_db.scalar(
                 select(func.count()).select_from(TenantDefaultModel)
             )
             # print(model_providers_count)
             if model_providers_count == 0:
-                db.add_all(models)
-                await db.flush()  # 添加 await 关键字
+                async_db.add_all(models)
+                await async_db.flush()  # 添加 await 关键字
 
         return None
 
@@ -55,7 +56,7 @@ async def seed_default_tenant_models(db) -> Exception | None:
         return e
 
 
-# async def seed_model_providers(db) -> Exception | None:
+# async def seed_model_providers(async_db:AsyncSession) -> Exception | None:
 #     try:
 #         provider_config = ProviderManager().load_provider_models()
 #         # Check if the table is empty
@@ -72,9 +73,9 @@ async def seed_default_tenant_models(db) -> Exception | None:
 #                     encrypted_config='',
 #                     is_valid=True,
 #                 )
-#                 db.add(provider)
-#                 await db.flush()
-#                 await db.refresh(provider)
+#                 async_db.add(provider)
+#                 await async_db.flush()
+#                 await async_db.refresh(provider)
 #
 #                 for model_type, model_configs in config["models"].items():
 #                     for model_name, model_config in model_configs.items():
@@ -96,8 +97,8 @@ async def seed_default_tenant_models(db) -> Exception | None:
 #             model_providers_count = await db.scalar(select(func.count()).select_from(ProviderModel))
 #             # print(model_providers_count)
 #             if model_providers_count == 0:
-#                 db.add_all(models)
-#                 await db.flush()  # 添加 await 关键字
+#                 async_db.add_all(models)
+#                 await async_db.flush()  # 添加 await 关键字
 #
 #         return None
 #

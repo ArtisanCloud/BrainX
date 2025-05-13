@@ -8,16 +8,14 @@ from app.schemas.base import Pagination, ResponsePagination
 from app.schemas.rag.document_segment import DocumentSegmentSchema
 
 from app.service.base import paginate_query
-from app.service.rag.dataset.create import transform_dataset_to_reply
 
 from app.models.rag.document_segment import DocumentSegment
-from app.service.rag.document_segment.create import transform_document_segment_to_reply
 from app.service.rag.document_segment.service import (
     transform_document_segments_to_reply,
 )
 
 
-async def get_document_segment_list(db: AsyncSession, pagination: Pagination) -> Tuple[
+async def get_document_segment_list(async_db: AsyncSession, pagination: Pagination) -> Tuple[
     List[DocumentSegmentSchema] | None,
     ResponsePagination | None,
     SQLAlchemyError | None,
@@ -29,7 +27,7 @@ async def get_document_segment_list(db: AsyncSession, pagination: Pagination) ->
     )
     # print(stmt)
     res, pg, exception = await paginate_query(
-        db, stmt, DocumentSegment, pagination, True
+        async_db, stmt, DocumentSegment, pagination, True
     )
     if exception:
         return None, None, exception

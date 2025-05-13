@@ -6,11 +6,11 @@ from app.service.rag.dataset.service import DatasetService
 
 
 async def soft_delete_dataset(
-        db: AsyncSession,
+       async_db: AsyncSession,
         user_id: int,
         dataset_uuid: str
 ) -> Tuple[bool | None, Exception | None]:
-    service_dataset = DatasetService(db)
+    service_dataset = DatasetService(async_db)
     result, exception = await service_dataset.dataset_dao.soft_delete(user_id, dataset_uuid)
 
     if exception:

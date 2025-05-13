@@ -1,5 +1,5 @@
 import io
-from typing import List, Dict, Literal, Type, Any
+from typing import List, Dict, Literal, Type
 
 from PIL import Image as PILImage
 from langchain_core.prompts import ChatPromptTemplate

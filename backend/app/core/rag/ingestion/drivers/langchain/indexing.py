@@ -8,7 +8,7 @@ from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
 from app.core.rag.vector_store.factory import VectorStoreDriverFactory
 from app.core.rag.vector_store.interface import BaseVectorStore
-from app.models import DocumentSegment, User, Document
+from app.models import  User, Document
 from app.models.rag.document_node import DocumentNode
 
 

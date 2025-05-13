@@ -12,8 +12,8 @@ from app.models.tenant.tenant import TenantDefaultModel
 
 
 class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
-    def __init__(self, db: Union[AsyncSession, Session]):
-        super().__init__(db, TenantDefaultModel)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(TenantDefaultModel,async_db,sync_db)
 
     async def async_get_default_model_by_uuid(self, tenant_uuid: str, model_type: str) -> Tuple[
         Optional[TenantDefaultModel], Optional[SQLAlchemyError]]:
@@ -22,7 +22,7 @@ class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
             query = self._get_default_model_by_uuid(tenant_uuid, model_type)
             # print("Generated SQL (async):", str(query))
             # 这里需要根据 db 类型执行查询操作
-            result = await self.db.execute(query)
+            result = await self.async_db.execute(query)
             default_model = result.scalars().first()
 
             return default_model, None
@@ -40,8 +40,8 @@ class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
             # compiled_query = str(query.compile(compile_kwargs={"literal_binds": True}))
             # print("Executing SQL query:", compiled_query)
 
-            # 这里需要根据 db 类型执行查询操作
-            result = self.db.execute(query)  # 同步查询
+            # 这里需要根据 async_db 类型执行查询操作
+            result = self.async_db.execute(query)  # 同步查询
             default_model = result.scalars().first()
             return default_model, None
 
@@ -65,7 +65,7 @@ class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
     async def get_tenant_default_model_from_config(self, user: User) -> Tuple[
         List[TenantDefaultModel] | None, Exception | None]:
         try:
-            result = await self.db.execute(select(Provider))
+            result = await self.async_db.execute(select(Provider))
             providers = result.scalars().all()  # 获取结果列表
             # print(providers)
             models = []
