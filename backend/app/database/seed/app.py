@@ -107,7 +107,7 @@ async def get_apps_from_data(async_db: AsyncSession, data: list[dict]) -> list[A
         app_model_config.model_provider = model_provider
 
         # 将 AppModelConfig 对象添加到当前会话
-        db.add(app_model_config)
+        async_db.add(app_model_config)
 
         # 将 AppModelConfig 对象与 App 对象关联
         app.model_config = app_model_config

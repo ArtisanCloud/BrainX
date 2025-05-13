@@ -62,7 +62,7 @@ async def api_agent_chat(
         return StreamingResponse(
             agent_chat_event_generator(
                 request=request, data=data,
-                user_uuid=str(session_user.uuid), db=db
+                user_uuid=str(session_user.uuid), async_db=async_db
             ),
             media_type="text/event-stream",
             headers={

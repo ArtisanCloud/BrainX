@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional, Any, Sequence
+from typing import List, Tuple, Optional, Any
 
 from langchain_postgres.vectorstores import PGVector
 

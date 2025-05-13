@@ -1,5 +1,3 @@
-import uuid
-
 from sqlalchemy import UUID, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 

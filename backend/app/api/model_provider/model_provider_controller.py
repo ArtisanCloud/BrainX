@@ -1,4 +1,3 @@
-from ast import Tuple
 import http
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -79,6 +78,7 @@ async def api_create_model_provider(
     async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseCreateModelProvider | ResponseSchema:
     try:
+        model_provider = request.model_provider
         model_provider, exception = await create_model_provider(async_db, model_provider)
         if exception is not None:
             raise exception

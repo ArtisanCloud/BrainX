@@ -1,4 +1,5 @@
 from app.core.workflow.node.base import BaseNode
+from app.core.workflow.state import GraphState
 
 
 class ConditionNode(BaseNode):

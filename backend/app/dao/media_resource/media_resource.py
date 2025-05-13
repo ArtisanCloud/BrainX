@@ -1,5 +1,3 @@
-from typing import Union
-
 from sqlalchemy.orm import Session
 import mimetypes
 from typing import List, Tuple
@@ -36,16 +34,16 @@ class MediaResourceDAO(BaseDAO[MediaResource]):
         super().__init__(MediaResource, async_db, sync_db)
 
     async def build_find_query_no_page(self, query: select, opt: FindManyMediaResourcesOption) -> select:
-        if opt.ids:
-            query = query.where(MediaResource.c.id.in_(opt.ids))
+        # if opt.ids:
+        #     query = query.where(MediaResource.id.in_(opt.ids))
         if opt.uuids:
-            query = query.where(MediaResource.c.uuid.in_(opt.uuids))
+            query = query.where(MediaResource.uuid.in_(opt.uuids))
 
         if opt.types:
-            query = query.where(MediaResource.media_type.in_(opt.types))
+            query = query.where(MediaResource.content_type.in_(opt.types))
 
         if opt.like_name:
-            query = query.where(MediaResource.c.filename.like(f"%{opt.like_name}%"))
+            query = query.where(MediaResource.filename.like(f"%{opt.like_name}%"))
 
         return query
 

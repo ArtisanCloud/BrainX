@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from app.core.ai_model.model_instance import ModelInstance
 from app.core.rag.ingestion.cleaner.base import Cleaner

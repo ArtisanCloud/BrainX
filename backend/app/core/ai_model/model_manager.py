@@ -37,7 +37,7 @@ class ModelManager:
             self, sync_db: Session, tenant_uuid: str, model_type: ModelType
     ) -> Tuple[Optional[ModelInstance], Optional[Exception]]:
 
-        model, exception = self.provider_manager.get_default_model(db, tenant_uuid, model_type)
+        model, exception = self.provider_manager.get_default_model(sync_db, tenant_uuid, model_type)
         if exception is not None:
             return None, exception
 

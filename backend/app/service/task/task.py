@@ -33,7 +33,7 @@ def run_manual_connect_db():
         raise e
 
     finally:
-        db.close()
+        sync_db.close()
         # 手动关闭生成器
         logger.info("finally finished")
 

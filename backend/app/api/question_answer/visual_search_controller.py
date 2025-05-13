@@ -36,7 +36,7 @@ async def api_visual_search(
 
         query_embedding = image_base64_to_embed(base64Image, embedding_model)
 
-        res = await visual_search(db, query_embedding)
+        res = await visual_search(async_db, query_embedding)
 
         return res
 

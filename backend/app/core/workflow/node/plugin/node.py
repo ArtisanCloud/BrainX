@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 import importlib
-from typing import Dict, Generic, List, Any, Optional, TypeVar
+from typing import Dict, Generic, Any, Optional, TypeVar
 
 from pydantic import BaseModel
 

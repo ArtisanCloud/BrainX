@@ -64,7 +64,7 @@ async def visual_search(
 
         }
         # print(query, params)
-        result = await db.execute(query, params)
+        result = await async_db.execute(query, params)
         rows = result.mappings().all()
 
         # logger.info(rows)

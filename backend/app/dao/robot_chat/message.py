@@ -1,6 +1,4 @@
 from typing import Type, Optional, Tuple, List
-from typing import Union
-
 from sqlalchemy.orm import Session
 from langchain_core.messages import BaseMessage
 from sqlalchemy.ext.asyncio import AsyncSession

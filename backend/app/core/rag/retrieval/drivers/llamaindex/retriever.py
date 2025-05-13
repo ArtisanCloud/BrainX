@@ -61,6 +61,7 @@ class LlamaIndexRetriever(BaseRetriever):
             # configure response synthesizer
             response_synthesizer = get_response_synthesizer()
 
+            content = ""
             match_docs = retriever.retrieve(content)
             # print(match_docs)
 

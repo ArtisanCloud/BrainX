@@ -60,7 +60,7 @@ async def test_sync_upsert_update(async_db: AsyncSession):
 @pytest.mark.asyncio
 async def test_sync_upsert_invalid_uid(async_db: AsyncSession):
     """测试 sync_upsert 传入无效的唯一标识字段"""
-    dao = UserDAO(dasync_db)
+    dao = UserDAO(async_db)
     obj = User(
         uuid="10000000-0000-0000-0001-1607772020bb",
         name="Mike", nick_name="mike",

@@ -1,9 +1,8 @@
 # Define the MediaResource models
 from sqlalchemy.orm import mapped_column
 
-from app import settings
 from app.models.base import BaseORM, table_name_media_resource, table_name_tenant, table_name_user
-from sqlalchemy import Column, Integer, String, Boolean, UUID, ForeignKey
+from sqlalchemy import  Integer, String, Boolean, UUID, ForeignKey
 
 
 class MediaResource(BaseORM):

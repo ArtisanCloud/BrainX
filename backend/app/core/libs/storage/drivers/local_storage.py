@@ -11,6 +11,7 @@ from app.core.libs.storage.storage_abc import ObjectResult
 
 
 class LocalStorage:
+    base_path: str = None
     def __init__(self, config: LocalStorage):
         base_path = config.storage_path
         if not os.path.exists(base_path):
