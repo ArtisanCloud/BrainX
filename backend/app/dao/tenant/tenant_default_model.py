@@ -40,8 +40,8 @@ class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
             # compiled_query = str(query.compile(compile_kwargs={"literal_binds": True}))
             # print("Executing SQL query:", compiled_query)
 
-            # 这里需要根据 async_db 类型执行查询操作
-            result = self.async_db.execute(query)  # 同步查询
+            # 这里需要根据 sync_db 类型执行查询操作
+            result = self.sync_db.execute(query)  # 同步查询
             default_model = result.scalars().first()
             return default_model, None
 

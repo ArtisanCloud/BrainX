@@ -101,8 +101,8 @@ class DocumentDAO(BaseDAO[Document]):
             document, error = self._set_indexing_status(document, status, error, user)
             if error:
                 return None, error
-            self.async_db.flush()
-            self.async_db.refresh(document)
+            self.sync_db.flush()
+            self.sync_db.refresh(document)
             return document, None
         except SQLAlchemyError as e:
             print("error: ", e)
