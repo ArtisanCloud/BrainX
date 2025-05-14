@@ -31,13 +31,14 @@ async def get_async_db_session_dep() -> AsyncSession:
             #  commit the db session if no exception occurs
             #  if context_set_db_session_rollback is set to True then rollback the db session
             if context_set_db_session_rollback.get():
-                logger.info("Rollback Async DB session")
+                logger.error("Rollback Async DB dep session")
                 await async_db.rollback()
             else:
+                logger.info("Commit Async DB dep session")
                 await async_db.commit()
         except Exception as e:
             #  rollback the db session if any exception occurs
-            logger.error(f"Async Session local error: {e}")
+            logger.error(f"Async Session dep error: {e}")
             await async_db.rollback()
             raise e
 
@@ -64,16 +65,16 @@ def get_sync_db_session_dep() -> Session:
         yield sync_db
         # 提交事务
 
-        logger.info("Sync DB commit")
+        logger.info("Sync DB dep commit")
         sync_db.commit()
     except Exception as e:
         # 出现异常时回滚事务
-        logger.error("Sync DB rollback")
+        logger.error("Sync DB dep rollback")
         sync_db.rollback()
         raise e
     finally:
         # 关闭数据库会话
 
-        logger.info("Sync DB session closed")
+        logger.info("Sync DB dep session closed")
         sync_db.close()
 

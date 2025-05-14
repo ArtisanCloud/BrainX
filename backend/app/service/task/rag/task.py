@@ -1,10 +1,11 @@
 from celery import states
 
 from app import settings
-from app.database.deps import get_sync_db_session_dep
+from app.database.session_manager import get_sync_db_session
 from app.service.task import logger_rag as logger
 
 from app.service.task.celery_app import celery_app
+
 from app.service.task.rag.service import RagProcessorTaskService
 
 
@@ -12,10 +13,10 @@ from app.service.task.rag.service import RagProcessorTaskService
 def task_process_document(
     self, document_uuid: str, user_uuid: str = None, *args, **kwargs
 ):
-    with get_sync_db_session_dep() as db:
+    with get_sync_db_session() as sync_db:
 
         service_rag_processor = RagProcessorTaskService(
-            db, document_uuid, user_uuid, task=self
+            sync_db, document_uuid, user_uuid, task=self
         )
         task_id = self.request.id
         exception = None
@@ -23,13 +24,16 @@ def task_process_document(
             f"Start to Task: {task_id}, document UUID: {service_rag_processor.document.uuid}"
         )
 
-
         try:
             _, exception = service_rag_processor.process_document()
             if exception is not None:
                 raise exception
+            sync_db.commit()
 
         except Exception as e:
+            # 发生异常时回滚事务
+            logger.error("Exception process_document occurred and rollback the transaction.")
+            sync_db.rollback()
             logger.error(
                 f"Task: {task_id}, document UUID: {service_rag_processor.document.uuid}, error: {e}",
                 exc_info=settings.log.exc_info,
