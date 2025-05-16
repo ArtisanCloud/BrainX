@@ -61,7 +61,7 @@ class BaseDAO(Generic[ModelType]):
                     self.sync_db.rollback()
                 return None, e
         else:
-            return None, Exception("sync_create method requires an Session")
+            return None, Exception(f"{self.model.__name__} sync_create method requires an Session")
 
     def sync_upsert(self, obj: ModelType, uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
@@ -139,20 +139,17 @@ class BaseDAO(Generic[ModelType]):
         """
         创建新的模型对象
         """
-        if isinstance(self.sync_db, Session):
-            try:
-                self.sync_db.add_all(objs)
-                self.sync_db.flush()
-                # print(objs)
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.commit()
-                return objs, None
-            except Exception as e:
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.rollback()
-                return None, e
-        else:
-            return None, Exception("sync_create_many method requires an Session")
+        try:
+            self.sync_db.add_all(objs)
+            self.sync_db.flush()
+            # print(objs)
+            if not is_dep_session(self.sync_db):
+                self.sync_db.commit()
+            return objs, None
+        except Exception as e:
+            if not is_dep_session(self.sync_db):
+                self.sync_db.rollback()
+            return None, e
 
     async def async_get_by_uuid(self, uuid: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
@@ -171,14 +168,11 @@ class BaseDAO(Generic[ModelType]):
         """
         根据 UUID 获取模型对象
         """
-        if isinstance(self.sync_db, Session):
-            try:
-                result = self.sync_db.execute(select(self.model).filter(self.model.uuid == uuid))
-                return result.scalar_one_or_none(), None
-            except Exception as e:
-                return None, e
-        else:
-            return None, Exception("sync_get_by_uuid method requires an Session")
+        try:
+            result = self.sync_db.execute(select(self.model).filter(self.model.uuid == uuid))
+            return result.scalar_one_or_none(), None
+        except Exception as e:
+            return None, e
 
     async def async_get_objects_by_conditions(self, conditions: Dict[str, Any]) -> Tuple[
         Optional[Sequence[ModelType]], Optional[Exception]]:
@@ -285,90 +279,83 @@ class BaseDAO(Generic[ModelType]):
         """
         更新模型对象
         """
-        if isinstance(self.sync_db, Session):
-            try:
-                obj, error = self.sync_get_by_uuid(obj_uuid)
-                if error:
-                    return None, error
-                if not obj:
-                    return None, Exception(f"Object with uuid {obj_uuid} not found")
+        try:
+            obj, error = self.sync_get_by_uuid(obj_uuid)
+            if error:
+                return None, error
+            if not obj:
+                return None, Exception(f"Object with uuid {obj_uuid} not found")
 
-                for field, value in update_data.items():
-                    setattr(obj, field, value)
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.commit()
-                return obj, None
-            except Exception as e:
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.rollback()
-                return None, e
-        else:
-            return None, Exception("sync_update method requires an Session")
+            for field, value in update_data.items():
+                setattr(obj, field, value)
+            if not is_dep_session(self.sync_db):
+                self.sync_db.commit()
+            return obj, None
+        except Exception as e:
+            if not is_dep_session(self.sync_db):
+                self.sync_db.rollback()
+            return None, e
+
 
     async def async_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象
         """
-        if isinstance(self.async_db, AsyncSession):
-            try:
-                obj, error = await self.async_get_by_uuid(obj_uuid)
+        try:
+            obj, error = await self.async_get_by_uuid(obj_uuid)
 
-                if error:
-                    return None, error
-                if not obj:
-                    return None, Exception(f"Object with uuid {obj_uuid} not found")
+            if error:
+                return None, error
+            if not obj:
+                return None, Exception(f"Object with uuid {obj_uuid} not found")
 
-                for field, value in patch_data.items():
-                    setattr(obj, field, value)
-                setattr(obj, "updated_at", datetime.now(UTC))
+            for field, value in patch_data.items():
+                setattr(obj, field, value)
+            setattr(obj, "updated_at", datetime.now(UTC))
 
-                await self.async_db.flush()
-                await self.async_db.refresh(obj)
+            await self.async_db.flush()
+            await self.async_db.refresh(obj)
 
-                if not is_dep_session(self.async_db):
-                    await self.async_db.commit()
+            if not is_dep_session(self.async_db):
+                await self.async_db.commit()
 
-                return obj, None
+            return obj, None
 
-            except Exception as e:
-                if not is_dep_session(self.async_db):
-                    await self.async_db.rollback()
-                return None, e
-        else:
-            return None, Exception("async_patch method requires an AsyncSession")
+        except Exception as e:
+            if not is_dep_session(self.async_db):
+                await self.async_db.rollback()
+            return None, e
 
     def sync_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象
         """
-        if isinstance(self.sync_db, Session):
-            try:
-                obj, error = self.sync_get_by_uuid(obj_uuid)
+        try:
+            obj, error = self.sync_get_by_uuid(obj_uuid)
 
-                if error:
-                    return None, error
-                if not obj:
-                    return None, Exception(f"Object with uuid {obj_uuid} not found")
+            if error:
+                return None, error
+            if not obj:
+                return None, Exception(f"Object with uuid {obj_uuid} not found")
 
-                for field, value in patch_data.items():
-                    setattr(obj, field, value)
-                setattr(obj, "updated_at", datetime.now(UTC))
+            for field, value in patch_data.items():
+                setattr(obj, field, value)
+            setattr(obj, "updated_at", datetime.now(UTC))
 
-                self.sync_db.flush()
-                self.sync_db.refresh(obj)
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.commit()
+            self.sync_db.flush()
+            self.sync_db.refresh(obj)
+            if not is_dep_session(self.sync_db):
+                self.sync_db.commit()
 
-                return obj, None
+            return obj, None
 
-            except Exception as e:
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.rollback()
-                return None, e
-        else:
-            return None, Exception("sync_patch method requires an Session")
+        except Exception as e:
+            if not is_dep_session(self.sync_db):
+                self.sync_db.rollback()
+            return None, e
+
 
     async def async_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
         bool, Optional[Exception]]:
@@ -430,7 +417,7 @@ class BaseDAO(Generic[ModelType]):
                     self.sync_db.rollback()
                 return False, e
         else:
-            return False, Exception("sync_soft_delete method requires an Session")
+            return False, Exception(f"{self.model.__name__} sync_soft_delete method requires an Session")
 
     async def async_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
         """
@@ -459,21 +446,18 @@ class BaseDAO(Generic[ModelType]):
         """
         删除模型对象
         """
-        if isinstance(self.sync_db, Session):
-            try:
-                obj, error = self.sync_get_by_uuid(obj_uuid)
-                if error:
-                    return False, error
-                if not obj:
-                    return False, Exception(f"Object with uuid {obj_uuid} not found")
+        try:
+            obj, error = self.sync_get_by_uuid(obj_uuid)
+            if error:
+                return False, error
+            if not obj:
+                return False, Exception(f"Object with uuid {obj_uuid} not found")
 
-                self.async_db.delete(obj)
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.commit()
-                return True, None
-            except Exception as e:
-                if not is_dep_session(self.sync_db):
-                    self.sync_db.rollback()
-                return False, e
-        else:
-            return False, Exception("sync_delete method requires an Session")
+            self.async_db.delete(obj)
+            if not is_dep_session(self.sync_db):
+                self.sync_db.commit()
+            return True, None
+        except Exception as e:
+            if not is_dep_session(self.sync_db):
+                self.sync_db.rollback()
+            return False, e
