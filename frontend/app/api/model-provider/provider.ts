@@ -10,6 +10,7 @@ import { backendClient } from "@/app/api/backend";
 
 import { unstable_noStore as noStore } from "next/dist/server/web/spec-extension/unstable-no-store";
 import { backendUrl } from "@/app/config/config";
+import {RequestQueryTasksStatus, ResponseQueryTasksStatus} from "@/app/api/task";
 
 export interface Help {
   // 帮助标题，支持多语言
@@ -20,8 +21,8 @@ export interface Help {
 
 // 配置方法枚举
 export enum ConfigurateMethod {
-  PREDEFINED_MODEL = "predefined", // 预定义模型
-  CUSTOMIZED_MODEL = "customized", // 自定义模型
+  PREDEFINED_MODEL = "predefined-model", // 预定义模型
+  CUSTOMIZED_MODEL = "customizable-model", // 自定义模型
 }
 
 // 凭证表单字段接口
@@ -102,10 +103,10 @@ export interface ResponseFetchProviderList {
   data: Record<string, Provider>; // 'data' 是一个键值对对象，键是字符串，值是 Provider 类型
 }
 
-export async function ActionFetchProviderList(): Promise<ResponseFetchProviderList> {
+export async function ActionFetchProviderSchemaList(): Promise<ResponseFetchProviderList> {
   noStore();
   try {
-    const endpoint = `/api/model-provider/list`;
+    const endpoint = `/api/model-provider/provider-schema/list`;
     const res = await backendClient.backend_get(endpoint, {
       cache: "no-store",
     });
@@ -130,4 +131,24 @@ export async function ActionGetProviderIcon(
     console.error("Fetch apps Error:", error);
     // throw new Error(`Failed to fetch the provider icon : ${error}`);
   }
+}
+
+export interface RequestSaveProvider {
+  config_from: string
+  provider: string
+  credentials: object
+}
+export interface ResponseSaveProvider{
+  data: Record<string, Provider>;
+}
+
+
+export async function ActionSaveProvider(option: RequestSaveProvider): Promise<ResponseSaveProvider> {
+
+  const endpoint = `/api/model-provider/save`
+
+  const res = await backendClient.backend_post(endpoint, option);
+
+  return res as ResponseSaveProvider;
+
 }

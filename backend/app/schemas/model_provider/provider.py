@@ -1,12 +1,12 @@
 from typing import Dict, Optional
 from pydantic import UUID4, constr
 from datetime import datetime
-from app.core.ai_model.schema.provider import ProviderSchema
+from app.core.ai_model.entity.provider import ProviderEntity
 
 from app.schemas.base import BaseSchema
 
 
-class ProvderSchema(BaseSchema):
+class ProviderSchema(BaseSchema):
     tenant_uuid: UUID4
     provider_name: constr(min_length=1)
     provider_type: constr(min_length=1)
@@ -19,12 +19,13 @@ class ProvderSchema(BaseSchema):
 
 
 class ResponseGetModelProviderList(BaseSchema):
-    data: Dict[str, ProviderSchema]
+    data: Dict[str, ProviderEntity]
 
 
 class RequestCreateModelProvider(BaseSchema):
-    name: constr(min_length=1)
-    description: constr(min_length=1)
+    config_from: str
+    provider: str
+    credentials: dict
 
 
 class ResponseCreateModelProvider(BaseSchema):

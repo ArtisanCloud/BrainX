@@ -6,7 +6,8 @@ import {
   Switch,
   SelectItem,
   RadioGroup,
-} from "@heroui/react"; // 替换为实际使用的 UI 库组件
+  cn,
+} from "@heroui/react";
 import { CredentialForm } from "@/app/api/model-provider/provider";
 import {
   FormOption as DynamicFormOption,
@@ -14,47 +15,88 @@ import {
 } from "@/app/api/model-provider";
 
 export default function DynamicForm({
-  credentialSchemas,
-  onFilledRequired, // 接收外部的回调函数
-  onChange,
-}: {
+                                      credentialSchemas,
+                                      onFilledRequired,
+                                      onChange,
+                                    }: {
   credentialSchemas: CredentialForm[];
-  onFilledRequired?: (filled: boolean) => void; // 回调函数的类型，可能为空
+  onFilledRequired?: (filled: boolean) => void;
   onChange?: (formValues: Record<string, any>) => void;
 }) {
   const [formValues, setFormValues] = useState<Record<string, any>>({});
 
   const handleChange = (variable: string, value: any) => {
-    // console.log(variable, value);
     const updatedFormValues = {
       ...formValues,
       [variable]: value,
     };
+    // console.log(updatedFormValues);
     setFormValues(updatedFormValues);
-
-    if (onChange) {
-      onChange(updatedFormValues); // 实时传递表单值
-    }
+    onChange?.(updatedFormValues);
   };
 
-  // 检查必填字段是否已填写
+  // 获取字段当前值，兼容对象情况（value: string | { value: string, ... }）
+  const getFieldValue = (variable: string) => {
+    const val = formValues[variable];
+    return typeof val === "object" && val !== null && "value" in val
+      ? val.value
+      : val;
+  };
+
   const checkFilledRequired = () => {
     const filled = credentialSchemas?.every((field) => {
-      // 检查字段是必填并且已经有值
-      return field.required === false || formValues[field.variable];
+      // 如果字段未满足 show_on 条件，就忽略校验
+      if (field.show_on && field.show_on.length > 0) {
+        const shouldShow = field.show_on.every((condition) => {
+          const currentValue = getFieldValue(condition.variable);
+          return currentValue === condition.value;
+        });
+        if (!shouldShow) return true; // 忽略隐藏字段
+      }
+
+      // 校验 required 字段是否有值
+      return field.required === false || getFieldValue(field.variable);
     });
+    // console.log("filled:", filled);
 
-    // 如果所有必填字段已填写，触发回调通知外部
-
-    if (onFilledRequired) {
-      onFilledRequired(filled);
-    }
+    onFilledRequired?.(filled);
   };
 
-  // 监听表单值变化，检查必填字段是否已填写
   useEffect(() => {
     checkFilledRequired();
   }, [formValues]);
+
+  useEffect(() => {
+    const initialValues: Record<string, any> = {};
+
+    credentialSchemas?.forEach((field) => {
+      if (!field) return;
+      const variable = field.variable;
+
+      // 跳过已有值的字段
+      if (formValues[variable] !== undefined) return;
+
+      if (
+        (field.type === FormType.RADIO) &&
+        field.options &&
+        field.options.length > 0
+      ) {
+        initialValues[variable] = field.options[0].value;
+      }
+
+      if (field.type === FormType.SWITCH) {
+        initialValues[variable] = false; // switch 默认为 false
+      }
+
+      if (field.type === FormType.INPUT_TEXT || field.type === FormType.INPUT_SECRET) {
+        initialValues[variable] = "";
+      }
+    });
+
+    if (Object.keys(initialValues).length > 0) {
+      setFormValues((prev) => ({ ...initialValues, ...prev }));
+    }
+  }, [credentialSchemas]);
 
   return (
     <>
@@ -67,50 +109,54 @@ export default function DynamicForm({
           );
         }
 
-        const isRequired = field.required !== false; // 默认为 true
+        // ✅ 判断 show_on 条件
+        if (field.show_on && field.show_on.length > 0) {
+          const shouldShow = field.show_on.every((condition) => {
+            const currentValue = getFieldValue(condition.variable);
+            return currentValue === condition.value;
+          });
+          if (!shouldShow) return null;
+        }
+
+        const isRequired = field.required !== false;
         const placeholder =
           field.placeholder?.zh_Hans ||
           field.placeholder?.en_US ||
-          "Enter your value here"; // 示例支持多语言
-        const title = field.label?.zh_Hans || field.label?.en_US || "Field"; // 示例支持多语言
+          "Enter your value here";
+        const title = field.label?.zh_Hans || field.label?.en_US || "Field";
 
-        // console.log(field);
-        // 根据字段类型动态渲染表单
         let inputElement;
+
         switch (field.type) {
           case FormType.INPUT_TEXT:
           case FormType.INPUT_SECRET:
             inputElement = (
               <Input
                 errorMessage={
-                  (isRequired && field.placeholder?.zh_Hans) ||
-                  field.placeholder?.en_US
-                    ? "This field is required"
-                    : ""
+                  isRequired &&
+                  !getFieldValue(field.variable) &&
+                  "This field is required"
                 }
-                // type={field.type === FormType.INPUT_TEXT ? "text" : "password"}
                 placeholder={placeholder}
-                value={formValues[field.variable] || ""}
-                maxLength={
-                  field.max_length && field.max_length > 0
-                    ? field.max_length
-                    : 9999
-                }
+                value={getFieldValue(field.variable) || ""}
+                maxLength={field.max_length && field.max_length > 0 ? field.max_length : 9999}
                 onChange={(e) => handleChange(field.variable, e.target.value)}
               />
             );
             break;
 
           case FormType.SELECT:
+            // console.log("字段名:", field.variable, "当前值:", getFieldValue(field.variable), "options:", field.options);
             inputElement = (
               <Select
                 placeholder={placeholder}
-                // items={transformOptions(field.options!)}
+                aria-label={title}
                 items={field.options!}
-                onChange={(value) => handleChange(field.variable, value)} // 修复：使用箭头函数传递参数
+                onSelectionChange={(key) => handleChange(field.variable, key.currentKey)} // ✅ React Aria 风格的回调
               >
+
                 {(option: DynamicFormOption) => (
-                  <SelectItem key={option.label.en_US} textValue={option.value}>
+                  <SelectItem key={option.value} value={option.value} textValue={option.value}>
                     {option.label.zh_Hans || option.label.en_US}
                   </SelectItem>
                 )}
@@ -121,19 +167,30 @@ export default function DynamicForm({
           case FormType.RADIO:
             inputElement = (
               <div className="flex flex-row gap-4">
-                {field?.options?.map((option) => (
-                  <RadioGroup
-                    key={option.value}
-                    onChange={(value) => handleChange(field.variable, value)} // 改变选中值时调用
-                  >
+                <RadioGroup
+                  orientation="horizontal"
+                  value={formValues[field.variable] ?? ""}
+                  onValueChange={(value) => {
+                    // ✅ 使用 onValueChange 替代 onChange
+                    handleChange(field.variable, value);
+                  }}
+                >
+                  {field?.options?.map((option) => (
                     <Radio
+                      key={option.value}
                       value={option.value}
-                      checked={formValues[field.variable] === option.value}
+                      classNames={{
+                        base: cn(
+                          "inline-flex m-0 bg-content1 hover:bg-content2 items-center justify-between",
+                          "flex-row-reverse max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
+                          "data-[selected=true]:border-primary",
+                        ),
+                      }}
                     >
-                      {field.label.zh_Hans || option.label.en_US}
+                      {option.label.zh_Hans || option.label.en_US}
                     </Radio>
-                  </RadioGroup>
-                ))}
+                  ))}
+                </RadioGroup>
               </div>
             );
             break;
@@ -141,7 +198,7 @@ export default function DynamicForm({
           case FormType.SWITCH:
             inputElement = (
               <Switch
-                checked={!!formValues[field.variable]}
+                checked={!!getFieldValue(field.variable)}
                 onChange={(checked) => handleChange(field.variable, checked)}
               />
             );

@@ -296,7 +296,6 @@ class BaseDAO(Generic[ModelType]):
                 self.sync_db.rollback()
             return None, e
 
-
     async def async_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
@@ -355,7 +354,6 @@ class BaseDAO(Generic[ModelType]):
             if not is_dep_session(self.sync_db):
                 self.sync_db.rollback()
             return None, e
-
 
     async def async_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
         bool, Optional[Exception]]:

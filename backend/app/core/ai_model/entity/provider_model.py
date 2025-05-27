@@ -3,7 +3,7 @@ from typing import Optional, Any
 
 from pydantic import BaseModel
 
-from app.core.ai_model.schema.base import I18nObject
+from app.core.ai_model.entity.base import I18nObject
 from app.models.model_provider.provider_model import ModelType
 
 
@@ -43,7 +43,7 @@ class ModelPropertyKey(Enum):
     MAX_SEQUENCE_LENGTH = "max_sequence_length"
 
 
-class ProviderModelSchema(BaseModel):
+class ProviderModelEntity(BaseModel):
     """
     Model class for provider model_provider.
     """

@@ -34,9 +34,11 @@ models_credential_schema:
         - value: hosted_inference_api
           label:
             en_US: Hosted Inference API
+            zh_Hans: 托管推理 API
         - value: inference_endpoints
           label:
             en_US: Inference Endpoints
+            zh_Hans: 推理端点
     - variable: huggingfacehub_api_token
       label:
         en_US: API Token

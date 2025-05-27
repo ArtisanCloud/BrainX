@@ -5,23 +5,28 @@ from fastapi import Path
 
 from sqlalchemy.orm import Session
 
+from app import logger
 from app.constant.ai_model.provider import ProviderID
 from app.core.ai_model.drivers.interface.ai_model import AIModel
 from app.core.ai_model.drivers.langchain.driver import LangchainModelProviderDriver
-from app.core.ai_model.schema.provider import ProviderSchema
-from app.core.ai_model.schema.provider_model import ProviderModelSchema
+from app.core.ai_model.entity.provider_config import ProviderConfigurations, ProviderConfiguration
+from app.core.ai_model.entity.provider import ProviderEntity
+from app.core.ai_model.entity.provider_model import ProviderModelEntity
 from app.core.libs.file import get_project_path
 from app.core.libs.yaml import load_yaml_file
 from app.core.rag import FrameworkDriverType
+from app.dao.model_provider.provider import ProviderDAO
 from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
 from app.models.model_provider.provider_model import ModelType, ProviderModel
 
-_global_provider_cache: Dict[str, ProviderSchema] | None = None
+_global_provider_cache: Dict[str, ProviderEntity] | None = None
 
 
 class ProviderManager:
-    def __init__(self, framework_type: FrameworkDriverType):
+    def __init__(self, model_provider_dao: ProviderDAO = None,
+                 framework_type: FrameworkDriverType = FrameworkDriverType.LANGCHAIN):
         self.model_provider_driver = None
+        self.model_provider_dao = model_provider_dao
         self._initialize(framework_type)
 
     def _initialize(self, framework_type: FrameworkDriverType):
@@ -32,7 +37,7 @@ class ProviderManager:
                 raise Exception("Unsupported framework type for Provider Manager")
 
     def get_model(
-        self, sync_db: Session, tenant_uuid: str, provider: str, model_type: ModelType
+            self, sync_db: Session, tenant_uuid: str, provider: str, model_type: ModelType
     ) -> Tuple[Optional[AIModel], Optional[Exception]]:
 
         # self.model_provider_driver
@@ -41,7 +46,7 @@ class ProviderManager:
         return None, None
 
     def get_default_model(
-        self, sync_db: Session, tenant_uuid: str, model_type: ModelType
+            self, sync_db: Session, tenant_uuid: str, model_type: ModelType
     ) -> Tuple[Optional[AIModel], Optional[Exception]]:
         try:
             # 获取默认模型
@@ -70,7 +75,8 @@ class ProviderManager:
 
         return model, None
 
-    def load_provider_models(self) -> Tuple[Dict[str, ProviderSchema] | Exception]:
+    @staticmethod
+    def load_provider_schemas() -> Tuple[Dict[str, ProviderEntity] | None, Exception | None]:
         """Gather all configuration files under the given base path."""
         global _global_provider_cache
 
@@ -82,12 +88,12 @@ class ProviderManager:
 
             base_path = os.path.join(get_project_path(), "core/ai_model/providers")
 
-            provider_schemas: Dict[str, ProviderSchema] = {}
+            provider_schemas: Dict[str, ProviderEntity] = {}
             # print(base_path,provider_schemas)
             for folder_name in os.listdir(base_path):
                 folder_path = os.path.join(base_path, folder_name)
                 if os.path.isdir(folder_path):  # 确保是一个目录
-                    provider_config_schema: Optional[ProviderSchema] = None
+                    provider_config_schema: Optional[ProviderEntity] = None
 
                     # 加载主配置文件（如 openai.yml）
                     for file in os.listdir(folder_path):
@@ -95,7 +101,7 @@ class ProviderManager:
                             filepath = os.path.join(folder_path, file)
                             yaml_data = load_yaml_file(filepath)
 
-                            provider_config_schema = ProviderSchema(**yaml_data)
+                            provider_config_schema = ProviderEntity(**yaml_data)
                             # print(provider_config_schema)
                             break  # 只加载一个主配置文件
 
@@ -109,7 +115,7 @@ class ProviderManager:
 
                             for model_file in os.listdir(model_type_path):
                                 if model_file.endswith(".yml") or model_file.endswith(
-                                    ".yaml"
+                                        ".yaml"
                                 ):
                                     model_filepath = os.path.join(
                                         model_type_path, model_file
@@ -118,7 +124,7 @@ class ProviderManager:
 
                                     # 加载该模型的配置文件
                                     yaml_data = load_yaml_file(model_filepath)
-                                    model_schema = ProviderModelSchema(**yaml_data)
+                                    model_schema = ProviderModelEntity(**yaml_data)
                                     provider_config_schema.models.append(model_schema)
 
                     # print(provider_config)
@@ -132,19 +138,20 @@ class ProviderManager:
 
         return provider_schemas, None
 
+    @staticmethod
     def convert_default_model_to_model(
-        self, default_model: ProviderModel
+            self, default_model: ProviderModel
     ) -> Tuple[Optional[AIModel], Optional[Exception]]:
         return None, None
 
-    def get_provider_schema(self, provider: str) -> ProviderSchema:
+    def get_provider_schema(self, provider: str) -> ProviderEntity:
         """
         Get provider instance by provider name
         :param provider: provider name
         :return: provider instance
         """
         # scan all providers
-        model_provider_models, exception = self.load_provider_models()
+        model_provider_models, exception = self.load_provider_schemas()
         if exception:
             raise exception
         # print(111, model_provider_models)
@@ -158,8 +165,8 @@ class ProviderManager:
         return model_provider
 
     def get_model_provider_icon(
-        self, provider: str, icon_type: str, lang: str
-    ) -> tuple[Optional[bytes], Optional[str], Optional[Exception]]:
+            self, provider: str, icon_type: str, lang: str
+    ) -> tuple[Optional[str], Optional[str], Optional[Exception]]:
         """
         get model provider icon.
 
@@ -177,8 +184,8 @@ class ProviderManager:
 
             if lang.lower() == "zh_cn":
                 file_name = (
-                    provider_descriptor.icon_small.zh_Hans
-                    or provider_descriptor.icon_small.en_US
+                        provider_descriptor.icon_small.zh_Hans
+                        or provider_descriptor.icon_small.en_US
                 )
             else:
                 file_name = provider_descriptor.icon_small.en_US
@@ -211,3 +218,19 @@ class ProviderManager:
         # byte_data = Path(file_path).read_bytes()
         # return byte_data, mimetype, None
         return file_path, mimetype, None
+
+    def get_provider_configurations(self, tenant_uuid: str) -> ProviderConfigurations | None:
+        return None
+
+    async def get_provider_configuration(self, tenant_uuid: str, provider_name: str) -> Tuple[
+        ProviderConfiguration | None, Exception | None]:
+        providers, exception = await self.model_provider_dao.async_get_objects_by_conditions({
+            "tenant_uuid": tenant_uuid,
+            "provider_name": provider_name,
+        })
+        if exception:
+            return None, exception
+
+        logger.info(providers)
+
+        return None, None

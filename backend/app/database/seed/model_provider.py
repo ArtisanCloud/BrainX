@@ -8,7 +8,7 @@ from app.models.model_provider.provider import ProviderType
 from app.models.tenant.tenant import TenantDefaultModel
 
 
-async def seed_default_tenant_models(async_db:AsyncSession) -> Exception | None:
+async def seed_default_tenant_models(async_db: AsyncSession) -> Exception | None:
     try:
         # Check if the table is empty
         providers_count = await async_db.scalar(select(func.count()).select_from(Provider))
@@ -55,10 +55,9 @@ async def seed_default_tenant_models(async_db:AsyncSession) -> Exception | None:
     except Exception as e:
         return e
 
-
 # async def seed_model_providers(async_db:AsyncSession) -> Exception | None:
 #     try:
-#         provider_config = ProviderManager().load_provider_models()
+#         provider_config = ProviderManager().load_provider_schemas()
 #         # Check if the table is empty
 #         providers_count = await db.scalar(select(func.count()).select_from(Provider))
 #         if providers_count == 0:

@@ -7,6 +7,7 @@ import { ProviderIcon } from "./provider-icon";
 import ModalAddModels from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers/modal-add-models";
 import ModalSettingProvider from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers/modal-setting-provider";
 import React from "react";
+import {ConfigurateMethod} from "@/app/api/model-provider/provider";
 
 const ToConfigProviders: React.FC = () => {
   const { providers } = useSettingsStore(); // 获取 providers
@@ -45,9 +46,9 @@ const ToConfigProviders: React.FC = () => {
         const visibleButtons = actionButtons.filter((button) => {
           if (
             (button.type === "providerSetting" &&
-              provider.provider_credential_schema) ||
+              provider.configurate_methods.includes(ConfigurateMethod.PREDEFINED_MODEL)) ||
             (button.type === "modelSetting" &&
-              provider.models_credential_schema)
+              provider.configurate_methods.includes(ConfigurateMethod.CUSTOMIZED_MODEL))
           ) {
             // console.log(provider.provider,button.type,provider.provider_credential_schema,provider.models_credential_schema )
 

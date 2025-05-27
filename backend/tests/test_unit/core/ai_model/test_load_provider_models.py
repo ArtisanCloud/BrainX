@@ -6,15 +6,15 @@ from app.constant.ai_model.openai import OpenAIModelID
 from app.constant.ai_model.provider import ProviderID
 from app.constant.ai_model.wenxin import WenxinModelID
 from app.core.ai_model.provider_manager import ProviderManager
-from app.core.ai_model.schema.provider import ProviderSchema
+from app.core.ai_model.entity.provider import ProviderSchema
 from app.core.rag import FrameworkDriverType
 
 
-def test_load_provider_models(tmp_path, monkeypatch):
-    # 调用 load_provider_models 方法
+def test_load_provider_schemas(tmp_path, monkeypatch):
+    # 调用 load_provider_schemas 方法
     configurations: Dict[str: ProviderSchema] = ProviderManager(
         FrameworkDriverType(settings.agent.framework_driver)
-    ).load_provider_models()
+    ).load_provider_schemas()
 
     # 验证 configurations 是否正确加载
     assert configurations is not None

@@ -6,25 +6,31 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/react";
-import { Provider } from "@/app/api/model-provider/provider";
+import {ActionSaveProvider, ConfigurateMethod, Provider, ResponseSaveProvider} from "@/app/api/model-provider/provider";
 import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { ProviderIcon } from "./provider-icon";
+import {useState} from "react";
+import {ProviderIcon} from "./provider-icon";
 import DynamicForm from "../../components/dynamic-form";
+import useLoadingStore from "@/app/store/global-loading";
+import {useNotification} from "@/app/components/notification";
 
 // 定义 Props 接口
 interface ModalAddModelsProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function ModalAddModels({ provider }: ModalAddModelsProps) {
+export default function ModalAddModels({provider}: ModalAddModelsProps) {
   const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
   const [formValues, setFormValues] = useState<Record<string, any>>({});
+
+  const {loading, setLoading} = useLoadingStore();
+  const {msgSuccess, msgError} = useNotification();
+
 
   // 手动控制Modal开关
   const onOpen = () => setIsOpen(true);
@@ -36,9 +42,28 @@ export default function ModalAddModels({ provider }: ModalAddModelsProps) {
     setIsOpen(newIsOpen);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     // console.log("form:", formValues); // 表单变化时触发的回调函数
-    setIsOpen(false); // 关闭Modal
+    if (loading) {
+      return;
+    } else {
+      setLoading(true);
+    }
+    try {
+      const res: ResponseSaveProvider = await ActionSaveProvider({
+        config_from: ConfigurateMethod.CUSTOMIZED_MODEL,
+        provider: provider.provider,
+        credentials: formValues,
+      });
+
+      msgSuccess("保存成功");
+
+    } catch (error: any) {
+      msgError(error);
+    } finally {
+      setIsOpen(false); // 关闭Modal
+
+    }
   };
 
   const onFormChanged = (formValues: Record<string, any>) => {
@@ -56,7 +81,7 @@ export default function ModalAddModels({ provider }: ModalAddModelsProps) {
       <Button
         key={provider.provider}
         className={styles.btnFun}
-        startContent={<PlusIcon style={{ width: "18px", color: "gray" }} />}
+        startContent={<PlusIcon style={{width: "18px", color: "gray"}}/>}
         onPress={onOpen}
       >
         添加模型
@@ -76,7 +101,7 @@ export default function ModalAddModels({ provider }: ModalAddModelsProps) {
                     <span className="text-xl font-semibold text-gray-900">
                       添加 {provider.provider} 模型
                     </span>
-                    <ProviderIcon providerName={provider.provider} />
+                    <ProviderIcon providerName={provider.provider}/>
                   </div>
                   <div>
                     <DynamicForm
@@ -90,7 +115,8 @@ export default function ModalAddModels({ provider }: ModalAddModelsProps) {
                   </div>
                 </div>
               </div>
-              <div className="sticky bottom-0 flex justify-between items-center mt-2 -mx-2 pt-4 px-2 pb-6 flex-wrap gap-y-2 bg-white">
+              <div
+                className="sticky bottom-0 flex justify-between items-center mt-2 -mx-2 pt-4 px-2 pb-6 flex-wrap gap-y-2 bg-white">
                 <div className="inline-flex items-center text-xs text-primary-600">
                   {provider.help?.label?.zh_Hans ||
                     provider.help?.label?.en_US + " "}
@@ -103,7 +129,7 @@ export default function ModalAddModels({ provider }: ModalAddModelsProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <ArrowTopRightOnSquareIcon width={14} />
+                    <ArrowTopRightOnSquareIcon width={14}/>
                   </a>
                 </div>
                 <div className="flex flex-row gap-1">

@@ -6,7 +6,10 @@
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
-      "args": ["app.main:app", "--reload"],
+      "args": [
+        "app.main:app",
+        "--reload"
+      ],
       "jinja": true
     },
     {
@@ -17,7 +20,7 @@
       "args": [
         "-q",
         "--tb=short",
-        "tests/test_unit/core/ai_model/test_load_provider_models.py::test_load_provider_models",
+        "tests/test_unit/core/ai_model/test_load_provider_schemas.py::test_load_provider_schemas",
         "-p",
         "no:warnings"
       ],

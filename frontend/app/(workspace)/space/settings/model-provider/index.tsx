@@ -4,7 +4,7 @@ import useSettingsStore from "@/app/store/setting";
 import { useNotification } from "@/app/components/notification";
 import useLoadingStore from "@/app/store/global-loading";
 import {
-  ActionFetchProviderList,
+  ActionFetchProviderSchemaList,
   ResponseFetchProviderList,
 } from "@/app/api/model-provider/provider";
 import SystemModelSetting from "@/app/(workspace)/space/settings/model-provider/system-model-setting";
@@ -22,9 +22,9 @@ const ModelProviderComponent: React.FC = () => {
         setLoading(true);
       }
       try {
-        // 调用 ActionFetchProviderList 获取数据
+        // 调用 ActionFetchProviderSchemaList 获取数据
         const response: ResponseFetchProviderList =
-          await ActionFetchProviderList();
+          await ActionFetchProviderSchemaList();
         setProviders(response.data); // 将数据保存到 zustand store
         // console.log(response.data)
       } catch (error) {
