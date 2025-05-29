@@ -48,7 +48,6 @@ async def get_async_db_session_dep() -> AsyncSession:
         # await db.close()
 
 
-@contextmanager
 # 为了某些场景，比如 Celery 等需要直接调用的场景，你可以使用一个简单的函数来获取 session：
 def get_sync_db_session_dep() -> Session:
     sync_db = sync_session_local()
@@ -65,8 +64,17 @@ def get_sync_db_session_dep() -> Session:
         yield sync_db
         # 提交事务
 
-        logger.info("Sync DB dep commit")
-        sync_db.commit()
+        if (
+                sync_db.dirty  # 修改
+                or sync_db.new  # 新增
+                or sync_db.deleted  # 删除
+        ):
+            logger.info("Sync DB dep commit")
+            sync_db.commit()
+            
+        else:
+            logger.info("No changes to commit")
+
     except Exception as e:
         # 出现异常时回滚事务
         logger.error("Sync DB dep rollback")
@@ -77,4 +85,3 @@ def get_sync_db_session_dep() -> Session:
 
         logger.info("Sync DB dep session closed")
         sync_db.close()
-

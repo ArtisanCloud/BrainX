@@ -1,22 +1,24 @@
 from typing import Dict
 import ollama
-from app.core.brainx.base import LLMModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.service.brainx.service import BrainXService
 from langchain.schema import HumanMessage, SystemMessage
 
 
 async def completion(
-    llm: str,
-    system: str = "",
-    user: str = "",
-    messages: Dict = None,
-    images: list[str] | None = None,
+        llm: str,
+        async_db: AsyncSession,
+        system: str = "",
+        user: str = "",
+        messages: Dict = None,
+        images: list[str] | None = None,
 ):
     try:
 
         service_brain_x = BrainXService(
-            llm,
+            llm=llm,
+            async_db=async_db,
             streaming=False,
         )
 

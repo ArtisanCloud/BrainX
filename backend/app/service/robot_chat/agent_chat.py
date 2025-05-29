@@ -4,16 +4,16 @@ import json
 import ollama
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import settings
-from app.core.brainx.base import LLMModel
-from app.core.brainx.chat.app import generate_session_id
 from fastapi import Request
 
+from app.core.brainx.base import LLMModel
 from app.logger import logger
 from app.models.robot_chat.conversation import Conversation
 from app.schemas.robot_chat.chat import RequestChat
 from app.service.app.service import AppService
 from app.service.brainx.service import BrainXService
 from app.service.conversation.service import ConversationService
+from app.utils.chat import generate_session_id
 from app.utils.media import remove_base64_images_prefix
 
 
@@ -85,7 +85,8 @@ async def agent_chat(
             return None, None, exception
         # stream_response = chat_by_llm(question, llm, app, 0.5)
         service_brain_x = BrainXService(
-            llm,
+            llm=llm,
+            async_db=async_db,
             streaming=True,
             app=app,
         )

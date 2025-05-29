@@ -5,13 +5,13 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
+from app.core.brainx.base import get_visual_search_embedding_model
 from app.database.deps import get_async_db_session_dep
 from app.logger import logger
 from app.schemas.base import ResponseSchema
 from app.schemas.question_answer.visual_search import RequestVisualSearch, ResponseVisualSearch
 from app.service.question_answer.visual_search import visual_search
 from app.utils.media import image_base64_to_embed
-from app.core.brainx.base import get_visual_search_embedding_model
 
 router = APIRouter()
 

@@ -8,8 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import settings
-from app.core.ai_model.model_manager import ModelManager
-from app.core.rag import FrameworkDriverType
+from app.core.brainx.model_manager import ModelManager
 from app.core.rag.ingestion.extractor.factory import DataExtractorFactory
 from app.core.rag.ingestion.factory import IndexingFactory
 from app.core.rag.ingestion.splitter.base import BaseTextSplitter
@@ -24,17 +23,19 @@ from app.models.model_provider.provider_model import ModelType
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType, DataSourceType
 from app.models.rag.document_node import DocumentNode
 from app.utils.document import parse_local_document, load_document
-from app.utils.url import get_storage_complete_url, get_oss_url, get_storage_path
+from app.utils.url import get_oss_url, get_storage_path
 
 
 class RagProcessorTaskService:
     def __init__(
             self,
+            tenant_uuid: str,
             sync_db: Optional[Session],
             document_uuid: str,
             user_uuid: str,
             task: Any = None,
     ):
+        self.tenant_uuid = tenant_uuid
         self.task = task
         self.request = None
         self.document: Document
@@ -44,9 +45,7 @@ class RagProcessorTaskService:
         if sync_db is None:
             raise Exception("db session is None")
         self.sync_db = sync_db
-        self.model_manager = ModelManager(
-            FrameworkDriverType(settings.agent.framework_driver)
-        )
+        self.model_manager = ModelManager(sync_db=self.sync_db)
         self.document_dao = DocumentDAO(sync_db=self.sync_db)
         self.document_segment_dao = DocumentSegmentDAO(sync_db=self.sync_db)
 
@@ -170,16 +169,14 @@ class RagProcessorTaskService:
             return None, exception
 
         # create splitter
-        splitter = TextSplitterFactory.get_splitter(
-            FrameworkDriverType(settings.agent.framework_driver)
-        )
+        splitter = TextSplitterFactory.get_splitter()
 
         # create embedding model instance
         embedding_model_instance, exception = self.model_manager.get_model_instance(
-            self.sync_db,
-            self.document.tenant_uuid,
-            self.dataset.embedding_model_provider,
-            ModelType.TEXT_EMBEDDING,
+            tenant_uuid=self.tenant_uuid,
+            provider=self.dataset.embedding_model_provider,
+            model_type=ModelType.TEXT_EMBEDDING,
+            model=self.dataset.embedding_model,
         )
 
         if exception is not None:
@@ -187,7 +184,6 @@ class RagProcessorTaskService:
             return None, exception
         # create indexer
         indexer = IndexingFactory.get_indexer(
-            FrameworkDriverType(settings.agent.framework_driver),
             splitter,
             embedding_model_instance,
             self.user,

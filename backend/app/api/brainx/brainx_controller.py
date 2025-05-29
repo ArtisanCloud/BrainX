@@ -1,9 +1,14 @@
 import http
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app import settings
+from app.api.middleware.auth import get_session_user
+from app.database.deps import get_async_db_session_dep, get_sync_db_session_dep
 from app.logger import logger
+from app.models import User
 from app.schemas.base import ResponseSchema
 from app.schemas.brainx.demo.format import ResponseDemoFormatQuery
 from app.schemas.brainx.demo.string import RequestDemoQuery, ResponseDemoQuery
@@ -16,11 +21,13 @@ router = APIRouter()
 @router.post("/demo/format-output-invoke")
 async def api_demo_format_output_invoke(
         data: RequestDemoQuery,
+        session_user: User = Depends(get_session_user),
 ) -> ResponseDemoFormatQuery | ResponseSchema:
     try:
         question = data.question
 
         response, exception = await demo_struct_output_invoke(
+            tenant_uuid=session_user.tenant_owner_uuid,
             question=question, llm=data.llm,
         )
 
@@ -34,12 +41,19 @@ async def api_demo_format_output_invoke(
 @router.post("/demo/invoke")
 async def api_demo_invoke(
         data: RequestDemoQuery,
+        session_user: User = Depends(get_session_user),
+        sync_db: Session = Depends(get_sync_db_session_dep)
 ) -> ResponseDemoQuery | ResponseSchema:
     try:
+        # print(session_user.tenant_owner_uuid)
         question = data.question
-
+        tenant_uuid = str(session_user.tenant_owner_uuid)
+        
         response, exception = await demo_str_output_invoke(
-            question=question, llm=data.llm,
+            sync_db=sync_db,
+            tenant_uuid=tenant_uuid,
+            question=question,
+            llm=data.llm,
         )
 
         return ResponseDemoQuery(data=response)

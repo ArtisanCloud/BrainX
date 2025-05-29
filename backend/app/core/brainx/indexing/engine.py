@@ -4,33 +4,8 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-
 from app.core.brainx.indexing.pg_vector import get_vector_store_singleton
 from app.config.config import settings
-
-
-# def bind_llm(llm: str, temperature=0.5):
-#     # print(llm)
-#     Settings.llm = None
-
-#     mdl_llm = OpenAI(
-#         temperature=0.5,
-#         model=llm,
-#         streaming=False,
-#         api_key=settings.openai.api_key,
-#         api_base=settings.openai.api_base
-#     )
-#     match llm:
-#         case _ if LLMModel.is_baidu_model(llm):
-#             mdl_llm = get_ollama_llm(llm, temperature, streaming=False)
-#         case _ if LLMModel.is_ollama_model(llm):
-#             # print("match:", llm, LLMModel.OLLAMA_13B_ALPACA_16K)
-#             mdl_llm = get_ollama_llm(llm, temperature, streaming=False)
-#             # print("match:", llm, LLMModel.OLLAMA_GEMMA_2B)
-
-#     print("llm", mdl_llm)
-#     # return mdl_llm
-#     Settings.llm = mdl_llm
 
 
 def bind_embed_model():

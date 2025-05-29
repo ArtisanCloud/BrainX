@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from pydantic import UUID4, constr
 from datetime import datetime
-from app.core.ai_model.entity.provider import ProviderEntity
+from app.core.brainx.entity.provider import ProviderEntity
 
 from app.schemas.base import BaseSchema
 

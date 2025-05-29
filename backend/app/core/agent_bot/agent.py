@@ -10,9 +10,7 @@ from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolInvocation
 from pydantic import BaseModel, Field
 
-from app.config.config import settings
-from app.core.brainx.base import LLMModel
-from app.core.brainx.llm.langchain import get_llm
+from app.core.brainx.model_instance import ModelInstance
 from app.core.rag.retrieval.interface import BaseRetriever
 from app.core.workflow.graph import Graph
 from app.core.workflow.node.base import NodeType
@@ -40,18 +38,20 @@ def create_dynamic_route_query(options: list[str]) -> Type[BaseModel]:
 
 
 class AgentBot:
+    llm_model_instance: ModelInstance
+
     def __init__(
             self,
-            default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value,
             app: App = None,
+            llm_model_instance: ModelInstance = None,
             retriever: BaseRetriever = None,
     ):
         # graph
         self.builder = None
         self.graph: CompiledStateGraph | None = None
-        self.default_llm = None
-        self.router_llm = None
-        self.generate_llm = None
+        self.default_llm = llm_model_instance
+        self.router_llm = llm_model_instance
+        self.generate_llm = llm_model_instance
         self.router = None
         self.routes_options = [NodeType.END.value]
 
@@ -81,7 +81,6 @@ class AgentBot:
         self.voices: List[dict] = []
 
         try:
-            self.init_llm(default_llm)
             # self.init_plugins()
             self.init_text_datasets()
             # self.init_workflows()
@@ -91,45 +90,6 @@ class AgentBot:
 
         except Exception as e:
             raise e
-
-    def init_llm(self, default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value):
-        # match self.app.current_app_model_config.model_provider:
-        self.default_llm, exception = get_llm(
-            default_llm, params={
-                "temperature": 0,
-                "streaming": False
-            }
-        )
-        if exception:
-            raise exception
-
-        # 根据配置文件中的 router_llm 初始化 router_llm
-        default_router_llm = LLMModel.OPENAI_GPT_3_D_5_TURBO.value
-        if (
-                settings.agent.router_llm == LLMModel.BAIDU_ERNIE_Lite_8K.value
-                or settings.agent.router_llm == LLMModel.OLLAMA_LLAMA3_2.value
-        ):
-            default_router_llm = settings.agent.router_llm
-
-        self.router_llm, exception = get_llm(
-            default_router_llm,
-            params={
-                "temperature": 0,
-                "streaming": False
-            }
-        )
-        if exception:
-            raise exception
-
-        self.generate_llm, exception = get_llm(
-            default_llm,
-            params={
-                "temperature": 0,
-                "streaming": False
-            }
-        )
-        if exception:
-            raise exception
 
     def init_plugins(self):
         self.plugins = [

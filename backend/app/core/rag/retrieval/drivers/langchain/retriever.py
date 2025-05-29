@@ -4,7 +4,7 @@ from langchain_postgres import PGVector
 
 from app import settings
 from app.logger import logger
-from app.core.ai_model.model_instance import ModelInstance
+from app.core.brainx.model_instance import ModelInstance
 from app.core.rag import FrameworkDriverType
 from app.core.rag.ingestion.drivers.langchain.helper import convert_documents_to_nodes, \
     convert_documents_to_nodes_with_score
@@ -69,9 +69,9 @@ class LangchainRetriever(BaseRetriever):
             logger.info(f"Error in invoking documents: {e}", exc_info=settings.log.exc_info)
             return None, e
 
-    def retrieve(self, query: str, top_k: int=3, score_threshold: float=0.5, filters: Dict = None) -> \
-    Tuple[
-        List[DocumentNode] | None, Exception | None]:
+    def retrieve(self, query: str, top_k: int = 3, score_threshold: float = 0.5, filters: Dict = None) -> \
+            Tuple[
+                List[DocumentNode] | None, Exception | None]:
 
         try:
 

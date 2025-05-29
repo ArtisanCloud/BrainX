@@ -6,11 +6,12 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import FileResponse
 
 from app.api.middleware.auth import get_session_user
+from app.core.brainx.providers.registry import ModelProviderRegistry
 from app.database.deps import get_async_db_session_dep
 from app.logger import logger
 
 from app.config.config import settings
-from app.core.ai_model.model_manager import ModelManager
+from app.core.brainx.model_manager import ModelManager
 from app.models.originaztion.user import User
 from app.core.rag import FrameworkDriverType
 from app.schemas.base import ResponseSchema
@@ -29,10 +30,8 @@ async def api_get_model_provider_list(
         request: Request,
 ) -> ResponseGetModelProviderList | ResponseSchema:
     try:
-        model_manager = ModelManager(
-            FrameworkDriverType(settings.agent.framework_driver)
-        )
-        providers, exception = model_manager.provider_manager.load_provider_schemas()
+
+        providers, exception = ModelProviderRegistry().load_provider_entities()
         if exception is not None:
             raise exception
 

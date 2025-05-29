@@ -1,14 +1,14 @@
 from typing import List, Optional, Tuple
 
 from app import settings
-from app.core.ai_model.model_instance import ModelInstance
+from app.core.brainx.model_instance import ModelInstance
 from app.core.rag import FrameworkDriverType
 from app.core.rag.ingestion.interface import BaseIndexing
 from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
 from app.core.rag.vector_store.factory import VectorStoreDriverFactory
 from app.core.rag.vector_store.interface import BaseVectorStore
-from app.models import  User, Document
+from app.models import User, Document
 from app.models.rag.document_node import DocumentNode
 
 
@@ -43,13 +43,11 @@ class LangchainIndexer(BaseIndexing):
             embedding_model=embedding_model
         )
 
-
         # create retrieval
         self.retriever_driver = (
             self.vector_store_driver
             .get_base_vector_store()
         )
-
 
     def transform_documents(self, nodes: List[DocumentNode]) -> List[DocumentNode]:
         # 实现存储数据逻辑

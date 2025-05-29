@@ -1,4 +1,4 @@
-from app.core.ai_model.entity.base import I18nObject
+from app.core.brainx.entity.base import I18nObject
 
 
 def test_multilingual_field():

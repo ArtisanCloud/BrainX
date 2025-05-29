@@ -20,7 +20,7 @@
       "args": [
         "-q",
         "--tb=short",
-        "tests/test_unit/core/ai_model/test_load_provider_schemas.py::test_load_provider_schemas",
+        "tests/test_unit/core/ai_model/test_load_provider_entities.py::test_load_provider_entities",
         "-p",
         "no:warnings"
       ],

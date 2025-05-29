@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import settings
 from app.core.brainx.base import LLMModel
-from app.core.brainx.chat.app import generate_session_id
 from app.logger import logger
 from app.models.app.app import App
 from app.models.robot_chat.conversation import Conversation
@@ -16,6 +15,7 @@ from app.service.brainx.service import BrainXService
 from app.service.conversation.service import ConversationService
 from fastapi import Request
 
+from app.utils.chat import generate_session_id
 from app.utils.media import remove_base64_images_prefix
 
 

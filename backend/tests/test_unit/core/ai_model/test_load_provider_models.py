@@ -1,20 +1,16 @@
 from typing import Dict
 
-from app import settings
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.openai import OpenAIModelID
 from app.constant.ai_model.provider import ProviderID
 from app.constant.ai_model.wenxin import WenxinModelID
-from app.core.ai_model.provider_manager import ProviderManager
-from app.core.ai_model.entity.provider import ProviderSchema
-from app.core.rag import FrameworkDriverType
+from app.core.brainx.providers.registry import ModelProviderRegistry
+from app.schemas.model_provider.provider import ProviderSchema
 
 
-def test_load_provider_schemas(tmp_path, monkeypatch):
-    # 调用 load_provider_schemas 方法
-    configurations: Dict[str: ProviderSchema] = ProviderManager(
-        FrameworkDriverType(settings.agent.framework_driver)
-    ).load_provider_schemas()
+def test_load_provider_entities(tmp_path, monkeypatch):
+    # 调用 load_provider_entities 方法
+    configurations: Dict[str: ProviderSchema] = ModelProviderRegistry().load_provider_entities()
 
     # 验证 configurations 是否正确加载
     assert configurations is not None

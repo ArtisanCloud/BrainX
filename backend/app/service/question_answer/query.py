@@ -1,7 +1,11 @@
 import http
 from typing import List
 
+from fastapi import Depends
+from sqlalchemy.orm import Session
+
 from app import settings
+from app.database.deps import get_sync_db_session_dep
 from app.logger import logger
 from app.models.rag.document_node import DocumentNode
 from app.schemas.base import ResponseSchema
@@ -10,7 +14,7 @@ from app.service.brainx.service import BrainXService
 
 
 def transform_documents_to_reply(
-    answer: str, documents: List[DocumentNode]
+        answer: str, documents: List[DocumentNode]
 ) -> ResponseQuery:
     return ResponseQuery(
         answer=answer,
@@ -31,9 +35,10 @@ def transform_document_to_reply(document: DocumentNode) -> DocumentSchema:
     )
 
 
-async def query_by_text(question: str, llm: str) -> ResponseQuery | ResponseSchema:
+async def query_by_text(question: str, llm: str,
+                        sync_db: Session = Depends(get_sync_db_session_dep)) -> ResponseQuery | ResponseSchema:
     service_brain_x = BrainXService(
-        llm, streaming=False, collection_name="opl_embeddings"
+        llm=llm, sync_db=sync_db, collection_name="opl_embeddings"
     )
 
     res = ResponseQuery(answer="暂时没有找到答案，请稍后再试。", documents=[])
@@ -49,8 +54,8 @@ async def query_by_text(question: str, llm: str) -> ResponseQuery | ResponseSche
 
         if len(docs) > 0:
             template = (
-                docs[0].page_content
-                + " \n\n 请根据以上召回内容，针对此问题'{query}'，做一个回答"
+                    docs[0].page_content
+                    + " \n\n 请根据以上召回内容，针对此问题'{query}'，做一个回答"
             )
             # print(template)
             response, exception = service_brain_x.invoke(

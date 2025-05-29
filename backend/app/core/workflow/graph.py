@@ -11,7 +11,7 @@ from langgraph.prebuilt import ToolExecutor
 
 from app import settings
 from app.core.brainx.base import LLMModel
-from app.core.brainx.llm.langchain import get_llm
+from app.core.brainx.model_instance import ModelInstance
 from app.core.workflow.context.manager import ContextManager
 from app.core.workflow.node.base import NodeType
 from app.core.workflow.node.factory import NodeFactory
@@ -20,58 +20,30 @@ from app.logger import logger
 
 
 class Graph:
-    def __init__(self, graph_data: Dict = {}):
+    llm_model_instance: ModelInstance
+
+    def __init__(
+            self,
+            graph_data: Dict,
+            llm_model_instance: ModelInstance = None,
+    ):
 
         self.builder = None
         self.graph: CompiledStateGraph | None = None
         self.context_manager: ContextManager = ContextManager()  # Global context
 
-        self.default_llm = None
-        self.router_llm = None
-        self.generate_llm = None
+        self.default_llm = llm_model_instance
+        self.router_llm = llm_model_instance
+        self.generate_llm = llm_model_instance
         self.router = None
         self.routes_options = [NodeType.END.value]
         self.tools = []
         try:
-            self.init_llm()
             # self._build_static_nodes()
             self.tool_executor = ToolExecutor(self.tools)
             self.build(graph_data)
         except Exception as e:
             raise e
-
-    def init_llm(self, default_llm: str = LLMModel.BAIDU_ERNIE_Lite_8K.value):
-        # match self.app.current_app_model_config.model_provider:
-        self.default_llm, exception = get_llm(
-            default_llm,
-            params={
-                "temperature": 0,
-                "streaming": False,
-            },
-        )
-        if exception:
-            raise exception
-
-        # self.router_llm, exception = get_llm(LLMModel.OLLAMA_LLAMA3_2.value, temperature=0, streaming=False)
-        self.router_llm, exception = get_llm(
-            LLMModel.OPENAI_GPT_3_D_5_TURBO.value,
-            params={
-                "temperature": 0,
-                "streaming": False,
-            },
-        )
-        if exception:
-            raise exception
-
-        self.generate_llm, exception = get_llm(
-            default_llm,
-            params={
-                "temperature": 0,
-                "streaming": True,
-            },
-        )
-        if exception:
-            raise exception
 
     def call_agent(self, state: GraphState):
         messages = state["messages"]

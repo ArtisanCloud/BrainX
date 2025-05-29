@@ -57,7 +57,7 @@ async def seed_default_tenant_models(async_db: AsyncSession) -> Exception | None
 
 # async def seed_model_providers(async_db:AsyncSession) -> Exception | None:
 #     try:
-#         provider_config = ProviderManager().load_provider_schemas()
+#         provider_config = ProviderManager().load_provider_entities()
 #         # Check if the table is empty
 #         providers_count = await db.scalar(select(func.count()).select_from(Provider))
 #         if providers_count == 0:
