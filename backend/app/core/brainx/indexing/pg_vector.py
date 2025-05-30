@@ -1,8 +1,9 @@
 from typing import Tuple
-
-from llama_index.core.vector_stores.types import BasePydanticVectorStore
-from llama_index.vector_stores.postgres import PGVectorStore
 from sqlalchemy.engine import make_url
+
+from app.config.agent.pgvector import PGVector
+from app.core.rag.base import create_text_embedding_model
+from app.core.rag.vector_store.drivers.langchain.vdb.pgvector.pgvector import PGVectorStore
 from app.database.session import (
     async_session_local as app_async_session_local,
     async_db_engine as app_engine,
@@ -76,8 +77,8 @@ class CustomPGVectorStore(PGVectorStore):
 
 
 def get_vector_store_singleton(
-    table_name: str,
-) -> Tuple[BasePydanticVectorStore | None, Exception | None]:
+        table_name: str = "rag_embeddings",
+) -> Tuple[PGVectorStore | None, Exception | None]:
     global singleton_instances
 
     if table_name == "":
@@ -89,14 +90,15 @@ def get_vector_store_singleton(
 
     try:
         url = make_url(settings.database.dsn)
-        singleton_instances[table_name] = CustomPGVectorStore.from_params(
-            host=url.host,
-            port=url.port or 5432,
-            database=url.database,
-            user=url.username,
-            password=url.password,
-            table_name=table_name,
-            embed_dim=768,
+
+        embedding_model = create_text_embedding_model()
+        singleton_instances[table_name] = CustomPGVectorStore(
+            collection_name=table_name,
+            embedding=embedding_model,
+            config=PGVector(
+                url=url,
+                use_jsonb=settings.agent.use_jsonb,
+            )
         )
     except Exception as e:
         return None, e

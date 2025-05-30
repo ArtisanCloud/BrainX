@@ -46,16 +46,18 @@ async def demo_struct_output_invoke(
 async def demo_str_output_invoke(
         sync_db: Session,
         tenant_uuid: str,
-        question: str, llm: str,
+        question: str,
+        provider_id: str = None, model_id: str = None,
 ) -> Tuple[Any, Exception | None]:
     try:
         service_brain_x = BrainXService(
             tenant_uuid=tenant_uuid,
-            llm=llm,
+            provider_id=provider_id,
+            model_id=model_id,
             sync_db=sync_db,
             streaming=False,
         )
-        print(service_brain_x)
+
         background = "你是一位HR分析师"
 
         template = """

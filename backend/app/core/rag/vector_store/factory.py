@@ -1,5 +1,4 @@
 from app import settings
-from app.core.rag import FrameworkDriverType
 from app.core.rag.vector_store.drivers.langchain.store import LangchainVectorStoreDriver
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
 from app.core.rag.vector_store.drivers.langchain.vdb.faiss.faiss import FaissVectorStore

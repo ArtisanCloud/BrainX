@@ -1,15 +1,17 @@
 from typing import Mapping
 
 from langchain_openai import ChatOpenAI
+from pydantic import Field
 
+from app.core.brainx.base import LLMModel
 from app.core.brainx.interface.llm import LLM
 
 
 class OpenAILMM(LLM):
-    model: str
+    model_id: str = Field(default=LLMModel.OPENAI_GPT_3_D_5_TURBO, description="模型 ID")
 
-    def __init__(self, model: str = 'gpt-3.5-turbo'):
-        self.model = model
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def validate_credentials(self, model: str, credentials: Mapping) -> None:
         raise NotImplementedError
@@ -21,7 +23,7 @@ class OpenAILMM(LLM):
 
         # 初始化并返回模型
         return ChatOpenAI(
-            model=self.model,
+            model=self.model_id,
             temperature=temperature,
             streaming=streaming,
         )

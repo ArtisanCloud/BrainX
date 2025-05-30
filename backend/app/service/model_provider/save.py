@@ -1,6 +1,5 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from app import logger
-from app.models.model_provider.provider import Provider
+from sqlalchemy.orm import Session
+
 from app.schemas.model_provider.provider import ProviderSchema
 from app.service.model_provider.provider_service import (
     ProviderService,
@@ -11,15 +10,21 @@ from app.config.config import settings
 
 
 async def save_model_provider(
-        async_db: AsyncSession,
+        sync_db: Session,
         tenant_uuid: str,
-        provider_name: str,
+        provider: str,
         credentials: dict
 ) -> Tuple[ProviderSchema | None, Exception | None]:
     try:
-        service_model_provider = ProviderService(async_db)
+        service_model_provider = ProviderService(sync_db=sync_db)
 
-        _, _ = await service_model_provider.provider_manager.get_provider_configuration(tenant_uuid, provider_name)
+        # 加载租户的模型配置表
+        configurations = service_model_provider.provider_manager.get_configurations(tenant_uuid)
+
+        # 获取指定的provider配置
+        provider_configuration = configurations.get(provider)
+        if provider_configuration is None:
+            raise Exception(f"Cannot find provider configuration for {provider}")
 
         model_provider = None
         # model_provider, exception = (
@@ -29,7 +34,6 @@ async def save_model_provider(
         #     raise exception
 
     except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
         return None, e
 
     return transform_provider_to_reply(model_provider), None

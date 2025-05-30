@@ -1,12 +1,11 @@
 import http
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app import settings
 from app.api.middleware.auth import get_session_user
-from app.database.deps import get_async_db_session_dep, get_sync_db_session_dep
+from app.database.deps import get_sync_db_session_dep
 from app.logger import logger
 from app.models import User
 from app.schemas.base import ResponseSchema
@@ -44,23 +43,21 @@ async def api_demo_invoke(
         session_user: User = Depends(get_session_user),
         sync_db: Session = Depends(get_sync_db_session_dep)
 ) -> ResponseDemoQuery | ResponseSchema:
-    try:
-        # print(session_user.tenant_owner_uuid)
-        question = data.question
-        tenant_uuid = str(session_user.tenant_owner_uuid)
-        
-        response, exception = await demo_str_output_invoke(
-            sync_db=sync_db,
-            tenant_uuid=tenant_uuid,
-            question=question,
-            llm=data.llm,
-        )
+    question = data.question
+    tenant_uuid = str(session_user.tenant_owner_uuid)
 
-        return ResponseDemoQuery(data=response)
+    response, exception = await demo_str_output_invoke(
+        sync_db=sync_db,
+        tenant_uuid=tenant_uuid,
+        question=question,
+        provider_id=data.provider_id,
+        model_id=data.model_id,
+    )
 
-    except Exception as e:
-        logger.error(f"Failed to brainx format output: {e}", exc_info=settings.log.exc_info)
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    if exception:
+        raise exception
+
+    return ResponseDemoQuery(data=response)
 
 
 @router.post("/demo/completion")

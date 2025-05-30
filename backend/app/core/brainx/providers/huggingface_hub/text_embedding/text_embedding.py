@@ -1,14 +1,18 @@
 from collections.abc import Mapping
 
+from pydantic import Field
+
 from app import settings
+from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.core.brainx.interface.text_embedding import TextEmbeddingModel
 from langchain_huggingface import HuggingFaceEmbeddings
 
 
 class HuggingFaceHubTextEmbeddingModel(TextEmbeddingModel):
+    model_id: str = Field(default=HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE, description="模型 ID")
 
-    def __init__(self, model_id: str):
-        self.model_id = model_id
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def validate_credentials(self, model: str, credentials: Mapping) -> None:
         pass

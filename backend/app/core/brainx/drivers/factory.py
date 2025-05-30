@@ -69,84 +69,102 @@ class ModelProviderFactory:
     def __init__(self, tenant_uuid: str):
         self.tenant_uuid = tenant_uuid
 
-    def get_model_type_instance(self, provider: str, model_type: ModelType) -> AIModel:
+    def get_model_type_instance(self, model_type: ModelType, provider_id: str, model_id: str) -> AIModel:
 
-        provider_id = ProviderID(provider)
+        provider_id = ProviderID(provider_id)
+
+        init_params = {
+            "tenant_uuid": self.tenant_uuid,
+            "provider_id": provider_id,
+            "provider_name": provider_id,
+            "model_type": model_type,
+            "model_id": model_id,
+            # "plugin_model_provider": self.get_plugin_model_provider(provider),
+        }
 
         if model_type == ModelType.LLM:
-            return self.create_llm_provider(provider_id=provider_id)
+            return self.create_llm_provider(**init_params)
         elif model_type == ModelType.TEXT_EMBEDDING:
-            return self.create_text_embedding_provider(provider_id=provider_id)
+            return self.create_text_embedding_provider(**init_params)
         elif model_type == ModelType.RERANK:
-            return self.create_rerank_provider(provider_id=provider_id)
+            return self.create_rerank_provider(**init_params)
         elif model_type == ModelType.SPEECH2TEXT:
-            return self.create_speech2text_provider(provider_id=provider_id)
+            return self.create_speech2text_provider(**init_params)
         elif model_type == ModelType.TEXT2VIDEO:
-            return self.create_text2video_provider(provider_id=provider_id)
+            return self.create_text2video_provider(**init_params)
         elif model_type == ModelType.TTS:
-            return self.create_tts_provider(provider_id=provider_id)
+            return self.create_tts_provider(**init_params)
+        else:
+            raise ValueError(f'Unsupported model type: {model_type}')
 
     @staticmethod
-    def create_llm_provider(
-            provider_id: ProviderID
-    ) -> LLM:
+    def create_llm_provider(**kwargs) -> LLM:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.llm_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported LLM provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_text_embedding_provider(provider_id: ProviderID) -> TextEmbeddingModel:
+    def create_text_embedding_provider(**kwargs) -> TextEmbeddingModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.text_embedding_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Text Embedding provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_image_embedding_provider(provider_id: ProviderID) -> ImageEmbeddingModel:
+    def create_image_embedding_provider(**kwargs) -> ImageEmbeddingModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.image_embedding_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Image Embedding provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_img2img_provider(provider_id: ProviderID) -> Img2ImgModel:
+    def create_img2img_provider(**kwargs) -> Img2ImgModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.img2img_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Img2Img provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_rerank_provider(provider_id: ProviderID) -> RerankModel:
+    def create_rerank_provider(**kwargs) -> RerankModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.rerank_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Rerank provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_speech2text_provider(provider_id: ProviderID) -> Speech2TextModel:
+    def create_speech2text_provider(**kwargs) -> Speech2TextModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.speech2text_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Speech2Text provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_text2img_provider(provider_id: ProviderID) -> Text2ImgModel:
+    def create_text2img_provider(**kwargs) -> Text2ImgModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.text2img_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Text2Img provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_text2video_provider(provider_id: ProviderID) -> Text2VideoModel:
+    def create_text2video_provider(**kwargs) -> Text2VideoModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.text2video_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported Text2Video provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)
 
     @staticmethod
-    def create_tts_provider(provider_id: ProviderID) -> TTSModel:
+    def create_tts_provider(**kwargs) -> TTSModel:
+        provider_id = kwargs.get("provider_id")
         model_provider_class = ModelProviderFactory.tts_provider_map.get(provider_id.value)
         if model_provider_class is None:
             raise ValueError(f"Unsupported TTS provider id: {provider_id}")
-        return model_provider_class()
+        return model_provider_class(**kwargs)

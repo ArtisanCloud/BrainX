@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app import logger
+from app.constant.ai_model.provider import ProviderID
 from app.core.agent_bot.agent import AgentBot
+from app.core.brainx.base import LLMModel
 from app.core.brainx.model_manager import ModelManager
 from app.core.rag.base import create_indexer, create_retriever, create_text_embedding_model
 from app.core.workflow.state import GraphState
@@ -25,7 +27,8 @@ class BrainXService:
             app: App = None,
             async_db: AsyncSession = None,
             sync_db: Session = None,
-            llm: str = "openai",
+            provider_id: str = ProviderID.OPENAI,
+            model_id: str = LLMModel.OPENAI_GPT_3_D_5_TURBO,
             streaming: bool = False,
             collection_name: str = "rag_embeddings",
     ):
@@ -33,18 +36,18 @@ class BrainXService:
         self.tenant_uuid = tenant_uuid
         self.async_db = async_db
         self.sync_db = sync_db
-        self.llm = llm
         self.streaming = streaming
 
         # 初始化 ModelManager
         self.model_manager = ModelManager(
+            provider_id=provider_id, model_id=model_id,
             async_db=async_db, sync_db=sync_db
         )
 
         # define the agent executor
         self.llm_model_instance, exception = self.model_manager.get_default_model_instance(tenant_uuid, ModelType.LLM)
         if exception:
-            raise exception
+            return
 
         self.text_embedding_model_instance, exception = self.model_manager.get_default_model_instance(tenant_uuid, ModelType.TEXT_EMBEDDING)
         if exception:

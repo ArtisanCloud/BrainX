@@ -40,17 +40,22 @@ class ProviderConfiguration(BaseModel):
     # pydantic configs
     model_config = ConfigDict(protected_namespaces=())
 
-    def get_model_type_instance(self, model_type: ModelType) -> AIModel:
+    def get_model_type_instance(self, model_type: ModelType, provider_id: str = None, model_id: str = None) -> AIModel:
         """
         Get current model type instance.
 
         :param model_type: model type
+        :param model_id: model id
         :return:
         """
         model_provider_factory = ModelProviderFactory(self.tenant_uuid)
 
         # Get model instance of LLM
-        return model_provider_factory.get_model_type_instance(provider=self.provider.provider, model_type=model_type)
+        return model_provider_factory.get_model_type_instance(
+            model_type=model_type,
+            provider_id=provider_id,
+            model_id=model_id,
+        )
 
 
 class ProviderConfigurations(BaseModel):
@@ -101,5 +106,4 @@ class ProviderConfigurations(BaseModel):
         return iter(self.configurations.values())
 
     def get(self, key, default=None) -> ProviderConfiguration | None:
-
         return self.configurations.get(key, default)  # type: ignore

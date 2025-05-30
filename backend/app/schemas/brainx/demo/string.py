@@ -4,7 +4,8 @@ from app.schemas.base import BaseSchema
 
 
 class RequestDemoQuery(BaseSchema):
-    llm: Optional[str | None] = None
+    provider_id: Optional[str | None] = None
+    model_id: Optional[str | None] = None
     question: str
 
 

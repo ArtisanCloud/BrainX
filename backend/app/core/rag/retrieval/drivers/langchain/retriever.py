@@ -1,11 +1,8 @@
 from typing import List, Optional, Any, Dict, Tuple
 
-from langchain_postgres import PGVector
-
 from app import settings
 from app.logger import logger
 from app.core.brainx.model_instance import ModelInstance
-from app.core.rag import FrameworkDriverType
 from app.core.rag.ingestion.drivers.langchain.helper import convert_documents_to_nodes, \
     convert_documents_to_nodes_with_score
 from app.core.rag.retrieval.interface import BaseRetriever
@@ -29,10 +26,9 @@ class LangchainRetriever(BaseRetriever):
 
         self.vector_stored_driver: VectorStoreDriver | None = None
         if vector_store_driver is None:
-            embedding_model = embedding_model_instance.model.get_provider_model()
+            embedding_model = embedding_model_instance
             # get vector store
             self.vector_stored_driver = VectorStoreDriverFactory.create_vector_store_driver(
-                FrameworkDriverType(settings.agent.framework_driver),
                 VectorStoreType(settings.agent.vdb),
                 collection_name=collection_name,
                 embedding_model=embedding_model

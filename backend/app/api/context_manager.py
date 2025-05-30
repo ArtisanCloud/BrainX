@@ -4,10 +4,10 @@ import uuid
 from fastapi import Request
 from sqlalchemy.orm import Session
 
+from app.core.exception.exceptions import AuthException
 from app.models.originaztion.user import User
 from app.logger import logger
 from app.schemas.tenant.user import UserTokenData, UserSchema, UserStatus
-from app.utils.exceptions import AuthException
 
 # we are using context variables to store request level context , as FASTAPI
 # does not provide request context out of the box
@@ -44,8 +44,7 @@ async def build_request_context(request: Request):
         elif user.status != UserStatus.ACTIVE.value:
             error_message = "Invalid authentication credentials, tenant is not active"
         if error_message:
-            raise AuthException(status_code=401, message=error_message)
+            raise AuthException(message=error_message)
     context_log_meta.set({'api_id': context_api_id.get(), 'request_id': request.headers.get('X-Request-ID'),
                           'user_id': context_user_id.get(), 'actor': context_actor_user_data.get()})
     logger.info(extra=context_log_meta.get(), msg="REQUEST_INITIATED")
-

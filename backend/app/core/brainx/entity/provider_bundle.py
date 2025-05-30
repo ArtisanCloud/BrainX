@@ -10,7 +10,7 @@ class ProviderModelBundle(BaseModel):
     """
 
     configuration: ProviderConfiguration
-    model_instance: AIModel
+    model_type_instance: AIModel
 
     # pydantic configs
     model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())

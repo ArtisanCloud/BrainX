@@ -6,8 +6,6 @@ from sqlalchemy.orm import Session
 from app.config.config import settings
 from app.core.brainx.provider_manager import ProviderManager
 from app.core.brainx.entity.provider import ProviderEntity
-from app.core.rag import FrameworkDriverType
-from app.dao.base import ModelType
 
 from app.dao.model_provider.provider import ProviderDAO
 from app.models.model_provider.provider import Provider
@@ -16,9 +14,9 @@ from app.models.model_provider.provider import Provider
 class ProviderService:
     model_provider_dao: ProviderDAO
 
-    def __init__(self, async_db: AsyncSession):
-        self.model_provider_dao = ProviderDAO(async_db)
-        self.provider_manager = ProviderManager(async_db)
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        self.model_provider_dao = ProviderDAO(async_db=async_db, sync_db=sync_db)
+        self.provider_manager = ProviderManager(async_db=async_db, sync_db=sync_db)
 
     async def get_provider(self, tenant_uuid: str, provider_name: str) -> Tuple[Provider | None, Exception | None]:
         providers, exception = await self.model_provider_dao.async_get_objects_by_conditions({

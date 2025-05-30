@@ -23,10 +23,10 @@ class ModelInstance:
             **kwargs: Any,
     ) -> Tuple[Iterator | None, Exception | None]:
 
-        if not isinstance(self.model_bundle.model_instance, LLM):
+        if not isinstance(self.model_bundle.model_type_instance, LLM):
             return None, Exception("Model type instance is not LargeLanguageModel")
 
-        return self.model_bundle.model_instance.stream(
+        return self.model_bundle.model_type_instance.stream(
             query=query,
             temperature=temperature,
             input_variables=input_variables,
@@ -42,10 +42,10 @@ class ModelInstance:
             output_schemas: Any = None,
             **kwargs: Any,
     ) -> Tuple[Any | None, Exception | None]:
-        if not isinstance(self.model_bundle.model_instance, LLM):
+        if not isinstance(self.model_bundle.model_type_instance, LLM):
             return None, Exception("Model type instance is not LargeLanguageModel")
 
-        return self.model_bundle.model_instance.invoke(
+        return self.model_bundle.model_type_instance.invoke(
             query=query,
             temperature=temperature,
             input_variables=input_variables,
@@ -61,10 +61,10 @@ class ModelInstance:
             session_id: str = "",
             **kwargs: Any,
     ) -> Tuple[str | None, Exception | None]:
-        if not isinstance(self.model_bundle.model_instance, LLM):
+        if not isinstance(self.model_bundle.model_type_instance, LLM):
             return None, Exception("Model type instance is not LargeLanguageModel")
 
-        return self.model_bundle.model_instance.chat_completion(
+        return self.model_bundle.model_type_instance.chat_completion(
             query=query,
             temperature=temperature,
             app=app,
@@ -80,10 +80,10 @@ class ModelInstance:
             **kwargs: Any,
     ) -> Tuple[Iterator | None, Exception | None]:
 
-        if not isinstance(self.model_bundle.model_instance, LLM):
+        if not isinstance(self.model_bundle.model_type_instance, LLM):
             return None, Exception("Model type instance is not LargeLanguageModel")
 
-        return self.model_bundle.model_instance.chat_stream(
+        return self.model_bundle.model_type_instance.chat_stream(
             question=question,
             temperature=temperature,
             app=app,

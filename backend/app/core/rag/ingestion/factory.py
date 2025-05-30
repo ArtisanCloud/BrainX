@@ -4,7 +4,6 @@ from app.models import User, Document
 from .drivers.langchain.indexing import LangchainIndexer
 from .interface import BaseIndexing
 from .splitter.base import BaseTextSplitter
-from .. import FrameworkDriverType
 from ...brainx.model_instance import ModelInstance
 
 

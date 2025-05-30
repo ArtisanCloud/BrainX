@@ -4,17 +4,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from sqlalchemy.orm import Session
 
-from app.core.brainx.entity.base import ModelProviderID
 from app.core.brainx.entity.provider_bundle import ProviderModelBundle
 from app.core.brainx.interface.ai_model import AIModel
 from app.core.brainx.entity.provider_config import ProviderConfigurations, ProviderConfiguration, ModelSettings
-from app.core.brainx.entity.provider import ProviderEntity
 from app.core.brainx.providers.registry import ModelProviderRegistry
 
 from app.dao.model_provider.provider import ProviderDAO
 from app.dao.model_provider.provider_model import ProviderModelDAO
 from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
-from app.models.model_provider.provider import ProviderType
+from app.models.model_provider.provider import ProviderType, Provider
 from app.models.model_provider.provider_model import ModelType, ProviderModel
 from app.models.tenant.tenant import TenantDefaultModel
 
@@ -22,11 +20,18 @@ from app.models.tenant.tenant import TenantDefaultModel
 class ProviderManager:
     async_db: AsyncSession
     sync_db: Session
+    provider_id: str = None
+    model_id: str = None
     model_provider_dao: ProviderDAO
 
-    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+    def __init__(self,
+                 async_db: AsyncSession = None, sync_db: Session = None,
+                 provider_id=None, model_id=None,
+                 ):
         self.async_db = async_db
         self.sync_db = sync_db
+        self.provider_id = provider_id
+        self.model_id = model_id
         self.model_provider_dao = ProviderDAO(async_db=async_db, sync_db=sync_db)
         self.model_provider_model_dao = ProviderModelDAO(async_db=async_db, sync_db=sync_db)
 
@@ -54,35 +59,44 @@ class ProviderManager:
 
         return default_model, None
 
-    def get_provider_model_bundle(self, tenant_uuid: str, provider: str, model_type: ModelType):
+    def get_provider_model_bundle(
+            self, tenant_uuid: str,
+            model_type: ModelType, provider_id: str, model_id: str):
         # 加载租户的模型配置表
         configurations = self.get_configurations(tenant_uuid)
-
+        # print(provider, configurations.configurations)
         # 获取指定的provider配置
-        provider_configuration = configurations.get(provider)
+        provider_configuration = configurations.get(provider_id)
         if provider_configuration is None:
             raise Exception(f"Cannot find provider configuration for {provider}")
 
         # 通过配置对象，获取指定的模型实例
-        model_instance = provider_configuration.get_model_type_instance(model_type)
+        model_type_instance = provider_configuration.get_model_type_instance(
+            model_type,
+            provider_id=provider_id, model_id=model_id
+        )
 
         return ProviderModelBundle(
             configuration=provider_configuration,
-            model_type_instance=model_instance,
+            model_type_instance=model_type_instance,
         ), None
 
-    def get_all_providers(self, tenant_uuid: str) -> Dict[str, ProviderEntity]:
+    def get_all_providers(self, tenant_uuid: str) -> dict[str, list[Provider]]:
         provider_records, exception = self.model_provider_dao.sync_get_objects_by_conditions({
             "tenant_uuid": tenant_uuid,
             "is_valid": True,
         })
+        if exception is not None:
+            raise Exception(exception)
+
         dict_providers = defaultdict(list)
         for record in provider_records:
+            # print(111, record.provider_name, record.provider_type)
             dict_providers[record.provider_name].append(record)
 
         return dict_providers
 
-    def get_all_provider_models(self, tenant_uuid: str) -> Dict[str, ProviderEntity]:
+    def get_all_provider_models(self, tenant_uuid: str) -> Dict[str, list[ProviderModel]]:
         provider_model_records, exception = self.model_provider_model_dao.sync_get_objects_by_conditions({
             "tenant_uuid": tenant_uuid,
             "is_valid": True,
@@ -92,6 +106,7 @@ class ProviderManager:
 
         dict_provider_models = defaultdict(list)
         for record in provider_model_records:
+            # print(222, record.provider_name, record.model_name, record.model_type)
             dict_provider_models[record.provider_name].append(record)
 
         return dict_provider_models
@@ -112,10 +127,13 @@ class ProviderManager:
         provider_configurations = ProviderConfigurations(tenant_uuid=tenant_uuid)
 
         for key, provider_entity in dict_provider_entities.items():
+            # print(provider_entity.provider, len(provider_entity.models))
+
             provider_name = provider_entity.provider
             provider_records = dict_providers.get(provider_entity.provider, [])
             provider_model_records = dict_provider_models.get(provider_entity.provider, [])
-            provider_id_entity = ModelProviderID(provider_name)
+            # provider_id_entity = ModelProviderID(provider_name)
+            provider_id_entity = provider_name
 
             using_provider_type = ProviderType.SYSTEM
 
@@ -136,6 +154,7 @@ class ProviderManager:
                 model_settings=model_settings,
             )
             provider_configurations[str(provider_id_entity)] = provider_configuration
+            # print(10333333, provider_configuration.provider.provider)
 
         return provider_configurations
 

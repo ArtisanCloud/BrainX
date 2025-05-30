@@ -1,6 +1,5 @@
 from enum import Enum
 
-from app.core.rag import FrameworkDriverType
 from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.ingestion.splitter.drivers.langchain.splitter import LangchainRecursiveCharacterTextSplitter
 

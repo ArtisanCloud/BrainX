@@ -2,7 +2,6 @@ from typing import List, Optional, Tuple
 
 from app import settings
 from app.core.brainx.model_instance import ModelInstance
-from app.core.rag import FrameworkDriverType
 from app.core.rag.ingestion.interface import BaseIndexing
 from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.vector_store.drivers.langchain.vdb import VectorStoreType
@@ -32,12 +31,11 @@ class LangchainIndexer(BaseIndexing):
         self.nodes = []
 
         # get framework driver embedding model from embedding_model_instance
-        embedding_model = embedding_model_instance.model.get_provider_model()
+        embedding_model = embedding_model_instance
         # print("get embedding model:", embedding_model)
 
         # get vector store
         self.vector_store_driver = VectorStoreDriverFactory.create_vector_store_driver(
-            FrameworkDriverType(settings.agent.framework_driver),
             VectorStoreType(settings.agent.vdb),
             collection_name=collection_name,
             embedding_model=embedding_model

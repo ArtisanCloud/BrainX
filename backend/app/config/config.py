@@ -101,11 +101,9 @@ settings = Settings(
     storage=Storage(**config["storage"]),
 )
 
-
 UTC = timezone(settings.server.timezone)
 
 print(f"current timezone: {UTC}")
-
 
 # 补齐设置数据库地址
 # 定时任务的存储配置
@@ -123,12 +121,12 @@ if settings.task.celery_result_backend == "":
 # Access the settings
 print(f"load config file finished, current version is '{settings.server.version}'")
 
-# print(settings)
-os.environ["OPENAI_API_BASE"] = settings.openai.api_base
-os.environ["OPENAI_API_KEY"] = settings.openai.api_key
-os.environ["QIANFAN_AK"] = settings.baidu_qianfan.api_key
-os.environ["QIANFAN_SK"] = settings.baidu_qianfan.secret_key
-# print(os.environ)
-os.environ["POLYGON_API_KEY"] = settings.polygon.api_key
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+# # print(settings)
+# os.environ["OPENAI_API_BASE"] = settings.openai.api_base
+# os.environ["OPENAI_API_KEY"] = settings.openai.api_key
+# os.environ["QIANFAN_AK"] = settings.baidu_qianfan.api_key
+# os.environ["QIANFAN_SK"] = settings.baidu_qianfan.secret_key
+# # print(os.environ)
+# os.environ["POLYGON_API_KEY"] = settings.polygon.api_key
+# os.environ["TOKENIZERS_PARALLELISM"] = "false"
 # ...

@@ -7,6 +7,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory, Redis
 from app import logger, settings
 from app.models import App
 from app.core.libs.json import sanitize_json
+from app.models.model_provider.provider_model import ModelType
 from .ai_model import AIModel
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.utils import Input
@@ -18,8 +19,18 @@ from ...rag.ingestion.drivers.langchain.helper import convert_document_to_respon
 
 
 class LLM(AIModel):
+    """
+    LLM model class.
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_type = ModelType.LLM
 
     def validate_credentials(self, model: str, credentials: Mapping) -> None:
+        raise NotImplementedError
+
+    def get_provider_model(self, params: dict = None) -> any:
         raise NotImplementedError
 
     def stream(

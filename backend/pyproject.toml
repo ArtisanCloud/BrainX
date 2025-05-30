@@ -21,13 +21,6 @@ asyncio = "^3.4.3"
 greenlet = "^3.0.3"
 sentry-sdk = "^1.44.1"
 pydantic = {extras = ["email"], version = "^2.7.4"}
-llama-index = "^0.10.27"
-llama-index-vector-stores-postgres = "^0.1.5"
-llama-index-llms-huggingface = "^0.2.5"
-llama-index-llms-ollama = "^0.1.2"
-llama-index-llms-openai = "^0.1.14"
-llama-index-embeddings-huggingface = "^0.2.0"
-llama-index-embeddings-openai = "^0.1.7"
 asyncpg = "^0.29.0"
 httpx = {extras = ["socks"], version = "^0.27.0"}
 tensorboard = "^2.16.2"
@@ -83,6 +76,8 @@ aioftp = "^0.24.1"
 
 # custom
 # add your own custoized project dependency here
+pytz = "^2025.2"
+pandas = "^2.2.3"
 
 
 [tool.poetry.dev-dependencies]

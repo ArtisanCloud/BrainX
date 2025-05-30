@@ -6,6 +6,7 @@ from starlette.staticfiles import StaticFiles
 
 from app import default_local_storage_path
 from app.cache.factory import CacheFactory
+from app.core.exception.handler import register_exception_handlers
 from app.database.session import get_database_sync_url
 from app.events.manager import startup_events, shutdown_events
 from app.logger import logger, setup_uvicorn_logging
@@ -81,10 +82,10 @@ async def lifespan(app: FastAPI):
         )
 
     # initialize pg vector store singleton
-    query_embedding_table = settings.agent.vector_store_table_name
-    vector_store, _ = get_vector_store_singleton(query_embedding_table)
-    vector_store = cast(CustomPGVectorStore, vector_store)
-    await vector_store.run_setup()
+    # query_embedding_table = settings.agent.vector_store_table_name
+    # vector_store, _ = get_vector_store_singleton(query_embedding_table)
+    # vector_store = cast(CustomPGVectorStore, vector_store)
+    # await vector_store.run_setup()
 
     # setup cache resource
     CacheFactory.initialize_cache(
@@ -114,8 +115,8 @@ async def lifespan(app: FastAPI):
         await shutdown_events()
 
     # This section is run on app shutdown
-    if vector_store:
-        await vector_store.close()
+    # if vector_store:
+    #     await vector_store.close()
 
     # release cache resource
     await CacheFactory.get_cache().async_disconnect()
@@ -134,6 +135,8 @@ app = FastAPI(
     # This means that this code will be executed once, before the application starts receiving requests.
     lifespan=lifespan,
 )
+
+register_exception_handlers(app)
 
 app.mount("/static", StaticFiles(directory=os.path.abspath(default_local_storage_path)), name="statics")
 

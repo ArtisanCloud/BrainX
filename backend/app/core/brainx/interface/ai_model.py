@@ -1,21 +1,26 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 
+from pydantic import BaseModel
+
 from app.core.brainx.entity.provider import ProviderEntity
 from app.models.model_provider.provider_model import ModelType
 
 
-class AIModel(ABC):
+class AIModel(BaseModel):
     """
     Base class for all models.
     """
 
     tenant_uuid: str
-    model_type: ModelType
     model_id: str
+    model_type: ModelType
     provider_name: str
-    provider_entity: ProviderEntity
+    # provider_entity: ProviderEntity
     started_at: float = 0
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     # pydantic configs
     class Config:
