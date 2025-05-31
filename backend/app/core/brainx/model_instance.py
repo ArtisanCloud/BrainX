@@ -9,10 +9,11 @@ from app.models import App
 class ModelInstance:
     configuration: ProviderConfiguration
 
-    def __init__(self, model_bundle: ProviderModelBundle, model: str):
+    def __init__(self, model_bundle: ProviderModelBundle, model_id: str):
         # 初始化模型实例
         self.model_bundle = model_bundle
-        self.model = model
+        self.model_id = model_id
+        self.credential = self.model_bundle.get_credential(model_id)
 
     def llm_stream(
             self,
@@ -28,6 +29,7 @@ class ModelInstance:
 
         return self.model_bundle.model_type_instance.stream(
             query=query,
+            credential=self.credential,
             temperature=temperature,
             input_variables=input_variables,
             template=template,
@@ -47,6 +49,7 @@ class ModelInstance:
 
         return self.model_bundle.model_type_instance.invoke(
             query=query,
+            credential=self.credential,
             temperature=temperature,
             input_variables=input_variables,
             template=template,
@@ -66,6 +69,7 @@ class ModelInstance:
 
         return self.model_bundle.model_type_instance.chat_completion(
             query=query,
+            credential=self.credential,
             temperature=temperature,
             app=app,
             session_id=session_id,
@@ -85,6 +89,7 @@ class ModelInstance:
 
         return self.model_bundle.model_type_instance.chat_stream(
             question=question,
+            credential=self.credential,
             temperature=temperature,
             app=app,
             session_id=session_id,

@@ -4,7 +4,7 @@ from .ai_model import AIModel
 
 
 class RerankModel(AIModel):
-    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, credentials: Mapping) -> None:
         raise NotImplementedError
 
     def get_provider_model(self) -> any:

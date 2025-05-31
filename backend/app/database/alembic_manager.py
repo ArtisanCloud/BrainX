@@ -5,8 +5,8 @@ from alembic.config import Config
 from sqlalchemy import text
 
 from app.config.config import settings
-from app.database.deps import get_sync_db_session_dep
 from app.database.session import get_database_sync_url
+from app.database.session_manager import get_sync_db_session
 from app.models.base import Base  # noqa
 
 
@@ -21,7 +21,7 @@ class AlembicManager:
         self.check_and_create_schema(settings.database.db_schema)
 
     def check_and_create_schema(self, schema_name: str):
-        with get_sync_db_session_dep() as sync_db:
+        with get_sync_db_session() as sync_db:
             # Check if schema exists
             result = sync_db.execute(text(
                 f"SELECT schema_name FROM information_schema.schemata WHERE schema_name = :schema_name"

@@ -5,7 +5,7 @@ from typing import Tuple, List
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import client_storage
+from app import oss_client_storage
 from app.config.config import UTC, settings
 from app.core.libs.storage.storage import Storage
 from app.models import User
@@ -25,12 +25,12 @@ from app.utils.media import (
 
 
 class MediaResourceService:
-    def __init__(self,async_db: AsyncSession):
+    oss_client: Storage | None = None
+
+    def __init__(self, async_db: AsyncSession):
         self.async_db = async_db
         self.media_resource_dao = MediaResourceDAO(self.async_db)
-        self.oss_client: Storage | None = None
-
-        self.oss_client = client_storage
+        self.oss_client = oss_client_storage
 
     async def find_all_media_resources(
             self,

@@ -3,7 +3,7 @@ import http
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from app import settings, logger
-from app.core.exception.exceptions import AppException, ProviderNotFoundException, AuthException
+from app.core.exception.exceptions import AppException, AuthException, ProviderModelCredentialNotProvidedException
 from app.schemas.base import ResponseSchema
 
 
@@ -34,7 +34,7 @@ def register_exception_handlers(app: FastAPI):
             ).model_dump()
         )
 
-    @app.exception_handler(ProviderNotFoundException)
+    @app.exception_handler(ProviderModelCredentialNotProvidedException)
     async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
         logger.error(exc, exc_info=settings.log.exc_info)
         return JSONResponse(

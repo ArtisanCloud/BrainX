@@ -78,8 +78,7 @@ async def demo_str_output_invoke(
         )
 
         if exception:
-            logger.error(exception)
-            raise Exception(exception)
+            raise exception
 
     except Exception as e:
         logger.error(e, exc_info=True)

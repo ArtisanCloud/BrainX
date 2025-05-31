@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
 
 from app.core.brainx.interface.ai_model import AIModel
@@ -14,3 +16,6 @@ class ProviderModelBundle(BaseModel):
 
     # pydantic configs
     model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
+
+    def get_credential(self, model_id: str) -> Optional[dict]:
+        return None

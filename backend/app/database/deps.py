@@ -64,17 +64,9 @@ def get_sync_db_session_dep() -> Session:
         yield sync_db
         # 提交事务
 
-        if (
-                sync_db.dirty  # 修改
-                or sync_db.new  # 新增
-                or sync_db.deleted  # 删除
-        ):
-            logger.info("Sync DB dep commit")
-            sync_db.commit()
+        logger.info("Sync DB dep commit")
+        sync_db.commit()
             
-        else:
-            logger.info("No changes to commit")
-
     except Exception as e:
         # 出现异常时回滚事务
         logger.error("Sync DB dep rollback")

@@ -7,6 +7,8 @@ from sqlalchemy.exc import IntegrityError
 
 from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Sequence
 
+from sqlalchemy.orm.attributes import flag_modified
+
 from app.config.config import UTC
 from app.database.session_manager import is_dep_session
 
@@ -15,12 +17,12 @@ ModelType = TypeVar('ModelType', bound=DeclarativeMeta)
 
 
 class BaseDAO(Generic[ModelType]):
-    def __init__(self, model: Type[ModelType], async_db: AsyncSession = None, sync_db: Session = None):
+    def __init__(self, model: Generic[ModelType], async_db: AsyncSession = None, sync_db: Session = None):
         self.async_db = async_db
         self.sync_db = sync_db
         self.model = model
 
-    async def async_create(self, obj: ModelType) -> Tuple[
+    async def async_create(self, obj: Generic[ModelType]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         创建新的模型对象
@@ -42,7 +44,7 @@ class BaseDAO(Generic[ModelType]):
         else:
             return None, Exception("a_create method requires an AsyncSession")
 
-    def sync_create(self, obj: ModelType) -> Tuple[
+    def sync_create(self, obj: Generic[ModelType]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         创建新的模型对象
@@ -63,7 +65,7 @@ class BaseDAO(Generic[ModelType]):
         else:
             return None, Exception(f"{self.model.__name__} sync_create method requires an Session")
 
-    def sync_upsert(self, obj: ModelType, uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    def sync_upsert(self, obj: Generic[ModelType], uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
         先查询是否存在该记录：
         - 如果存在，则更新
@@ -89,7 +91,7 @@ class BaseDAO(Generic[ModelType]):
         else:
             return None, Exception("sync_upsert method requires a Session")
 
-    async def async_upsert(self, obj: ModelType, uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
+    async def async_upsert(self, obj: Generic[ModelType], uid_key: str) -> Tuple[Optional[ModelType], Optional[Exception]]:
         """
         先查询是否存在该记录：
         - 如果存在，则更新
@@ -157,7 +159,30 @@ class BaseDAO(Generic[ModelType]):
         """
         if isinstance(self.async_db, AsyncSession):
             try:
-                result = await self.async_db.execute(select(self.model).filter(self.model.uuid == uuid))
+                query = select(self.model).filter(self.model.uuid == uuid)
+                result = await self.async_db.execute(query)
+                return result.scalar_one_or_none(), None
+            except Exception as e:
+                return None, e
+        else:
+            return None, Exception("async_get_by_uuid method requires an AsyncSession")
+
+    async def async_get_by(self, conditions: Dict[str, Any] = None) -> Tuple[Optional[ModelType], Optional[Exception]]:
+        """
+        根据 UUID 获取模型对象
+        """
+        if conditions is None:
+            return None, Exception("sync_get_by method requires a conditions")
+
+        if isinstance(self.async_db, AsyncSession):
+            try:
+                query = select(self.model)
+
+                filters = self._build_filters(conditions)
+                if filters:
+                    query = query.filter(and_(*filters))
+
+                result = await self.async_db.execute(query)
                 return result.scalar_one_or_none(), None
             except Exception as e:
                 return None, e
@@ -169,7 +194,37 @@ class BaseDAO(Generic[ModelType]):
         根据 UUID 获取模型对象
         """
         try:
-            result = self.sync_db.execute(select(self.model).filter(self.model.uuid == uuid))
+            query = select(self.model).filter(self.model.uuid == uuid)
+
+            # 打印生成的 SQL 查询语句
+            # query_str = str(query)
+            # print(conditions)
+            # print(f"Generated SQL query: {query_str}")
+
+            result = self.sync_db.execute(query)
+            return result.scalar_one_or_none(), None
+        except Exception as e:
+            return None, e
+
+    def sync_get_by(self, conditions: Dict[str, Any] = None) -> Tuple[Optional[ModelType], Optional[Exception]]:
+        """
+        根据 UUID 获取模型对象
+        """
+        if conditions is None:
+            return None, Exception("sync_get_by method requires a conditions")
+        try:
+            query = select(self.model)
+
+            filters = self._build_filters(conditions)
+            if filters:
+                query = query.filter(and_(*filters))
+
+            # 打印生成的 SQL 查询语句
+            query_str = str(query)
+            print(conditions)
+            print(f"Generated SQL query: {query_str}")
+
+            result = self.sync_db.execute(query)
             return result.scalar_one_or_none(), None
         except Exception as e:
             return None, e
@@ -326,7 +381,7 @@ class BaseDAO(Generic[ModelType]):
                 await self.async_db.rollback()
             return None, e
 
-    def sync_patch(self, obj_uuid: Any, patch_data: Dict[str, Any]) -> Tuple[
+    def sync_patch(self, obj_uuid: str, patch_data: Dict[str, Any]) -> Tuple[
         Optional[ModelType], Optional[Exception]]:
         """
         部分更新模型对象

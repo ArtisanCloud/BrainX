@@ -135,7 +135,8 @@ class ProviderManager:
             # provider_id_entity = ModelProviderID(provider_name)
             provider_id_entity = provider_name
 
-            using_provider_type = ProviderType.SYSTEM
+            # using_provider_type = ProviderType.SYSTEM
+            using_provider_type = ProviderType.CUSTOM
 
             # Convert to model settings
             model_settings = self._to_model_settings(

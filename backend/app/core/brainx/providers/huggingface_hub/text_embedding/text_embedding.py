@@ -14,7 +14,7 @@ class HuggingFaceHubTextEmbeddingModel(TextEmbeddingModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, credentials: Mapping) -> None:
         pass
 
     def get_provider_model(self) -> any:

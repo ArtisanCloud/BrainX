@@ -4,12 +4,12 @@ from minio import Minio
 
 from app import settings
 from app.config.storage import MinIO
-from app.core.libs.storage.storage_abc import StorageABC, ObjectResult
+from app.core.libs.storage.storage_abc import StorageInterface, ObjectResult
 
 from typing import Generator
 
 
-class MinioStorage(StorageABC):
+class MinioStorage(StorageInterface):
     """Minio storage implementation of the abstract base class."""
 
     def __init__(self, config: MinIO):

@@ -208,3 +208,19 @@ class ProviderConfig(BaseModel):
 
     provider: str
     credentials: dict
+
+
+class CredentialFormSchema(BaseModel):
+    """
+    Model class for credential form schema.
+    """
+
+    variable: str
+    label: I18nObject
+    type: FormType
+    required: bool = True
+    default: Optional[str] = None
+    options: Optional[list[FormOption]] = None
+    placeholder: Optional[I18nObject] = None
+    max_length: int = 0
+    show_on: list[FormShowOnObject] = []

@@ -11,7 +11,6 @@ from app.core.workflow.node.base import BaseNode
 from app.core.workflow.state import GraphState
 from app.models import Dataset
 from app.models.rag.document_node import DocumentNode
-from app.config.config import settings
 
 
 class SearchStrategyType(Enum):
@@ -57,7 +56,7 @@ class KnowledgeNode(BaseNode):
         super().__init__(node_data)
 
         default_text_embedding_model = create_text_embedding_model()
-        default_retriever =  create_retriever(embedding_model_instance=default_text_embedding_model)
+        default_retriever = create_retriever(embedding_model_instance=default_text_embedding_model)
 
         self.retriever = node_data.get("retriever", default_retriever)
 

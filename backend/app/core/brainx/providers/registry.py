@@ -1,3 +1,4 @@
+import mimetypes
 from typing import Optional, Dict, Tuple
 from app.core.libs.file import get_project_path
 import os

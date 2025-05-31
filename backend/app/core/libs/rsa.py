@@ -1,7 +1,13 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
-# from app import lib_storage
+from app import local_client_storage
+
+
+def get_tenant_private_key_path(tenant_uuid):
+    bucket_name = "private_keys/{identifier}".format(identifier=tenant_uuid)
+    filepath = "private.pem"
+    return bucket_name, filepath
 
 
 def generate_key_pair(identifier, size=2048):
@@ -11,9 +17,9 @@ def generate_key_pair(identifier, size=2048):
     pem_private = private_key.export_key()
     pem_public = public_key.export_key()
 
-    filepath = "storage/private_keys/{identifier}".format(identifier=identifier) + "/private.pem"
+    bucket_name, filepath = get_tenant_private_key_path(identifier)
 
-    # lib_storage.save(filepath, pem_private)
+    local_client_storage.save(bucket_name, filepath, pem_private)
 
     return pem_public.decode()
 

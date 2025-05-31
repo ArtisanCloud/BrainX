@@ -16,7 +16,7 @@ class ObjectResult(BaseModel):
     location: str = '',
 
 
-class StorageABC(ABC):
+class StorageInterface(ABC):
     """Abstract base class for file storage systems."""
 
     def __init__(self, config: dict):

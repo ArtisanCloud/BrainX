@@ -6,7 +6,7 @@
 #
 #
 # class OpenAIProvider(ModelProvider):
-#     def validate_provider_credentials(self, credentials: dict) -> None:
+#     def validate_provider_credentials(self, credentials: dict) -> Optional[Exception]:
 #         """
 #         Validate provider credentials
 #         if validate failed, raise exception

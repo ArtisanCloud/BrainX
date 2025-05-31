@@ -19,6 +19,6 @@ class AuthException(AppException):
         super().__init__(status_code=400001, message=message)
 
 
-class ProviderNotFoundException(AppException):
-    def __init__(self, message: str = "未找到对应模型提供方，需要配置模型"):
+class ProviderModelCredentialNotProvidedException(AppException):
+    def __init__(self, message: str = "需要配置授权访问参数"):
         super().__init__(status_code=400002, message=message)

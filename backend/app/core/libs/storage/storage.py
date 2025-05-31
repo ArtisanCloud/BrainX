@@ -5,14 +5,14 @@ from app.core.libs.storage.drivers.azure import AzureStorage
 from app.core.libs.storage.drivers.google import GoogleStorage
 from app.core.libs.storage.drivers.minio import MinioStorage
 from app.core.libs.storage.drivers.s3 import S3Storage
-from app.core.libs.storage.storage_abc import StorageABC, ObjectResult
+from app.core.libs.storage.storage_abc import StorageInterface, ObjectResult
 
 
 class Storage:
+    storage_driver: StorageInterface | None
+
     def __init__(self, config: StorageConfig):
         self.config = config
-        self.storage_driver: StorageABC | None = None  # 先将 storage_driver 初始化为 None
-
         self._initialize_driver()
 
     def _initialize_driver(self):

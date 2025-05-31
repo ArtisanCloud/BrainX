@@ -13,7 +13,7 @@ class TextEmbeddingModel(AIModel):
         self.model_type = ModelType.TEXT_EMBEDDING
         self._embeddings_cache = {}
 
-    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, credentials: Mapping) -> None:
         raise NotImplementedError
 
     def get_provider_model(self) -> any:

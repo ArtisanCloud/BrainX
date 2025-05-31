@@ -9,7 +9,7 @@ from pydantic import Field
 class WenXinLMM(LLM):
     model_id: str = Field(default=LLMModel.BAIDU_ERNIE_Lite_8K, description="模型 ID")
 
-    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, credentials: Mapping) -> None:
         raise NotImplementedError
 
     def get_provider_model(self, params: dict = None) -> any:

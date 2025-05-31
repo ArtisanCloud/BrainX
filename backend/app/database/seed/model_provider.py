@@ -21,7 +21,7 @@ async def seed_default_tenant_models(async_db: AsyncSession) -> Exception | None
                 provider = Provider(
                     tenant_uuid=init_tenant_uuid,
                     provider_name=provider_name,
-                    provider_type=ProviderType.SYSTEM.value,
+                    provider_type=ProviderType.CUSTOM.value,
                     encrypted_config="",
                     is_valid=True,
                 )

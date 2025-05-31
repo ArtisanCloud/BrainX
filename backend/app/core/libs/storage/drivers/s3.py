@@ -1,12 +1,12 @@
 import boto3
 from botocore.config import Config
 
-from app.core.libs.storage.storage_abc import StorageABC, ObjectResult
+from app.core.libs.storage.storage_abc import StorageInterface, ObjectResult
 
 from typing import Generator, Union
 
 
-class S3Storage(StorageABC):
+class S3Storage(StorageInterface):
     """S3 storage implementation of the abstract base class."""
 
     def __init__(self, config: dict):

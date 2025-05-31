@@ -1,6 +1,6 @@
 from app.constant.ai_model.provider import ProviderID
 from app.core.brainx.interface.ai_model import AIModel
-from app.core.brainx.drivers.langchain.factory import ModelProviderFactory
+from app.core.brainx.drivers.langchain.factory import ProviderModelFactory
 from app.models.model_provider.provider_model import ModelType
 
 
@@ -19,27 +19,27 @@ class LangchainModelProviderDriver:
     ) -> any:
         match model_type.value:
             case ModelType.LLM.value:
-                self.model_provider = ModelProviderFactory.create_llm_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_llm_provider(provider_id, model_id)
             # case ModelType.EMBEDDING.value:
-            #     self.model_provider = ModelProviderFactory.create_embedding_provider(provider_id, model_id)
+            #     self.model_provider = ProviderModelFactory.create_embedding_provider(provider_id, model_id)
             case ModelType.TEXT_EMBEDDING.value:
-                self.model_provider = ModelProviderFactory.create_text_embedding_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_text_embedding_provider(provider_id, model_id)
             case ModelType.IMAGE_EMBEDDING.value:
-                self.model_provider = ModelProviderFactory.create_image_embedding_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_image_embedding_provider(provider_id, model_id)
             case ModelType.RERANK.value:
-                self.model_provider = ModelProviderFactory.create_rerank_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_rerank_provider(provider_id, model_id)
             case ModelType.SPEECH2TEXT.value:
-                self.model_provider = ModelProviderFactory.create_speech2text_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_speech2text_provider(provider_id, model_id)
             # case ModelType.MODERATION.value:
-            #     self.model_provider = ModelProviderFactory.create_text_embedding_provider(provider_id, model_id)
+            #     self.model_provider = ProviderModelFactory.create_text_embedding_provider(provider_id, model_id)
             case ModelType.TTS.value:
-                self.model_provider = ModelProviderFactory.create_tts_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_tts_provider(provider_id, model_id)
             case ModelType.TEXT2IMG.value:
-                self.model_provider = ModelProviderFactory.create_text2img_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_text2img_provider(provider_id, model_id)
             case ModelType.IMG2IMG.value:
-                self.model_provider = ModelProviderFactory.create_img2img_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_img2img_provider(provider_id, model_id)
             case ModelType.TEXT2VIDEO.value:
-                self.model_provider = ModelProviderFactory.create_text2video_provider(provider_id, model_id)
+                self.model_provider = ProviderModelFactory.create_text2video_provider(provider_id, model_id)
             case _:
                 return None
 

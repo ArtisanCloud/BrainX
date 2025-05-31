@@ -2,7 +2,7 @@ from app.config.config import settings
 
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
-from app.core.brainx.drivers.factory import ModelProviderFactory
+from app.core.brainx.drivers.provider_model_factory import ProviderModelFactory
 
 from app.core.brainx.entity.provider_bundle import ProviderModelBundle
 from app.core.brainx.model_instance import ModelInstance
@@ -12,7 +12,7 @@ from app.core.rag.retrieval.interface import BaseRetriever
 
 
 def create_text_embedding_model():
-    text_embedding_model = ModelProviderFactory.create_text_embedding_provider(
+    text_embedding_model = ProviderModelFactory.create_text_embedding_provider(
         provider_id=ProviderID.HUGGINGFACE_HUB,
         model_id=HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value,
     )

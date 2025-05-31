@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from collections.abc import Mapping
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from app.core.brainx.entity.provider import ProviderEntity
 from app.models.model_provider.provider_model import ModelType
 
 
@@ -19,15 +18,13 @@ class AIModel(BaseModel):
     # provider_entity: ProviderEntity
     started_at: float = 0
 
+    model_config = ConfigDict(protected_namespaces=())
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    # pydantic configs
-    class Config:
-        protected_namespaces = ()
-
     @abstractmethod
-    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, credentials: Mapping) -> None:
         raise NotImplementedError
 
     @abstractmethod

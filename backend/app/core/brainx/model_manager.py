@@ -42,7 +42,7 @@ class ModelManager:
                 provider_id = self.provider_id
             if self.model_id is not None:
                 model_id = self.model_id
-        print(33333333, provider_id, model_id)
+        # print(33333333, provider_id, model_id)
 
         # 如果没有提供provider名称
         if not provider_id:
@@ -57,7 +57,7 @@ class ModelManager:
 
         return ModelInstance(
             model_bundle=model_bundle,
-            model=model_id,
+            model_id=model_id,
         ), None
 
     def get_default_model_instance(

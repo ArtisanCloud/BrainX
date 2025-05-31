@@ -4,28 +4,28 @@ from io import BytesIO
 from typing import Any
 from urllib.parse import urljoin
 
-from app.config.storage import LocalStorage
+from app.config.storage import LocalStorage as LocalStorageConfig
 from app.config.config import settings
 
 from app.core.libs.storage.storage_abc import ObjectResult
 
 
 class LocalStorage:
-    base_path: str = None
-    def __init__(self, config: LocalStorage):
-        base_path = config.storage_path
-        if not os.path.exists(base_path):
-            os.makedirs(base_path)
+    local_storage_path: str = None
 
-        self.local_storage_path = os.path.join(base_path, "public", "static")
+    def __init__(self, config: LocalStorageConfig):
+        self.local_storage_path = config.storage_path
+
+        if not os.path.exists(self.local_storage_path):
+            os.makedirs(self.local_storage_path)
 
         # print(self.local_storage_path, self.local_storage_url)
 
     def save(self,
              bucket_name: str,
              object_name: str,
-             data: bytes,
-             length: int,
+             data: bytes = None,
+             length: int = None,
              content_type: str = "application/octet-stream",
              metadata: dict | None = None,
              # sse: Sse | None = None,
@@ -38,10 +38,12 @@ class LocalStorage:
              ) -> Any:
 
         bucket_path = os.path.join(self.local_storage_path, bucket_name)
+        print(bucket_path)
         if not os.path.exists(bucket_path):
             os.makedirs(bucket_path)
 
         upload_path = os.path.join(bucket_path, object_name)
+        print(upload_path)
         with open(upload_path, "wb") as f:
             f.write(data)
 

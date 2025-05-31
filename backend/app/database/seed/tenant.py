@@ -4,11 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.seed import init_user_uuid, init_tenant_uuid
 from app.models.base import BaseStatus
 from app.models.tenant.tenant import Tenant
-
+from app.service.tenant.service import TenantService
 
 
 # 添加代理人数据
-async def seed_tenants(async_db:AsyncSession) -> Exception | None:
+async def seed_tenants(async_db: AsyncSession) -> Exception | None:
     print("start seed tenants")
     try:
         # Check if the table is empty
@@ -20,9 +20,9 @@ async def seed_tenants(async_db:AsyncSession) -> Exception | None:
                 name="初始用户租户",
                 status=BaseStatus.ACTIVE,
             )
-            # print(tenant)
-            async_db.add(tenant)
 
+            tenant_service = TenantService(async_db=async_db)
+            _ = await tenant_service.add_tenant(tenant)
             # model_providers = [
             #     ProviderModel(
             #         tenant_uuid=init_tenant_uuid,
@@ -41,8 +41,6 @@ async def seed_tenants(async_db:AsyncSession) -> Exception | None:
             # ]
             # model_providers[0].uuid = init_model_provider_uuid
             # db.add_all(model_providers)
-
-            await async_db.flush()  # 添加 await 关键字
 
         print("success seed tenants -----------")
         return None

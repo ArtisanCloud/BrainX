@@ -14,6 +14,7 @@ from langchain_core.runnables.utils import Input
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
 
+from ..base import LLMModel
 from ..templates.chat import get_chat_prompt_template
 from ...rag.ingestion.drivers.langchain.helper import convert_document_to_response
 
@@ -27,7 +28,7 @@ class LLM(AIModel):
         super().__init__(**kwargs)
         self.model_type = ModelType.LLM
 
-    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+    def validate_credentials(self, credentials: Mapping) -> None:
         raise NotImplementedError
 
     def get_provider_model(self, params: dict = None) -> any:
@@ -36,6 +37,7 @@ class LLM(AIModel):
     def stream(
             self,
             query: Dict,
+            credential: dict = None,
             temperature: float = 0.5,
             input_variables=list[str],
             template: str = "",
@@ -65,6 +67,7 @@ class LLM(AIModel):
     def invoke(
             self,
             query: Any,
+            credential: dict = None,
             temperature: float = 0.5,
             input_variables=list[str],
             template: str = "",
@@ -141,6 +144,7 @@ class LLM(AIModel):
     def chat_completion(
             self,
             query: Dict,
+            credential: dict = None,
             temperature: float = 0.5,
             app: App = None,
             session_id: str = "",
@@ -202,6 +206,7 @@ class LLM(AIModel):
     def chat_stream(
             self,
             question: Dict,
+            credential: dict = None,
             app: App = None,
             temperature: float = 0.5,
             session_id: str = "",
@@ -210,7 +215,11 @@ class LLM(AIModel):
 
         try:
             chat_llm = self.get_provider_model(
-                params={"temperature": temperature, "streaming": True},
+                params={
+                    "credential": credential,
+                    "temperature": temperature,
+                    "streaming": True
+                },
             )
 
             prompt = get_chat_prompt_template(app)
