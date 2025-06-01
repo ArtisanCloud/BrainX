@@ -3,24 +3,24 @@
 import useSettingsStore from "@/app/store/setting";
 import styles from "./index.module.scss";
 import { useState } from "react";
-import { ProviderIcon } from "./provider-icon";
-import ModalAddModels from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers/modal-add-models";
-import ModalSettingProvider from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers/modal-setting-provider";
+import {ProviderIcon} from "../provider-icon";
+import ModalSettingProvider from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-setting-provider";
+import ModalAddModels from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-add-models";
 import React from "react";
 import {ConfigurateMethod} from "@/app/api/model-provider/provider";
 
 const ToConfigProviders: React.FC = () => {
-  const { providers } = useSettingsStore(); // 获取 providers
+  const { notConfiguredProviders } = useSettingsStore(); // 获取 providers
   const [iconUrl, setIconUrl] = useState<string | null>(null);
 
   // 检查 providers 是否为空或未定义
-  if (!providers || Object.keys(providers).length === 0) {
-    return <div>No providers available</div>; // 如果没有 providers，显示提示
+  if (!notConfiguredProviders || Object.keys(notConfiguredProviders).length === 0) {
+    return <div>没有可配置的供应平台</div>; // 如果没有 providers，显示提示
   }
 
   return (
     <div className={styles.container}>
-      {Object.entries(providers).map(([key, provider]) => {
+      {Object.entries(notConfiguredProviders).map(([key, provider]) => {
         // 获取 provider 和 description 对应当前语言的值
         const providerName = provider.provider;
         const providerDescription = provider.description?.zh_Hans;

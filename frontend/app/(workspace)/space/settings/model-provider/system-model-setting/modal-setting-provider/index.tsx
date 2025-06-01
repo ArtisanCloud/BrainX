@@ -10,27 +10,28 @@ import {ActionSaveProvider, ConfigurateMethod, Provider, ResponseSaveProvider} f
 import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
-  PlusIcon,
+  CogIcon,
 } from "@heroicons/react/24/outline";
 import {useState} from "react";
-import {ProviderIcon} from "./provider-icon";
+import {ProviderIcon} from "../provider-icon";
 import DynamicForm from "../../components/dynamic-form";
 import useLoadingStore from "@/app/store/global-loading";
 import {useNotification} from "@/app/components/notification";
 
 // 定义 Props 接口
-interface ModalAddModelsProps {
+interface ModalSettingProviderProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function ModalAddModels({provider}: ModalAddModelsProps) {
+export default function Index({
+                                               provider,
+                                             }: ModalSettingProviderProps) {
   const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
   const [formValues, setFormValues] = useState<Record<string, any>>({});
 
   const {loading, setLoading} = useLoadingStore();
   const {msgSuccess, msgError} = useNotification();
-
 
   // 手动控制Modal开关
   const onOpen = () => setIsOpen(true);
@@ -64,6 +65,8 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
       setIsOpen(false); // 关闭Modal
 
     }
+
+
   };
 
   const onFormChanged = (formValues: Record<string, any>) => {
@@ -81,10 +84,10 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
       <Button
         key={provider.provider}
         className={styles.btnFun}
-        startContent={<PlusIcon style={{width: "18px", color: "gray"}}/>}
+        startContent={<CogIcon style={{width: "18px", color: "gray"}}/>}
         onPress={onOpen}
       >
-        添加模型
+        设置 {JSON.stringify(provider.provider_credential_schema?? "")}
       </Button>
       <Modal
         size="3xl"
@@ -99,14 +102,14 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
                 <div className="px-8 pt-8">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xl font-semibold text-gray-900">
-                      添加 {provider.provider} 模型
+                      设置 {provider.provider}
                     </span>
                     <ProviderIcon providerName={provider.provider}/>
                   </div>
                   <div>
                     <DynamicForm
                       credentialSchemas={
-                        provider.models_credential_schema
+                        provider.provider_credential_schema
                           ?.credential_form_schemas!
                       }
                       onFilledRequired={onFilledRequired}
@@ -118,14 +121,9 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
               <div
                 className="sticky bottom-0 flex justify-between items-center mt-2 -mx-2 pt-4 px-2 pb-6 flex-wrap gap-y-2 bg-white">
                 <div className="inline-flex items-center text-xs text-primary-600">
-                  {provider.help?.label?.zh_Hans ||
-                    provider.help?.label?.en_US + " "}
+                  {provider.help?.label?.en_US + " "}
                   <a
-                    href={
-                      provider.help?.url.zh_Hans ||
-                      provider.help?.url.en_US ||
-                      "#"
-                    }
+                    href={provider.help?.url.en_US || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

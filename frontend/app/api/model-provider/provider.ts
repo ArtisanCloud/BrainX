@@ -69,6 +69,11 @@ export interface ModelCredential {
   credential_form_schemas: CredentialForm[];
 }
 
+export enum CustomConfigurationStatusEnum {
+  active = 'active',
+  noConfigure = 'no-configure',
+}
+
 // 提供者接口
 export interface Provider {
   // 提供者名称
@@ -96,6 +101,9 @@ export interface Provider {
   // 模型凭证模式，可选
   models_credential_schema?: ModelCredential;
   // 配置选项（TypeScript 中用于动态字段）
+  custom_configuration: {
+    status: CustomConfigurationStatusEnum
+  }
   [key: string]: any;
 }
 
@@ -106,7 +114,7 @@ export interface ResponseFetchProviderList {
 export async function ActionFetchProviderSchemaList(): Promise<ResponseFetchProviderList> {
   noStore();
   try {
-    const endpoint = `/api/model-provider/provider-schema/list`;
+    const endpoint = `/api/model-provider/provider/list`;
     const res = await backendClient.backend_get(endpoint, {
       cache: "no-store",
     });

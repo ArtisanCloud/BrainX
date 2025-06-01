@@ -1,19 +1,22 @@
 import styles from "./index.module.scss";
-import { useEffect } from "react";
+import {useEffect, useMemo} from "react";
 import useSettingsStore from "@/app/store/setting";
 import { useNotification } from "@/app/components/notification";
 import useLoadingStore from "@/app/store/global-loading";
 import {
-  ActionFetchProviderSchemaList,
+  ActionFetchProviderSchemaList, Provider,
   ResponseFetchProviderList,
 } from "@/app/api/model-provider/provider";
 import SystemModelSetting from "@/app/(workspace)/space/settings/model-provider/system-model-setting";
 import ToConfigProviders from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers";
+import ConfiguredProviders
+  from "@/app/(workspace)/space/settings/model-provider/system-model-setting/configured-providers";
 
 const ModelProviderComponent: React.FC = () => {
   const { setProviders } = useSettingsStore();
   const { loading, setLoading } = useLoadingStore();
   const { msgError } = useNotification();
+
   useEffect(() => {
     const fetchProviders = async () => {
       if (loading) {
@@ -45,9 +48,7 @@ const ModelProviderComponent: React.FC = () => {
           <SystemModelSetting />
         </div>
         <div className={styles.configuredModelProviders}>
-          <span className="text-lg font-semibold text-gray-500">
-            请添加模型
-          </span>
+          <ConfiguredProviders />
         </div>
       </div>
       <div className={styles.toConfigModelProvidersBox}>
