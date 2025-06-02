@@ -22,19 +22,17 @@ async def api_demo_format_output_invoke(
         data: RequestDemoQuery,
         session_user: User = Depends(get_session_user),
 ) -> ResponseDemoFormatQuery | ResponseSchema:
-    try:
-        question = data.question
+    question = data.question
 
-        response, exception = await demo_struct_output_invoke(
-            tenant_uuid=session_user.tenant_owner_uuid,
-            question=question, llm=data.llm,
-        )
+    response, exception = await demo_struct_output_invoke(
+        tenant_uuid=session_user.tenant_owner_uuid,
+        question=question, llm=data.llm,
+    )
 
-        return ResponseDemoFormatQuery(data=response)
+    if exception:
+        raise exception
 
-    except Exception as e:
-        logger.error(f"Failed to brainx format output: {e}", exc_info=settings.log.exc_info)
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    return ResponseDemoFormatQuery(data=response)
 
 
 @router.post("/demo/invoke")
@@ -64,16 +62,14 @@ async def api_demo_invoke(
 async def api_demo_completion(
         data: RequestDemoQuery,
 ) -> ResponseDemoQuery | ResponseSchema:
-    try:
-        question = data.question
-        # print(data.question)
+    question = data.question
+    # print(data.question)
 
-        response, exception = await demo_str_output_completion(
-            question=question, llm=data.llm,
-        )
+    response, exception = await demo_str_output_completion(
+        question=question, llm=data.llm,
+    )
 
-        return ResponseDemoQuery(data=response)
+    if exception:
+        raise exception
 
-    except Exception as e:
-        logger.error(f"Failed to brainx format output: {e}", exc_info=settings.log.exc_info)
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    return ResponseDemoQuery(data=response)

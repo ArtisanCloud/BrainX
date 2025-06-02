@@ -22,6 +22,8 @@ async def get_async_db_session() -> AsyncSession:
     from app.api.context_manager import context_set_db_session_rollback
 
     async with async_session_local() as async_db:
+        async_db._from_manual_session = True  # 自定义标记
+
         await async_db.execute(
             text(f"SET search_path TO {settings.database.db_schema}, public")
         )
@@ -37,6 +39,8 @@ async def get_async_db_session() -> AsyncSession:
 # 为了某些场景，比如 Celery 等需要直接调用的场景，你可以使用一个简单的函数来获取 session：
 def get_sync_db_session() -> Session:
     sync_db = sync_session_local()
+    sync_db._from_manual_session = True  # 自定义标记
+
     if not sync_db:
         raise ValueError("Failed to initialize sync session")
 
@@ -56,5 +60,5 @@ def get_sync_db_session() -> Session:
 
 
 # 判断 db 是否为 FastAPI 依赖注入提供的对象
-def is_dep_session(db: Session | AsyncSession) -> bool:
-    return hasattr(db, "execute")  # 依赖注入的 db 会有 execute 方法
+def is_manual_session(db: Session | AsyncSession) -> bool:
+    return getattr(db, "_from_manual_session", False)

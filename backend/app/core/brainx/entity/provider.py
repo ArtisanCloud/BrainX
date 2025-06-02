@@ -47,10 +47,6 @@ class CredentialFormEntity(BaseModel):
 
 # 提供者凭证的定义
 class ProviderCredentialEntity(BaseModel):
-    """
-    提供者凭证模式定义，包含多个凭证表单字段。
-    """
-
     credential_form_schemas: List[CredentialFormEntity]  # 凭证表单字段列表
 
 
@@ -189,12 +185,8 @@ class ProviderEntity(BaseProviderEntity):
     help: Help  # 帮助信息
     supported_model_types: List[ModelType]  # 支持的模型类型列表
     configurate_methods: List[ConfigurateMethod]  # 支持的配置方法列表
-    provider_credential_schema: Optional[ProviderCredentialEntity] = (
-        None  # 提供者凭证模式，可选
-    )
-    models_credential_schema: Optional[ModelCredentialEntity] = (
-        None  # 模型凭证模式，可选
-    )
+    provider_credential_schema: Optional[ProviderCredentialEntity] = None  # 提供者凭证模式，可选
+    model_credential_schema: Optional[ModelCredentialEntity] = None  # 模型凭证模式，可选
 
     class Config:
         validate_assignment = False
@@ -224,3 +216,13 @@ class CredentialFormSchema(BaseModel):
     placeholder: Optional[I18nObject] = None
     max_length: int = 0
     show_on: list[FormShowOnObject] = []
+
+
+class FieldModelSchema(BaseModel):
+    label: I18nObject
+    placeholder: Optional[I18nObject] = None
+
+
+class CustomConfigurationStatus(Enum):
+    ACTIVE = "active"
+    NO_CONFIGURE = "no-configure"

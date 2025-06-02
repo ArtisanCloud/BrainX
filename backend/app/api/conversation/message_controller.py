@@ -28,16 +28,9 @@ async def api_get_message_list(
     p = Pagination(page=page, page_size=page_size)
     # print("app_uuid:", app_uuid)
 
-    try:
-        messages, pagination, exception = await get_cached_message_list(async_db, conversation_uuid, p)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    messages, pagination, exception = await get_cached_message_list(async_db, conversation_uuid, p)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetMessageList(data=messages, pagination=pagination)
 

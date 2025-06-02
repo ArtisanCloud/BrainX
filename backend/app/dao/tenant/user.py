@@ -9,7 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
 from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
-from app.database.session_manager import is_dep_session
+from app.database.session_manager import is_manual_session
 from app.models.base import BaseStatus
 from app.models.originaztion.user import User
 from app.models.tenant.tenant import Tenant, TenantDefaultModel
@@ -84,13 +84,13 @@ class UserDAO(BaseDAO[User]):
             # 在这里调用 flush()，以便获取 user 的 uuid
             await self.async_db.flush()  # 确保所有添加的对象已经持久化到数据库
 
-            if not is_dep_session(self.async_db):
+            if not is_manual_session(self.async_db):
                 await self.async_db.commit()
             await self.async_db.refresh(user)
 
             return user, None
 
         except SQLAlchemyError as e:
-            if not is_dep_session(self.async_db):
+            if not is_manual_session(self.async_db):
                 await self.async_db.rollback()
             raise e

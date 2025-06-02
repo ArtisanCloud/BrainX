@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import lazyload
 
 from app.dao.base import BaseDAO
-from app.database.session_manager import is_dep_session
+from app.database.session_manager import is_manual_session
 from app.logger import logger
 from app.models import App
 from app.models.rag.dataset import Dataset, DatasetSegmentRule
@@ -130,12 +130,12 @@ class DatasetDAO(BaseDAO[Dataset]):
                 PivotAppToDataset.app_uuid == app_uuid
             )
             await self.async_db.execute(stmt)
-            if not is_dep_session(self.async_db):
+            if not is_manual_session(self.async_db):
                 await self.async_db.commit()
 
             return None
         except SQLAlchemyError as e:
-            if not is_dep_session(self.async_db):
+            if not is_manual_session(self.async_db):
                 await self.async_db.rollback()
             return e
 

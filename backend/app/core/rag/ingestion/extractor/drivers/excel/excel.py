@@ -65,7 +65,7 @@ class ExcelDataExtractor(BaseDataExtractor):
         try:
 
             self.doc = self.loader.load()
-            print(len(self.doc))
+            # print(len(self.doc))
             for sheet in self.doc:
                 blocks.append(Block(
                     block_id=str(uuid.uuid4()),

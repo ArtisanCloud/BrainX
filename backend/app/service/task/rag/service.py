@@ -15,7 +15,7 @@ from app.core.rag.ingestion.splitter.base import BaseTextSplitter
 from app.core.rag.ingestion.splitter.factory import TextSplitterFactory
 from app.dao.rag.document import DocumentDAO
 from app.dao.rag.document_segment import DocumentSegmentDAO
-from app.database.session_manager import is_dep_session
+from app.database.session_manager import is_manual_session
 from app.service.task import logger_rag as logger
 from app.models import DocumentSegment, User, Dataset
 from app.models.base import UTC
@@ -180,8 +180,8 @@ class RagProcessorTaskService:
         )
 
         if exception is not None:
-            logger.error(f"process document {self.document.uuid} error: {exception}", exc_info=settings.log.exc_info)
             return None, exception
+        
         # create indexer
         indexer = IndexingFactory.get_indexer(
             splitter,
@@ -433,7 +433,7 @@ class RagProcessorTaskService:
             self.document.updated_at = datetime.now(UTC)  # 更新操作时间为当前时间
 
             # 保存预处理后的状态
-            if not is_dep_session(self.sync_db):
+            if not is_manual_session(self.sync_db):
                 self.sync_db.commit()  # 提交数据库事务
             return None
 

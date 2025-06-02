@@ -57,26 +57,26 @@ class LocalStorage:
 
     def load_once(self, filename):
         # 加载文件（一次性加载）
-        file_path = os.path.join(self.base_path, filename)
+        file_path = os.path.join(self.local_storage_path, filename)
         with open(file_path, 'rb') as f:
             data = f.read()
         return data
 
     def load_stream(self, filename):
         # 加载文件（流式加载）
-        file_path = os.path.join(self.base_path, filename)
+        file_path = os.path.join(self.local_storage_path, filename)
         with open(file_path, 'rb') as f:
             stream = BytesIO(f.read())
         return stream
 
     def download(self, filename, target_filepath):
         # 下载文件到本地路径
-        file_path = os.path.join(self.base_path, filename)
+        file_path = os.path.join(self.local_storage_path, filename)
         shutil.copyfile(file_path, target_filepath)
 
     def exists(self, filename):
         # 检查文件是否存在
-        file_path = os.path.join(self.base_path, filename)
+        file_path = os.path.join(self.local_storage_path, filename)
         return os.path.exists(file_path)
 
     async def check_bucket_exists(self, bucket: str) -> Exception | None:
@@ -93,7 +93,7 @@ class LocalStorage:
 
     def delete(self, filename):
         # 删除文件
-        file_path = os.path.join(self.base_path, filename)
+        file_path = os.path.join(self.local_storage_path, filename)
         if os.path.exists(file_path):
             os.remove(file_path)
         else:

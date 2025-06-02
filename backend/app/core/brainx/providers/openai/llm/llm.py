@@ -26,11 +26,11 @@ class OpenAILMM(LLM):
     def get_provider_model(self, params: dict = None) -> Any:
         # 从 params 提取参数
         credentials = dict(params.get("credentials", {})) if params else {}
-        temperature = float(params.get("temperature", 0.5))  # 默认值 0.5
-        streaming = bool(params.get("streaming", False))  # 默认值 False
-
         if not credentials:
             raise ProviderModelCredentialNotProvidedException()
+
+        temperature = float(params.get("temperature", 0.5))  # 默认值 0.5
+        streaming = bool(params.get("streaming", False))  # 默认值 False
 
         api_base = credentials.get('openai_api_base')
         api_key = credentials.get('openai_api_key')

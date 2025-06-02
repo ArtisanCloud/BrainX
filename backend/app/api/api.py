@@ -10,7 +10,7 @@ from app.api.rag import (
     document_controller,
     document_segment_controller,
 )
-from app.api.model_provider import model_provider_controller
+from app.api.model_provider import provider_model_controller, provider_controller
 from app.api.system import status_controller, test_controller
 from app.api.task import task_controller
 from app.api.tenant import user_controller, tenant_controller
@@ -146,12 +146,17 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    model_provider_controller.router,
-    prefix="/model-provider",
+    provider_controller.router,
+    prefix="/model-provider/provider",
     dependencies=[Depends(auth_user_token)],
     tags=["model_provider"],
 )
-
+api_router.include_router(
+    provider_model_controller.router,
+    prefix="/model-provider/provider-model",
+    dependencies=[Depends(auth_user_token)],
+    tags=["model_provider"],
+)
 
 # task
 api_router.include_router(

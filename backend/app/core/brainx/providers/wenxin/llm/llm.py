@@ -5,6 +5,8 @@ from app.core.brainx.interface.llm import LLM
 from typing import Mapping
 from pydantic import Field
 
+from app.core.exception.exceptions import ProviderModelCredentialNotProvidedException
+
 
 class WenXinLMM(LLM):
     model_id: str = Field(default=LLMModel.BAIDU_ERNIE_Lite_8K, description="模型 ID")
@@ -13,6 +15,10 @@ class WenXinLMM(LLM):
         raise NotImplementedError
 
     def get_provider_model(self, params: dict = None) -> any:
+        credentials = dict(params.get("credentials", {})) if params else {}
+        if not credentials:
+            raise ProviderModelCredentialNotProvidedException()
+
         # 从 params 中获取并进行处理
         temperature = float(params.get("temperature", 0))  # 默认值 0
         if temperature <= 0:

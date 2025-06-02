@@ -26,19 +26,3 @@ class TenantService:
             raise exception
 
         return tenant
-
-    def encrypt_content(self, tenant_uuid: str, content: str):
-        tenant, exception = self.tenant_dao.sync_get_by_uuid(tenant_uuid)
-        if exception:
-            raise exception
-        if not tenant:
-            raise ValueError(f"Tenant with uuid {tenant_uuid} not found")
-
-        encrypted_content = rsa.rsa_encrypt(tenant.encrypted_public_key, content)
-
-        return base64.b64encode(encrypted_content).decode()
-
-    def decrypt_content(self, tenant_uuid: str, content: str) -> str:
-
-        private_key_path = rsa.get_tenant_private_key_path(tenant_uuid)
-        return rsa.rsa_decrypt(private_key_path, base64.b64decode(content))

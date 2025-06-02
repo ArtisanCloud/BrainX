@@ -24,7 +24,7 @@ supported_model_types:
 configurate_methods:
   - predefined-model
   - customizable-model
-models_credential_schema:
+model_credential_schema:
   model:
     label:
       en_US: Model Name

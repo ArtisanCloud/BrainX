@@ -43,8 +43,12 @@ class RedisCache(CacheInterface):
     def get(self, key: str) -> Optional[Any]:
         """获取缓存"""
         if self.redis:
-            value_str = self.redis.get(key)
+            value_bytes = self.redis.get(key)
+            if value_bytes is None:
+                return None
             try:
+                # 先 decode 成 utf-8 字符串
+                value_str = value_bytes.decode('utf-8')
                 # 尝试将字符串解析为 JSON
                 value = json.loads(value_str)
                 return value
@@ -77,7 +81,7 @@ class RedisCache(CacheInterface):
             # 设置锁，并设置超时过期时间（防止死锁）
             # timeout 是锁的超时时间，单位是秒
             return self.redis.setnx(lock_key, "True") and self.redis.expire(lock_key, timeout)
-        else: 
+        else:
             raise Exception("Redis 连接未初始化")
 
     def is_locked(self, lock_key: str) -> bool:
@@ -85,7 +89,7 @@ class RedisCache(CacheInterface):
         if self.redis:
             # 获取锁的值，如果存在且值为 "True"，则表示锁已被占用
             return self.get(lock_key) == "True"
-        else: 
+        else:
             raise Exception("Redis 连接未初始化")
 
     def release_lock(self, lock_key: str):

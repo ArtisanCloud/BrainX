@@ -32,16 +32,9 @@ async def api_get_media_resource_list(
 
     p = Pagination(page=page, page_size=page_size)
 
-    try:
-        media_resources, pagination, exception = await get_media_resource_list(async_db, p)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    media_resources, pagination, exception = await get_media_resource_list(async_db, p)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetMediaResourceList(data=media_resources, pagination=pagination)
 
@@ -54,17 +47,9 @@ async def create_media_resource(
         async_db: AsyncSession = Depends(get_async_db_session_dep),
         resource: UploadFile = File(...)
 ) -> ResponseCreateMediaResource | ResponseSchema:
-    try:
-
-        media_resource, exception = await create_media_resource_by_file(async_db, resource)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    media_resource, exception = await create_media_resource_by_file(async_db, resource)
+    if exception is not None:
+        raise exception
 
     media_resource.sort_index = sort_index
     res = ResponseCreateMediaResource(media_resource=media_resource, is_oss=(not media_resource.is_local_stored))
@@ -78,24 +63,17 @@ async def create_media_resource(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseCreateMediaResource | ResponseSchema:
-    try:
-        # Parse multipart form
-        # print(resource)
-        #
-        # print(session_user)
-        media_resource, exception = await create_media_resource_by_base64_string(
-            async_db, session_user,
-            data.bucketName, data.base64Data,
-            data.mediaName, data.sortIndex,
-        )
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    # Parse multipart form
+    # print(resource)
+    #
+    # print(session_user)
+    media_resource, exception = await create_media_resource_by_base64_string(
+        async_db, session_user,
+        data.bucketName, data.base64Data,
+        data.mediaName, data.sortIndex,
+    )
+    if exception is not None:
+        raise exception
 
     # media_resource.sort_index = sort_index
     res = ResponseCreateMediaResource(media_resource=media_resource, is_oss=(not media_resource.is_local_stored))
@@ -109,16 +87,9 @@ async def api_get_media_resource_by_uuid(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep)
 ):
-    try:
-        media_resource, exception = await get_media_resource_by_uuid(async_db, session_user, media_resource_uuid)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    media_resource, exception = await get_media_resource_by_uuid(async_db, session_user, media_resource_uuid)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetMediaResource(data=media_resource)
 

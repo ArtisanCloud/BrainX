@@ -21,18 +21,9 @@ async def api_register(
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 
 ) -> ResponseRegisterUser | ResponseSchema:
-    try:
-
-        user, exception = await create_user_by_account(async_db, data.account, data.password)
-        if exception is not None:
-            raise exception
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            raise Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    user, exception = await create_user_by_account(async_db, data.account, data.password)
+    if exception is not None:
+        raise exception
 
     res = ResponseRegisterUser(user=user)
 
@@ -45,17 +36,9 @@ async def api_login(
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 
 ) -> ResponseLoginUser | ResponseSchema:
-    try:
-
-        token, exception = await login_by_account(async_db, data.account, data.password)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    token, exception = await login_by_account(async_db, data.account, data.password)
+    if exception is not None:
+        raise exception
 
     res = ResponseLoginUser(
         account=data.account,

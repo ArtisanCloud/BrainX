@@ -10,7 +10,7 @@ from typing import List, Dict, Any, TypeVar, Generic, Optional, Type, Tuple, Seq
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.config.config import UTC
-from app.database.session_manager import is_dep_session
+from app.database.session_manager import is_manual_session
 
 # 定义 ModelType 类型变量，限定为 SQLAlchemy 的 DeclarativeMeta
 ModelType = TypeVar('ModelType', bound=DeclarativeMeta)
@@ -34,11 +34,11 @@ class BaseDAO(Generic[ModelType]):
                 await self.async_db.flush()
                 await self.async_db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
-                if not is_dep_session(self.async_db):
+                if is_manual_session(self.async_db):
                     await self.async_db.commit()
                 return obj, None
             except Exception as e:
-                if not is_dep_session(self.async_db):
+                if is_manual_session(self.async_db):
                     await self.async_db.rollback()
                 return None, e
         else:
@@ -55,11 +55,11 @@ class BaseDAO(Generic[ModelType]):
                 self.sync_db.flush()
                 self.sync_db.refresh(obj)  # 刷新对象以获取数据库中的最新状态
 
-                if not is_dep_session(self.sync_db):
+                if is_manual_session(self.sync_db):
                     self.sync_db.commit()
                 return obj, None
             except Exception as e:
-                if not is_dep_session(self.sync_db):
+                if is_manual_session(self.sync_db):
                     self.sync_db.rollback()
                 return None, e
         else:
@@ -125,12 +125,12 @@ class BaseDAO(Generic[ModelType]):
             try:
                 self.async_db.add_all(objs)
                 await self.async_db.flush()
-                if not is_dep_session(self.async_db):
+                if is_manual_session(self.async_db):
                     await self.async_db.commit()
                 # print(objs)
                 return objs, None
             except Exception as e:
-                if not is_dep_session(self.async_db):
+                if is_manual_session(self.async_db):
                     await self.async_db.rollback()
                 return None, e
         else:
@@ -145,11 +145,11 @@ class BaseDAO(Generic[ModelType]):
             self.sync_db.add_all(objs)
             self.sync_db.flush()
             # print(objs)
-            if not is_dep_session(self.sync_db):
+            if is_manual_session(self.sync_db):
                 self.sync_db.commit()
             return objs, None
         except Exception as e:
-            if not is_dep_session(self.sync_db):
+            if is_manual_session(self.sync_db):
                 self.sync_db.rollback()
             return None, e
 
@@ -210,6 +210,7 @@ class BaseDAO(Generic[ModelType]):
         """
         根据 UUID 获取模型对象
         """
+
         if conditions is None:
             return None, Exception("sync_get_by method requires a conditions")
         try:
@@ -220,9 +221,9 @@ class BaseDAO(Generic[ModelType]):
                 query = query.filter(and_(*filters))
 
             # 打印生成的 SQL 查询语句
-            query_str = str(query)
-            print(conditions)
-            print(f"Generated SQL query: {query_str}")
+            # query_str = str(query)
+            # print(conditions)
+            # print(f"Generated SQL query: {query_str}")
 
             result = self.sync_db.execute(query)
             return result.scalar_one_or_none(), None
@@ -318,11 +319,11 @@ class BaseDAO(Generic[ModelType]):
                 for field, value in update_data.items():
                     setattr(obj, field, value)
 
-                if not is_dep_session(self.async_db):
+                if is_manual_session(self.async_db):
                     await self.async_db.commit()
                 return obj, None
             except Exception as e:
-                if not is_dep_session(self.async_db):
+                if is_manual_session(self.async_db):
                     await self.async_db.rollback()
 
                 return None, e
@@ -343,11 +344,12 @@ class BaseDAO(Generic[ModelType]):
 
             for field, value in update_data.items():
                 setattr(obj, field, value)
-            if not is_dep_session(self.sync_db):
+
+            if is_manual_session(self.sync_db):
                 self.sync_db.commit()
             return obj, None
         except Exception as e:
-            if not is_dep_session(self.sync_db):
+            if is_manual_session(self.sync_db):
                 self.sync_db.rollback()
             return None, e
 
@@ -371,13 +373,13 @@ class BaseDAO(Generic[ModelType]):
             await self.async_db.flush()
             await self.async_db.refresh(obj)
 
-            if not is_dep_session(self.async_db):
+            if is_manual_session(self.async_db):
                 await self.async_db.commit()
 
             return obj, None
 
         except Exception as e:
-            if not is_dep_session(self.async_db):
+            if is_manual_session(self.async_db):
                 await self.async_db.rollback()
             return None, e
 
@@ -394,24 +396,29 @@ class BaseDAO(Generic[ModelType]):
             if not obj:
                 return None, Exception(f"Object with uuid {obj_uuid} not found")
 
+            print(f"Before setattr: dirty={self.sync_db.dirty}")
             for field, value in patch_data.items():
                 setattr(obj, field, value)
+                # flag_modified(obj, field)
             setattr(obj, "updated_at", datetime.now(UTC))
+            # flag_modified(obj, "updated_at")
+            # print(f"After setattr: dirty={self.sync_db.dirty}")
 
             self.sync_db.flush()
             self.sync_db.refresh(obj)
-            if not is_dep_session(self.sync_db):
+
+            if is_manual_session(self.sync_db):
                 self.sync_db.commit()
 
             return obj, None
 
         except Exception as e:
-            if not is_dep_session(self.sync_db):
+            if is_manual_session(self.sync_db):
                 self.sync_db.rollback()
             return None, e
 
     async def async_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
-        bool, Optional[Exception]]:
+        str, Optional[Exception]]:
         """
         通用的软删除方法，适用于任意模型对象
         """
@@ -425,24 +432,24 @@ class BaseDAO(Generic[ModelType]):
                     exist_obj = result.scalars().first()
 
                     if exist_obj is None:
-                        return False, Exception(f"{model_cls.__name__} not found")
+                        return "", Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
                     await self.async_db.flush()
-                    if not is_dep_session(self.async_db):
+                    if is_manual_session(self.async_db):
                         await self.async_db.commit()
-                    return True, None
+                    return exist_obj.uuid, None
 
             except Exception as e:
-                if not is_dep_session(self.async_db):
-                    await self.sync_db.rollback()
-                return False, e
+                if is_manual_session(self.async_db):
+                    await self.async_db.rollback()
+                return "", e
         else:
-            return False, Exception("async_soft_delete method requires an AsyncSession")
+            return "", Exception("async_soft_delete method requires an AsyncSession")
 
     def sync_soft_delete(self, model_cls: Type, conditions: dict) -> Tuple[
-        bool, Optional[Exception]]:
+        str, Optional[Exception]]:
         """
         通用的软删除方法，适用于任意模型对象
         """
@@ -456,61 +463,64 @@ class BaseDAO(Generic[ModelType]):
                     exist_obj = result.scalars().first()
 
                     if exist_obj is None:
-                        return False, Exception(f"{model_cls.__name__} not found")
+                        return "", Exception(f"{model_cls.__name__} not found")
 
                     # 执行软删除操作，这里假设模型类有 deleted_at 字段
                     exist_obj.deleted_at = datetime.now(UTC)
                     self.async_db.flush()
-                    if not is_dep_session(self.sync_db):
+                    if is_manual_session(self.sync_db):
                         self.sync_db.commit()
-                    return True, None
+                    return exist_obj.uuid, None
 
             except Exception as e:
-                if not is_dep_session(self.sync_db):
+                if is_manual_session(self.sync_db):
                     self.sync_db.rollback()
-                return False, e
+                return "", e
         else:
-            return False, Exception(f"{self.model.__name__} sync_soft_delete method requires an Session")
+            return "", Exception(f"{self.model.__name__} sync_soft_delete method requires an Session")
 
-    async def async_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
+    async def async_delete_by(self, conditions: Dict[str, Any] = None) -> Tuple[str, Optional[Exception]]:
         """
         删除模型对象
         """
         if isinstance(self.async_db, AsyncSession):
             try:
-                obj, error = await self.async_get_by_uuid(obj_uuid)
+                obj, error = await self.async_get_by(conditions)
                 if error:
-                    return False, error
+                    return "", error
                 if not obj:
-                    return False, Exception(f"Object with uuid {obj_uuid} not found")
+                    return "", Exception(f"Object with uuid {conditions} not found")
 
                 await self.async_db.delete(obj)
-                if not is_dep_session(self.async_db):
-                    await self.async_db.commit()
-                return True, None
-            except Exception as e:
-                if not is_dep_session(self.async_db):
-                    self.sync_db.rollback()
-                return False, e
-        else:
-            return False, Exception("async_delete method requires an AsyncSession")
 
-    def sync_delete(self, obj_uuid: Any) -> Tuple[bool, Optional[Exception]]:
+                if is_manual_session(self.async_db):
+                    await self.async_db.commit()
+                return obj.uuid, None
+
+            except Exception as e:
+                if is_manual_session(self.async_db):
+                    self.sync_db.rollback()
+                return "", e
+        else:
+            return "", Exception("async_delete method requires an AsyncSession")
+
+    def sync_delete_by(self, conditions: Dict[str, Any] = None) -> Tuple[str, Optional[Exception]]:
         """
         删除模型对象
         """
         try:
-            obj, error = self.sync_get_by_uuid(obj_uuid)
+            obj, error = self.sync_get_by(conditions)
             if error:
-                return False, error
+                return "", error
             if not obj:
-                return False, Exception(f"Object with uuid {obj_uuid} not found")
-
-            self.async_db.delete(obj)
-            if not is_dep_session(self.sync_db):
+                return "", Exception(f"Object with uuid {conditions} not found")
+            # print(f"obj:", obj)
+            self.sync_db.delete(obj)
+            if is_manual_session(self.sync_db):
                 self.sync_db.commit()
-            return True, None
+            return obj.uuid, None
+
         except Exception as e:
-            if not is_dep_session(self.sync_db):
+            if is_manual_session(self.sync_db):
                 self.sync_db.rollback()
-            return False, e
+            return "", e

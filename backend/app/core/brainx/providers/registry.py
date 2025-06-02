@@ -35,7 +35,7 @@ class ModelProviderRegistry:
             base_path = os.path.join(get_project_path(), "core/brainx/providers")
 
             provider_schemas: Dict[str, ProviderEntity] = {}
-            print(base_path, provider_schemas)
+            # print(base_path, provider_schemas)
             for folder_name in os.listdir(base_path):
                 folder_path = os.path.join(base_path, folder_name)
                 if os.path.isdir(folder_path):  # 确保是一个目录
@@ -115,7 +115,7 @@ class ModelProviderRegistry:
         :param lang: language (zh_Hans or en_US)
         :return:
         """
-        provider_descriptor = self.get_provider_schema(provider)
+        provider_descriptor = self.get_provider_entity(provider)
         file_name: str | None = None
 
         if icon_type.lower() == "icon_small":
@@ -143,7 +143,7 @@ class ModelProviderRegistry:
 
         root_path = get_project_path()
         provider_instance_path = os.path.join(
-            root_path, "core", "ai_model", "providers", provider
+            root_path, "core", "brainx", "providers", provider
         )
 
         file_path = os.path.join(provider_instance_path, "assets")

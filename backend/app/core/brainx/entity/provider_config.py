@@ -12,11 +12,13 @@ from app.core.brainx.entity.base import FormType
 from app.core.brainx.entity.provider import ProviderEntity, SystemConfiguration, CustomConfiguration, CredentialFormSchema
 from app.core.brainx.entity.provider_model import ProviderModelEntity
 from app.core.brainx.interface.ai_model import AIModel
+from app.dao.model_provider.provider import ProviderDAO
 from app.database.session_manager import get_sync_db_session
 from app.models.model_provider.provider import ProviderType, Provider
 from app.models.model_provider.provider_model import ModelType
-from app.service.model_provider.provider_service import ProviderService
 from app.service.tenant.service import TenantService
+from app.utils.cache.provider_credentials import ProviderCredentialsCache, ProviderCredentialsCacheType
+from app.utils.encrypter import decrypt_content, encrypt_content, desensitized_content
 
 
 class ModelSettings(BaseModel):
@@ -66,6 +68,9 @@ class ProviderConfiguration(BaseModel):
             model_id=model_id,
         )
 
+    def is_custom_configuration_available(self) -> bool:
+        return self.custom_configuration.provider is not None or len(self.custom_configuration.models) > 0
+
     def extract_secret_variables(self, credential_form_schemas: list[CredentialFormSchema]) -> list[str]:
         secret_input_form_variables = []
         for credential_form_schema in credential_form_schemas:
@@ -78,7 +83,7 @@ class ProviderConfiguration(BaseModel):
     def validate_provider_credentials(self, credentials: dict) -> tuple[Provider | None, dict]:
         provider_record = None
         with get_sync_db_session() as sync_db:
-            provider_dao = ProviderService(sync_db=sync_db).provider_dao
+            provider_dao = ProviderDAO(sync_db=sync_db)
             provider_record, exception = provider_dao.sync_get_by({
                 "tenant_uuid": self.tenant_uuid,
                 "provider_type": ProviderType.CUSTOM.value,
@@ -115,7 +120,7 @@ class ProviderConfiguration(BaseModel):
                 if key in provider_credential_secret_variables:
                     # if send [__HIDDEN__] in secret input, it will be same as original value
                     if value == HIDDEN_VALUE and key in original_credentials:
-                        credentials[key] = tenant_service.decrypt_content(self.tenant_uuid, original_credentials[key])
+                        credentials[key] = decrypt_content(self.tenant_uuid, original_credentials[key])
             # print("credentials:", credentials)
 
         # validate credentials
@@ -125,13 +130,59 @@ class ProviderConfiguration(BaseModel):
         )
         # print(credentials)
 
-        tenant_service = TenantService(sync_db=sync_db)
         for key, value in credentials.items():
             if key in provider_credential_secret_variables:
-                credentials[key] = tenant_service.encrypt_content(self.tenant_uuid, value)
+                credentials[key] = encrypt_content(sync_db, self.tenant_uuid, value)
         # print(provider_record, credentials)
 
         return provider_record, credentials
+
+    def desensitized_credentials(self, credentials: dict, credential_form_schemas: list[CredentialFormSchema]) -> dict:
+        # Get provider credential secret variables
+        credential_secret_variables = self.extract_secret_variables(credential_form_schemas)
+
+        # Obfuscate provider credentials
+        copy_credentials = credentials.copy()
+        for key, value in copy_credentials.items():
+            if key in credential_secret_variables:
+                copy_credentials[key] = desensitized_content(value)
+
+        return copy_credentials
+
+    def get_custom_credentials(self, desensitized: bool = False) -> dict | None:
+        if self.custom_configuration is None:
+            return None
+        credentials = self.custom_configuration.provider.credentials
+        if not desensitized:
+            return credentials
+
+        return self.desensitized_credentials(
+            credentials=credentials,
+            credential_form_schemas=self.provider.provider_credential_schema.credential_form_schemas
+            if self.provider.provider_credential_schema
+            else [],
+        )
+
+    def delete_custom_credentials(self) -> None:
+        # get provider
+        with get_sync_db_session() as sync_db:
+            provider_dao = ProviderDAO(sync_db=sync_db)
+
+            record_uuid, exception = provider_dao.sync_delete_by({
+                "tenant_uuid": self.tenant_uuid,
+                "provider_type": ProviderType.CUSTOM.value,
+                "provider_name": self.provider.provider,
+            })
+            if exception:
+                raise exception
+
+            provider_model_credentials_cache = ProviderCredentialsCache(
+                tenant_uuid=self.tenant_uuid,
+                identity_id=record_uuid,
+                cache_type=ProviderCredentialsCacheType.PROVIDER,
+            )
+
+            provider_model_credentials_cache.delete()
 
 
 class ProviderConfigurations(BaseModel):

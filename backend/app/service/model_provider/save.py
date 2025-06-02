@@ -12,6 +12,7 @@ from app.service.model_provider.provider_service import (
 )
 from typing import Tuple
 from app.config.config import settings
+from app.utils.cache.provider_credentials import ProviderCredentialsCache, ProviderCredentialsCacheType
 
 
 async def save_model_provider(
@@ -22,6 +23,7 @@ async def save_model_provider(
 ) -> Tuple[ProviderSchema | None, Exception | None]:
     try:
         provider_manager = ProviderManager(sync_db=sync_db)
+        provider_service = ProviderService(sync_db=sync_db)
 
         # 加载租户的模型配置表
         configurations = provider_manager.get_configurations(tenant_uuid)
@@ -35,13 +37,13 @@ async def save_model_provider(
         provider_record, credentials = provider_configuration.validate_provider_credentials(credentials)
 
         # upsert credentials
-        provider_service = ProviderService(sync_db=sync_db)
+
         if provider_record:
             dict_provider_record: dict = {}
-            # print("update provider record")
+            # print("update provider record", )
             dict_provider_record["encrypted_config"] = json.dumps(credentials)
             dict_provider_record["is_valid"] = True
-            # print(dict_provider_record)
+            # print(dict_provider_record["encrypted_config"])
             provider_record, exception = provider_service.provider_dao.sync_patch(
                 provider_record.uuid, dict_provider_record
             )
@@ -56,6 +58,13 @@ async def save_model_provider(
             provider_record, exception = provider_service.provider_dao.sync_create(
                 provider_record
             )
+
+        # 清楚缓存
+        provider_model_credentials_cache = ProviderCredentialsCache(
+            tenant_uuid=tenant_uuid, identity_id=provider_record.uuid, cache_type=ProviderCredentialsCacheType.PROVIDER
+        )
+        provider_model_credentials_cache.delete()
+
         if exception:
             raise exception
 

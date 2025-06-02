@@ -35,9 +35,9 @@ router = APIRouter()
 
 @router.get("/list")
 async def api_get_app_list(
-    request: Request,
-    session_user: User = Depends(get_session_user),
-    async_db: AsyncSession = Depends(get_async_db_session_dep),
+        request: Request,
+        session_user: User = Depends(get_session_user),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseGetAppList | ResponseSchema:
     # 获取页码和每页条目数，如果参数不存在则默认为1和10
     page = int(request.query_params.get("page", PAGE))
@@ -45,18 +45,11 @@ async def api_get_app_list(
 
     p = Pagination(page=page, page_size=page_size)
 
-    try:
-        apps, pagination, exception = await get_app_list(
-            async_db, session_user.tenant_owner_uuid, p
-        )
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    apps, pagination, exception = await get_app_list(
+        async_db, session_user.tenant_owner_uuid, p
+    )
+    if exception is not None:
+        raise exception
 
     res = ResponseGetAppList(data=apps, pagination=pagination)
 
@@ -65,20 +58,13 @@ async def api_get_app_list(
 
 @router.get("/{app_uuid}")
 async def api_get_app_by_uuid(
-    app_uuid: str,
-    session_user: User = Depends(get_session_user),
-    async_db: AsyncSession = Depends(get_async_db_session_dep),
+        app_uuid: str,
+        session_user: User = Depends(get_session_user),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ):
-    try:
-        app, exception = await get_app_by_uuid(async_db, session_user, app_uuid)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    app, exception = await get_app_by_uuid(async_db, session_user, app_uuid)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetApp(data=app)
 
@@ -87,25 +73,17 @@ async def api_get_app_by_uuid(
 
 @router.post("/create")
 async def api_create_app(
-    data: RequestCreateApp,
-    session_user: User = Depends(get_session_user),
-    async_db: AsyncSession = Depends(get_async_db_session_dep),
+        data: RequestCreateApp,
+        session_user: User = Depends(get_session_user),
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ):
-    try:
-
-        app = make_app(data)
-        app.tenant_uuid = str(session_user.tenant_owner_uuid)
-        app.created_user_by = str(session_user.uuid)
-        # print(app)
-        app, exception = await create_app(async_db, app)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    app = make_app(data)
+    app.tenant_uuid = str(session_user.tenant_owner_uuid)
+    app.created_user_by = str(session_user.uuid)
+    # print(app)
+    app, exception = await create_app(async_db, app)
+    if exception is not None:
+        raise exception
 
     res = ResponseCreateApp(app=app)
 
@@ -114,9 +92,9 @@ async def api_create_app(
 
 @router.patch("/patch/{app_uuid}")
 async def api_patch_app(
-    app_uuid: str,  # 接收路径参数 app_uuid
-    data: RequestPatchApp,
-    async_db: AsyncSession = Depends(get_async_db_session_dep),
+        app_uuid: str,  # 接收路径参数 app_uuid
+        data: RequestPatchApp,
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ):
     try:
 
@@ -140,8 +118,8 @@ async def api_patch_app(
 
 @router.delete("/delete/{app_uuid}")
 async def api_delete_app(
-    app_uuid: str,  # 接收路径参数 app_uuid
-    async_db: AsyncSession = Depends(get_async_db_session_dep),
+        app_uuid: str,  # 接收路径参数 app_uuid
+        async_db: AsyncSession = Depends(get_async_db_session_dep),
 ):
     try:
         user_id = 1

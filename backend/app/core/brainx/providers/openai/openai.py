@@ -15,6 +15,8 @@ class OpenAIProvider(ProviderInterface):
         model_instance = self.get_model_type_instance(ModelType.LLM, LLMModel.OPENAI_GPT_3_D_5_TURBO.value)
 
         # 验证凭据
-        exception = model_instance.validate_credentials(credentials)
+        try:
+            model_instance.validate_credentials(credentials)
 
-        return exception
+        except Exception as e:
+            return e

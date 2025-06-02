@@ -22,3 +22,8 @@ class AuthException(AppException):
 class ProviderModelCredentialNotProvidedException(AppException):
     def __init__(self, message: str = "需要配置授权访问参数"):
         super().__init__(status_code=400002, message=message)
+
+
+class PrivateKeyNotFoundError(AppException):
+    def __init__(self, message: str = "未找到私有密钥"):
+        super().__init__(status_code=400003, message=message)

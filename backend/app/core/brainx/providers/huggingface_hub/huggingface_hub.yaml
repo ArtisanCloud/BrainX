@@ -17,7 +17,7 @@ supported_model_types:
   - text-embedding
 configurate_methods:
   - customizable-model
-models_credential_schema:
+model_credential_schema:
   model:
     label:
       en_US: Model Name

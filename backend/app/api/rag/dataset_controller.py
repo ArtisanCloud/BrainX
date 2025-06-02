@@ -43,16 +43,10 @@ async def api_get_dataset_list(
     page_size = int(request.query_params.get("page_size", PER_PAGE))
 
     p = Pagination(page=page, page_size=page_size)
-    try:
-        datasets, pagination, exception = await get_dataset_list(async_db, session_user.tenant_owner_uuid, p)
-        if exception is not None:
-            raise exception
 
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    datasets, pagination, exception = await get_dataset_list(async_db, session_user.tenant_owner_uuid, p)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetDatasetList(data=datasets, pagination=pagination)
 
@@ -65,16 +59,9 @@ async def api_get_dataset_by_uuid(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep)
 ):
-    try:
-        dataset, exception = await get_dataset_by_uuid(async_db, session_user, dataset_uuid)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    dataset, exception = await get_dataset_by_uuid(async_db, session_user, dataset_uuid)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetDataset(data=dataset)
 
@@ -86,21 +73,13 @@ async def api_create_dataset(
         data: RequestCreateDataset,
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
-
-        dataset = make_dataset(data)
-        dataset.tenant_uuid = str(session_user.tenant_owner_uuid)
-        dataset.created_user_by = str(session_user.uuid)
-        # print(dataset)
-        dataset, exception = await create_dataset(async_db, dataset)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    dataset = make_dataset(data)
+    dataset.tenant_uuid = str(session_user.tenant_owner_uuid)
+    dataset.created_user_by = str(session_user.uuid)
+    # print(dataset)
+    dataset, exception = await create_dataset(async_db, dataset)
+    if exception is not None:
+        raise exception
 
     res = ResponseCreateDataset(dataset=dataset)
 
@@ -112,20 +91,12 @@ async def api_patch_dataset(
         dataset_uuid: str,  # 接收路径参数 dataset_uuid
         data: RequestPatchDataset,
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
+    update_data = data.dict(exclude_unset=True)
+    # print(dataset_uuid, update_data)
 
-        update_data = data.dict(exclude_unset=True)
-        # print(dataset_uuid, update_data)
-
-        dataset, exception = await patch_dataset(async_db, dataset_uuid, update_data)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    dataset, exception = await patch_dataset(async_db, dataset_uuid, update_data)
+    if exception is not None:
+        raise exception
 
     res = ResponsePatchDataset(dataset=dataset)
 
@@ -136,17 +107,10 @@ async def api_patch_dataset(
 async def api_delete_dataset(
         dataset_uuid: str,  # 接收路径参数 dataset_uuid
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
-        user_id = 1
-        result, exception = await soft_delete_dataset(async_db, user_id, dataset_uuid)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    user_id = 1
+    result, exception = await soft_delete_dataset(async_db, user_id, dataset_uuid)
+    if exception is not None:
+        raise exception
 
     res = ResponseDeleteDataset(result=result)
 
@@ -159,22 +123,15 @@ async def api_get_dataset_list_with_connected_app(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseGetDatasetListWithApp | ResponseSchema:
-    try:
-        if request.app_uuid == "":
-            raise Exception("app_uuid is empty")
+    if request.app_uuid == "":
+        raise Exception("app_uuid is empty")
 
-        datasets, exception = await get_dataset_list_with_connected_app(
-            async_db, session_user.tenant_owner_uuid,
-            request.app_uuid, request.only_connected
-        )
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    datasets, exception = await get_dataset_list_with_connected_app(
+        async_db, session_user.tenant_owner_uuid,
+        request.app_uuid, request.only_connected
+    )
+    if exception is not None:
+        raise exception
 
     res = ResponseGetDatasetListWithApp(data=datasets)
 
@@ -189,10 +146,8 @@ async def validate_app_uuid(async_db: AsyncSession, app_uuid: str, session_user:
     app_service = AppService(async_db)
     app, exception = await app_service.app_dao.async_get_by_uuid(app_uuid)
     if exception:
-        logger.error(exception, exc_info=settings.log.exc_info)
-        if isinstance(exception, SQLAlchemyError):
-            raise Exception("database query: pls check log")
         raise exception
+
     # print(app.tenant_uuid, session_user.tenant_owner_uuid)
     if str(app.tenant_uuid) != str(session_user.tenant_owner_uuid):
         raise Exception("app not belong to this tenant")
@@ -204,25 +159,17 @@ async def api_dataset_sync_apps(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseDatasetSyncApps | ResponseSchema:
-    try:
+    # validate the app
+    await validate_app_uuid(async_db, request.app_uuid, session_user)
 
-        # validate the app
-        await validate_app_uuid(async_db, request.app_uuid, session_user)
-
-        # sync app with databases
-        dataset_service = DatasetService(async_db)
-        datasets, exception = await dataset_service.sync_dataset_with_apps(
-            request.app_uuid,
-            request.connect_dataset_uuids, request.disconnect_dataset_uuids
-        )
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    # sync app with databases
+    dataset_service = DatasetService(async_db)
+    datasets, exception = await dataset_service.sync_dataset_with_apps(
+        request.app_uuid,
+        request.connect_dataset_uuids, request.disconnect_dataset_uuids
+    )
+    if exception is not None:
+        raise exception
 
     res = ResponseDatasetSyncApps(data=datasets)
 
@@ -235,24 +182,17 @@ async def api_dataset_connect_apps(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseDatasetConnectApps | ResponseSchema:
-    try:
-        # validate the app
-        await validate_app_uuid(async_db, request.app_uuid, session_user)
+    # validate the app
+    await validate_app_uuid(async_db, request.app_uuid, session_user)
 
-        # sync app with databases
-        dataset_service = DatasetService(async_db)
-        exception = await dataset_service.connect_dataset_with_apps(
-            request.app_uuid,
-            request.dataset_uuids
-        )
-        if exception:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    # sync app with databases
+    dataset_service = DatasetService(async_db)
+    exception = await dataset_service.connect_dataset_with_apps(
+        request.app_uuid,
+        request.dataset_uuids
+    )
+    if exception:
+        raise exception
 
     res = ResponseDatasetConnectApps(result=True)
 
@@ -265,23 +205,16 @@ async def api_dataset_disconnect_apps(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
 ) -> ResponseDatasetDisconnectApps | ResponseSchema:
-    try:
-        await validate_app_uuid(async_db, request.app_uuid, session_user)
+    await validate_app_uuid(async_db, request.app_uuid, session_user)
 
-        # sync app with databases
-        dataset_service = DatasetService(async_db)
-        exception = await dataset_service.disconnect_dataset_with_apps(
-            request.app_uuid,
-            request.dataset_uuids
-        )
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    # sync app with databases
+    dataset_service = DatasetService(async_db)
+    exception = await dataset_service.disconnect_dataset_with_apps(
+        request.app_uuid,
+        request.dataset_uuids
+    )
+    if exception is not None:
+        raise exception
 
     res = ResponseDatasetDisconnectApps(result=True)
 

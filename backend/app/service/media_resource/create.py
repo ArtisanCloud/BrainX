@@ -15,8 +15,8 @@ from app.utils.datetime import datetime_format
 
 
 async def create_media_resource_by_file(
-   async_db: AsyncSession,
-    handler: UploadFile,
+        async_db: AsyncSession,
+        handler: UploadFile,
 ) -> Tuple[MediaResourceSchema | None, Exception | None]:
     # Create media resource
     service_media_resource = MediaResourceService(async_db)
@@ -37,12 +37,12 @@ async def create_media_resource_by_file(
 
 
 async def create_media_resource_by_base64_string(
-   async_db: AsyncSession,
-    user: User,
-    bucket: str,
-    base64_data: str,
-    media_name: str = None,
-    sort_index: int = None,
+        async_db: AsyncSession,
+        user: User,
+        bucket: str,
+        base64_data: str,
+        media_name: str = None,
+        sort_index: int = None,
 ) -> Tuple[MediaResourceSchema | None, Exception | None]:
     try:
         # Create media resource
@@ -60,9 +60,9 @@ async def create_media_resource_by_base64_string(
         )
         if exception:
             raise Exception(f"Database error: {exception}")
-        # print(123321, media_resource, exception)
+
     except Exception as e:
-        print(123)
+        
         return None, e
 
     return transform_media_resource_to_reply(media_resource), None

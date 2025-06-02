@@ -76,16 +76,9 @@ async def api_get_document_by_uuid(
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep)
 ):
-    try:
-        document, exception = await get_document_by_uuid(async_db, session_user, document_uuid)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    document, exception = await get_document_by_uuid(async_db, session_user, document_uuid)
+    if exception is not None:
+        raise exception
 
     res = ResponseGetDocument(data=document)
 
@@ -97,21 +90,13 @@ async def api_create_document(
         data: RequestCreateDocument,
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
-
-        document = make_document(data)
-        document.tenant_uuid = str(session_user.tenant_owner_uuid)
-        document.created_user_by = str(session_user.uuid)
-        # print(document)
-        document, exception = await create_document(async_db, document)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    document = make_document(data)
+    document.tenant_uuid = str(session_user.tenant_owner_uuid)
+    document.created_user_by = str(session_user.uuid)
+    # print(document)
+    document, exception = await create_document(async_db, document)
+    if exception is not None:
+        raise exception
 
     res = ResponseCreateDocument(document=document)
 
@@ -123,20 +108,12 @@ async def api_patch_document(
         document_uuid: str,  # 接收路径参数 document_uuid
         data: RequestPatchDocument,
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
+    update_data = data.dict(exclude_unset=True)
+    # print(document_uuid, update_data)
 
-        update_data = data.dict(exclude_unset=True)
-        # print(document_uuid, update_data)
-
-        document, exception = await patch_document(async_db, document_uuid, update_data)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    document, exception = await patch_document(async_db, document_uuid, update_data)
+    if exception is not None:
+        raise exception
 
     res = ResponsePatchDocument(document=document)
 
@@ -147,17 +124,10 @@ async def api_patch_document(
 async def api_delete_document(
         document_uuid: str,  # 接收路径参数 document_uuid
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
-        user_id = 1
-        result, exception = await soft_delete_document(async_db, user_id, document_uuid)
-        if exception is not None:
-            raise exception
-
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(error=str(e), status_code=http.HTTPStatus.BAD_REQUEST)
+    user_id = 1
+    result, exception = await soft_delete_document(async_db, user_id, document_uuid)
+    if exception is not None:
+        raise exception
 
     res = ResponseDeleteDocument(result=result)
 
@@ -169,30 +139,21 @@ async def api_add_document_content(
         data: RequestAddDocumentContent,
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep)):
-    try:
-        # print(data)
-        documents, exception = await add_document_content(async_db, session_user, data)
-        if exception is not None:
-            raise exception
+    # print(data)
+    documents, exception = await add_document_content(async_db, session_user, data)
+    if exception is not None:
+        raise exception
 
-        # 如果保存dataset和documents 准备数据信息成功
-        # 则开始开启后台的worker，做Extractor和Indexing的工作
-        # 创建一个任务组，针对每个文档启动一个独立的任务
-        tasks = group(
-            task_process_document.s(doc.uuid, session_user.uuid)
-            for doc in documents
-        )
-        # 异步执行所有任务
-        task_group_result = tasks.apply_async(queue=rag_queue, task_id=str(uuid.uuid4()))
-        # task_group_result = []
-    except Exception as e:
-        logger.error(e, exc_info=settings.log.exc_info)
-        if isinstance(e, SQLAlchemyError):
-            e = Exception("database query: pls check log")
-        return ResponseSchema(
-            error=str(e),
-            status_code=http.HTTPStatus.BAD_REQUEST,
-        )
+    # 如果保存dataset和documents 准备数据信息成功
+    # 则开始开启后台的worker，做Extractor和Indexing的工作
+    # 创建一个任务组，针对每个文档启动一个独立的任务
+    tasks = group(
+        task_process_document.s(doc.uuid, session_user.uuid)
+        for doc in documents
+    )
+    # 异步执行所有任务
+    task_group_result = tasks.apply_async(queue=rag_queue, task_id=str(uuid.uuid4()))
+    # task_group_result = []
 
     task_ids = [result.id for result in task_group_result]
     res = ResponseAddDocumentContent(data=documents, task_ids=task_ids)

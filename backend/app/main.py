@@ -1,5 +1,4 @@
 import os
-from typing import cast
 
 import asyncio
 from starlette.staticfiles import StaticFiles
@@ -167,6 +166,7 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.api.api_prefix)
 app.include_router(openapi_router, prefix=settings.api.openapi_prefix)
 
+# from app.utils.route import print_routes
 # print_routes(app)
 
 if __name__ == '__main__':

@@ -17,3 +17,11 @@ class ProviderModelSchema(BaseSchema):
     quota_type: Optional[int]
     quota_limit: Optional[int]
     quota_used: int = 0
+
+
+class RequestGetProviderModelList(BaseSchema):
+    provider_id: constr(min_length=1)
+
+
+class ResponseGetProviderModelList(BaseSchema):
+    data: list[ProviderModelSchema]
