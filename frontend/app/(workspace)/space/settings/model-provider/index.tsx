@@ -1,21 +1,22 @@
 import styles from "./index.module.scss";
 import {useEffect, useMemo} from "react";
 import useSettingsStore from "@/app/store/setting";
-import { useNotification } from "@/app/components/notification";
+import {useNotification} from "@/app/components/notification";
 import useLoadingStore from "@/app/store/global-loading";
 import {
   ActionFetchProviderSchemaList, Provider,
   ResponseFetchProviderList,
 } from "@/app/api/model-provider/provider";
 import SystemModelSetting from "@/app/(workspace)/space/settings/model-provider/system-model-setting";
-import ToConfigProviders from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers";
+import ToConfigProviders
+  from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers";
 import ConfiguredProviders
   from "@/app/(workspace)/space/settings/model-provider/system-model-setting/configured-providers";
 
 const ModelProviderComponent: React.FC = () => {
-  const { setProviders } = useSettingsStore();
-  const { loading, setLoading } = useLoadingStore();
-  const { msgError } = useNotification();
+  const {setProviders, toRefresh} = useSettingsStore();
+  const {loading, setLoading} = useLoadingStore();
+  const {msgError} = useNotification();
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -38,17 +39,17 @@ const ModelProviderComponent: React.FC = () => {
     };
 
     fetchProviders();
-  }, []);
+  }, [toRefresh]);
 
   return (
     <div className={styles.container}>
       <div className={styles.configuredModelProvidersBox}>
         <div className={styles.systemModelSettingBox}>
           <span className="text-gray-800 font-medium text-sm">模型列表</span>
-          <SystemModelSetting />
+          <SystemModelSetting/>
         </div>
         <div className={styles.configuredModelProviders}>
-          <ConfiguredProviders />
+          <ConfiguredProviders/>
         </div>
       </div>
       <div className={styles.toConfigModelProvidersBox}>
@@ -56,7 +57,7 @@ const ModelProviderComponent: React.FC = () => {
           <span className="text-xs font-semibold text-gray-500">+添加模型</span>
           <span className="grow ml-3 h-[1px] bg-gradient-to-r from-[#f3f4f6]"></span>
         </div>
-        <ToConfigProviders />
+        <ToConfigProviders/>
       </div>
     </div>
   );

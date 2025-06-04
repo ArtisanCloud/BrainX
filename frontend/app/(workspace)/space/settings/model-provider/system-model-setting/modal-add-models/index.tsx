@@ -6,34 +6,46 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/react";
-import {ActionSaveProvider, ConfigurateMethod, Provider, ResponseSaveProvider} from "@/app/api/model-provider/provider";
+import {
+  ActionSaveProvider,
+  ConfigurateMethod,
+  CustomConfigurationStatusEnum,
+  Provider,
+  ResponseSaveProvider
+} from "@/app/api/model-provider/provider";
+import { FaCirclePlus } from "react-icons/fa6";
+
 import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
-  PlusIcon,
 } from "@heroicons/react/24/outline";
 import {useState} from "react";
 import {ProviderIcon} from "../provider-icon";
 import DynamicForm from "../../components/dynamic-form";
 import useLoadingStore from "@/app/store/global-loading";
 import {useNotification} from "@/app/components/notification";
+import useSettingsStore from "@/app/store/setting";
+import {BuildMergedCredentialSchemas} from "@/app/utils/provider";
 
 // 定义 Props 接口
 interface ModalAddModelsProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function Index({provider}: ModalAddModelsProps) {
+export default function ModalAddModels({provider}: ModalAddModelsProps) {
   const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
   const [formValues, setFormValues] = useState<Record<string, any>>({});
 
+  const { setToRefresh } = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
   const {msgSuccess, msgError} = useNotification();
 
 
   // 手动控制Modal开关
-  const onOpen = () => setIsOpen(true);
+  const onOpen =async  () => {
+    setIsOpen(true);
+  }
   const onClose = () => setIsOpen(false);
 
   // 监听 Modal 打开状态变化
@@ -56,7 +68,12 @@ export default function Index({provider}: ModalAddModelsProps) {
         credentials: formValues,
       });
 
-      msgSuccess("保存成功");
+      if (res.result) {
+        msgSuccess("保存成功");
+        setToRefresh()
+      }else{
+        msgError("保存失败");
+      }
 
     } catch (error: any) {
       msgError(error);
@@ -80,14 +97,19 @@ export default function Index({provider}: ModalAddModelsProps) {
     <>
       <Button
         key={provider.provider}
-        className={styles.btnFun}
-        startContent={<PlusIcon style={{width: "18px", color: "gray"}}/>}
+        className={
+          provider.custom_configuration.status === CustomConfigurationStatusEnum.noConfigure
+            ? styles.btnFun
+            : styles.btnFunActive
+        }
+        startContent={<FaCirclePlus style={{width: "12px", color: "gray"}}/>}
         onPress={onOpen}
       >
         添加模型
       </Button>
       <Modal
         size="3xl"
+        scrollBehavior={"inside"}
         backdrop="opaque"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -106,8 +128,7 @@ export default function Index({provider}: ModalAddModelsProps) {
                   <div>
                     <DynamicForm
                       credentialSchemas={
-                        provider.models_credential_schema
-                          ?.credential_form_schemas!
+                        BuildMergedCredentialSchemas(provider)
                       }
                       onFilledRequired={onFilledRequired}
                       onChange={onFormChanged}

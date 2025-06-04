@@ -3,9 +3,9 @@ import {
   FormOption,
   FormShowOnObject,
   FormType,
-  I18nObject,
+  I18nObject, ModelTypeEnum,
 } from "@/app/api/model-provider/index";
-import { ModelType, ProviderModel } from "@/app/api/model-provider/model";
+import { ProviderModel } from "@/app/api/model-provider/model";
 import { backendClient } from "@/app/api/backend";
 
 import { unstable_noStore as noStore } from "next/dist/server/web/spec-extension/unstable-no-store";
@@ -56,7 +56,7 @@ export interface ProviderCredential {
 // 模型字段接口
 export interface FieldModel {
   // 字段标题，支持多语言
-  title: I18nObject;
+  label: I18nObject;
   // 占位符，支持多语言
   placeholder?: I18nObject;
 }
@@ -91,7 +91,7 @@ export interface Provider {
   // 帮助信息
   help: Help;
   // 支持的模型类型列表
-  supported_model_types: ModelType[];
+  supported_model_types: ModelTypeEnum[];
   // 支持的配置方法列表
   configurate_methods: ConfigurateMethod[];
   // 可用的模型列表，默认为空
@@ -99,7 +99,7 @@ export interface Provider {
   // 提供者凭证模式，可选
   provider_credential_schema?: ProviderCredential;
   // 模型凭证模式，可选
-  models_credential_schema?: ModelCredential;
+  model_credential_schema?: ModelCredential;
   // 配置选项（TypeScript 中用于动态字段）
   custom_configuration: {
     status: CustomConfigurationStatusEnum
@@ -126,6 +126,25 @@ export async function ActionFetchProviderSchemaList(): Promise<ResponseFetchProv
   }
 }
 
+
+export interface RequestGetProviderCredentials {
+  provider: string;
+}
+export interface ResponseGetProviderCredentials{
+  data: object
+}
+
+export async function ActionGetProviderCredentials(option: RequestGetProviderCredentials): Promise<ResponseGetProviderCredentials> {
+  try {
+    const endpoint = `/api/model-provider/provider/get_provider_credentials`;
+    const res = await backendClient.backend_post(endpoint, option);
+    return res as ResponseGetProviderCredentials;
+  }catch (error) {
+    throw new Error(`Failed to fetch the provider credentials : ${error}`);
+  }
+}
+
+
 export async function ActionGetProviderIcon(
   providerName: string
 ): Promise<any> {
@@ -147,16 +166,30 @@ export interface RequestSaveProvider {
   credentials: object
 }
 export interface ResponseSaveProvider{
-  data: Record<string, Provider>;
+  result:boolean;
 }
 
 
 export async function ActionSaveProvider(option: RequestSaveProvider): Promise<ResponseSaveProvider> {
 
-  const endpoint = `/api/model-provider/save`
+  const endpoint = `/api/model-provider/provider/save`
 
   const res = await backendClient.backend_post(endpoint, option);
 
   return res as ResponseSaveProvider;
 
+}
+
+
+export interface RequestDeleteProvider {
+  provider: string
+}
+export interface ResponseDeleteProvider{
+  result: boolean;
+}
+
+export async function ActionDeleteProvider(option: RequestDeleteProvider): Promise<ResponseDeleteProvider> {
+  const endpoint = `/api/model-provider/provider/delete`
+  const res = await backendClient.backend_delete(endpoint, option);
+  return res as ResponseDeleteProvider;
 }

@@ -6,7 +6,16 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/react";
-import {ActionSaveProvider, ConfigurateMethod, Provider, ResponseSaveProvider} from "@/app/api/model-provider/provider";
+import { GrStatusGoodSmall } from "react-icons/gr";
+import {
+  ActionDeleteProvider,
+  ActionGetProviderCredentials,
+  ActionSaveProvider,
+  ConfigurateMethod,
+  CustomConfigurationStatusEnum,
+  Provider, ResponseDeleteProvider,
+  ResponseSaveProvider
+} from "@/app/api/model-provider/provider";
 import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
@@ -17,31 +26,88 @@ import {ProviderIcon} from "../provider-icon";
 import DynamicForm from "../../components/dynamic-form";
 import useLoadingStore from "@/app/store/global-loading";
 import {useNotification} from "@/app/components/notification";
-
+import {useGlobalPanel} from "@/app/store/global-panel";
+import useSettingsStore from "@/app/store/setting";
 // 定义 Props 接口
 interface ModalSettingProviderProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function Index({
-                                               provider,
-                                             }: ModalSettingProviderProps) {
+export default function ModelSettingProvider({
+                                provider,
+}: ModalSettingProviderProps) {
   const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
   const [formValues, setFormValues] = useState<Record<string, any>>({});
 
+  const { setToRefresh } = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
+  const showPanel = useGlobalPanel((s) => s.showPanel);
+
   const {msgSuccess, msgError} = useNotification();
 
   // 手动控制Modal开关
-  const onOpen = () => setIsOpen(true);
+  const onOpen = async () => {
+    if (provider.custom_configuration.status === CustomConfigurationStatusEnum.active){
+      const res = await ActionGetProviderCredentials({
+        provider: provider.provider,
+      })
+      if (res.data) {
+        setFormValues(res.data);
+      }
+    }
+    setIsOpen(true);
+  }
   const onClose = () => setIsOpen(false);
+
+  const onDelete = async() =>{
+    showPanel({
+      title: "删除确认",
+      message: "确定要删除这个供应商配置吗？此操作不可撤销。",
+      confirmButtonColor: "danger", // 控制按钮样式
+      onConfirm: () => {
+        onSubmitDelete()
+      },
+      onCancel: () => {
+        // console.log("用户取消操作");
+      },
+    });
+  }
 
   // 监听 Modal 打开状态变化
   const onOpenChange = (newIsOpen: boolean) => {
     // console.log(newIsOpen); // 打开状态的变化
     setIsOpen(newIsOpen);
   };
+
+  const onSubmitDelete = async () =>{
+    if (loading) {
+      return;
+    } else {
+      setLoading(true);
+    }
+    try {
+      const res: ResponseDeleteProvider = await ActionDeleteProvider({
+        provider: provider.provider,
+      });
+
+      if (res.result) {
+        msgSuccess("删除成功");
+        setToRefresh()
+      }else{
+        msgError("删除失败");
+      }
+
+    } catch (error: any) {
+      msgError(error.message);
+    } finally {
+      setLoading(false);
+      setIsOpen(false); // 关闭Modal
+
+
+
+    }
+  }
 
   const onSubmit = async () => {
     // console.log("form:", formValues); // 表单变化时触发的回调函数
@@ -52,18 +118,23 @@ export default function Index({
     }
     try {
       const res: ResponseSaveProvider = await ActionSaveProvider({
-        config_from: ConfigurateMethod.CUSTOMIZED_MODEL,
+        config_from: ConfigurateMethod.PREDEFINED_MODEL,
         provider: provider.provider,
         credentials: formValues,
       });
 
-      msgSuccess("保存成功");
+      if (res.result) {
+        msgSuccess("保存成功");
+        setToRefresh()
+      }else{
+        msgError("保存失败");
+      }
 
     } catch (error: any) {
-      msgError(error);
+      msgError(error.message);
     } finally {
+      setLoading(false);
       setIsOpen(false); // 关闭Modal
-
     }
 
 
@@ -81,14 +152,34 @@ export default function Index({
 
   return (
     <>
-      <Button
+    {provider.custom_configuration.status === CustomConfigurationStatusEnum.noConfigure ? (
+        <Button
         key={provider.provider}
         className={styles.btnFun}
-        startContent={<CogIcon style={{width: "18px", color: "gray"}}/>}
+        startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
         onPress={onOpen}
       >
-        设置 {JSON.stringify(provider.provider_credential_schema?? "")}
+        设置
       </Button>
+    ) : (
+      provider.configurate_methods.includes(ConfigurateMethod.PREDEFINED_MODEL) && (
+
+      <div className={styles.actionBox}>
+        <div className={styles.statusBox}>
+          <span>API-KEY</span>
+          <GrStatusGoodSmall style={{border:"1px solid white", borderRadius:48}} color="green" />
+        </div>
+        <Button
+          key={provider.provider}
+          className={styles.btnFun}
+          startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
+          onPress={onOpen}
+        >
+          设置
+        </Button>
+      </div>
+      )
+    )}
       <Modal
         size="3xl"
         backdrop="opaque"
@@ -112,6 +203,7 @@ export default function Index({
                         provider.provider_credential_schema
                           ?.credential_form_schemas!
                       }
+                      value={formValues}
                       onFilledRequired={onFilledRequired}
                       onChange={onFormChanged}
                     />
@@ -131,7 +223,12 @@ export default function Index({
                   </a>
                 </div>
                 <div className="flex flex-row gap-1">
-                  <Button variant="light" onPress={onClose}>
+                  {provider.custom_configuration.status === CustomConfigurationStatusEnum.active && (
+                    <Button color="danger" onPress={onDelete}>
+                      删除
+                    </Button>
+                  )}
+                  <Button  onPress={onClose}>
                     取消
                   </Button>
                   <Button

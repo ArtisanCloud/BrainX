@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import {CustomConfigurationStatusEnum, Provider} from "@/app/api/model-provider/provider";
+import {Token} from "@/app/api/auth";
+import {ProviderModel} from "@/app/api/model-provider/model";
 
 // 定义 store 状态类型
 interface SettingsState {
@@ -7,6 +9,10 @@ interface SettingsState {
   language: string;
   configuredProviders: Provider[];
   notConfiguredProviders: Provider[];
+  configuredProviderModels: Record<string, ProviderModel[]> ;
+  toRefresh: number;
+  setConfiguredProviderModels: (providerId: string, models: ProviderModel[]) => void;
+  setToRefresh: () => void;
   setLanguage: (language: string) => void;
   setProviders: (providers: Record<string, Provider>) => void;
 }
@@ -16,6 +22,21 @@ const useSettingsStore = create<SettingsState>((set) => ({
   providers: {}, // 初始化为一个空对象
   configuredProviders: [],
   notConfiguredProviders: [] ,
+  configuredProviderModels: {},
+  setConfiguredProviderModels: (providerId, models) => {
+    set((state) => ({
+      configuredProviderModels: {
+        ...state.configuredProviderModels,
+        [providerId]: models
+      }
+    }));
+  },
+  toRefresh: 0,
+  setToRefresh: () => {
+    set(state => ({
+      toRefresh: state.toRefresh + 1
+    }))
+  },
   language: "zh/CN",
   setLanguage: (language: string) => set({ language }),
   setProviders: (providers: Record<string, Provider>) => {

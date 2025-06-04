@@ -76,3 +76,21 @@ export enum FormType {
   RADIO = "radio", // 单选按钮
   SWITCH = "switch", // 开关
 }
+
+export enum ModelTypeEnum {
+  textGeneration = 'llm',
+  textEmbedding = 'text-embedding',
+  rerank = 'rerank',
+  speech2text = 'speech2text',
+  moderation = 'moderation',
+  tts = 'tts',
+}
+
+export const MODEL_TYPE_TEXT = {
+  [ModelTypeEnum.textGeneration]: 'LLM',
+  [ModelTypeEnum.textEmbedding]: 'Text Embedding',
+  [ModelTypeEnum.rerank]: 'Rerank',
+  [ModelTypeEnum.speech2text]: 'Speech2text',
+  [ModelTypeEnum.moderation]: 'Moderation',
+  [ModelTypeEnum.tts]: 'TTS',
+}

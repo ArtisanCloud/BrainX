@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Input,
   Select,
@@ -8,19 +8,25 @@ import {
   RadioGroup,
   cn,
 } from "@heroui/react";
-import { CredentialForm } from "@/app/api/model-provider/provider";
+import {CredentialForm} from "@/app/api/model-provider/provider";
 import {
   FormOption as DynamicFormOption,
   FormType,
 } from "@/app/api/model-provider";
 
+const SECRET_PLACEHOLDER = "*****"; // 展示给用户的占位
+const SECRET_UPLOAD_PLACEHOLDER = "[__HIDDEN__]"; // 提交给后端的默认标记值
+
+
 export default function DynamicForm({
                                       credentialSchemas,
+                                      value,
                                       onFilledRequired,
                                       onChange,
                                     }: {
   credentialSchemas: CredentialForm[];
   onFilledRequired?: (filled: boolean) => void;
+  value?: Record<string, any>;
   onChange?: (formValues: Record<string, any>) => void;
 }) {
   const [formValues, setFormValues] = useState<Record<string, any>>({});
@@ -42,6 +48,13 @@ export default function DynamicForm({
       ? val.value
       : val;
   };
+
+  function getDefaultSelectedKeys(field: CredentialForm): string[] {
+    if (!field.options || !field.default) return [];
+
+    const match = field.options.find(opt => opt.value === field.default);
+    return match ? [match.value] : [];
+  }
 
   const checkFilledRequired = () => {
     const filled = credentialSchemas?.every((field) => {
@@ -72,29 +85,45 @@ export default function DynamicForm({
     credentialSchemas?.forEach((field) => {
       if (!field) return;
       const variable = field.variable;
+      // console.log("field:", field);
+      // console.log(value)
+      // 优先使用外部传入的值
+      if (value && value[variable] !== undefined) {
+        if (field.type === FormType.INPUT_SECRET) {
+          initialValues[variable] = SECRET_UPLOAD_PLACEHOLDER;
+        } else {
+          initialValues[variable] = value[variable];
+        }
+        return;
+      }
 
-      // 跳过已有值的字段
-      if (formValues[variable] !== undefined) return;
+      if (
+        (field.type === FormType.SELECT) &&
+        field.options &&
+        field.options.length > 0
+      ) {
+        initialValues[variable] = field.default;
+      }
 
       if (
         (field.type === FormType.RADIO) &&
         field.options &&
         field.options.length > 0
       ) {
-        initialValues[variable] = field.options[0].value;
+        initialValues[variable] = field.default;
       }
 
       if (field.type === FormType.SWITCH) {
-        initialValues[variable] = false; // switch 默认为 false
+        initialValues[variable] = field.default; // switch 默认为 false
       }
 
       if (field.type === FormType.INPUT_TEXT || field.type === FormType.INPUT_SECRET) {
-        initialValues[variable] = "";
+        initialValues[variable] = field.default;
       }
     });
 
     if (Object.keys(initialValues).length > 0) {
-      setFormValues((prev) => ({ ...initialValues, ...prev }));
+      setFormValues((prev) => ({...initialValues, ...prev}));
     }
   }, [credentialSchemas]);
 
@@ -129,7 +158,6 @@ export default function DynamicForm({
 
         switch (field.type) {
           case FormType.INPUT_TEXT:
-          case FormType.INPUT_SECRET:
             inputElement = (
               <Input
                 errorMessage={
@@ -144,7 +172,22 @@ export default function DynamicForm({
               />
             );
             break;
-
+          case FormType.INPUT_SECRET:
+            inputElement = (
+              <Input
+                errorMessage={
+                  isRequired &&
+                  !getFieldValue(field.variable) &&
+                  "This field is required"
+                }
+                type={"password"}
+                placeholder={placeholder}
+                value={getFieldValue(field.variable) || ""}
+                maxLength={field.max_length && field.max_length > 0 ? field.max_length : 9999}
+                onChange={(e) => handleChange(field.variable, e.target.value)}
+              />
+            );
+            break;
           case FormType.SELECT:
             // console.log("字段名:", field.variable, "当前值:", getFieldValue(field.variable), "options:", field.options);
             inputElement = (
@@ -152,11 +195,12 @@ export default function DynamicForm({
                 placeholder={placeholder}
                 aria-label={title}
                 items={field.options!}
+                defaultSelectedKeys={getDefaultSelectedKeys(field)}
                 onSelectionChange={(key) => handleChange(field.variable, key.currentKey)} // ✅ React Aria 风格的回调
               >
 
                 {(option: DynamicFormOption) => (
-                  <SelectItem key={option.value} value={option.value} textValue={option.value}>
+                  <SelectItem key={option.value}>
                     {option.label.zh_Hans || option.label.en_US}
                   </SelectItem>
                 )}

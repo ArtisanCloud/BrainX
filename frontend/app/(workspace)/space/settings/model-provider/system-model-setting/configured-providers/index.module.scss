@@ -47,15 +47,37 @@
 
     .modelsBox {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 12px;
       font-size: 12px;
       font-weight: 500;
       line-height: 16px;
-      border-top: 1px solid #ccc;
+      padding:4px;
+      //border-top: 1px solid #ccc;
       //border: 1px solid green;
+      .btnShowModels{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+        padding: 2px 8px;
+        background-color: #e0e0e0; /* 默认背景 */
+        color: #333;
+        font-size: 12px;
+        width: auto;
+        //border: 1px solid red;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+      .btnShowModels:hover {
+        background-color: #bebfc1 !important; /* hover 背景色 */
+      }
+      .btnShowModels.active {
+        background-color: white; /* 点击后背景色 */
+      }
     }
 
   }

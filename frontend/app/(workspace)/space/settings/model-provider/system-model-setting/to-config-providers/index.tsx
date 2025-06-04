@@ -50,7 +50,7 @@ const ToConfigProviders: React.FC = () => {
             (button.type === "modelSetting" &&
               provider.configurate_methods.includes(ConfigurateMethod.CUSTOMIZED_MODEL))
           ) {
-            // console.log(provider.provider,button.type,provider.provider_credential_schema,provider.models_credential_schema )
+            // console.log(provider.provider,button.type,provider.provider_credential_schema,provider.model_credential_schema )
 
             return true; // 显示按钮
           }

@@ -1,3 +1,31 @@
+.actionBox{
+  width: 112px;
+  display: flex;
+  flex-direction: column;
+  background-color:rgb(255 255 255 / 0.18);
+  border-width: 0.5px;
+  border-radius: 0.5rem;
+  margin-left: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem;
+  .statusBox{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: #676f83;
+    padding-top: 0.25rem;
+    padding-left: 0.5rem;
+    padding-right: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 16px;
+    margin-bottom: 0.25rem;
+  }
+
+}
+
 .btnFun {
   border: 1px solid #ccc;
   width: auto;
@@ -7,5 +35,5 @@
   height: 20px;
   text-align: center;
   background-color: white;
-  font-size: 12px; /* 调整字体大小 */
+  font-size: 10px; /* 调整字体大小 */
 }
