@@ -3,6 +3,8 @@ from pydantic import UUID4, constr
 from datetime import datetime
 
 from app.schemas.base import BaseSchema
+from app.schemas.model_provider.load_balance import ModelLoadBalanceConfig
+from app.schemas.model_provider.provider import ModelWithProviderEntityResponse
 
 
 class ProviderModelSchema(BaseSchema):
@@ -24,4 +26,16 @@ class RequestGetProviderModelList(BaseSchema):
 
 
 class ResponseGetProviderModelList(BaseSchema):
-    data: list[ProviderModelSchema]
+    data: list[ModelWithProviderEntityResponse]
+
+
+class RequestSaveModel(BaseSchema):
+    provider: str
+    model: str
+    model_type: str
+    credentials: dict
+    load_balancing: Optional[ModelLoadBalanceConfig]
+
+
+class ResponseSaveModel(BaseSchema):
+    success: bool

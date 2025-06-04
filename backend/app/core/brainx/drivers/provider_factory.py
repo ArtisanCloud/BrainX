@@ -1,7 +1,10 @@
 from typing import Type, Dict
 from app.constant.ai_model.provider import ProviderID
+from app.core.brainx.entity.runtime.provider import ProviderEntity
+from app.core.brainx.entity.runtime.provider_model import ModelType
 from app.core.brainx.interface.provider import ProviderInterface
 from app.core.brainx.providers.huggingface_hub.huggingface_hub import HuggingFaceHubProvider
+from app.core.brainx.providers.ollama.ollama import OllamaProvider
 from app.core.brainx.providers.openai.openai import OpenAIProvider
 from app.core.brainx.providers.wenxin.wenxin import WenXinProvider
 
@@ -13,6 +16,7 @@ class ProviderFactory:
         ProviderID.HUGGINGFACE_HUB.value: HuggingFaceHubProvider,
         ProviderID.OPENAI.value: OpenAIProvider,
         ProviderID.WENXIN.value: WenXinProvider,
+        ProviderID.OLLAMA.value: OllamaProvider,
         # 可以在这里继续添加其他 LLM 提供者
     }
 
@@ -35,7 +39,33 @@ class ProviderFactory:
     def provider_credentials_validate(self, provider_id: str, credentials: dict) -> dict:
         provider = self.get_provider_instance(provider_id)
 
-        exception = provider.validate_provider_credentials(credentials)
+        exception = provider.validate_credentials(
+            tenant_uuid=self.tenant_uuid,
+            user_uuid="",
+            provider_id=provider_id,
+            credentials=credentials
+        )
+        if exception:
+            raise exception
+
+        return credentials
+
+    def model_credentials_validate(
+            self, provider_id: str, model_type: ModelType, model_id: str, credentials: dict
+    ) -> dict:
+        # fetch plugin model provider
+        provider = self.get_provider_instance(provider_id=provider_id)
+
+        # call validate_credentials method of model type to validate credentials, raise exception if validation failed
+        exception = provider.validate_credentials(
+            tenant_uuid=self.tenant_uuid,
+            user_uuid="",
+            provider_id=provider_id,
+            model_type=model_type.value,
+            model_id=model_id,
+            credentials=credentials,
+        )
+
         if exception:
             raise exception
 

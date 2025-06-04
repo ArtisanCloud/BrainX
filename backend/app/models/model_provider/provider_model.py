@@ -18,24 +18,6 @@ from app.models.base import (
 )
 
 
-class ModelType(Enum):
-    """
-    Enum class for different model types.
-    """
-
-    LLM = "llm"
-    EMBEDDING = "embedding"
-    TEXT_EMBEDDING = "text-embedding"
-    IMAGE_EMBEDDING = "image-embedding"
-    RERANK = "rerank"
-    SPEECH2TEXT = "speech2text"
-    MODERATION = "moderation"
-    TTS = "tts"
-    TEXT2IMG = "text2img"
-    IMG2IMG = "img2img"
-    TEXT2VIDEO = "text2video"
-
-
 # Tenant's models provider
 class ProviderModel(BaseORM):
     __tablename__ = table_name_provider_model
@@ -46,11 +28,11 @@ class ProviderModel(BaseORM):
         ForeignKey("public." + table_name_tenant + ".uuid"),
         nullable=False,
     )
-    provider_uuid = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey(settings.database.db_schema + "." + table_name_provider + ".uuid"),
-        nullable=True,
-    )
+    # provider_uuid = mapped_column(
+    #     UUID(as_uuid=True),
+    #     ForeignKey(settings.database.db_schema + "." + table_name_provider + ".uuid"),
+    #     nullable=True,
+    # )
     provider_name = mapped_column("provider_name", String, nullable=False)
     model_name = mapped_column("model_name", String, nullable=False)
     model_type = mapped_column("model_type", String, nullable=False)

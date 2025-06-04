@@ -7,7 +7,6 @@ from langchain_community.chat_message_histories import ChatMessageHistory, Redis
 from app import logger, settings
 from app.models import App
 from app.core.libs.json import sanitize_json
-from app.models.model_provider.provider_model import ModelType
 from .ai_model import AIModel
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables.utils import Input
@@ -15,6 +14,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
 
 from ..base import LLMModel
+from ..entity.runtime.provider_model import ModelType
 from ..templates.chat import get_chat_prompt_template
 from ...rag.ingestion.drivers.langchain.helper import convert_document_to_response
 

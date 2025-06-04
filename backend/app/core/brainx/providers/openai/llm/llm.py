@@ -4,6 +4,9 @@ from langchain_openai import ChatOpenAI
 from pydantic import Field
 
 from app.core.brainx.base import LLMModel
+from app.core.brainx.entity.base import I18nObject
+from app.core.brainx.entity.provider_model import FetchFrom
+from app.core.brainx.entity.runtime.provider_model import AIModelEntity, ModelType
 from app.core.brainx.interface.llm import LLM
 from app.core.exception.exceptions import ProviderModelCredentialNotProvidedException
 
@@ -45,3 +48,37 @@ class OpenAILMM(LLM):
             base_url=api_base if api_base else None,  # 如果是空字符串则传None
             api_key=api_key
         )
+
+    def get_customizable_model_schema(self, model: str, credentials: dict) -> AIModelEntity:
+        if not model.startswith("ft:"):
+            base_model = model
+        else:
+            # get base_model
+            base_model = model.split(":")[1]
+
+        # get model schema
+        base_model_schema = None
+        for predefined_model in self.predefined_models():
+            if base_model == predefined_model.model:
+                base_model_schema = predefined_model
+                break
+
+        if not base_model_schema:
+            raise ValueError(f"Base model {base_model} not found")
+
+        base_model_schema_features = base_model_schema.features or []
+        base_model_schema_model_properties = base_model_schema.model_properties
+        base_model_schema_parameters_rules = base_model_schema.parameter_rules
+
+        entity = AIModelEntity(
+            model=model,
+            label=I18nObject(zh_Hans=model, en_US=model),
+            model_type=ModelType.LLM,
+            features=list(base_model_schema_features),
+            fetch_from=FetchFrom.CUSTOMIZABLE_MODEL,
+            model_properties=dict(base_model_schema_model_properties.items()),
+            parameter_rules=list(base_model_schema_parameters_rules),
+            pricing=base_model_schema.pricing,
+        )
+
+        return entity

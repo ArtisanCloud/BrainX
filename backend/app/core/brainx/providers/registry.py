@@ -1,11 +1,13 @@
 import mimetypes
 from typing import Optional, Dict, Tuple
+
+from app.core.brainx.entity.provider_model import ModelWithProviderEntity
+from app.core.brainx.entity.runtime.provider import ProviderEntity
+from app.core.brainx.entity.runtime.provider_model import ModelType, AIModelEntity
 from app.core.libs.file import get_project_path
 import os
 
-from app.core.brainx.entity.provider import ProviderEntity, ProviderConfig, BaseProviderEntity
-from app.models.model_provider.provider_model import ModelType
-from app.core.brainx.entity.provider_model import ProviderModelEntity
+from app.core.brainx.entity.provider import ProviderConfig
 from app.core.libs.yaml import load_yaml_file
 
 _global_provider_cache: Dict[str, ProviderEntity] | None = None
@@ -17,7 +19,7 @@ class ModelProviderRegistry:
             self, provider: str = None,
             model_type: ModelType = None,
             provider_configs: Optional[list[ProviderConfig]] = None,
-    ) -> Tuple[list[BaseProviderEntity], Optional[Exception]]:
+    ) -> Tuple[list[ModelWithProviderEntity], Optional[Exception]]:
         # return _global_provider_cache[provider], None
         return None, None
 
@@ -28,6 +30,7 @@ class ModelProviderRegistry:
 
         # 如果全局缓存存在，直接返回它
         if _global_provider_cache is not None:
+            print("load_provider_entities with global cached")
             return _global_provider_cache, None
 
         try:
@@ -70,7 +73,7 @@ class ModelProviderRegistry:
 
                                     # 加载该模型的配置文件
                                     yaml_data = load_yaml_file(model_filepath)
-                                    model_schema = ProviderModelEntity(**yaml_data)
+                                    model_schema = AIModelEntity(**yaml_data)
                                     provider_config_schema.models.append(model_schema)
 
                     # print(provider_config)

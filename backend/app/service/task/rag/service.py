@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import settings
+from app.core.brainx.entity.runtime.provider_model import ModelType
 from app.core.brainx.model_manager import ModelManager
 from app.core.rag.ingestion.extractor.factory import DataExtractorFactory
 from app.core.rag.ingestion.factory import IndexingFactory
@@ -19,7 +20,6 @@ from app.database.session_manager import is_manual_session
 from app.service.task import logger_rag as logger
 from app.models import DocumentSegment, User, Dataset
 from app.models.base import UTC
-from app.models.model_provider.provider_model import ModelType
 from app.models.rag.document import DocumentIndexingStatus, Document, ContentType, DataSourceType
 from app.models.rag.document_node import DocumentNode
 from app.utils.document import parse_local_document, load_document
@@ -174,14 +174,14 @@ class RagProcessorTaskService:
         # create embedding model instance
         embedding_model_instance, exception = self.model_manager.get_model_instance(
             tenant_uuid=self.tenant_uuid,
-            provider=self.dataset.embedding_model_provider,
+            provider_id=self.dataset.embedding_model_provider,
             model_type=ModelType.TEXT_EMBEDDING,
-            model=self.dataset.embedding_model,
+            model_id=self.dataset.embedding_model,
         )
 
         if exception is not None:
             return None, exception
-        
+
         # create indexer
         indexer = IndexingFactory.get_indexer(
             splitter,

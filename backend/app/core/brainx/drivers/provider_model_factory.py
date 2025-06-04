@@ -1,6 +1,7 @@
 from typing import Dict, Type
 
 from app.constant.ai_model.provider import ProviderID, ModelID
+from app.core.brainx.entity.runtime.provider_model import ModelType
 from app.core.brainx.interface.ai_model import AIModel
 from app.core.brainx.interface.image_embedding import ImageEmbeddingModel
 from app.core.brainx.interface.img2img import Img2ImgModel
@@ -15,8 +16,9 @@ from app.core.brainx.providers.huggingface_hub.llm.llm import HuggingFaceHubLMM
 from app.core.brainx.providers.huggingface_hub.text_embedding.text_embedding import HuggingFaceHubTextEmbeddingModel
 from app.core.brainx.providers.openai.llm.llm import OpenAILMM
 from app.core.brainx.providers.openai.text_embedding.text_embedding import OpenAITextEmbeddingModel
-from app.core.brainx.providers.wenxin.llm.llm import WenXinLMM
-from app.models.model_provider.provider_model import ModelType
+from app.core.brainx.providers.wenxin.llm.llm import WenXinLLM
+from app.core.brainx.providers.ollama.llm.llm import OllamaLLM
+from app.core.brainx.providers.ollama.text_embedding.text_embedding import OllamaTextEmbeddingModel
 
 
 class ProviderModelFactory:
@@ -25,13 +27,15 @@ class ProviderModelFactory:
     _provider_model_map: Dict[str, Type[LLM]] = {
         ProviderID.HUGGINGFACE_HUB.value: HuggingFaceHubLMM,
         ProviderID.OPENAI.value: OpenAILMM,
-        ProviderID.WENXIN.value: WenXinLMM,
+        ProviderID.WENXIN.value: WenXinLLM,
+        ProviderID.OLLAMA.value: OllamaLLM,
         # 可以在这里继续添加其他 LLM 提供者
     }
 
     text_embedding_provider_map: Dict[str, Type[TextEmbeddingModel]] = {
         ProviderID.HUGGINGFACE_HUB.value: HuggingFaceHubTextEmbeddingModel,
         ProviderID.OPENAI.value: OpenAITextEmbeddingModel,
+        ProviderID.OLLAMA.value: OllamaTextEmbeddingModel,
         # 可以在这里继续添加其他 Text Embedding 提供者
     }
 

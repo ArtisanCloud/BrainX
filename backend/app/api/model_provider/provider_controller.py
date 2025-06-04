@@ -18,7 +18,6 @@ from app.schemas.model_provider.provider import (
     ResponseGetModelProviderList, RequestDeleteModelProvider, ResponseDeleteModelProvider, ResponseGetProviderCredentials, RequestGetProviderCredentials,
 )
 from app.service.model_provider.provider_service import ProviderService
-from app.service.model_provider.save import save_model_provider
 
 router = APIRouter()
 
@@ -72,9 +71,8 @@ async def api_save_model_provider(
         sync_db: Session = Depends(get_sync_db_session_dep),
 ) -> ResponseCreateModelProvider | ResponseSchema:
     tenant_uuid = str(session_user.tenant_owner_uuid)
-
-    model_provider, exception = await save_model_provider(
-        sync_db=sync_db,
+    provider_service = ProviderService(sync_db=sync_db)
+    model_provider, exception = provider_service.save_model_provider_credentials(
         tenant_uuid=tenant_uuid,
         provider=request.provider,
         credentials=request.credentials,

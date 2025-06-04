@@ -8,11 +8,11 @@ from app import logger
 from app.constant.ai_model.provider import ProviderID
 from app.core.agent_bot.agent import AgentBot
 from app.core.brainx.base import LLMModel
+from app.core.brainx.entity.runtime.provider_model import ModelType
 from app.core.brainx.model_manager import ModelManager
 from app.core.rag.base import create_indexer, create_retriever, create_text_embedding_model
 from app.core.workflow.state import GraphState
 from app.models.app.app import App
-from app.models.model_provider.provider_model import ModelType
 
 
 class BrainXService:

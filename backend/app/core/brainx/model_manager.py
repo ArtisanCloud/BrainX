@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.constant.ai_model.provider import ProviderID
+from app.core.brainx.entity.runtime.provider_model import ModelType
 from app.core.brainx.model_instance import ModelInstance
 from app.core.brainx.provider_manager import ProviderManager
-from app.models.model_provider.provider_model import ModelType
 
 
 class ModelManager:

@@ -6,9 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from sqlalchemy.orm import Session
 
-from app.core.brainx.entity.base import FormType
-from app.core.brainx.entity.provider import CredentialFormSchema, ProviderEntity, CustomConfiguration, CustomProviderConfiguration, CustomModelConfiguration
+from app.core.brainx.entity.provider import CustomConfiguration, CustomProviderConfiguration, CustomModelConfiguration
 from app.core.brainx.entity.provider_bundle import ProviderModelBundle
+from app.core.brainx.entity.runtime.provider import CredentialFormSchema, FormType, ProviderEntity
+from app.core.brainx.entity.runtime.provider_model import ModelType
 from app.core.brainx.interface.ai_model import AIModel
 from app.core.brainx.entity.provider_config import ProviderConfigurations, ProviderConfiguration, ModelSettings
 from app.core.brainx.providers.registry import ModelProviderRegistry
@@ -17,7 +18,7 @@ from app.dao.model_provider.provider import ProviderDAO
 from app.dao.model_provider.provider_model import ProviderModelDAO
 from app.dao.tenant.tenant_default_model import TenantDefaultModelDAO
 from app.models.model_provider.provider import ProviderType, Provider
-from app.models.model_provider.provider_model import ModelType, ProviderModel
+from app.models.model_provider.provider_model import ProviderModel
 from app.models.tenant.tenant import TenantDefaultModel
 from app.utils.cache.provider_credentials import ProviderCredentialsCache, ProviderCredentialsCacheType
 from app.utils.encrypter import get_decrypt_decoding, decrypt_content_with_decoding
@@ -191,6 +192,8 @@ class ProviderManager:
                 )
             )
 
+        return model_settings
+
     @staticmethod
     def _extract_secret_variables(credential_form_schemas: list[CredentialFormSchema]) -> list[str]:
         """
@@ -327,7 +330,7 @@ class ProviderManager:
             custom_model_configurations.append(
                 CustomModelConfiguration(
                     model=provider_model_record.model_name,
-                    model_type=ModelType.value_of(provider_model_record.model_type),
+                    model_type=ModelType(provider_model_record.model_type),
                     credentials=provider_model_credentials,
                 )
             )

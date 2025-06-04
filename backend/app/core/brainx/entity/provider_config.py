@@ -1,38 +1,29 @@
 import json
 from json import JSONDecodeError
-from typing import Optional, Iterator
+from typing import Optional, Iterator, Sequence
+from collections import defaultdict
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app import logger
 from app.constant import HIDDEN_VALUE
 from app.core.brainx.drivers.provider_model_factory import ProviderModelFactory
 
 from app.core.brainx.drivers.provider_factory import ProviderFactory
-from app.core.brainx.entity.base import FormType
-from app.core.brainx.entity.provider import ProviderEntity, SystemConfiguration, CustomConfiguration, CredentialFormSchema
-from app.core.brainx.entity.provider_model import ProviderModelEntity
+from app.core.brainx.entity.provider import SystemConfiguration, CustomConfiguration, ModelSettings
+from app.core.brainx.entity.provider_model import ModelWithProviderEntity, ModelStatus, FetchFrom, SimpleModelProviderEntity
+from app.core.brainx.entity.runtime.provider import ProviderEntity, FormType, CredentialFormSchema
+from app.core.brainx.entity.runtime.provider_model import ModelType, AIModelEntity
 from app.core.brainx.interface.ai_model import AIModel
+from app.core.brainx.providers.registry import ModelProviderRegistry
 from app.dao.model_provider.provider import ProviderDAO
+from app.dao.model_provider.provider_model import ProviderModelDAO
 from app.database.session_manager import get_sync_db_session
 from app.models.model_provider.provider import ProviderType, Provider
-from app.models.model_provider.provider_model import ModelType
+from app.models.model_provider.provider_model import ProviderModel
 from app.service.tenant.service import TenantService
 from app.utils.cache.provider_credentials import ProviderCredentialsCache, ProviderCredentialsCacheType
 from app.utils.encrypter import decrypt_content, encrypt_content, desensitized_content
-
-
-class ModelSettings(BaseModel):
-    """
-    Model class for model settings.
-    """
-
-    model: str
-    model_type: ModelType
-    enabled: bool = True
-    # load_balancing_configs: list[ModelLoadBalancingConfiguration] = []
-
-    # pydantic configs
-    model_config = ConfigDict(protected_namespaces=())
 
 
 class ProviderConfiguration(BaseModel):
@@ -80,7 +71,9 @@ class ProviderConfiguration(BaseModel):
 
         return secret_input_form_variables
 
-    def validate_provider_credentials(self, credentials: dict) -> tuple[Provider | None, dict]:
+    def validate_provider_credentials(
+            self, credentials: dict,
+    ) -> tuple[Provider | None, dict]:
         provider_record = None
         with get_sync_db_session() as sync_db:
             provider_dao = ProviderDAO(sync_db=sync_db)
@@ -137,6 +130,54 @@ class ProviderConfiguration(BaseModel):
 
         return provider_record, credentials
 
+    def validate_provider_model_credentials(
+            self, model_type: ModelType, model: str, credentials: dict
+    ) -> tuple[ProviderModel | None, dict]:
+        provider_model_record = None
+        with get_sync_db_session() as sync_db:
+            provider_model_dao = ProviderModelDAO(sync_db=sync_db)
+            provider_model_record, exception = provider_model_dao.sync_get_by({
+                "tenant_uuid": self.tenant_uuid,
+                "provider_name": self.provider.provider,
+                "model_name": model,
+                "model_type": model_type.value,
+            })
+            # print("fetch provider record", provider_record)
+            if exception:
+                raise exception
+        provider_credential_secret_variables = self.extract_secret_variables(
+            self.provider.model_credential_schema.credential_form_schemas
+            if self.provider.model_credential_schema
+            else []
+        )
+
+        if provider_model_record:
+            try:
+                original_credentials = (
+                    json.loads(provider_model_record.encrypted_config) if provider_model_record.encrypted_config else {}
+                )
+            except JSONDecodeError:
+                original_credentials = {}
+
+            # decrypt credentials
+            for key, value in credentials.items():
+                if key in provider_credential_secret_variables:
+                    # if send [__HIDDEN__] in secret input, it will be same as original value
+                    if value == HIDDEN_VALUE and key in original_credentials:
+                        credentials[key] = decrypt_content(self.tenant_uuid, original_credentials[key])
+
+        provider_factory = ProviderFactory(tenant_uuid=self.tenant_uuid)
+        credentials = provider_factory.model_credentials_validate(
+            provider_id=self.provider.provider, model_type=model_type,
+            model_id=model, credentials=credentials
+        )
+
+        for key, value in credentials.items():
+            if key in provider_credential_secret_variables:
+                credentials[key] = encrypt_content(self.tenant_uuid, value)
+
+        return provider_model_record, credentials
+
     def desensitized_credentials(self, credentials: dict, credential_form_schemas: list[CredentialFormSchema]) -> dict:
         # Get provider credential secret variables
         credential_secret_variables = self.extract_secret_variables(credential_form_schemas)
@@ -150,8 +191,9 @@ class ProviderConfiguration(BaseModel):
         return copy_credentials
 
     def get_custom_credentials(self, desensitized: bool = False) -> dict | None:
-        if self.custom_configuration is None:
+        if self.custom_configuration.provider is None:
             return None
+
         credentials = self.custom_configuration.provider.credentials
         if not desensitized:
             return credentials
@@ -184,6 +226,168 @@ class ProviderConfiguration(BaseModel):
 
             provider_model_credentials_cache.delete()
 
+    def get_provider_models(
+            self, model_type: Optional[ModelType] = None, only_active: bool = False, model: Optional[str] = None
+    ) -> list[ModelWithProviderEntity]:
+
+        dict_provider_entities, exception = ModelProviderRegistry.load_provider_entities()
+        if exception:
+            raise Exception(exception)
+        provider_schema = dict_provider_entities.get(self.provider.provider)
+
+        model_types: list[ModelType] = []
+        if model_type:
+            model_types.append(model_type)
+        else:
+            model_types = list(provider_schema.supported_model_types)
+
+        # Group model settings by model type and model
+        model_setting_map: defaultdict[ModelType, dict[str, ModelSettings]] = defaultdict(dict)
+        for model_setting in self.model_settings:
+            model_setting_map[model_setting.model_type][model_setting.model] = model_setting
+
+        # Get provider models
+        provider_models = []
+        if self.using_provider_type == ProviderType.SYSTEM:
+            # provider_models = self._get_system_provider_models(
+            #     model_types=model_types, provider_schema=provider_schema, model_setting_map=model_setting_map
+            # )
+            pass
+        else:
+            provider_models = self._get_custom_provider_models(
+                model_types=model_types,
+                provider_schema=provider_schema,
+                model_setting_map=model_setting_map,
+                model=model,
+            )
+
+        if only_active:
+            provider_models = [m for m in provider_models if m.status == ModelStatus.ACTIVE]
+
+        # resort provider_models
+        # Optimize sorting logic: first sort by provider.position order, then by model_type.value
+        # Get the position list for model types (retrieve only once for better performance)
+        model_type_positions = {}
+        if hasattr(self.provider, "position") and self.provider.position:
+            model_type_positions = self.provider.position
+
+        def get_sort_key(model: ModelWithProviderEntity):
+            # Get the position list for the current model type
+            positions = model_type_positions.get(model.model_type.value, [])
+
+            # If the model name is in the position list, use its index for sorting
+            # Otherwise use a large value (list length) to place undefined models at the end
+            position_index = positions.index(model.model) if model.model in positions else len(positions)
+
+            # Return composite sort key: (model_type value, model position index)
+            return (model.model_type.value, position_index)
+
+        # Sort using the composite sort key
+        return sorted(provider_models, key=get_sort_key)
+
+    def get_model_schema(self, model_type: ModelType, model: str, credentials: dict) -> AIModelEntity | None:
+        model_instance = self.get_model_type_instance(model_type=model_type, provider_id=self.provider.provider, model_id=model)
+        return model_instance.get_customizable_model_schema_from_credentials(model=model, credentials=credentials)
+
+    def _get_custom_provider_models(
+            self,
+            model_types: Sequence[ModelType],
+            provider_schema: ProviderEntity,
+            model_setting_map: dict[ModelType, dict[str, ModelSettings]],
+            model: Optional[str] = None,
+    ) -> list[ModelWithProviderEntity]:
+
+        provider_models = []
+
+        credentials = None
+        if self.custom_configuration.provider:
+            credentials = self.custom_configuration.provider.credentials
+
+        for model_type in model_types:
+            if model_type not in self.provider.supported_model_types:
+                continue
+
+            for m in provider_schema.models:
+                if m.model_type != model_type:
+                    continue
+
+                status = ModelStatus.ACTIVE if credentials else ModelStatus.NO_CONFIGURE
+
+                load_balancing_enabled = False
+                if m.model_type in model_setting_map and m.model in model_setting_map[m.model_type]:
+                    model_setting = model_setting_map[m.model_type][m.model]
+                    if model_setting.enabled is False:
+                        status = ModelStatus.DISABLED
+
+                    if len(model_setting.load_balancing_configs) > 1:
+                        load_balancing_enabled = True
+
+                provider_models.append(
+                    ModelWithProviderEntity(
+                        model=m.model,
+                        label=m.label,
+                        model_type=m.model_type,
+                        features=m.features,
+                        fetch_from=m.fetch_from,
+                        model_properties=m.model_properties,
+                        deprecated=m.deprecated,
+                        provider=SimpleModelProviderEntity(self.provider),
+                        status=status,
+                        load_balancing_enabled=load_balancing_enabled,
+                    )
+                )
+
+        # custom models
+        for model_configuration in self.custom_configuration.models:
+            if model_configuration.model_type not in model_types:
+                continue
+            if model and model != model_configuration.model:
+                continue
+
+            try:
+                custom_model_schema = self.get_model_schema(
+                    model_type=model_configuration.model_type,
+                    model=model_configuration.model,
+                    credentials=model_configuration.credentials,
+                )
+
+            except Exception as ex:
+                logger.warning(f"get custom model schema failed, {ex}")
+                continue
+
+            if not custom_model_schema:
+                continue
+
+            status = ModelStatus.ACTIVE
+            load_balancing_enabled = False
+            if (
+                    custom_model_schema.model_type in model_setting_map
+                    and custom_model_schema.model in model_setting_map[custom_model_schema.model_type]
+            ):
+                model_setting = model_setting_map[custom_model_schema.model_type][custom_model_schema.model]
+                if model_setting.enabled is False:
+                    status = ModelStatus.DISABLED
+
+                if len(model_setting.load_balancing_configs) > 1:
+                    load_balancing_enabled = True
+
+            provider_models.append(
+                ModelWithProviderEntity(
+                    model=custom_model_schema.model,
+                    label=custom_model_schema.label,
+                    model_type=custom_model_schema.model_type,
+                    features=custom_model_schema.features,
+                    fetch_from=FetchFrom.CUSTOMIZABLE_MODEL,
+                    model_properties=custom_model_schema.model_properties,
+                    deprecated=custom_model_schema.deprecated,
+                    provider=SimpleModelProviderEntity(self.provider),
+                    status=status,
+                    load_balancing_enabled=load_balancing_enabled,
+                )
+            )
+
+        return provider_models
+
 
 class ProviderConfigurations(BaseModel):
     """
@@ -198,13 +402,12 @@ class ProviderConfigurations(BaseModel):
 
     def get_models(
             self, provider: Optional[str] = None, model_type: Optional[ModelType] = None, only_active: bool = False
-    ) -> list[ProviderModelEntity]:
+    ) -> list[ModelWithProviderEntity]:
 
         all_models = []
         for provider_configuration in self.values():
             if provider and provider_configuration.provider.provider != provider:
                 continue
-
             all_models.extend(provider_configuration.get_provider_models(model_type, only_active))
 
         return all_models

@@ -1,8 +1,7 @@
-from abc import abstractmethod
 from collections.abc import Mapping
 
-from app.models.model_provider.provider_model import ModelType
 from .ai_model import AIModel
+from ..entity.runtime.provider_model import ModelType
 
 
 class TextEmbeddingModel(AIModel):

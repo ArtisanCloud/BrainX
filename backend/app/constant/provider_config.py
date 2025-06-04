@@ -1,7 +1,7 @@
 from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.openai import OpenAIModelID
 from app.constant.ai_model.provider import ProviderID
-from app.models.model_provider.provider_model import ModelType
+from app.core.brainx.entity.runtime.provider_model import ModelType
 
 provider_config = {
     ProviderID.OPENAI.value: {

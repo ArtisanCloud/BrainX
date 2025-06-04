@@ -17,7 +17,7 @@ def create_text_embedding_model():
         model_id=HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value,
     )
     model_bundle = ProviderModelBundle(model=text_embedding_model)
-    embedding_model_instance = ModelInstance(model_bundle=model_bundle, model=ProviderID.HUGGINGFACE_HUB.value)
+    embedding_model_instance = ModelInstance(model_bundle=model_bundle, model_id=HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE.value)
     return embedding_model_instance
 
 
