@@ -8,9 +8,10 @@ import {ProviderIcon} from "../provider-icon";
 import ModalSettingProvider from "../modal-setting-provider";
 import ModalAddModels from "../modal-add-models";
 import {IoIosArrowDown, IoIosArrowForward} from "react-icons/io";
-import {ActionGetProviderModels, ProviderModel} from "@/app/api/model-provider/model";
+import {ActionChangeModelStatus, ActionGetProviderModels, ProviderModel} from "@/app/api/model-provider/model";
 import {useNotification} from "@/app/components/notification";
-import {Checkbox, Switch} from "@heroui/react";
+import {Button, Checkbox, Switch} from "@heroui/react";
+import {CogIcon} from "@heroicons/react/24/outline";
 
 
 const ConfiguredProviders: React.FC = () => {
@@ -18,7 +19,7 @@ const ConfiguredProviders: React.FC = () => {
   const [iconUrl, setIconUrl] = useState<string | null>(null);
   const [activeKeys, setActiveKeys] = useState<Record<string, boolean>>({});
   const [hoverKey, setHoverKey] = useState<string | boolean>(false);
-  const [modelStatus,setModelStatus] = useState<Record<string, boolean>>({})
+  const [modelStatus, setModelStatus] = useState<Record<string, boolean>>({})
   const {msgError} = useNotification();
 
   // 检查 providers 是否为空或未定义
@@ -28,7 +29,7 @@ const ConfiguredProviders: React.FC = () => {
           </span>; // 如果没有 providers，显示提示
   }
 
-  const clickProviderModel = async (provider_id: string) => {
+  const onClickShowModels = async (provider_id: string) => {
     if (configuredProviderModels[provider_id]) {
       setActiveKeys(prev => ({
         ...prev,
@@ -54,7 +55,7 @@ const ConfiguredProviders: React.FC = () => {
       for (let i = 0; i < res.data.length; i++) {
         setModelStatus(prev => ({
           ...prev,
-          [res.data[i].model]: res.data[i].status
+          [res.data[i].model]: res.data[i].status==="active"
         }))
       }
     } else {
@@ -64,14 +65,29 @@ const ConfiguredProviders: React.FC = () => {
     return res.data
   }
 
-  const setChangeModelStatus = async (model: ProviderModel) => {
-    // const models = configuredProviderModels[provider_id];
-    model.status = !model.status;
-    // console.log(model.status);
-    setModelStatus(prev => ({
-      ...prev,
-      [model.model]: model.status
-    }))
+  const onOpenAddModelModule = async (model: ProviderModel) => {
+    console.log(model.model)
+  }
+
+  const setChangeModelStatus = async (provider: string, model: ProviderModel) => {
+    const changeToStatus = !(model.status==="active")
+    const res = await ActionChangeModelStatus({
+      provider: provider,
+      model_type: model.model_type,
+      model: model.model,
+      status: changeToStatus
+    })
+
+    if (res.success) {
+      model.status = "inactive"
+      // console.log(model.status);
+      setModelStatus(prev => ({
+        ...prev,
+        [model.model]: changeToStatus
+      }))
+    } else {
+      msgError("切换模型状态失败");
+    }
   }
 
   return (
@@ -123,7 +139,7 @@ const ConfiguredProviders: React.FC = () => {
                 <div className="flex flex-row w-full justify-between content-center p-2">
                 <span
                   className={`${styles.btnShowModels} ${isActive ? styles.active : ""} ${isHover ? styles.hover : ""}`}
-                  onClick={() => clickProviderModel(provider.provider)}
+                  onClick={() => onClickShowModels(provider.provider)}
                   onMouseEnter={() => setHoverKey(provider.provider)}
                   onMouseLeave={() => setHoverKey(false)}
                 >
@@ -136,7 +152,8 @@ const ConfiguredProviders: React.FC = () => {
                 >
                   {(configuredProviderModels[provider.provider] && isActive) &&
                     Object.entries(configuredProviderModels[provider.provider]).map(([modelIndex, model]) => (
-                      <div key={`model-${modelIndex}`} className="flex flex-row w-full p-2 gap-2 hover:bg-gray-100 rounded-md">
+                      <div key={`model-${modelIndex}`}
+                           className="flex flex-row w-full p-2 gap-2 hover:bg-gray-100 rounded-md">
                         <div className="flex flex-row justify-between content-center w-full gap-0.5">
                           <div className="flex flex-row items-center justify-center gap-2">
                             <div className="text-sm font-medium text-gray-900">
@@ -151,9 +168,18 @@ const ConfiguredProviders: React.FC = () => {
                                 ))}
                             </div>
                           </div>
-                          <div className="flex flex-row justify-center content-center">
-
-                            <Switch isSelected={modelStatus[model.model]} size={"sm"} onValueChange={() => setChangeModelStatus(model )} />
+                          <div className="flex flex-row justify-center content-center gap-2">
+                            <Button
+                              key={`btn-config-${modelIndex}`}
+                              size="sm"
+                              className="border-gray-400 border-1 rounded p-0.5 text-xs bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                              startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
+                              onPress={()=>onOpenAddModelModule(model)}
+                            >配置</Button>
+                            <Switch
+                              isSelected={modelStatus[model.model]}
+                              size={"sm"}
+                              onValueChange={() => setChangeModelStatus(provider.provider, model)}/>
                           </div>
                         </div>
                       </div>

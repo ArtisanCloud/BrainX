@@ -26,6 +26,7 @@ import useLoadingStore from "@/app/store/global-loading";
 import {useNotification} from "@/app/components/notification";
 import useSettingsStore from "@/app/store/setting";
 import {BuildMergedCredentialSchemas} from "@/app/utils/provider";
+import {ActionSaveProviderModelSetting} from "@/app/api/model-provider/model";
 
 // 定义 Props 接口
 interface ModalAddModelsProps {
@@ -62,10 +63,14 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
       setLoading(true);
     }
     try {
-      const res: ResponseSaveProvider = await ActionSaveProvider({
-        config_from: ConfigurateMethod.CUSTOMIZED_MODEL,
+      const res: ResponseSaveProvider = await ActionSaveProviderModelSetting({
+        model_type:formValues["__model_type"],
+        model: formValues["model"],
         provider: provider.provider,
         credentials: formValues,
+        load_balancing: {
+          enable: false,
+        },
       });
 
       if (res.result) {
@@ -76,10 +81,10 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
       }
 
     } catch (error: any) {
-      msgError(error);
+      msgError(error.message);
     } finally {
       setIsOpen(false); // 关闭Modal
-
+      setLoading(false);
     }
   };
 

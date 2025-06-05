@@ -160,9 +160,8 @@ class BackendClient {
 	private async processResponse(res: Response) {
 
 		if (!res.ok) {
-			this.processHttpErrorResponse(res).then(() => {
-				throw new Error(`HTTP error! status: ${res.status}`);
-			})
+			await this.processHttpErrorResponse(res);
+			throw new Error(`HTTP error! status: ${res.status}`);
 		}
 
 		// 根据 Content-Type 处理响应

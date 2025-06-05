@@ -20,7 +20,7 @@ export interface ProviderModel {
   fetch_from: FetchFrom; // 获取方式
   model_properties: Record<ModelPropertyKey, any>; // 模型属性
   deprecated?: boolean; // 是否弃用，默认 false
-  status: boolean;
+  status: string;
 }
 
 export interface RequestGetProviderModels {
@@ -40,3 +40,51 @@ export async function ActionGetProviderModels(option: RequestGetProviderModels):
   }
 }
 
+export interface RequestChangeModelStatus {
+  model_type: string;
+  provider: string;
+  model: string;
+  status: boolean;
+}
+
+export interface ResponseChangeModelStatus{
+  success: boolean;
+}
+
+export async function ActionChangeModelStatus(option: RequestChangeModelStatus): Promise<ResponseChangeModelStatus> {
+  try {
+    const endpoint = `/api/model-provider/provider-model/status`;
+    const res = await backendClient.backend_patch(endpoint, option);
+    return res as ResponseChangeModelStatus;
+  }catch (error) {
+    throw new Error(`Failed to change the provider model status : ${error}`);
+  }
+}
+
+
+export interface ModelLoadBalanceConfig{
+  enable: boolean;
+  configs?: Record<string, any>;
+}
+
+export interface RequestSaveProviderModelSetting {
+  model_type: string;
+  provider: string;
+  model: string;
+  credentials: Record<string, any>;
+  load_balancing:ModelLoadBalanceConfig
+}
+export interface ResponseSaveProviderModelSetting{
+  result: boolean;
+}
+
+
+export async function ActionSaveProviderModelSetting(option: RequestSaveProviderModelSetting): Promise<ResponseSaveProviderModelSetting> {
+  try {
+    const endpoint = `/api/model-provider/provider-model/save`;
+    const res = await backendClient.backend_post(endpoint, option);
+    return res as ResponseSaveProviderModelSetting;
+  }catch (error) {
+    throw new Error(`Failed to save the provider credentials : ${error}`);
+  }
+}
