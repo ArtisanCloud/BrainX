@@ -45,6 +45,8 @@ export interface CredentialForm {
   max_length?: number;
   // 字段展示条件
   show_on?: FormShowOnObject[];
+  // 是否可以修改
+  editable?: boolean; // 可选字段，默认 true
 }
 
 // 提供者凭证接口

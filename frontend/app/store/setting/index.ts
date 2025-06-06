@@ -106,7 +106,10 @@ const useSettingsStore = create<SettingsState>((set) => ({
   },
   // 表单值
   formValues: {},
-  setFormValues: (formValues: Record<string, any>) => {set({ formValues })}
+  setFormValues: (formValues: Record<string, any>) => {
+    set({ formValues })
+    // console.log(formValues);
+  }
 }));
 
 export default useSettingsStore;

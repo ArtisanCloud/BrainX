@@ -2,9 +2,7 @@ import {
   Modal,
   ModalContent,
   Button,
-  Input,
   ModalBody,
-  ModalFooter,
 } from "@heroui/react";
 import {
   Provider,
@@ -21,7 +19,9 @@ import useLoadingStore from "@/app/store/global-loading";
 import {useNotification} from "@/app/components/notification";
 import useSettingsStore from "@/app/store/setting";
 import {BuildMergedCredentialSchemas} from "@/app/utils/provider";
-import {ActionSaveProviderModelSetting} from "@/app/api/model-provider/model";
+import {ActionDeleteModel, ActionSaveProviderModelSetting, ResponseDeleteModel} from "@/app/api/model-provider/model";
+import {FetchFrom, FormType} from "@/app/api/model-provider";
+import {useGlobalPanel} from "@/app/store/global-panel";
 
 // 定义 Props 接口
 interface ModalSaveModelProps {
@@ -30,11 +30,15 @@ interface ModalSaveModelProps {
 
 export default function ModalSaveModel({provider}: ModalSaveModelProps) {
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
 
-  const { setToRefresh,isOpenSaveModelModal,setIsOpenSaveModelModal } = useSettingsStore();
+  const {
+    formValues,setFormValues,
+    setToRefresh,currentModel,
+    isOpenSaveModelModal,setIsOpenSaveModelModal
+  } = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
   const {msgSuccess, msgError} = useNotification();
+  const showPanel = useGlobalPanel((s) => s.showPanel);
 
   // 手动控制Modal开关
   const onOpen =async  () => {
@@ -42,11 +46,53 @@ export default function ModalSaveModel({provider}: ModalSaveModelProps) {
   }
   const onClose = () => setIsOpenSaveModelModal(false);
 
+  const onDelete = ( ) =>{
+    showPanel({
+      title: "删除确认",
+      message: "确定要删除这个模型配置吗？此操作不可撤销。",
+      confirmButtonColor: "danger", // 控制按钮样式
+      onConfirm: () => {
+        onSubmitDelete()
+      },
+      onCancel: () => {
+        // console.log("用户取消操作");
+      },
+    });
+  }
+
   // 监听 Modal 打开状态变化
   const onOpenChange = (newIsOpen: boolean) => {
     // console.log(newIsOpen); // 打开状态的变化
     setIsOpenSaveModelModal(newIsOpen);
   };
+
+  const onSubmitDelete = async () =>{
+    if (loading) {
+      return;
+    } else {
+      setLoading(true);
+    }
+    try {
+      const res: ResponseDeleteModel = await ActionDeleteModel({
+        provider: provider.provider,
+        model_type: currentModel?.model_type!,
+        model: currentModel?.model!,
+      });
+
+      if (res.result) {
+        msgSuccess("删除成功");
+        setToRefresh()
+      }else{
+        msgError("删除失败");
+      }
+
+    } catch (error: any) {
+      msgError(error.message);
+    } finally {
+      setLoading(false);
+      setIsOpenSaveModelModal(false); // 关闭Modal
+    }
+  }
 
   const onSubmit = async () => {
     // console.log("form:", formValues); // 表单变化时触发的回调函数
@@ -116,6 +162,7 @@ export default function ModalSaveModel({provider}: ModalSaveModelProps) {
                       credentialSchemas={
                         BuildMergedCredentialSchemas(provider)
                       }
+                      value={formValues}
                       onFilledRequired={onFilledRequired}
                       onChange={onFormChanged}
                     />
@@ -140,6 +187,11 @@ export default function ModalSaveModel({provider}: ModalSaveModelProps) {
                   </a>
                 </div>
                 <div className="flex flex-row gap-1">
+                  {currentModel?.fetch_from === FetchFrom.CUSTOMIZED && (
+                    <Button color="danger" onPress={onDelete}>
+                      删除
+                    </Button>
+                  )}
                   <Button variant="light" onPress={onClose}>
                     取消
                   </Button>

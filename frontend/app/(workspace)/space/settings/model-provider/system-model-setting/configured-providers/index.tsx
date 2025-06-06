@@ -6,7 +6,12 @@ import {useState} from "react";
 import React from "react";
 import {ProviderIcon} from "../provider-icon";
 import {IoIosArrowDown, IoIosArrowForward} from "react-icons/io";
-import {ActionChangeModelStatus, ActionGetProviderModels, ProviderModel} from "@/app/api/model-provider/model";
+import {
+  ActionChangeModelStatus,
+  ActionGetModelCredentials,
+  ActionGetProviderModels,
+  ProviderModel
+} from "@/app/api/model-provider/model";
 import {useNotification} from "@/app/components/notification";
 import {Button, Switch} from "@heroui/react";
 import {CogIcon} from "@heroicons/react/24/outline";
@@ -22,8 +27,8 @@ import {
 
 const ConfiguredProviders: React.FC = () => {
   const {
-    configuredProviders, setCurrentProvider,
-    configuredProviderModels,setConfiguredProviderModels,
+    configuredProviders, setCurrentProvider, setCurrentModel,
+    configuredProviderModels, setConfiguredProviderModels,
     setIsOpenSaveModelModal, setIsOpenSaveProviderModal,
     setFormValues,
   } = useSettingsStore(); // 获取 providers
@@ -76,9 +81,6 @@ const ConfiguredProviders: React.FC = () => {
     return res.data
   }
 
-  const onOpenAddModelModule = async (model: ProviderModel) => {
-    console.log(model.model)
-  }
 
   const setChangeModelStatus = async (provider: string, model: ProviderModel) => {
     const changeToStatus = !(model.status === "active")
@@ -89,7 +91,7 @@ const ConfiguredProviders: React.FC = () => {
       status: changeToStatus
     })
 
-    if (res.success) {
+    if (res.result) {
       model.status = "inactive"
       // console.log(model.status);
       setModelStatus(prev => ({
@@ -125,7 +127,7 @@ const ConfiguredProviders: React.FC = () => {
         const onClickToSaveProvider = async (provider: Provider) => {
           setCurrentProvider(provider)
 
-          if (provider.custom_configuration.status === CustomConfigurationStatusEnum.active){
+          if (provider.custom_configuration.status === CustomConfigurationStatusEnum.active) {
             const res = await ActionGetProviderCredentials({
               provider: provider.provider,
             })
@@ -135,8 +137,19 @@ const ConfiguredProviders: React.FC = () => {
           }
           setIsOpenSaveProviderModal(true);
         }
-        const onClickToSaveModel = (provider: Provider) => {
+        const onClickToSaveModel =async (provider: Provider, model: ProviderModel | null) => {
           setCurrentProvider(provider)
+          if (model) {
+            setCurrentModel(model)
+            const res = await ActionGetModelCredentials({
+              provider: provider.provider,
+              model_type: model.model_type,
+              model: model.model,
+            })
+            if (res.data) {
+              setFormValues(res.data);
+            }
+          }
           setIsOpenSaveModelModal(true);
         }
 
@@ -164,14 +177,16 @@ const ConfiguredProviders: React.FC = () => {
                     <span>API-KEY</span>
                     <GrStatusGoodSmall style={{border: "1px solid white", borderRadius: 48}} color="green"/>
                   </div>
+                  {provider.configurate_methods.includes(ConfigurateMethod.PREDEFINED_MODEL) &&
                   <Button
                     key={provider.provider}
                     className={styles.btnFun}
                     startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
-                    onPress={()=>onClickToSaveProvider(provider)}
+                    onPress={() => onClickToSaveProvider(provider)}
                   >
                     设置
                   </Button>
+                  }
                 </div>
               </div>
             </div>
@@ -192,7 +207,7 @@ const ConfiguredProviders: React.FC = () => {
                       key={provider.provider}
                       className={styles.btnFunActive}
                       startContent={<FaCirclePlus style={{width: "12px", color: "gray"}}/>}
-                      onPress={() => onClickToSaveModel(provider)}
+                      onPress={() => onClickToSaveModel(provider, null)}
                     >
                       添加模型
                     </Button>
@@ -220,13 +235,15 @@ const ConfiguredProviders: React.FC = () => {
                             </div>
                           </div>
                           <div className="flex flex-row justify-center content-center gap-2">
-                            <Button
-                              key={`btn-config-${modelIndex}`}
-                              size="sm"
-                              className="border-gray-400 border-1 rounded p-0.5 text-xs bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                              startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
-                              onPress={() => onOpenAddModelModule(model)}
-                            >配置</Button>
+                            {!provider.configurate_methods.includes(ConfigurateMethod.PREDEFINED_MODEL) &&
+                              <Button
+                                key={`btn-config-${modelIndex}`}
+                                size="sm"
+                                className="border-gray-400 border-1 rounded p-0.5 text-xs bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
+                                onPress={() => onClickToSaveModel(provider, model)}
+                              >配置</Button>
+                            }
                             <Switch
                               isSelected={modelStatus[model.model]}
                               size={"sm"}

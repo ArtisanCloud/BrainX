@@ -48,7 +48,7 @@ export interface RequestChangeModelStatus {
 }
 
 export interface ResponseChangeModelStatus{
-  success: boolean;
+  result: boolean;
 }
 
 export async function ActionChangeModelStatus(option: RequestChangeModelStatus): Promise<ResponseChangeModelStatus> {
@@ -86,5 +86,40 @@ export async function ActionSaveProviderModelSetting(option: RequestSaveProvider
     return res as ResponseSaveProviderModelSetting;
   }catch (error) {
     throw new Error(`Failed to save the provider credentials : ${error}`);
+  }
+}
+
+export interface RequestDeleteModel {
+  provider: string
+  model: string
+  model_type: string
+}
+export interface ResponseDeleteModel{
+  result: boolean;
+}
+
+export async function ActionDeleteModel(option: RequestDeleteModel): Promise<ResponseDeleteModel> {
+  const endpoint = `/api/model-provider/provider-model/delete`
+  const res = await backendClient.backend_delete(endpoint, option);
+  return res as ResponseDeleteModel;
+}
+
+
+export interface RequestGetModelCredentials {
+  provider: string;
+  model_type: string;
+  model: string;
+}
+export interface ResponseGetModelCredentials{
+  data: object
+}
+
+export async function ActionGetModelCredentials(option: RequestGetModelCredentials): Promise<ResponseGetModelCredentials> {
+  try {
+    const endpoint = `/api/model-provider/provider-model/get_model_credentials`;
+    const res = await backendClient.backend_post(endpoint, option);
+    return res as ResponseGetModelCredentials;
+  } catch (error) {
+    throw new Error(`Failed to fetch the provider credentials : ${error}`);
   }
 }

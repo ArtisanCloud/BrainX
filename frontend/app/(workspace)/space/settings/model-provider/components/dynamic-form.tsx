@@ -86,13 +86,18 @@ export default function DynamicForm({
       if (!field) return;
       const variable = field.variable;
       // console.log("field:", field);
+      // console.log("variable:", variable);
       // console.log(value)
       // 优先使用外部传入的值
       if (value && value[variable] !== undefined) {
+        // console.log("value[variable]:",value[variable])
         if (field.type === FormType.INPUT_SECRET) {
           initialValues[variable] = SECRET_UPLOAD_PLACEHOLDER;
         } else {
           initialValues[variable] = value[variable];
+          if (variable=='model'){
+            field.editable = false;
+          }
         }
         return;
       }
@@ -169,6 +174,7 @@ export default function DynamicForm({
                 value={getFieldValue(field.variable) || ""}
                 maxLength={field.max_length && field.max_length > 0 ? field.max_length : 9999}
                 onChange={(e) => handleChange(field.variable, e.target.value)}
+                isDisabled={field.editable === false}
               />
             );
             break;
