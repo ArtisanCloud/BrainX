@@ -29,7 +29,7 @@ export function BuildMergedCredentialSchemas(provider: Provider): CredentialForm
 
   const modelField: CredentialForm = {
     variable: "model",
-    label: model.label,         // 多语言标题
+    label: model.label!,         // 多语言标题
     type: FormType.INPUT_TEXT, // 假设是文本输入，可根据实际字段类型调整
     required: true,
     placeholder: model.placeholder, // 占位符

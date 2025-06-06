@@ -2,14 +2,13 @@ import {
   Modal,
   ModalContent,
   Button,
-  Input,
+
   ModalBody,
-  ModalFooter,
+
 } from "@heroui/react";
-import { GrStatusGoodSmall } from "react-icons/gr";
+
 import {
   ActionDeleteProvider,
-  ActionGetProviderCredentials,
   ActionSaveProvider,
   ConfigurateMethod,
   CustomConfigurationStatusEnum,
@@ -19,7 +18,6 @@ import {
 import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
-  CogIcon,
 } from "@heroicons/react/24/outline";
 import {useState} from "react";
 import {ProviderIcon} from "../provider-icon";
@@ -29,36 +27,26 @@ import {useNotification} from "@/app/components/notification";
 import {useGlobalPanel} from "@/app/store/global-panel";
 import useSettingsStore from "@/app/store/setting";
 // 定义 Props 接口
-interface ModalSettingProviderProps {
+interface ModalSaveProviderProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function ModelSettingProvider({
+export default function ModalSaveProvider({
                                 provider,
-}: ModalSettingProviderProps) {
-  const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
+}: ModalSaveProviderProps) {
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
 
-  const { setToRefresh } = useSettingsStore();
+  const {
+    formValues,setFormValues,
+    setToRefresh,
+    setIsOpenSaveProviderModal, isOpenSaveProviderModal
+  } = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
   const showPanel = useGlobalPanel((s) => s.showPanel);
 
   const {msgSuccess, msgError} = useNotification();
 
-  // 手动控制Modal开关
-  const onOpen = async () => {
-    if (provider.custom_configuration.status === CustomConfigurationStatusEnum.active){
-      const res = await ActionGetProviderCredentials({
-        provider: provider.provider,
-      })
-      if (res.data) {
-        setFormValues(res.data);
-      }
-    }
-    setIsOpen(true);
-  }
-  const onClose = () => setIsOpen(false);
+  const onClose = () => setIsOpenSaveProviderModal(false);
 
   const onDelete = async() =>{
     showPanel({
@@ -77,7 +65,7 @@ export default function ModelSettingProvider({
   // 监听 Modal 打开状态变化
   const onOpenChange = (newIsOpen: boolean) => {
     // console.log(newIsOpen); // 打开状态的变化
-    setIsOpen(newIsOpen);
+    setIsOpenSaveProviderModal(newIsOpen);
   };
 
   const onSubmitDelete = async () =>{
@@ -102,7 +90,7 @@ export default function ModelSettingProvider({
       msgError(error.message);
     } finally {
       setLoading(false);
-      setIsOpen(false); // 关闭Modal
+      setIsOpenSaveProviderModal(false); // 关闭Modal
 
 
 
@@ -134,7 +122,7 @@ export default function ModelSettingProvider({
       msgError(error.message);
     } finally {
       setLoading(false);
-      setIsOpen(false); // 关闭Modal
+      setIsOpenSaveProviderModal(false); // 关闭Modal
     }
 
 
@@ -152,38 +140,10 @@ export default function ModelSettingProvider({
 
   return (
     <>
-    {provider.custom_configuration.status === CustomConfigurationStatusEnum.noConfigure ? (
-        <Button
-        key={provider.provider}
-        className={styles.btnFun}
-        startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
-        onPress={onOpen}
-      >
-        设置
-      </Button>
-    ) : (
-      provider.configurate_methods.includes(ConfigurateMethod.PREDEFINED_MODEL) && (
-
-      <div className={styles.actionBox}>
-        <div className={styles.statusBox}>
-          <span>API-KEY</span>
-          <GrStatusGoodSmall style={{border:"1px solid white", borderRadius:48}} color="green" />
-        </div>
-        <Button
-          key={provider.provider}
-          className={styles.btnFun}
-          startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
-          onPress={onOpen}
-        >
-          设置
-        </Button>
-      </div>
-      )
-    )}
       <Modal
         size="3xl"
         backdrop="opaque"
-        isOpen={isOpen}
+        isOpen={isOpenSaveProviderModal}
         onOpenChange={onOpenChange}
       >
         <ModalContent>

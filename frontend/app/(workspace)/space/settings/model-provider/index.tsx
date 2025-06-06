@@ -1,5 +1,5 @@
 import styles from "./index.module.scss";
-import {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo} from "react";
 import useSettingsStore from "@/app/store/setting";
 import {useNotification} from "@/app/components/notification";
 import useLoadingStore from "@/app/store/global-loading";
@@ -12,9 +12,12 @@ import ToConfigProviders
   from "@/app/(workspace)/space/settings/model-provider/system-model-setting/to-config-providers";
 import ConfiguredProviders
   from "@/app/(workspace)/space/settings/model-provider/system-model-setting/configured-providers";
+import ModalSaveProvider
+  from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-save-provider";
+import ModalSaveModel from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-save-model";
 
 const ModelProviderComponent: React.FC = () => {
-  const {setProviders, toRefresh} = useSettingsStore();
+  const {setProviders, toRefreshProviders,currentProvider} = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
   const {msgError} = useNotification();
 
@@ -39,7 +42,7 @@ const ModelProviderComponent: React.FC = () => {
     };
 
     fetchProviders();
-  }, [toRefresh]);
+  }, [toRefreshProviders]);
 
   return (
     <div className={styles.container}>
@@ -59,6 +62,8 @@ const ModelProviderComponent: React.FC = () => {
         </div>
         <ToConfigProviders/>
       </div>
+      <ModalSaveProvider provider={currentProvider!}/>
+      <ModalSaveModel provider={currentProvider!}/>
     </div>
   );
 };

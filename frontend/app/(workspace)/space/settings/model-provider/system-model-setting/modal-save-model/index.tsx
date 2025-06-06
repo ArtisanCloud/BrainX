@@ -7,15 +7,10 @@ import {
   ModalFooter,
 } from "@heroui/react";
 import {
-  ActionSaveProvider,
-  ConfigurateMethod,
-  CustomConfigurationStatusEnum,
   Provider,
   ResponseSaveProvider
 } from "@/app/api/model-provider/provider";
-import { FaCirclePlus } from "react-icons/fa6";
 
-import styles from "./index.module.scss";
 import {
   ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
@@ -29,30 +24,28 @@ import {BuildMergedCredentialSchemas} from "@/app/utils/provider";
 import {ActionSaveProviderModelSetting} from "@/app/api/model-provider/model";
 
 // 定义 Props 接口
-interface ModalAddModelsProps {
+interface ModalSaveModelProps {
   provider: Provider; // 根据实际类型替换 any
 }
 
-export default function ModalAddModels({provider}: ModalAddModelsProps) {
-  const [isOpen, setIsOpen] = useState(false); // 控制Modal开关的状态
+export default function ModalSaveModel({provider}: ModalSaveModelProps) {
   const [requiredFilled, setRequiredFilled] = useState(false); // 控制Modal开关的状态
   const [formValues, setFormValues] = useState<Record<string, any>>({});
 
-  const { setToRefresh } = useSettingsStore();
+  const { setToRefresh,isOpenSaveModelModal,setIsOpenSaveModelModal } = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
   const {msgSuccess, msgError} = useNotification();
 
-
   // 手动控制Modal开关
   const onOpen =async  () => {
-    setIsOpen(true);
+    setIsOpenSaveModelModal(true);
   }
-  const onClose = () => setIsOpen(false);
+  const onClose = () => setIsOpenSaveModelModal(false);
 
   // 监听 Modal 打开状态变化
   const onOpenChange = (newIsOpen: boolean) => {
     // console.log(newIsOpen); // 打开状态的变化
-    setIsOpen(newIsOpen);
+    setIsOpenSaveModelModal(newIsOpen);
   };
 
   const onSubmit = async () => {
@@ -83,7 +76,7 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
     } catch (error: any) {
       msgError(error.message);
     } finally {
-      setIsOpen(false); // 关闭Modal
+      setIsOpenSaveModelModal(false); // 关闭Modal
       setLoading(false);
     }
   };
@@ -100,23 +93,11 @@ export default function ModalAddModels({provider}: ModalAddModelsProps) {
 
   return (
     <>
-      <Button
-        key={provider.provider}
-        className={
-          provider.custom_configuration.status === CustomConfigurationStatusEnum.noConfigure
-            ? styles.btnFun
-            : styles.btnFunActive
-        }
-        startContent={<FaCirclePlus style={{width: "12px", color: "gray"}}/>}
-        onPress={onOpen}
-      >
-        添加模型
-      </Button>
       <Modal
         size="3xl"
         scrollBehavior={"inside"}
         backdrop="opaque"
-        isOpen={isOpen}
+        isOpen={isOpenSaveModelModal}
         onOpenChange={onOpenChange}
       >
         <ModalContent>

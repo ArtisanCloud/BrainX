@@ -2,20 +2,34 @@
 
 import useSettingsStore from "@/app/store/setting";
 import styles from "./index.module.scss";
-import { useState } from "react";
+import {useState} from "react";
 import {ProviderIcon} from "../provider-icon";
-import ModalSettingProvider from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-setting-provider";
-import ModalAddModels from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-add-models";
+import ModalSaveProvider from "../modal-save-provider";
+import ModalSaveModel from "../modal-save-model";
 import React from "react";
-import {ConfigurateMethod} from "@/app/api/model-provider/provider";
+import {ConfigurateMethod, CustomConfigurationStatusEnum, Provider} from "@/app/api/model-provider/provider";
+import {FaCirclePlus} from "react-icons/fa6";
+import {Button} from "@heroui/react";
+import {CogIcon} from "@heroicons/react/24/outline";
+import {GrStatusGoodSmall} from "react-icons/gr";
 
 const ToConfigProviders: React.FC = () => {
-  const { notConfiguredProviders } = useSettingsStore(); // 获取 providers
+  const {notConfiguredProviders,setCurrentProvider, setIsOpenSaveModelModal, setIsOpenSaveProviderModal} = useSettingsStore(); // 获取 providers
   const [iconUrl, setIconUrl] = useState<string | null>(null);
 
   // 检查 providers 是否为空或未定义
   if (!notConfiguredProviders || Object.keys(notConfiguredProviders).length === 0) {
     return <div>没有可配置的供应平台</div>; // 如果没有 providers，显示提示
+  }
+
+  const onClickToSaveProvider = (provider: Provider) => {
+    setCurrentProvider(provider)
+    setIsOpenSaveProviderModal(true)
+  }
+
+  const onClickToSaveModel = (provider: Provider) => {
+    setCurrentProvider(provider)
+    setIsOpenSaveModelModal(true)
   }
 
   return (
@@ -33,12 +47,28 @@ const ToConfigProviders: React.FC = () => {
           {
             key: provider.provider + "-setting-provider",
             type: "providerSetting",
-            component: <ModalSettingProvider provider={provider} />,
+            component: <>
+              <Button
+                key={provider.provider}
+                className={styles.btnFun}
+                startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
+                onPress={() => {onClickToSaveProvider(provider)}}
+              >
+                设置
+              </Button>
+            </>,
           },
           {
             key: provider.provider + "-add-models",
             type: "modelSetting",
-            component: <ModalAddModels provider={provider} />,
+            component:<Button
+              key={provider.provider}
+              className={styles.btnFun}
+              startContent={<FaCirclePlus style={{width: "12px", color: "gray"}}/>}
+              onPress={() => onClickToSaveModel(provider)}
+            >
+              添加模型
+            </Button>,
           },
         ];
 
@@ -64,12 +94,12 @@ const ToConfigProviders: React.FC = () => {
           <div
             key={key}
             className={`group ${styles.providerItem}`}
-            style={{ background: providerBackgroundColor }}
+            style={{background: providerBackgroundColor}}
           >
             <div className="flex-col">
               <h3>
                 {/* 服务端组件加载图片 */}
-                <ProviderIcon providerName={providerName} />
+                <ProviderIcon providerName={providerName}/>
               </h3>
               <p className="mt-1 leading-4 text-xs text-black/[48] line-clamp-4">
                 {providerDescription}

@@ -5,17 +5,28 @@ import styles from "./index.module.scss";
 import {useState} from "react";
 import React from "react";
 import {ProviderIcon} from "../provider-icon";
-import ModalSettingProvider from "../modal-setting-provider";
-import ModalAddModels from "../modal-add-models";
 import {IoIosArrowDown, IoIosArrowForward} from "react-icons/io";
 import {ActionChangeModelStatus, ActionGetProviderModels, ProviderModel} from "@/app/api/model-provider/model";
 import {useNotification} from "@/app/components/notification";
-import {Button, Checkbox, Switch} from "@heroui/react";
+import {Button, Switch} from "@heroui/react";
 import {CogIcon} from "@heroicons/react/24/outline";
+import {FaCirclePlus} from "react-icons/fa6";
+import {GrStatusGoodSmall} from "react-icons/gr";
+import {
+  ActionGetProviderCredentials,
+  ConfigurateMethod,
+  CustomConfigurationStatusEnum,
+  Provider
+} from "@/app/api/model-provider/provider";
 
 
 const ConfiguredProviders: React.FC = () => {
-  const {configuredProviders, configuredProviderModels, setConfiguredProviderModels} = useSettingsStore(); // 获取 providers
+  const {
+    configuredProviders, setCurrentProvider,
+    configuredProviderModels,setConfiguredProviderModels,
+    setIsOpenSaveModelModal, setIsOpenSaveProviderModal,
+    setFormValues,
+  } = useSettingsStore(); // 获取 providers
   const [iconUrl, setIconUrl] = useState<string | null>(null);
   const [activeKeys, setActiveKeys] = useState<Record<string, boolean>>({});
   const [hoverKey, setHoverKey] = useState<string | boolean>(false);
@@ -55,7 +66,7 @@ const ConfiguredProviders: React.FC = () => {
       for (let i = 0; i < res.data.length; i++) {
         setModelStatus(prev => ({
           ...prev,
-          [res.data[i].model]: res.data[i].status==="active"
+          [res.data[i].model]: res.data[i].status === "active"
         }))
       }
     } else {
@@ -70,7 +81,7 @@ const ConfiguredProviders: React.FC = () => {
   }
 
   const setChangeModelStatus = async (provider: string, model: ProviderModel) => {
-    const changeToStatus = !(model.status==="active")
+    const changeToStatus = !(model.status === "active")
     const res = await ActionChangeModelStatus({
       provider: provider,
       model_type: model.model_type,
@@ -111,6 +122,24 @@ const ConfiguredProviders: React.FC = () => {
           return <>{modelCount} 个模型 <IoIosArrowForward/></>;
         };
 
+        const onClickToSaveProvider = async (provider: Provider) => {
+          setCurrentProvider(provider)
+
+          if (provider.custom_configuration.status === CustomConfigurationStatusEnum.active){
+            const res = await ActionGetProviderCredentials({
+              provider: provider.provider,
+            })
+            if (res.data) {
+              setFormValues(res.data);
+            }
+          }
+          setIsOpenSaveProviderModal(true);
+        }
+        const onClickToSaveModel = (provider: Provider) => {
+          setCurrentProvider(provider)
+          setIsOpenSaveModelModal(true);
+        }
+
         return (
           <div key={key} className={styles.providerItem} style={{background: providerBackgroundColor}}>
             <div className={styles.providerBox}>
@@ -130,7 +159,20 @@ const ConfiguredProviders: React.FC = () => {
                 </div>
               </div>
               <div className={styles.providerRight}>
-                <ModalSettingProvider provider={provider}/>
+                <div className={styles.actionBox}>
+                  <div className={styles.statusBox}>
+                    <span>API-KEY</span>
+                    <GrStatusGoodSmall style={{border: "1px solid white", borderRadius: 48}} color="green"/>
+                  </div>
+                  <Button
+                    key={provider.provider}
+                    className={styles.btnFun}
+                    startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
+                    onPress={()=>onClickToSaveProvider(provider)}
+                  >
+                    设置
+                  </Button>
+                </div>
               </div>
             </div>
             <div className={styles.modelsBox}>
@@ -145,7 +187,16 @@ const ConfiguredProviders: React.FC = () => {
                 >
                   {renderText()}
                 </span>
-                  <div><ModalAddModels provider={provider}/></div>
+                  <div>
+                    <Button
+                      key={provider.provider}
+                      className={styles.btnFunActive}
+                      startContent={<FaCirclePlus style={{width: "12px", color: "gray"}}/>}
+                      onPress={() => onClickToSaveModel(provider)}
+                    >
+                      添加模型
+                    </Button>
+                  </div>
                 </div>
                 <div
                   className={`flex flex-col w-full gap-2 p-2 ${isActive ? '' : 'hidden'}`}
@@ -174,7 +225,7 @@ const ConfiguredProviders: React.FC = () => {
                               size="sm"
                               className="border-gray-400 border-1 rounded p-0.5 text-xs bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                               startContent={<CogIcon style={{width: "12px", color: "gray"}}/>}
-                              onPress={()=>onOpenAddModelModule(model)}
+                              onPress={() => onOpenAddModelModule(model)}
                             >配置</Button>
                             <Switch
                               isSelected={modelStatus[model.model]}
