@@ -149,7 +149,10 @@ const ConfiguredProviders: React.FC = () => {
             if (res.data) {
               setFormValues(res.data);
             }
+          }else{
+            setFormValues({})
           }
+
           setIsOpenSaveModelModal(true);
         }
 
@@ -222,6 +225,7 @@ const ConfiguredProviders: React.FC = () => {
                            className="flex flex-row w-full p-2 gap-2 hover:bg-gray-100 rounded-md">
                         <div className="flex flex-row justify-between content-center w-full gap-0.5">
                           <div className="flex flex-row items-center justify-center gap-2">
+                            <ProviderIcon providerName={providerName} iconSize={"icon_small"}/>
                             <div className="text-sm font-medium text-gray-900">
                               {model.label.zh_Hans}
                             </div>

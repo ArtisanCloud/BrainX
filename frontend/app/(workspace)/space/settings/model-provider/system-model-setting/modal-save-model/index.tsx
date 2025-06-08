@@ -155,7 +155,7 @@ export default function ModalSaveModel({provider}: ModalSaveModelProps) {
                     <span className="text-xl font-semibold text-gray-900">
                       添加 {provider.provider} 模型
                     </span>
-                    <ProviderIcon providerName={provider.provider}/>
+                    <ProviderIcon providerName={provider.provider} />
                   </div>
                   <div>
                     <DynamicForm

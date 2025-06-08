@@ -148,11 +148,12 @@ export async function ActionGetProviderCredentials(option: RequestGetProviderCre
 
 
 export async function ActionGetProviderIcon(
-  providerName: string
+  providerName: string,
+  size: string = "icon_large",
 ): Promise<any> {
   noStore();
   try {
-    const endpoint = `/api/model-provider/icon/${providerName}/icon_large/zh_Hans`;
+    const endpoint = `/api/model-provider/provider/icon/${providerName}/${size}/zh_Hans`;
     const resource = await backendClient.backend_get(endpoint, {});
     // 返回直接的 SVG or PNG 内容
     return resource;

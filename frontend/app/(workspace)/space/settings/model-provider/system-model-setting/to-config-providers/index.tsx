@@ -4,18 +4,19 @@ import useSettingsStore from "@/app/store/setting";
 import styles from "./index.module.scss";
 import {useState} from "react";
 import {ProviderIcon} from "../provider-icon";
-import ModalSaveProvider from "../modal-save-provider";
-import ModalSaveModel from "../modal-save-model";
 import React from "react";
-import {ConfigurateMethod, CustomConfigurationStatusEnum, Provider} from "@/app/api/model-provider/provider";
+import {ConfigurateMethod, Provider} from "@/app/api/model-provider/provider";
 import {FaCirclePlus} from "react-icons/fa6";
 import {Button} from "@heroui/react";
 import {CogIcon} from "@heroicons/react/24/outline";
-import {GrStatusGoodSmall} from "react-icons/gr";
+
+
 
 const ToConfigProviders: React.FC = () => {
   const {notConfiguredProviders,setCurrentProvider, setIsOpenSaveModelModal, setIsOpenSaveProviderModal} = useSettingsStore(); // 获取 providers
   const [iconUrl, setIconUrl] = useState<string | null>(null);
+
+  const {  setFormValues} = useSettingsStore();
 
   // 检查 providers 是否为空或未定义
   if (!notConfiguredProviders || Object.keys(notConfiguredProviders).length === 0) {
@@ -23,12 +24,20 @@ const ToConfigProviders: React.FC = () => {
   }
 
   const onClickToSaveProvider = (provider: Provider) => {
+    // 设置当前 provider
     setCurrentProvider(provider)
+    // 设置默认值
+    setFormValues({})
+    // 打开 Modal
     setIsOpenSaveProviderModal(true)
   }
 
   const onClickToSaveModel = (provider: Provider) => {
+    // 设置当前 provider
     setCurrentProvider(provider)
+    // 设置默认值
+    setFormValues({})
+    // 打开 Modal
     setIsOpenSaveModelModal(true)
   }
 

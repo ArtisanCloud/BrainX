@@ -7,10 +7,13 @@ const iconCache: { [providerName: string]: string } = {};
 
 interface ProviderIconProps {
   providerName: string;
+  iconSize?: string;
 }
 
 
-export function ProviderIcon({ providerName }: ProviderIconProps) {
+export function ProviderIcon({
+                               providerName, iconSize = 'icon_large'
+}: ProviderIconProps) {
   const [icon, setIcon] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -23,7 +26,7 @@ export function ProviderIcon({ providerName }: ProviderIconProps) {
       } else {
         try {
           setLoading(true);
-          const svg = await ActionGetProviderIcon(providerName); // 使用优化后的缓存函数
+          const svg = await ActionGetProviderIcon(providerName,iconSize); // 使用优化后的缓存函数
           // console.log(svg)
           // 缓存 SVG 内容
           setIcon(svg);
