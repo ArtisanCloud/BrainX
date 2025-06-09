@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import {CustomConfigurationStatusEnum, Provider} from "@/app/api/model-provider/provider";
-import {ProviderModel} from "@/app/api/model-provider/model";
+import {DefaultModelResponse, ProviderModel, ProviderWithModels} from "@/app/api/model-provider/model";
 import {useState} from "react";
+import {ModelTypeEnum} from "@/app/api/model-provider";
 
 // 定义 store 状态类型
 interface SettingsState {
@@ -32,8 +33,13 @@ interface SettingsState {
   // 表单值
   formValues:Record<string, any>;
   setFormValues: (formValues: Record<string, any>) => void;
-
-}
+  // 系统模型选择设置
+  workspaceModels: Record<ModelTypeEnum, ProviderWithModels[]>,
+  setWorkspaceModels: (updater: (prev: Record<ModelTypeEnum, ProviderWithModels[]>) => Record<ModelTypeEnum, ProviderWithModels[]>) => void,
+  workspaceDefaultModels: Record<ModelTypeEnum, DefaultModelResponse>,
+  setWorkspaceDefaultModels: (
+    updater: (prev: Record<ModelTypeEnum, DefaultModelResponse>) => Record<ModelTypeEnum, DefaultModelResponse>
+  ) => void;}
 
 // 创建 zustand store
 const useSettingsStore = create<SettingsState>((set) => ({
@@ -81,6 +87,7 @@ const useSettingsStore = create<SettingsState>((set) => ({
       }
     }));
   },
+
   // 刷新模型列表
   toRefreshProviders: 0,
   setToRefresh: () => {
@@ -88,6 +95,20 @@ const useSettingsStore = create<SettingsState>((set) => ({
       toRefreshProviders: state.toRefreshProviders + 1
     }))
   },
+  // 系统模型选择设置
+  workspaceModels: {} as Record<ModelTypeEnum, ProviderWithModels[]>,
+  setWorkspaceModels: (updater: (prev: Record<ModelTypeEnum, ProviderWithModels[]>) => Record<ModelTypeEnum, ProviderWithModels[]>) => {
+    set(state => ({
+      workspaceModels: updater(state.workspaceModels)
+    }));
+  },
+  workspaceDefaultModels: {} as Record<ModelTypeEnum, DefaultModelResponse>,
+  setWorkspaceDefaultModels: (updater: (prev: Record<ModelTypeEnum, DefaultModelResponse>) => Record<ModelTypeEnum, DefaultModelResponse>) => {
+    set(state => ({
+      workspaceDefaultModels: updater(state.workspaceDefaultModels)
+    }));
+  },
+
   // 语言
   language: "zh/CN",
   setLanguage: (language: string) => set({ language }),

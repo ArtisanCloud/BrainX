@@ -3,7 +3,7 @@
 import useSettingsStore from "@/app/store/setting";
 import styles from "./index.module.scss";
 import {useState} from "react";
-import {ProviderIcon} from "../provider-icon";
+import {ProviderIcon} from "../../components/provider-icon";
 import React from "react";
 import {ConfigurateMethod, Provider} from "@/app/api/model-provider/provider";
 import {FaCirclePlus} from "react-icons/fa6";

@@ -20,7 +20,7 @@ import {
   ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 import {useState} from "react";
-import {ProviderIcon} from "../provider-icon";
+import {ProviderIcon} from "../../components/provider-icon";
 import DynamicForm from "../../components/dynamic-form";
 import useLoadingStore from "@/app/store/global-loading";
 import {useNotification} from "@/app/components/notification";

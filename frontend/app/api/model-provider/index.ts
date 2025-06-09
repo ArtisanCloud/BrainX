@@ -19,6 +19,14 @@ export enum ModelFeature {
   STREAM_TOOL_CALL = "stream-tool-call",
 }
 
+export const ModelFeatureText = {
+  [ModelFeature.TOOL_CALL]: "工具调用",
+  [ModelFeature.MULTI_TOOL_CALL]: "多工具调用",
+  [ModelFeature.AGENT_THOUGHT]: "智能体思考",
+  [ModelFeature.VISION]: "视觉",
+  [ModelFeature.STREAM_TOOL_CALL]: "流工具调用",
+};
+
 /**
  * 枚举：FetchFrom
  * 用于定义模型的获取方式。

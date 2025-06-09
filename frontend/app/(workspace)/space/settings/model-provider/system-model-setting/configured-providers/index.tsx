@@ -4,7 +4,7 @@ import useSettingsStore from "@/app/store/setting";
 import styles from "./index.module.scss";
 import {useState} from "react";
 import React from "react";
-import {ProviderIcon} from "../provider-icon";
+import {ProviderIcon} from "../../components/provider-icon";
 import {IoIosArrowDown, IoIosArrowForward} from "react-icons/io";
 import {
   ActionChangeModelStatus,
@@ -71,7 +71,7 @@ const ConfiguredProviders: React.FC = () => {
       for (let i = 0; i < res.data.length; i++) {
         setModelStatus(prev => ({
           ...prev,
-          [res.data[i].model]: res.data[i].status === "active"
+          [res.data[i].model]: res.data[i].status === CustomConfigurationStatusEnum.active
         }))
       }
     } else {
@@ -83,7 +83,7 @@ const ConfiguredProviders: React.FC = () => {
 
 
   const setChangeModelStatus = async (provider: string, model: ProviderModel) => {
-    const changeToStatus = !(model.status === "active")
+    const changeToStatus = !(model.status === CustomConfigurationStatusEnum.active)
     const res = await ActionChangeModelStatus({
       provider: provider,
       model_type: model.model_type,

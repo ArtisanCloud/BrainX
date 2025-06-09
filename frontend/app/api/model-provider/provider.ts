@@ -9,8 +9,6 @@ import { ProviderModel } from "@/app/api/model-provider/model";
 import { backendClient } from "@/app/api/backend";
 
 import { unstable_noStore as noStore } from "next/dist/server/web/spec-extension/unstable-no-store";
-import { backendUrl } from "@/app/config/config";
-import {RequestQueryTasksStatus, ResponseQueryTasksStatus} from "@/app/api/task";
 
 export interface Help {
   // 帮助标题，支持多语言
@@ -75,6 +73,15 @@ export enum CustomConfigurationStatusEnum {
   active = 'active',
   noConfigure = 'no-configure',
 }
+
+export enum ModelStatusEnum{
+  active = "active",
+  noConfigure = "no-configure",
+  quotaExceeded = "quota-exceeded",
+  noPermission = "no-permission",
+  disabled = "disabled",
+}
+
 
 // 提供者接口
 export interface Provider {
