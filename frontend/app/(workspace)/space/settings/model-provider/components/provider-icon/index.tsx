@@ -3,7 +3,7 @@ import { ActionGetProviderIcon } from "@/app/api/model-provider/provider";
 import Image from 'next/image';
 
 // 缓存请求结果，避免重复请求
-const iconCache: { [providerName: string]: string } = {};
+const iconCache: Record<string, string> = {};
 
 interface ProviderIconProps {
   providerName: string;
@@ -15,13 +15,20 @@ export function ProviderIcon({
                                providerName, iconSize = 'icon_large'
 }: ProviderIconProps) {
   const [icon, setIcon] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchIcon() {
-      if (iconCache[providerName]) {
+      if (loading){
+        return
+      } else{
+        setLoading(true);
+      }
+      const cachedKay= providerName+'-'+iconSize
+      if (iconCache[cachedKay]) {
         // 如果缓存中已有图标，直接使用缓存的图标
-        setIcon(iconCache[providerName]);
+        setIcon(iconCache[cachedKay]);
+
         setLoading(false);
       } else {
         try {
@@ -30,6 +37,7 @@ export function ProviderIcon({
           // console.log(svg)
           // 缓存 SVG 内容
           setIcon(svg);
+          iconCache[cachedKay] = svg;
         } catch (error) {
           console.error("Failed to load provider icon:", error);
         } finally {

@@ -158,7 +158,7 @@ export async function ActionGetProviderIcon(
   providerName: string,
   size: string = "icon_large",
 ): Promise<any> {
-  noStore();
+  // noStore();
   try {
     const endpoint = `/api/model-provider/provider/icon/${providerName}/${size}/zh_Hans`;
     const resource = await backendClient.backend_get(endpoint, {});
