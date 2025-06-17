@@ -9,7 +9,7 @@ import {
 import {Cog6ToothIcon} from "@heroicons/react/24/outline";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
-import SelectionModels from "./selection-system-model";
+import SelectionModels from "../components/selection-system-model";
 import useSettingsStore from "@/app/store/setting";
 import {ModelTypeEnum} from "@/app/api/model-provider";
 import {
@@ -156,7 +156,7 @@ const SystemModelSetting: React.FC = () => {
           {(titleProps) => (
             <div className="flex flex-col justify-center content-center ga-4 px-1 py-2 w-full">
               {systemModelSelections.map((item, index) => (
-                <div key={index} className="mb-2">
+                <div key={index} className="mb-6">
                   {item.component}
                 </div>
               ))}

@@ -11,8 +11,7 @@
   align-items: center;
 
   .info {
-    display: flex;
-    flex-direction: row;
+    @apply flex flex-row items-center justify-center;
     //border: #ff006a 1px solid;
     margin-left: 20px;
 
@@ -26,23 +25,22 @@
       margin-left: 20px;
       display: flex;
       flex-direction: column;
+      //border: #ff006a 1px solid;
 
       .titleBox {
+        @apply flex flex-row items-center justify-start;
         display: flex;
         flex-direction: row;
         margin-bottom: 6px;
+        padding: 4px;
+        gap:8px;
+        //border: #ff006a 1px solid;
+
         .title {
           //margin-left: 10px;
           font-size: 14px;
           color: var(--text);
           font-weight: bold;
-        }
-        .selectLLM{
-          margin-left: 20px;
-          width: 180px;
-          height: 20px;
-          background-color: var(--bgText);
-          border-radius: 5px;
         }
       }
 

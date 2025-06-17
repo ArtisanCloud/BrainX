@@ -251,3 +251,22 @@ export async function saveDefaultModels(option: RequestSaveDefaultModels) {
     throw new Error(`Failed to fetch the default model: ${error}`);
   }
 }
+
+export interface  RequestGetModelParameterRule{
+  provider: string
+  model: string
+}
+export interface ResponseGetModelParameterRule{
+  data: ParameterRule[];
+}
+export async function getModelParameterRule(option: RequestGetModelParameterRule) {
+  try {
+    const endpoint = `/api/model-provider/provider-model/model-parameter-rule`;
+    const res = await backendClient.backend_post(endpoint, option);
+    return res as ResponseGetModelParameterRule;
+  }
+  catch (error) {
+    throw new Error(`Failed to fetch the default model: ${error}`);
+  }
+
+}

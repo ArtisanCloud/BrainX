@@ -15,18 +15,11 @@ import ConfiguredProviders
 import ModalSaveProvider
   from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-save-provider";
 import ModalSaveModel from "@/app/(workspace)/space/settings/model-provider/system-model-setting/modal-save-model";
-import {
-  DefaultModelResponse,
-  fetchDefaultModels,
-  fetchModelsByType,
-  ProviderWithModels
-} from "@/app/api/model-provider/model";
-import {ModelTypeEnum} from "@/app/api/model-provider";
 
 const ModelProviderComponent: React.FC = () => {
   const {setProviders, toRefreshProviders,
     currentProvider,
-    setWorkspaceModels,setWorkspaceDefaultModels} = useSettingsStore();
+    fetchWorkspaceModels,fetchAllDefaultModels} = useSettingsStore();
   const {loading, setLoading} = useLoadingStore();
   const {msgError} = useNotification();
 
@@ -53,62 +46,14 @@ const ModelProviderComponent: React.FC = () => {
     fetchProviders();
   }, [toRefreshProviders]);
 
+
+
   useEffect(() => {
     // console.log("load models by types")
-    async function fetchWorkspaceModels() {
-      try{
-        const types = Object.values(ModelTypeEnum);
-        const results = await Promise.all(
-          types.map(modelType =>
-            fetchModelsByType(modelType).then(res => ({ modelType, data: res.data }))
-          )
-        );
-
-        const modelsMap: Partial<Record<ModelTypeEnum, ProviderWithModels[]>> = {};
-        results.forEach(({ modelType, data }) => {
-          if (data) modelsMap[modelType] = data;
-        });
-
-        setWorkspaceModels(prev => ({
-          ...prev,
-          ...modelsMap
-        }))
-
-      }catch (e){
-        console.log(e)
-      }
-    }
-
     fetchWorkspaceModels();
-
   }, []);
 
   useEffect(() => {
-
-    async function fetchAllDefaultModels() {
-      try{
-        const types = Object.values(ModelTypeEnum);
-        const results = await Promise.all(
-          types.map(modelType =>
-            fetchDefaultModels(modelType).then(res => ({ modelType, data: res.data }))
-          )
-        );
-
-        const modelsMap: Partial<Record<ModelTypeEnum, DefaultModelResponse>> = {};
-        results.forEach(({ modelType, data }) => {
-          if (data) modelsMap[modelType] = data;
-        });
-
-        setWorkspaceDefaultModels(models => ({
-          ...models,
-          ...modelsMap
-        }))
-
-      }catch (e){
-        console.log(e)
-      }
-    }
-
     fetchAllDefaultModels();
   }, []);
 

@@ -8,15 +8,18 @@ import {
   Input,
 } from "@heroui/react";
 import {ProviderModelWithStatusEntity, ProviderWithModels} from "@/app/api/model-provider/model";
-import {ProviderIcon} from "../../components/provider-icon";
+import {ProviderIcon} from "../provider-icon";
 import {RenderFeatures} from "@/app/(workspace)/space/settings/model-provider/components/render-features";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
+import {CogIcon} from "@heroicons/react/24/outline";
 
 interface SelectionSystemModelProps {
   providersWithModels?: ProviderWithModels[];
-  label: string;
+  label?: string;
   onSelect?: (provider: ProviderWithModels, model: ProviderModelWithStatusEntity) => void;
   currentSelectValue?: string;
+  initShowConfig?: boolean;
+  onToConfig?: (provider: ProviderWithModels, model: ProviderModelWithStatusEntity) => void;
 }
 
 const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
@@ -24,10 +27,26 @@ const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
                                                                      label,
                                                                      onSelect,
                                                                      currentSelectValue,
+                                                                     initShowConfig = false,
+                                                                     onToConfig,
                                                                    }) => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(currentSelectValue);
 
   const [searchText, setSearchText] = useState("");
+  const [showConfigMap, setShowConfigMap] = useState<Record<string, boolean>>({});
+
+  const handleMouseEnterItem = (provider: string, modelKey: string) => {
+    setShowConfigMap(prev => ({...prev, [provider + '-' + modelKey]: true}));
+  };
+  const handleMouseLeaveItem = (provider: string, modelKey: string) => {
+    setShowConfigMap(prev => ({...prev, [provider + '-' + modelKey]: false}));
+  };
+
+  // ======================================================================
+
+  useEffect(() => {
+    setSelectedKey(currentSelectValue)
+  }, [currentSelectValue])
 
   const filteredProviders = useMemo(() => {
     if (!searchText.trim()) return providersWithModels;
@@ -43,9 +62,16 @@ const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
   }, [providersWithModels, searchText]);
 
   const selectedModel = useMemo(() => {
-    return providersWithModels
-      .flatMap((p) => p.models.map((m) => ({...m, provider: p.provider})))
-      .find((m) => m.model === selectedKey);
+    const flatModels = providersWithModels
+      .flatMap((p) => p.models.map((m) => ({...m, provider: p.provider})));
+
+    // console.log("selectedModel useMemo - flatModels:", flatModels); // Check all models
+    // console.log("selectedModel useMemo - selectedKey:", selectedKey); // Check what's being searched for
+
+    const foundModel = flatModels.find((m) => m.model === selectedKey);
+    // console.log("selectedModel useMemo - foundModel:", foundModel); // Is it undefined?
+
+    return foundModel;
   }, [selectedKey, providersWithModels]);
 
   const handleSelectModel = (key: any) => {
@@ -61,6 +87,13 @@ const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
         onSelect(provider, selectedModel); // ✅ 返回 provider 字符串 + 模型实体
         break;
       }
+    }
+  };
+
+  const handleToConfig = (provider: ProviderWithModels, model: ProviderModelWithStatusEntity) => {
+    if (onToConfig) {
+      onToConfig(provider, model);
+      handleMouseLeaveItem(provider.provider, model.model)
     }
   };
 
@@ -81,15 +114,48 @@ const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
       >
         {provider.models.map((model) => {
           const isDisabled = model.status !== "active";
+          // Create a unique key for each item's hover state
+          const itemKey = `${provider.provider}-${model.model}`;
+          // Get the show state for the current item from the map
+          const showConfigForThisItem = showConfigMap[itemKey] || false;
+
           return (
             <DropdownItem
               key={model.model}
               startContent={
                 <ProviderIcon providerName={provider.provider} iconSize="icon_small"/>
               }
+              textValue={model.model}
               className={isDisabled ? "opacity-50 pointer-events-none" : ""}
+              onMouseEnter={() => handleMouseEnterItem(provider.provider, model.model)}
+              onMouseLeave={() => handleMouseLeaveItem(provider.provider, model.model)}
             >
-              {model.label?.zh_Hans || model.model}
+              <div
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.closest(".cog-icon-button")) {
+                    // 点击了齿轮，忽略选择
+                    return;
+                  }
+                  handleSelectModel(model.model);
+                }}
+                className={`flex flex-row items-center gap-2 ${showConfigForThisItem ? 'justify-between' : 'justify-start'}`}>
+                <span>{model.label?.zh_Hans || model.model}</span>
+                {/* 在内容末尾添加按钮 */}
+
+                {showConfigForThisItem && !isDisabled && (
+                  <button
+                    className="cog-icon-button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleToConfig(provider, model);
+                    }}
+                  >
+                    <CogIcon className="text-sm w-6 cursor-pointer"/>
+                  </button>
+                )}
+              </div>
             </DropdownItem>
           );
         })}
@@ -100,8 +166,10 @@ const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
   return (
     <div className="w-full max-w-xl">
       <Dropdown>
-        <div className="flex flex-col gap-2 px-2 mt-4">
-          <span className="font-bold">{label}</span>
+        <div className="flex flex-col">
+          {label && (
+            <span className="text-default-400 text-sm mb-1">{label}</span>
+          )}
           <DropdownTrigger>
             <Button variant="bordered" className="w-full justify-between">
               {selectedModel ? (
@@ -127,7 +195,7 @@ const SelectionSystemModel: React.FC<SelectionSystemModelProps> = ({
           aria-label="Model Selection"
           variant="faded"
           className="min-w-[400px] max-h-[450px] overflow-auto p-2"
-          onAction={(key) => handleSelectModel(key)}
+
           topContent={
             <div className="mb-2 px-1">
               <Input
