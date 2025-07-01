@@ -4,10 +4,11 @@ from fastapi import Request, APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app import settings
 from app.api.middleware.auth import get_session_user
-from app.database.deps import get_async_db_session_dep
+from app.database.deps import get_async_db_session_dep, get_sync_db_session_dep
 from app.logger import logger
 from app.models import User
 from app.schemas.robot_chat.chat import RequestChat
@@ -23,13 +24,19 @@ async def api_chat(
         data: RequestChat,
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
+        sync_db: Session = Depends(get_sync_db_session_dep),
 ) -> StreamingResponse:
     try:
         # print("conversationUUID:", data)
+        tenant_uuid = str(session_user.tenant_owner_uuid)
+        user_uuid = str(session_user.uuid)
         return StreamingResponse(
             chat_event_generator(
                 request=request, data=data,
-                user_uuid=str(session_user.uuid), async_db=async_db
+                tenant_uuid=tenant_uuid,
+                user_uuid=user_uuid,
+                async_db=async_db,
+                sync_db=sync_db
             ),
             media_type="text/event-stream",
             headers={
@@ -57,12 +64,18 @@ async def api_agent_chat(
         data: RequestChat,
         session_user: User = Depends(get_session_user),
         async_db: AsyncSession = Depends(get_async_db_session_dep),
+        sync_db: Session = Depends(get_sync_db_session_dep),
 ) -> StreamingResponse:
     try:
+        tenant_uuid = str(session_user.tenant_owner_uuid)
+        user_uuid = str(session_user.uuid)
         return StreamingResponse(
             agent_chat_event_generator(
                 request=request, data=data,
-                user_uuid=str(session_user.uuid), async_db=async_db
+                user_uuid=user_uuid,
+                tenant_uuid=tenant_uuid,
+                async_db=async_db,
+                sync_db=sync_db,
             ),
             media_type="text/event-stream",
             headers={

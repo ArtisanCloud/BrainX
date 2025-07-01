@@ -8,7 +8,7 @@ from app.schemas.base import BaseSchema, Pagination, ResponsePagination, BaseObj
 
 class MessageSchema(BaseObjectSchema):
     reply_to_message_uuid: Optional[str] = None
-    content: str | None
+    content: Optional[str] = None
     role: Optional[str] = None
     type: Optional[str] = None
 
@@ -21,9 +21,10 @@ class MessageSchema(BaseObjectSchema):
             conversation_uuid=str(obj.conversation_uuid) if obj.conversation_uuid else None,  # 将 UUID 对象转换为字符串
             reply_to_message_uuid=str(obj.reply_to_message_uuid) if obj.reply_to_message_uuid else None,  # 处理 app_uuid 可能为 None 的情况
             content=obj.content,
-            role=obj.role if obj.role else None ,
+            role=obj.role if obj.role else None,
             type=obj.type,
         )
+
 
 class ConversationSchema(BaseObjectSchema):
     user_uuid: Optional[str] = None

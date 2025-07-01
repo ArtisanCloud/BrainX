@@ -27,7 +27,6 @@ class PlatformSourceType(Enum):
     WEB = 'web'
     MOBILE = 'mobile'
     SYSTEM = 'system'
-    
 
 
 Base = declarative_base()
@@ -102,6 +101,9 @@ table_name_customer = "customers"
 table_name_app_model_config = 'app_model_configs'
 table_name_provider = "providers"
 table_name_provider_model = "provider_models"
+table_name_provider_model_setting = "provider_model_settings"
+table_name_load_balancing_model_config = "load_balancing_model_configs"
 table_name_image_embedding = 'data_image_embedding'
 table_name_tenant_default_model = "tenant_default_models"
+table_name_tenant_preferred_model_provider = "tenant_preferred_model_providers"
 table_name_platform = "platform"

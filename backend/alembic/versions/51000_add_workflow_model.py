@@ -1,7 +1,7 @@
 """add workflow models
 
 Revision ID: 51000
-Revises: 14000
+Revises: 14100
 Create Date: 2024-06-15 00:45:05.449070
 
 """
@@ -14,12 +14,12 @@ from sqlalchemy import UUID
 
 from app import settings
 from app.models import Tenant
-from app.models.base import  time_now
+from app.models.base import time_now
 from app.models.workflow.workflow import table_name_workflow
 
 # revision identifiers, used by Alembic.
 revision: str = '51000'
-down_revision: Union[str, None] = '14000'
+down_revision: Union[str, None] = '14100'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

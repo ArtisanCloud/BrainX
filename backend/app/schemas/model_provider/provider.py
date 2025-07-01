@@ -71,7 +71,7 @@ class ResponseGetModelProviderList(BaseSchema):
 
 
 class RequestCreateModelProvider(BaseSchema):
-    config_from: str
+    config_from: Optional[str] = None
     provider: str
     credentials: dict
 

@@ -7,7 +7,7 @@ from app.dao.base import BaseDAO
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User
-from app.models.tenant.tenant import Tenant
+from app.models.tenant.tenant import Tenant, TenantPreferredModelProvider
 
 
 class TenantDAO(BaseDAO[Tenant]):
@@ -20,3 +20,8 @@ class TenantDAO(BaseDAO[Tenant]):
         tenant.owned_user = result.scalar_one_or_none()
 
         return tenant
+
+
+class PreferredModelProviderDAO(BaseDAO[TenantPreferredModelProvider]):
+    def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
+        super().__init__(TenantPreferredModelProvider, async_db, sync_db)

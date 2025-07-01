@@ -1,14 +1,20 @@
 from typing import Dict
 import ollama
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
+from app.core.brainx.base import LLMModel
 from app.service.brainx.service import BrainXService
 from langchain.schema import HumanMessage, SystemMessage
 
 
 async def completion(
-        llm: str,
-        async_db: AsyncSession,
+        tenant_uuid: str,
+        user_uuid: str,
+        provider: str,
+        model: str,
+        async_db: AsyncSession = None,
+        sync_db: Session = None,
         system: str = "",
         user: str = "",
         messages: Dict = None,
@@ -17,8 +23,12 @@ async def completion(
     try:
 
         service_brain_x = BrainXService(
-            llm=llm,
+            tenant_uuid=tenant_uuid,
+            app=None,
             async_db=async_db,
+            sync_db=sync_db,
+            provider_id=provider,
+            model_id=model,
             streaming=False,
         )
 

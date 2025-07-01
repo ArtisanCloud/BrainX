@@ -17,7 +17,7 @@ from app.core.brainx.entity.runtime.provider_model import ModelType, AIModelEnti
 from app.core.brainx.interface.ai_model import AIModel
 from app.core.brainx.providers.registry import ModelProviderRegistry
 from app.dao.model_provider.provider import ProviderDAO
-from app.dao.model_provider.provider_model import ProviderModelDAO
+from app.dao.model_provider.provider_model import ProviderModelDAO, ProviderModelSettingDAO
 from app.database.session_manager import get_sync_db_session
 from app.models.model_provider.provider import ProviderType, Provider
 from app.models.model_provider.provider_model import ProviderModel
@@ -61,6 +61,21 @@ class ProviderConfiguration(BaseModel):
 
     def is_custom_configuration_available(self) -> bool:
         return self.custom_configuration.provider is not None or len(self.custom_configuration.models) > 0
+
+    def get_provider_model_setting(self, model_type: ModelType, model: str) -> Optional[ModelSettings]:
+        with get_sync_db_session() as sync_db:
+            provider_model_setting_dao = ProviderModelSettingDAO(sync_db=sync_db)
+            provider_model_record, exception = provider_model_setting_dao.sync_get_by({
+                "tenant_uuid": self.tenant_uuid,
+                "provider_name": self.provider.provider,
+                "model_name": model,
+                "model_type": model_type.value,
+            })
+            # print("fetch provider record", provider_record)
+            if exception:
+                raise exception
+
+            return provider_model_record
 
     def extract_secret_variables(self, credential_form_schemas: list[CredentialFormSchema]) -> list[str]:
         secret_input_form_variables = []
@@ -226,6 +241,26 @@ class ProviderConfiguration(BaseModel):
 
             provider_model_credentials_cache.delete()
 
+    def delete_custom_model_credentials(self, model_type: ModelType, model: str) -> None:
+        # get provider
+        with get_sync_db_session() as sync_db:
+            provider_model_dao = ProviderModelDAO(sync_db=sync_db)
+            record_uuid, exception = provider_model_dao.sync_delete_by({
+                "tenant_uuid": self.tenant_uuid,
+                "model_type": model_type.value,
+                "provider_name": self.provider.provider,
+                "model_name": model,
+
+            })
+            if exception:
+                raise exception
+            provider_model_credentials_cache = ProviderCredentialsCache(
+                tenant_uuid=self.tenant_uuid,
+                identity_id=record_uuid,
+                cache_type=ProviderCredentialsCacheType.MODEL,
+            )
+            provider_model_credentials_cache.delete()
+
     def get_provider_models(
             self, model_type: Optional[ModelType] = None, only_active: bool = False, model: Optional[str] = None
     ) -> list[ModelWithProviderEntity]:
@@ -248,6 +283,7 @@ class ProviderConfiguration(BaseModel):
 
         # Get provider models
         provider_models = []
+
         if self.using_provider_type == ProviderType.SYSTEM:
             # provider_models = self._get_system_provider_models(
             #     model_types=model_types, provider_schema=provider_schema, model_setting_map=model_setting_map
@@ -265,22 +301,11 @@ class ProviderConfiguration(BaseModel):
             provider_models = [m for m in provider_models if m.status == ModelStatus.ACTIVE]
 
         # resort provider_models
-        # Optimize sorting logic: first sort by provider.position order, then by model_type.value
-        # Get the position list for model types (retrieve only once for better performance)
-        model_type_positions = {}
         if hasattr(self.provider, "position") and self.provider.position:
             model_type_positions = self.provider.position
 
         def get_sort_key(model: ModelWithProviderEntity):
-            # Get the position list for the current model type
-            positions = model_type_positions.get(model.model_type.value, [])
-
-            # If the model name is in the position list, use its index for sorting
-            # Otherwise use a large value (list length) to place undefined models at the end
-            position_index = positions.index(model.model) if model.model in positions else len(positions)
-
-            # Return composite sort key: (model_type value, model position index)
-            return (model.model_type.value, position_index)
+            return (model.model_type.value, model.model.lower())
 
         # Sort using the composite sort key
         return sorted(provider_models, key=get_sort_key)
@@ -288,6 +313,29 @@ class ProviderConfiguration(BaseModel):
     def get_model_schema(self, model_type: ModelType, model: str, credentials: dict) -> AIModelEntity | None:
         model_instance = self.get_model_type_instance(model_type=model_type, provider_id=self.provider.provider, model_id=model)
         return model_instance.get_customizable_model_schema_from_credentials(model=model, credentials=credentials)
+
+    def get_custom_model_credentials(
+            self, model_type: ModelType, model: str, desensitized: bool = False
+    ) -> Optional[dict]:
+
+        if not self.custom_configuration.models:
+            return None
+
+        for model_configuration in self.custom_configuration.models:
+            if model_configuration.model_type == model_type and model_configuration.model == model:
+                credentials = model_configuration.credentials
+                if not desensitized:
+                    return credentials
+
+                # Obfuscate credentials
+                return self.desensitized_credentials(
+                    credentials=credentials,
+                    credential_form_schemas=self.provider.model_credential_schema.credential_form_schemas
+                    if self.provider.model_credential_schema
+                    else [],
+                )
+
+        return None
 
     def _get_custom_provider_models(
             self,
@@ -387,6 +435,48 @@ class ProviderConfiguration(BaseModel):
             )
 
         return provider_models
+
+    def get_current_credentials(self, model_type: ModelType, model: str) -> Optional[dict]:
+        if self.model_settings:
+            # check if model is disabled by admin
+            for model_setting in self.model_settings:
+                if model_setting.model_type == model_type and model_setting.model == model:
+                    if not model_setting.enabled:
+                        raise ValueError(f"Model {model} is disabled.")
+
+        if self.using_provider_type == ProviderType.SYSTEM:
+            restrict_models = []
+            for quota_configuration in self.system_configuration.quota_configurations:
+                if self.system_configuration.current_quota_type != quota_configuration.quota_type:
+                    continue
+
+                restrict_models = quota_configuration.restrict_models
+
+            copy_credentials = (
+                self.system_configuration.credentials.copy() if self.system_configuration.credentials else {}
+            )
+            if restrict_models:
+                for restrict_model in restrict_models:
+                    if (
+                            restrict_model.model_type == model_type
+                            and restrict_model.model == model
+                            and restrict_model.base_model_name
+                    ):
+                        copy_credentials["base_model_name"] = restrict_model.base_model_name
+
+            return copy_credentials
+        else:
+            credentials = None
+            if self.custom_configuration.models:
+                for model_configuration in self.custom_configuration.models:
+                    if model_configuration.model_type == model_type and model_configuration.model == model:
+                        credentials = model_configuration.credentials
+                        break
+
+            if not credentials and self.custom_configuration.provider:
+                credentials = self.custom_configuration.provider.credentials
+
+            return credentials
 
 
 class ProviderConfigurations(BaseModel):

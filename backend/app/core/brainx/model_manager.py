@@ -52,6 +52,7 @@ class ModelManager:
         model_bundle, exception = self.provider_manager.get_provider_model_bundle(
             tenant_uuid, model_type, provider_id, model_id,
         )
+
         if exception is not None:
             return None, exception
 
@@ -65,10 +66,8 @@ class ModelManager:
     ) -> Tuple[Optional[ModelInstance], Optional[Exception]]:
 
         # 获取默认模型
-        default_model_record, exception = self.provider_manager.get_default_model(tenant_uuid, model_type)
-        if exception is not None:
-            return None, exception
-
+        default_model_record = self.provider_manager.get_default_model(tenant_uuid, model_type)
+        # print("default_model_record", default_model_record)
         if not default_model_record:
             raise Exception(f"Default model not found for {model_type}")
 
@@ -76,8 +75,8 @@ class ModelManager:
         return self.get_model_instance(
             tenant_uuid=tenant_uuid,
             model_type=model_type,
-            provider_id=default_model_record.provider_name,
-            model_id=default_model_record.name,
+            provider_id=default_model_record.provider.provider,
+            model_id=default_model_record.model,
         )
 
     @classmethod

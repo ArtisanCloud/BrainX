@@ -63,9 +63,7 @@ class ModelProviderRegistry:
                         if os.path.isdir(model_type_path):  # 确保是一个目录
 
                             for model_file in os.listdir(model_type_path):
-                                if model_file.endswith(".yml") or model_file.endswith(
-                                        ".yaml"
-                                ):
+                                if (model_file.endswith(".yml") or model_file.endswith(".yaml")) and not model_file.startswith("_"):
                                     model_filepath = os.path.join(
                                         model_type_path, model_file
                                     )
@@ -74,10 +72,15 @@ class ModelProviderRegistry:
                                     # 加载该模型的配置文件
                                     yaml_data = load_yaml_file(model_filepath)
                                     model_schema = AIModelEntity(**yaml_data)
+                                    # if model_file == 'o1.yaml':
+                                    #     print(model_schema)
                                     provider_config_schema.models.append(model_schema)
 
                     # print(provider_config)
                     provider_schemas[folder_name] = provider_config_schema
+                    # if folder_name == 'openai':
+                    #     print(provider_schemas[folder_name])
+
         except Exception as e:
             return None, e
 

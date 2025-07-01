@@ -4,7 +4,7 @@ from sqlalchemy import SmallInteger, BigInteger, TIMESTAMP, String, Boolean, UUI
 from sqlalchemy.orm import mapped_column
 
 from app import settings
-from app.models.base import BaseORM, table_name_provider,table_name_tenant
+from app.models.base import BaseORM, table_name_provider, table_name_tenant
 
 
 class ProviderType(Enum):
@@ -14,11 +14,12 @@ class ProviderType(Enum):
     SYSTEM = "system"  # 系统自带的提供者类型
     CUSTOM = "custom"  # 用户定义的提供者类型
 
+
 class Provider(BaseORM):
     __tablename__ = table_name_provider
     __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
 
-    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public."+table_name_tenant + '.uuid'), index=True)
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public." + table_name_tenant + '.uuid'), index=True)
     provider_name = mapped_column(String, nullable=False)
     provider_type = mapped_column(String, nullable=False)  # e.g., 'custom', 'system'
     encrypted_config = mapped_column(Text, nullable=True)
@@ -37,3 +38,16 @@ class Provider(BaseORM):
                 f"provider_name='{self.provider_name}', "
                 f"provider_type='{self.provider_type}"
                 f"')>")
+
+
+class LoadBalancingModelConfig(BaseORM):
+    __tablename__ = "table_name_load_balancing_model_config"
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
+
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public." + table_name_tenant + '.uuid'), index=True)
+    provider_name = mapped_column(String(255), nullable=False)
+    model_name = mapped_column(String(255), nullable=False)
+    model_type = mapped_column(String(40), nullable=False)
+    name = mapped_column(String(255), nullable=False)
+    encrypted_config = mapped_column(Text, nullable=True)
+    enabled = mapped_column(Boolean, nullable=False, default=True)

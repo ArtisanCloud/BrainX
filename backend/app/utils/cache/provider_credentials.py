@@ -17,7 +17,7 @@ class ProviderCredentialsCache:
     cache: CacheInterface
 
     def __init__(self, tenant_uuid: str, identity_id: str, cache_type: ProviderCredentialsCacheType):
-        self.cache_key = f"{cache_type.value}_credentials:tenant_uuid:{tenant_uuid}:uuid:{tenant_uuid}"
+        self.cache_key = f"{cache_type.value}_credentials:tenant_uuid:{tenant_uuid}:uuid:{identity_id}"
         self.cache = CacheFactory.get_cache()
 
     def get(self) -> Optional[dict]:

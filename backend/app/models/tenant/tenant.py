@@ -9,7 +9,7 @@ from app.models.base import (
     table_name_tenant,
     table_name_tenant_default_model,
     table_name_pivot_tenant_to_user,
-    table_name_provider,
+    table_name_provider, table_name_tenant_preferred_model_provider,
 )
 
 
@@ -73,3 +73,12 @@ class TenantDefaultModel(BaseORM):
     provider_name = mapped_column("provider_name", String(40), nullable=False)
     name = mapped_column("name", String(255), nullable=False)
     type = mapped_column("type", String(40), nullable=False)
+
+
+class TenantPreferredModelProvider(BaseORM):
+    __tablename__ = table_name_tenant_preferred_model_provider
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
+
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public." + table_name_tenant + '.uuid'), index=True)
+    provider_name = mapped_column(String(255), nullable=False)
+    preferred_provider_type = mapped_column(String(40), nullable=False)

@@ -13,7 +13,7 @@ class ModelInstance:
         # 初始化模型实例
         self.model_bundle = model_bundle
         self.model_id = model_id
-        self.credential = self.model_bundle.get_credential(model_id)
+        self.credentials = self.model_bundle.get_credentials(model_id)
 
     def llm_stream(
             self,
@@ -87,6 +87,7 @@ class ModelInstance:
         if not isinstance(self.model_bundle.model_type_instance, LLM):
             return None, Exception("Model type instance is not LargeLanguageModel")
 
+        # print("live chat stream", self.credential, )
         return self.model_bundle.model_type_instance.chat_stream(
             question=question,
             credential=self.credential,

@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from app import logger
+from app.constant.ai_model.huggingface_hub import HuggingFaceHubModelID
 from app.constant.ai_model.provider import ProviderID
 from app.core.agent_bot.agent import AgentBot
 from app.core.brainx.base import LLMModel
@@ -46,10 +46,18 @@ class BrainXService:
 
         # define the agent executor
         self.llm_model_instance, exception = self.model_manager.get_default_model_instance(tenant_uuid, ModelType.LLM)
+        # print("self.llm_model_instance", self.llm_model_instance.configuration)
+        # print("credential:", self.llm_model_instance.credential)
         if exception:
             return
 
-        self.text_embedding_model_instance, exception = self.model_manager.get_default_model_instance(tenant_uuid, ModelType.TEXT_EMBEDDING)
+        # self.text_embedding_model_instance, exception = self.model_manager.get_default_model_instance(tenant_uuid, ModelType.TEXT_EMBEDDING)
+        self.text_embedding_model_instance, exception = self.model_manager.get_model_instance(
+            tenant_uuid=tenant_uuid,
+            model_type=ModelType.TEXT_EMBEDDING,
+            provider_id="huggingface_hub",
+            model_id=str(HuggingFaceHubModelID.SHIBING624_TEXT2VEC_BASE_CHINESE),
+        )
         if exception:
             raise exception
 

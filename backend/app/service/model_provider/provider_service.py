@@ -79,7 +79,7 @@ class ProviderService:
 
         return providers, None
 
-    async def save_model_provider_credentials(
+    def save_model_provider_credentials(
             self,
             tenant_uuid: str,
             provider: str,
@@ -87,7 +87,6 @@ class ProviderService:
     ) -> Tuple[ProviderSchema | None, Exception | None]:
         try:
             provider_manager = ProviderManager(sync_db=self.sync_db)
-            provider_service = ProviderService(sync_db=self.sync_db)
 
             # 加载租户的模型配置表
             configurations = provider_manager.get_configurations(tenant_uuid)
@@ -107,7 +106,7 @@ class ProviderService:
                 dict_provider_record["encrypted_config"] = json.dumps(credentials)
                 dict_provider_record["is_valid"] = True
                 # print(dict_provider_record["encrypted_config"])
-                provider_record, exception = provider_service.provider_dao.sync_patch(
+                provider_record, exception = self.provider_dao.sync_patch(
                     provider_record.uuid, dict_provider_record
                 )
             else:
@@ -118,7 +117,7 @@ class ProviderService:
                 provider_record.provider_type = ProviderType.CUSTOM.value
                 provider_record.encrypted_config = json.dumps(credentials)
                 provider_record.is_valid = True
-                provider_record, exception = provider_service.provider_dao.sync_create(
+                provider_record, exception = self.provider_dao.sync_create(
                     provider_record
                 )
 

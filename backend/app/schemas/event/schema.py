@@ -7,4 +7,4 @@ class RequestPublishEvent(BaseSchema):
 
 
 class ResponsePublishEvent(BaseSchema):
-    success: bool
+    result: bool

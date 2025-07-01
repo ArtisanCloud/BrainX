@@ -11,14 +11,19 @@ from app.service.brainx.service import BrainXService
 
 
 async def demo_struct_output_invoke(
-        question: str, llm: str,
+        question: str,
+        provider: str,
+        model: str,
         tenant_uuid: str,
         sync_db: Session = Depends(get_sync_db_session_dep),
 ):
     service_brain_x = BrainXService(
         tenant_uuid=tenant_uuid,
-        llm=llm,
+        app=None,
+        # async_db=async_db,
         sync_db=sync_db,
+        provider_id=provider,
+        model_id=model,
         streaming=False,
     )
 
@@ -88,15 +93,22 @@ async def demo_str_output_invoke(
 
 
 async def demo_str_output_completion(
-        question: str, llm: str,
+        question: str,
+        tenant_uuid: str,
+        provider: str,
+        model: str,
         sync_db: Session = Depends(get_sync_db_session_dep),
 ) -> Tuple[Any, Exception | None]:
     service_brain_x = BrainXService(
-        llm=llm,
+        tenant_uuid=tenant_uuid,
+        app=None,
+        # async_db=async_db,
         sync_db=sync_db,
+        provider_id=provider,
+        model_id=model,
         streaming=False,
     )
 
-    return service_brain_x.completion(
+    return service_brain_x.llm_model_instance.completion(
         query=question
     )

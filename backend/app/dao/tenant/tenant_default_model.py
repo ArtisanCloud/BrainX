@@ -13,7 +13,7 @@ from app.models.tenant.tenant import TenantDefaultModel
 
 class TenantDefaultModelDAO(BaseDAO[TenantDefaultModel]):
     def __init__(self, async_db: AsyncSession = None, sync_db: Session = None):
-        super().__init__(TenantDefaultModel, async_db, sync_db)
+        super().__init__(TenantDefaultModel, async_db=async_db, sync_db=sync_db)
 
     async def async_get_default_model_by_uuid(self, tenant_uuid: str, model_type: str) -> Tuple[
         Optional[TenantDefaultModel], Optional[SQLAlchemyError]]:

@@ -1,7 +1,7 @@
 """add app models
 
 Revision ID: 51400
-Revises: 51300
+Revises: 51310
 Create Date: 2024-04-22 15:10:57.595552
 
 """
@@ -21,7 +21,7 @@ from app.models.workflow.workflow import Workflow
 
 # revision identifiers, used by Alembic.
 revision: str = '51400'
-down_revision: Union[str, None] = '51300'
+down_revision: Union[str, None] = '51310'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

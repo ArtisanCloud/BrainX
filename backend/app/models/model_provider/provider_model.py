@@ -14,7 +14,7 @@ from app.models.base import (
     BaseORM,
     table_name_provider_model,
     table_name_tenant,
-    table_name_provider,
+    table_name_provider, table_name_provider_model_setting,
 )
 
 
@@ -44,3 +44,15 @@ class ProviderModel(BaseORM):
         back_populates="model_provider",
         foreign_keys="[AppModelConfig.model_provider_uuid]",
     )
+
+
+class ProviderModelSetting(BaseORM):
+    __tablename__ = table_name_provider_model_setting
+    __table_args__ = {'schema': settings.database.db_schema}  # 动态指定 schema
+
+    tenant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("public." + table_name_tenant + '.uuid'), index=True)
+    provider_name = mapped_column(String(255), nullable=False)
+    model_name = mapped_column(String(255), nullable=False)
+    model_type = mapped_column(String(40), nullable=False)
+    enabled = mapped_column(Boolean, nullable=False, default=True)
+    load_balancing_enabled = mapped_column(Boolean, nullable=False, default=False)

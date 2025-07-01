@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+
+from app.core.brainx.model_instance import ModelInstance
 from app.logger import logger
-from typing import List, Dict, Any
+from typing import List, Dict, Any, cast
 
 from enum import Enum
 
@@ -57,7 +59,7 @@ class BaseNode(ABC, BaseModel):
     next_nodes: List[str] = Field([])
 
     # agent info
-    llm: Any = None
+    llm: Any | None = None
     app: App = None
 
     """
@@ -76,7 +78,22 @@ class BaseNode(ABC, BaseModel):
         self.name = node_data.get("name", "")
         self.description = node_data.get("description", "")
         self.node_type = node_data.get("node_type", None)
-        self.llm = node_data.get("llm", None)
+        llm: ModelInstance | None = node_data.get("llm")
+        llm_instance_from_data = cast(ModelInstance, llm)
+        print("base llm:", llm.model_bundle)
+        # 接下来就可以放心地使用 llm_instance_from_data，类型检查器会认为它是 ModelInstance
+        if llm_instance_from_data and hasattr(llm_instance_from_data, 'model_bundle') and llm_instance_from_data.model_bundle:
+            print("base llm:", llm_instance_from_data.model_bundle)
+            self.llm = llm_instance_from_data.model_bundle.model_type_instance.get_provider_model(
+                params={"credentials": llm_instance_from_data.credentials,  # 注意这里是 llm_instance_from_data.credential
+                        "stream": False,
+                        "temperature": 0.1}
+            )
+        else:
+            # 如果 cast 的结果不符合你的期望（例如 llm 为 None），你需要在这里处理
+            # 否则，如果 llm 是 None，上面的 if 语句会跳过，self.llm 仍为 None
+            self.llm = None  # 或者抛出错误
+            raise TypeError("Expected 'llm' to be a ModelInstance object, but it was not provided or was of an incorrect type.")
 
         self._init_inputs(self.id, node_data.get("inputs", []))
         self._init_output(self.id, node_data.get("output", []))
@@ -133,7 +150,7 @@ class BaseNode(ABC, BaseModel):
     def get_output(self, key: str) -> Any:
         return self.output_vars.get(key)
 
-    def set_llm(self, llm: Any):
+    def set_llm(self, llm: ModelInstance):
         self.llm = llm
 
     def to_dict(self):

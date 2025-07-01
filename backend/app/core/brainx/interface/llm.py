@@ -216,7 +216,7 @@ class LLM(AIModel):
         try:
             chat_llm = self.get_provider_model(
                 params={
-                    "credential": credential,
+                    "credentials": credential,
                     "temperature": temperature,
                     "streaming": True
                 },

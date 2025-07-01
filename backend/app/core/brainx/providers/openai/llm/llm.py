@@ -29,9 +29,9 @@ class OpenAILMM(LLM):
     def get_provider_model(self, params: dict = None) -> Any:
         # 从 params 提取参数
         credentials = dict(params.get("credentials", {})) if params else {}
+        print("credentials:", credentials)
         if not credentials:
             raise ProviderModelCredentialNotProvidedException()
-
         temperature = float(params.get("temperature", 0.5))  # 默认值 0.5
         streaming = bool(params.get("streaming", False))  # 默认值 False
 
@@ -39,7 +39,7 @@ class OpenAILMM(LLM):
         api_key = credentials.get('openai_api_key')
         if api_key is None:  # 只检查api_key是否为空
             raise ProviderModelCredentialNotProvidedException("OpenAI API key is required")
-
+        # print("api_base:", api_base, api_key)
         # 初始化并返回模型
         return ChatOpenAI(
             model=self.model_id,

@@ -35,10 +35,19 @@ def transform_document_to_reply(document: DocumentNode) -> DocumentSchema:
     )
 
 
-async def query_by_text(question: str, llm: str,
+async def query_by_text(question: str,
+                        tenant_uuid: str,
+                        provider: str,
+                        model: str,
                         sync_db: Session = Depends(get_sync_db_session_dep)) -> ResponseQuery | ResponseSchema:
     service_brain_x = BrainXService(
-        llm=llm, sync_db=sync_db, collection_name="opl_embeddings"
+        tenant_uuid=tenant_uuid,
+        app=None,
+        # async_db=async_db,
+        sync_db=sync_db,
+        provider_id=provider,
+        model_id=model,
+        collection_name="opl_embeddings"
     )
 
     res = ResponseQuery(answer="暂时没有找到答案，请稍后再试。", documents=[])

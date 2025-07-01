@@ -1,10 +1,13 @@
 from typing import Optional
-from pydantic import UUID4, constr
+from pydantic import UUID4, constr, ConfigDict, BaseModel
 from datetime import datetime
 
+from app.core.brainx.entity.base import I18nObject
+from app.core.brainx.entity.provider_model import ProviderModelWithStatusEntity
+from app.core.brainx.entity.runtime.provider_model import ModelType, ParameterRule
 from app.schemas.base import BaseSchema
 from app.schemas.model_provider.load_balance import ModelLoadBalanceConfig
-from app.schemas.model_provider.provider import ModelWithProviderEntityResponse
+from app.schemas.model_provider.provider import ModelWithProviderEntityResponse, CustomConfigurationStatus, SimpleProviderEntityResponse
 
 
 class ProviderModelSchema(BaseSchema):
@@ -38,4 +41,85 @@ class RequestSaveModel(BaseSchema):
 
 
 class ResponseSaveModel(BaseSchema):
-    success: bool
+    result: bool
+
+
+class RequestChangeModelStatus(BaseSchema):
+    model_type: str
+    provider: str
+    model: str
+    status: bool
+
+
+class ResponseChangeModelStatus(BaseSchema):
+    result: bool
+
+
+class RequestGetModelCredentials(BaseSchema):
+    provider: str
+    model_type: str
+    model: str
+
+
+class ResponseGetModelCredentials(BaseSchema):
+    data: dict | None
+
+
+class RequestDeleteModel(BaseSchema):
+    provider: str
+    model: str
+    model_type: str
+
+
+class ResponseDeleteModel(BaseSchema):
+    result: bool
+
+
+class ProviderWithModelsResponse(BaseSchema):
+    tenant_uuid: str
+    provider: str
+    label: I18nObject
+    icon_small: Optional[I18nObject] = None
+    icon_large: Optional[I18nObject] = None
+    status: CustomConfigurationStatus
+    models: list[ProviderModelWithStatusEntity]
+
+
+class ResponseGetModelsByModelType(BaseSchema):
+    data: list[ProviderWithModelsResponse]
+
+
+class DefaultModelResponse(BaseModel):
+    model: str
+    model_type: ModelType
+    provider: SimpleProviderEntityResponse
+
+    # pydantic configs
+    model_config = ConfigDict(protected_namespaces=())
+
+
+class ResponseGetDefaultModelByModelType(BaseSchema):
+    data: DefaultModelResponse | None
+
+
+class UpdateDefaultModel(BaseSchema):
+    model_type: str
+    provider: Optional[str] = None
+    model: Optional[str] = None
+
+
+class RequestUpdateDefaultModels(BaseSchema):
+    model_settings: list[UpdateDefaultModel]
+
+
+class ResponseUpdateDefaultModels(BaseSchema):
+    result: bool
+
+
+class RequestGetModelParameterRule(BaseSchema):
+    provider: str
+    model: str
+
+
+class ResponseGetModelParameterRule(BaseSchema):
+    data: list[ParameterRule]

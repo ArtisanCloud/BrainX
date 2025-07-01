@@ -7,9 +7,7 @@ from sqlalchemy.orm import Session
 from app.api.middleware.auth import get_session_user
 from app.core.brainx.providers.registry import ModelProviderRegistry
 from app.database.deps import get_sync_db_session_dep
-from app.logger import logger
 
-from app.config.config import settings
 from app.models.originaztion.user import User
 from app.schemas.base import ResponseSchema
 from app.schemas.model_provider.provider import (

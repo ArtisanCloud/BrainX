@@ -4,10 +4,12 @@ from typing import Iterator
 
 import ollama
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app import settings
 from app.core.brainx.base import LLMModel
 from app.logger import logger
+from app.models import User
 from app.models.app.app import App
 from app.models.robot_chat.conversation import Conversation
 from app.schemas.robot_chat.chat import RequestChat
@@ -67,7 +69,12 @@ async def event_api_generator(request: Request, llm: str, stream_response: Itera
 
 
 async def chat_event_generator(
-        request: Request, data: RequestChat, user_uuid: str, async_db: AsyncSession
+        request: Request,
+        data: RequestChat,
+        tenant_uuid: str,
+        user_uuid: str,
+        async_db: AsyncSession,
+        sync_db: Session,
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"
@@ -80,9 +87,12 @@ async def chat_event_generator(
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await chat(
             async_db=async_db,
+            sync_db=sync_db,
             question=question,
             images=base64_images,
-            llm=data.llm,
+            provider=data.provider,
+            model=data.model,
+            tenant_uuid=tenant_uuid,
             user_uuid=user_uuid,
             conversation_uuid=conversation_uuid,
         )
@@ -122,9 +132,12 @@ async def chat_event_generator(
 
 async def chat(
         async_db: AsyncSession,
+        sync_db: Session,
         question: str,
-        llm: str,
+        provider: str,
+        model: str,
         images: list[str] | None = None,
+        tenant_uuid: str = None,
         user_uuid: str = None,
         conversation_uuid: str = "",
 ):
@@ -135,7 +148,12 @@ async def chat(
 
     # stream_response = chat_by_llm(question, llm, app, 0.5)
     service_brain_x = BrainXService(
-        llm,
+        tenant_uuid=tenant_uuid,
+        app=None,
+        async_db=async_db,
+        sync_db=sync_db,
+        provider_id=provider,
+        model_id=model,
         streaming=True,
     )
 
@@ -162,7 +180,7 @@ async def chat(
                 await service_conversation.conversation_dao.async_create(
                     Conversation(
                         uuid=conversation_uuid,
-                        user_uuid=user_uuid,
+                        user_uuid=tenant_uuid,
                         name=question,
                     )
                 )
@@ -186,7 +204,7 @@ async def chat(
                 )
 
     if images is None or len(images) == 0:
-        stream_response, exception = service_brain_x.chat_stream(
+        stream_response, exception = service_brain_x.llm_model_instance.llm_chat_stream(
             question={"question": question},
             temperature=0.5,
             app=app,

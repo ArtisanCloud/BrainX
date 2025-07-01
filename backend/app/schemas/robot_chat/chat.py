@@ -5,9 +5,10 @@ from app.schemas.base import BaseSchema
 
 
 class RequestChat(BaseSchema):
-    llm: str | None
     conversationUUID: Optional[str] | None
     appUUID: Optional[str] | None
+    provider: str | None
+    model: str | None
     messages: list[MessageSchema]
     images: Optional[List[str]] = None
 

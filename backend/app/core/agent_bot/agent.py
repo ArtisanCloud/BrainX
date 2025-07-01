@@ -133,8 +133,14 @@ class AgentBot:
         logger.info(f"------route options:{self.routes_options}")
 
         # 动态生成 RouteQuery 类
+        # print("self.router_llm.credential:", self.router_llm.credential)
         route_query = create_dynamic_route_query(self.routes_options)
-        structured_llm_router = self.router_llm.with_structured_output(route_query)
+        structured_llm_router = (self.router_llm.
+                                 model_bundle.
+                                 model_type_instance.
+                                 get_provider_model(params={"credentials": self.router_llm.credentials,
+                                                            "stream": False,
+                                                            "temperature": 0.1}).with_structured_output(route_query))
 
         persona = (
             self.app.persona
@@ -197,7 +203,7 @@ class AgentBot:
         messages = state["messages"]
         logger.info(f"Calling agent with messages: {messages}")
         # self.default_llm = self.default_llm.bind_tools(self.tools)
-        response = self.default_llm.invoke(messages)
+        response = self.default_llm.llm_invoke(messages)
 
         return {"messages": [response]}
 

@@ -3,6 +3,8 @@ import json
 
 import ollama
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
+
 from app import settings
 from fastapi import Request
 
@@ -18,7 +20,11 @@ from app.utils.media import remove_base64_images_prefix
 
 
 async def agent_chat_event_generator(
-        request: Request, data: RequestChat, user_uuid: str, async_db: AsyncSession
+        request: Request, data: RequestChat,
+        user_uuid: str,
+        tenant_uuid: str,
+        async_db: AsyncSession,
+        sync_db: Session
 ):
     # 第一次响应发送“处理中”消息
     yield f"data: {json.dumps({'status': 'processing'})}\n\n"
@@ -33,10 +39,13 @@ async def agent_chat_event_generator(
         # 等待 agent_chat 的实际响应（这可能耗时几秒）
         stream_response, conversation_uuid, exception = await agent_chat(
             async_db=async_db,
+            sync_db=sync_db,
             question=question,
             images=base64_images,
-            llm=data.llm,
+            provider=data.provider,
+            model=data.model,
             user_uuid=user_uuid,
+            tenant_uuid=tenant_uuid,
             app_uuid=app_uuid,
             conversation_uuid=conversation_uuid,
         )
@@ -68,10 +77,13 @@ async def agent_chat_event_generator(
 
 async def agent_chat(
         async_db: AsyncSession,
+        sync_db: Session,
         app_uuid: str,
+        tenant_uuid: str,
         user_uuid: str,
         question: str,
-        llm: str,
+        provider: str,
+        model: str,
         conversation_uuid: str = "",
         images: list[str] | None = None,
 ):
@@ -85,8 +97,11 @@ async def agent_chat(
             return None, None, exception
         # stream_response = chat_by_llm(question, llm, app, 0.5)
         service_brain_x = BrainXService(
-            llm=llm,
+            tenant_uuid=tenant_uuid,
             async_db=async_db,
+            sync_db=sync_db,
+            provider_id=provider,
+            model_id=model,
             streaming=True,
             app=app,
         )
