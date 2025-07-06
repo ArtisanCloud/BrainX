@@ -32,7 +32,7 @@ import { useNotification } from "@/app/components/notification";
 const ChatBox = () => {
   const { selectedApp, currentConversation, setCurrentConversation } =
     useContext(SelectedAppContext) as AppContextType;
-  const { selectedLlm } = useContext(SelectLLMContext) as SelectLLMContextType;
+  const { selectedProvider,selectedModel } = useContext(SelectLLMContext) as SelectLLMContextType;
 
   const refInput = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -178,7 +178,8 @@ const ChatBox = () => {
     const requestBody: RequestSendChat = {
       conversationUUID: sessionID,
       appUUID: selectedApp?.uuid ?? "",
-      llm: selectedLlm ?? "",
+      provider: selectedProvider ?? "",
+      model: selectedModel ?? "",
       images: selectedImage ? [selectedImage] : [], // 如果有图片则添加到请求中
       messages: [
         {

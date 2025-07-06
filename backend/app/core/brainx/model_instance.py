@@ -90,7 +90,7 @@ class ModelInstance:
         # print("live chat stream", self.credential, )
         return self.model_bundle.model_type_instance.chat_stream(
             question=question,
-            credential=self.credential,
+            credential=self.credentials,
             temperature=temperature,
             app=app,
             session_id=session_id,

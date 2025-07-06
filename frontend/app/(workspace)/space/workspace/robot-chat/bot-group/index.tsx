@@ -20,7 +20,7 @@ export const defaultApp: App = {
 	avatar_url: 'images/app.png',
 }
 
-const Index = () => {
+const BotGroup = () => {
 	const {selectedApp, setSelectedApp} = useContext(SelectedAppContext) as AppContextType;
 	const [list, setList] = useState<App[]>([]);
 
@@ -76,4 +76,4 @@ const Index = () => {
 	);
 }
 
-export default Index
+export default BotGroup

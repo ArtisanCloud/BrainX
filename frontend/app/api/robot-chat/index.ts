@@ -6,7 +6,8 @@ export const UriWebChatBot = '/api/chat-bot';
 export interface RequestSendChat{
 	conversationUUID: string,
 	appUUID?: string,
-	llm?: string,
+	provider?: string,
+	model?: string,
 	images?: string[]
 	messages: Message[],
 }
