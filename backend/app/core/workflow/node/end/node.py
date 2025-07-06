@@ -48,7 +48,7 @@ class EndNode(BaseNode):
 
         # print(1111111, state["messages"])
         response = rag_chain.stream({"context": state["messages"], "question": state["question"]})
-        print(22222, response)
+        # print(22222, response)
         return {
             "result": response,
             # "messages": [response]

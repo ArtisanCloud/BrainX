@@ -29,7 +29,7 @@ class OpenAILMM(LLM):
     def get_provider_model(self, params: dict = None) -> Any:
         # 从 params 提取参数
         credentials = dict(params.get("credentials", {})) if params else {}
-        print("credentials:", credentials)
+        # print("credentials:", credentials)
         if not credentials:
             raise ProviderModelCredentialNotProvidedException()
         temperature = float(params.get("temperature", 0.5))  # 默认值 0.5

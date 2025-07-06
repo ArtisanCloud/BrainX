@@ -39,9 +39,9 @@ class WenXinLLM(LLM):
         request_timeout = int(params.get("request_timeout", 300))  # 默认值 300
 
         secret_key = credentials.get('secret_key')
-        api_key = credentials.get('openai_api_key')
+        api_key = credentials.get('api_key')
         if api_key is None:  # 只检查api_key是否为空
-            raise ProviderModelCredentialNotProvidedException("OpenAI API key is required")
+            raise ProviderModelCredentialNotProvidedException("API key is required")
 
         # 返回 QianfanChatEndpoint 实例
         return QianfanChatEndpoint(
