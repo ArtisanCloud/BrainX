@@ -87,7 +87,7 @@ class ModelInstance:
         if not isinstance(self.model_bundle.model_type_instance, LLM):
             return None, Exception("Model type instance is not LargeLanguageModel")
 
-        # print("live chat stream", self.credential, )
+        # print("live chat stream", self.credentials)
         return self.model_bundle.model_type_instance.chat_stream(
             question=question,
             credential=self.credentials,

@@ -96,6 +96,7 @@ async def chat_event_generator(
             user_uuid=user_uuid,
             conversation_uuid=conversation_uuid,
         )
+        # print("stream response-------", stream_response)
 
         if exception is not None:
             raise exception
@@ -147,6 +148,7 @@ async def chat(
     app = App()
 
     # stream_response = chat_by_llm(question, llm, app, 0.5)
+    # print("create brainx service start")
     service_brain_x = BrainXService(
         tenant_uuid=tenant_uuid,
         app=None,
@@ -156,6 +158,7 @@ async def chat(
         model_id=model,
         streaming=True,
     )
+    # print("create brainx service end")
 
     # 如果不是app的对话，则生成临时的新会话ID
     if conversation_uuid == "":
@@ -204,12 +207,14 @@ async def chat(
                 )
 
     if images is None or len(images) == 0:
+        # print("llm_chat_stream start")
         stream_response, exception = service_brain_x.llm_model_instance.llm_chat_stream(
             question={"question": question},
             temperature=0.5,
             app=app,
             session_id=conversation_uuid,
         )
+        # print("llm_chat_stream end")
     else:
 
         stream_response = ollama.chat(

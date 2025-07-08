@@ -35,12 +35,12 @@ class ModelManager:
             provider_id: str, model_id: str
     ) -> Tuple[Optional[ModelInstance], Optional[Exception]]:
 
-        # print(3330000, model_type, provider, model)
+        # print(3330000, model_type, provider_id, model_id)
         # 重载provider和model
         if model_type == ModelType.LLM:
-            if self.provider_id is not None:
+            if self.provider_id is not None and self.provider_id != "":
                 provider_id = self.provider_id
-            if self.model_id is not None:
+            if self.model_id is not None and self.model_id != "":
                 model_id = self.model_id
         # print(33333333, provider_id, model_id)
 
@@ -67,7 +67,7 @@ class ModelManager:
 
         # 获取默认模型
         default_model_record = self.provider_manager.get_default_model(tenant_uuid, model_type)
-        # print("default_model_record", default_model_record)
+
         if not default_model_record:
             raise Exception(f"Default model not found for {model_type}")
 

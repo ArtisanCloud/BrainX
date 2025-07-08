@@ -47,7 +47,7 @@ class BrainXService:
         # define the agent executor
         self.llm_model_instance, exception = self.model_manager.get_default_model_instance(tenant_uuid, ModelType.LLM)
         # print("self.llm_model_instance", self.llm_model_instance.configuration)
-        # print("credential:", self.llm_model_instance.credential)
+        print("get_default_model_instance credential:", self.llm_model_instance.credentials)
         if exception:
             return
 
